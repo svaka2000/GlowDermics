@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, Switch,
+  TextInput, Alert, Switch, Platform,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { UserProfile } from '../../src/types';
+import {
+  requestNotificationPermission,
+  scheduleRoutineReminder,
+  cancelNotifications,
+  getNotificationSettings,
+} from '../../src/services/notifications';
 
 const SKIN_TYPES = ['Oily', 'Dry', 'Combination', 'Normal', 'Sensitive'];
 const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Redness', 'Large Pores', 'Dullness', 'Sensitivity'];
@@ -21,13 +27,18 @@ export default function Settings() {
   const [skinType, setSkinType] = useState('');
   const [concerns, setConcerns] = useState<string[]>([]);
   const [scanCount, setScanCount] = useState(0);
+  const [notifsEnabled, setNotifsEnabled] = useState(false);
+  const [notifHour, setNotifHour] = useState(8);
 
   useFocusEffect(useCallback(() => {
     (async () => {
       const p = await Storage.getUserProfile();
       const history = await Storage.getScanHistory();
+      const notifSettings = await getNotificationSettings();
       setProfile(p);
       setScanCount(history.length);
+      setNotifsEnabled(notifSettings.enabled);
+      setNotifHour(notifSettings.hour);
       if (p) {
         setName(p.name);
         setSkinType(p.skinType);
@@ -150,6 +161,60 @@ export default function Settings() {
           )}
         </View>
 
+        {/* Notifications */}
+        {Platform.OS !== 'web' && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Notifications</Text>
+            <View style={styles.card}>
+              <View style={[rowStyles.wrap, rowStyles.border]}>
+                <Ionicons name="notifications-outline" size={16} color={Colors.primary} style={{ marginRight: 10 }} />
+                <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>Daily Scan Reminder</Text>
+                <Switch
+                  value={notifsEnabled}
+                  onValueChange={async (val) => {
+                    if (val) {
+                      const granted = await requestNotificationPermission();
+                      if (!granted) {
+                        Alert.alert('Permission Required', 'Enable notifications in your device settings to receive daily reminders.');
+                        return;
+                      }
+                      await scheduleRoutineReminder(notifHour);
+                      setNotifsEnabled(true);
+                    } else {
+                      await cancelNotifications();
+                      setNotifsEnabled(false);
+                    }
+                  }}
+                  trackColor={{ false: Colors.border, true: Colors.primary }}
+                  thumbColor={Colors.white}
+                />
+              </View>
+              {notifsEnabled && (
+                <View style={rowStyles.wrap}>
+                  <Ionicons name="time-outline" size={16} color={Colors.textMuted} style={{ marginRight: 10 }} />
+                  <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>Reminder time</Text>
+                  <View style={styles.hourPicker}>
+                    {[7, 8, 9, 12, 18, 20].map(h => (
+                      <Pressable
+                        key={h}
+                        style={[styles.hourBtn, notifHour === h && styles.hourBtnActive]}
+                        onPress={async () => {
+                          setNotifHour(h);
+                          await scheduleRoutineReminder(h);
+                        }}
+                      >
+                        <Text style={[styles.hourText, notifHour === h && styles.hourTextActive]}>
+                          {h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
+
         {/* About */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
@@ -166,7 +231,7 @@ export default function Settings() {
           <Text style={styles.sectionTitle}>TallowDermics</Text>
           <View style={styles.card}>
             <LinkRow icon="globe-outline" label="Visit trytallowdermics.com" />
-            <LinkRow icon="leaf-outline" label="Our 4 Ingredients" />
+            <LinkRow icon="leaf-outline" label="The Formula — 4 Ingredients" onPress={() => router.push('/product')} />
             <LinkRow icon="book-outline" label="The Journal" last />
           </View>
         </View>
@@ -261,6 +326,11 @@ const styles = StyleSheet.create({
   chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
   chipText: { fontSize: 13, color: Colors.textSecondary },
   chipTextActive: { color: Colors.primary, fontWeight: '600' },
+  hourPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+  hourBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
+  hourBtnActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  hourText: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
+  hourTextActive: { color: Colors.primary, fontWeight: '700' },
   dangerBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14,

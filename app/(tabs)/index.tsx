@@ -196,26 +196,34 @@ export default function Home() {
           </View>
         )}
 
-        {/* Quick actions */}
+        {/* Quick actions — 2 rows of 3 */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickGrid}>
             <Pressable style={styles.quickCard} onPress={() => router.push('/scanner')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="flask-outline" size={24} color={Colors.primary} />
+              <Ionicons name="flask-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Ingredient{'\n'}Scanner</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/dupes')}>
+              <Ionicons name="cash-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Dupe{'\n'}Finder</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/goals')}>
+              <Ionicons name="flag-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Goals</Text>
+            </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/routine')}>
-              <Ionicons name="list-outline" size={24} color={Colors.primary} />
+              <Ionicons name="list-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>My{'\n'}Routine</Text>
             </Pressable>
-            <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/progress')}>
-              <Ionicons name="trending-up-outline" size={24} color={Colors.primary} />
-              <Text style={styles.quickLabel}>Track{'\n'}Progress</Text>
-            </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/coach')}>
-              <Ionicons name="chatbubble-ellipses-outline" size={24} color={Colors.primary} />
+              <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Ask{'\n'}Derm</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/product')}>
+              <Ionicons name="leaf-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>The{'\n'}Formula</Text>
             </Pressable>
           </View>
         </View>
@@ -319,9 +327,9 @@ const styles = StyleSheet.create({
   },
   insightText: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, flex: 1 },
 
-  quickGrid: { flexDirection: 'row', gap: 10 },
+  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   quickCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 16,
+    width: '31%', backgroundColor: Colors.bgCard, borderRadius: 16,
     borderWidth: 1, borderColor: Colors.border, padding: 14,
     alignItems: 'center', gap: 8, overflow: 'hidden',
   },
