@@ -92,6 +92,17 @@ export default function Progress() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
+        {/* AI Trend Report CTA */}
+        <Pressable style={styles.reportCta} onPress={() => router.push('/report')}>
+          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+          <Ionicons name="analytics-outline" size={20} color={Colors.white} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.reportCtaTitle}>AI Trend Report</Text>
+            <Text style={styles.reportCtaSub}>AI analysis of your full skin journey</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+        </Pressable>
+
         {/* Activity stats */}
         <View style={styles.activityRow}>
           <View style={styles.activityCard}>
@@ -261,6 +272,13 @@ const styles = StyleSheet.create({
   scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
   scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
 
+  reportCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginHorizontal: 16, borderRadius: 16, overflow: 'hidden',
+    padding: 16, marginBottom: 12,
+  },
+  reportCtaTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  reportCtaSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   activityRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 4, gap: 8 },
   activityCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
   activityNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
