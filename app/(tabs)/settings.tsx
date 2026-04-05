@@ -237,18 +237,33 @@ export default function Settings() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tools</Text>
+          <Text style={styles.sectionTitle}>Analysis Tools</Text>
           <View style={styles.card}>
             <LinkRow icon="flask-outline" label="Ingredient Scanner" onPress={() => router.push('/scanner')} />
             <LinkRow icon="cash-outline" label="Dupe Finder" onPress={() => router.push('/dupes')} />
-            <LinkRow icon="flag-outline" label="Skin Goals" onPress={() => router.push('/goals')} />
-            <LinkRow icon="book-outline" label="Skin Lab — Articles" onPress={() => router.push('/learn')} />
-            <LinkRow icon="journal-outline" label="Skin Journal" onPress={() => router.push('/journal')} />
-            <LinkRow icon="cube-outline" label="My Product Shelf" onPress={() => router.push('/products')} />
             <LinkRow icon="git-compare-outline" label="Routine Analyzer" onPress={() => router.push('/routine-analyzer')} />
+            <LinkRow icon="analytics-outline" label="AI Trend Report" onPress={() => router.push('/report')} />
+            <LinkRow icon="bar-chart-outline" label="Compare Scans" onPress={() => router.push('/compare')} last />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Tracking</Text>
+          <View style={styles.card}>
+            <LinkRow icon="flag-outline" label="Skin Goals" onPress={() => router.push('/goals')} />
+            <LinkRow icon="journal-outline" label="Skin Journal" onPress={() => router.push('/journal')} />
             <LinkRow icon="checkmark-done-outline" label="Daily Habits Tracker" onPress={() => router.push('/habits')} />
+            <LinkRow icon="cube-outline" label="My Product Shelf" onPress={() => router.push('/products')} last />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Learn</Text>
+          <View style={styles.card}>
+            <LinkRow icon="book-outline" label="Skin Lab — Articles" onPress={() => router.push('/learn')} />
             <LinkRow icon="search-outline" label="Ingredient Decoder" onPress={() => router.push('/ingredient')} />
-            <LinkRow icon="person-circle-outline" label="Skin Type Guides" onPress={() => router.push('/skin-type')} last />
+            <LinkRow icon="person-circle-outline" label="Skin Type Guides" onPress={() => router.push('/skin-type')} />
+            <LinkRow icon="help-circle-outline" label="Skin Type Quiz" onPress={() => router.push('/quiz')} last />
           </View>
         </View>
 
