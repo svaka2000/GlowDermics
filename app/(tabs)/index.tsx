@@ -42,6 +42,7 @@ export default function Home() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [latest, setLatest] = useState<SkinAnalysis | null>(null);
   const [streak, setStreak] = useState(0);
+  const [habitScore, setHabitScore] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -54,6 +55,19 @@ export default function Home() {
     setProfile(p);
     setLatest(a);
     setStreak(s);
+    // Load today's habit score
+    try {
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+      const HABITS_KEY = 'gd_daily_habits';
+      const TOTAL_HABITS = 12;
+      const raw = await AsyncStorage.getItem(HABITS_KEY);
+      if (raw) {
+        const logs = JSON.parse(raw);
+        const today = new Date().toDateString();
+        const todayLog = logs.find((l: any) => l.date === today);
+        if (todayLog) setHabitScore(Math.round((todayLog.checked.length / TOTAL_HABITS) * 100));
+      }
+    } catch {}
     setLoading(false);
   };
 
@@ -99,18 +113,22 @@ export default function Home() {
 
         {/* Streak + stats row */}
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
+          <Pressable style={styles.statCard} onPress={() => router.push('/habits')}>
             <Text style={styles.statNum}>{streak}</Text>
-            <Text style={styles.statLabel}>🔥 Day Streak</Text>
-          </View>
-          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>🔥 Streak</Text>
+          </Pressable>
+          <Pressable style={styles.statCard} onPress={() => latest ? router.push(`/results/${latest.id}`) : router.push('/scan')}>
             <Text style={styles.statNum}>{latest ? latest.scores.overall : '—'}</Text>
-            <Text style={styles.statLabel}>Last Score</Text>
-          </View>
-          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Score</Text>
+          </Pressable>
+          <Pressable style={styles.statCard} onPress={() => router.push('/habits')}>
+            <Text style={styles.statNum}>{habitScore > 0 ? `${habitScore}%` : '—'}</Text>
+            <Text style={styles.statLabel}>Habits</Text>
+          </Pressable>
+          <Pressable style={styles.statCard} onPress={() => router.push('/journal')}>
             <Text style={styles.statNum}>{profile?.primaryConcerns?.length || 0}</Text>
             <Text style={styles.statLabel}>Concerns</Text>
-          </View>
+          </Pressable>
         </View>
 
         {/* Primary scan CTA */}
