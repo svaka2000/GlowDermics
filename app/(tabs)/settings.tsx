@@ -1,0 +1,261 @@
+import { useCallback, useState } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, Pressable,
+  TextInput, Alert, Switch,
+} from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '../../src/constants/colors';
+import { Storage } from '../../src/services/storage';
+import { UserProfile } from '../../src/types';
+
+const SKIN_TYPES = ['Oily', 'Dry', 'Combination', 'Normal', 'Sensitive'];
+const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Redness', 'Large Pores', 'Dullness', 'Sensitivity'];
+
+export default function Settings() {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState('');
+  const [skinType, setSkinType] = useState('');
+  const [concerns, setConcerns] = useState<string[]>([]);
+  const [scanCount, setScanCount] = useState(0);
+
+  useFocusEffect(useCallback(() => {
+    (async () => {
+      const p = await Storage.getUserProfile();
+      const history = await Storage.getScanHistory();
+      setProfile(p);
+      setScanCount(history.length);
+      if (p) {
+        setName(p.name);
+        setSkinType(p.skinType);
+        setConcerns(p.primaryConcerns);
+      }
+    })();
+  }, []));
+
+  const saveProfile = async () => {
+    if (!profile || !name.trim()) return;
+    const updated: UserProfile = {
+      ...profile,
+      name: name.trim(),
+      skinType: skinType.toLowerCase(),
+      primaryConcerns: concerns,
+    };
+    await Storage.saveUserProfile(updated);
+    setProfile(updated);
+    setEditing(false);
+  };
+
+  const confirmReset = () => {
+    Alert.alert(
+      'Reset All Data',
+      'This will delete all your scans, progress, and profile. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reset Everything',
+          style: 'destructive',
+          onPress: async () => {
+            await Storage.clearAll();
+            router.replace('/(auth)/onboarding');
+          },
+        },
+      ]
+    );
+  };
+
+  const toggleConcern = (c: string) => {
+    if (concerns.includes(c)) setConcerns(concerns.filter(x => x !== c));
+    else if (concerns.length < 3) setConcerns([...concerns, c]);
+  };
+
+  return (
+    <View style={styles.root}>
+      <SafeAreaView edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Settings</Text>
+        </View>
+      </SafeAreaView>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        {/* Profile card */}
+        <View style={styles.profileCard}>
+          <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.avatar}>
+            <Text style={styles.avatarText}>{profile?.name?.[0]?.toUpperCase() || '?'}</Text>
+          </LinearGradient>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{profile?.name || '—'}</Text>
+            <Text style={styles.profileSub}>{profile?.skinType ? profile.skinType.charAt(0).toUpperCase() + profile.skinType.slice(1) + ' Skin' : '—'}</Text>
+          </View>
+          <View style={styles.statBadge}>
+            <Text style={styles.statNum}>{scanCount}</Text>
+            <Text style={styles.statLabel}>Scans</Text>
+          </View>
+        </View>
+
+        {/* Edit Profile */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Profile</Text>
+            <Pressable onPress={() => editing ? saveProfile() : setEditing(true)}>
+              <Text style={styles.editBtn}>{editing ? 'Save' : 'Edit'}</Text>
+            </Pressable>
+          </View>
+
+          {editing ? (
+            <View style={styles.card}>
+              <Text style={styles.fieldLabel}>Name</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholderTextColor={Colors.textMuted}
+                placeholder="Your name"
+              />
+              <Text style={[styles.fieldLabel, { marginTop: 16 }]}>Skin Type</Text>
+              <View style={styles.chipRow}>
+                {SKIN_TYPES.map(t => (
+                  <Pressable
+                    key={t}
+                    style={[styles.chip, skinType === t.toLowerCase() && styles.chipActive]}
+                    onPress={() => setSkinType(t.toLowerCase())}
+                  >
+                    <Text style={[styles.chipText, skinType === t.toLowerCase() && styles.chipTextActive]}>{t}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              <Text style={[styles.fieldLabel, { marginTop: 16 }]}>Concerns (up to 3)</Text>
+              <View style={styles.chipRow}>
+                {CONCERNS.map(c => (
+                  <Pressable
+                    key={c}
+                    style={[styles.chip, concerns.includes(c) && styles.chipActive]}
+                    onPress={() => toggleConcern(c)}
+                  >
+                    <Text style={[styles.chipText, concerns.includes(c) && styles.chipTextActive]}>{c}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          ) : (
+            <View style={styles.card}>
+              <Row label="Name" value={profile?.name || '—'} />
+              <Row label="Skin Type" value={profile?.skinType ? profile.skinType.charAt(0).toUpperCase() + profile.skinType.slice(1) : '—'} />
+              <Row label="Concerns" value={profile?.primaryConcerns?.join(', ') || '—'} last />
+            </View>
+          )}
+        </View>
+
+        {/* About */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About</Text>
+          <View style={styles.card}>
+            <Row label="App" value="GlowDermics" />
+            <Row label="Version" value="1.0.0" />
+            <Row label="Powered by" value="Groq AI + Llama 4" />
+            <Row label="Brand" value="TallowDermics™" last />
+          </View>
+        </View>
+
+        {/* Links */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>TallowDermics</Text>
+          <View style={styles.card}>
+            <LinkRow icon="globe-outline" label="Visit trytallowdermics.com" />
+            <LinkRow icon="leaf-outline" label="Our 4 Ingredients" />
+            <LinkRow icon="book-outline" label="The Journal" last />
+          </View>
+        </View>
+
+        {/* Danger zone */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: Colors.scorePoor }]}>Data</Text>
+          <Pressable style={styles.dangerBtn} onPress={confirmReset}>
+            <Ionicons name="trash-outline" size={18} color={Colors.scorePoor} />
+            <Text style={styles.dangerText}>Reset All Data</Text>
+          </Pressable>
+        </View>
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </View>
+  );
+}
+
+function Row({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
+  return (
+    <View style={[rowStyles.wrap, !last && rowStyles.border]}>
+      <Text style={rowStyles.label}>{label}</Text>
+      <Text style={rowStyles.value}>{value}</Text>
+    </View>
+  );
+}
+
+function LinkRow({ icon, label, last = false }: { icon: any; label: string; last?: boolean }) {
+  return (
+    <Pressable style={[rowStyles.wrap, !last && rowStyles.border]}>
+      <Ionicons name={icon} size={16} color={Colors.primary} style={{ marginRight: 10 }} />
+      <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>{label}</Text>
+      <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+    </Pressable>
+  );
+}
+
+const rowStyles = StyleSheet.create({
+  wrap: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13 },
+  border: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  label: { fontSize: 14, color: Colors.textMuted, width: 100 },
+  value: { fontSize: 14, color: Colors.textPrimary, fontWeight: '500', flex: 1, textAlign: 'right' },
+});
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: Colors.bg },
+  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
+  scroll: { paddingHorizontal: 16 },
+  profileCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: Colors.bgCard, borderRadius: 18,
+    borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 24,
+  },
+  avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 22, fontWeight: '800', color: Colors.white },
+  profileInfo: { flex: 1 },
+  profileName: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  profileSub: { fontSize: 13, color: Colors.textMuted, marginTop: 2 },
+  statBadge: { alignItems: 'center' },
+  statNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },
+  statLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5 },
+  section: { marginBottom: 24 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
+  editBtn: { fontSize: 14, fontWeight: '600', color: Colors.primary },
+  card: {
+    backgroundColor: Colors.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 16,
+  },
+  fieldLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 8 },
+  input: {
+    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
+    fontSize: 15, color: Colors.textPrimary,
+  },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+  },
+  chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  chipText: { fontSize: 13, color: Colors.textSecondary },
+  chipTextActive: { color: Colors.primary, fontWeight: '600' },
+  dangerBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14,
+    borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', padding: 16,
+  },
+  dangerText: { fontSize: 15, fontWeight: '600', color: Colors.scorePoor },
+});

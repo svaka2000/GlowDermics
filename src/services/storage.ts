@@ -6,6 +6,8 @@ const KEYS = {
   SCAN_HISTORY: 'gd_scan_history',
   ANALYSES: 'gd_analyses',
   ONBOARDED: 'gd_onboarded',
+  STREAK: 'gd_streak',
+  LAST_SCAN_DATE: 'gd_last_scan_date',
 };
 
 export const Storage = {
@@ -22,6 +24,7 @@ export const Storage = {
     const existing = await this.getAnalyses();
     const updated = [analysis, ...existing].slice(0, 90);
     await AsyncStorage.setItem(KEYS.ANALYSES, JSON.stringify(updated));
+    await this.updateStreak();
   },
 
   async getAnalyses(): Promise<SkinAnalysis[]> {
@@ -52,6 +55,28 @@ export const Storage = {
 
   async setOnboarded(): Promise<void> {
     await AsyncStorage.setItem(KEYS.ONBOARDED, 'true');
+  },
+
+  async getStreak(): Promise<number> {
+    const raw = await AsyncStorage.getItem(KEYS.STREAK);
+    return raw ? parseInt(raw, 10) : 0;
+  },
+
+  async updateStreak(): Promise<number> {
+    const today = new Date().toDateString();
+    const lastScan = await AsyncStorage.getItem(KEYS.LAST_SCAN_DATE);
+    const currentStreak = await this.getStreak();
+
+    if (lastScan === today) return currentStreak; // already scanned today
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isConsecutive = lastScan === yesterday.toDateString();
+
+    const newStreak = isConsecutive ? currentStreak + 1 : 1;
+    await AsyncStorage.setItem(KEYS.STREAK, String(newStreak));
+    await AsyncStorage.setItem(KEYS.LAST_SCAN_DATE, today);
+    return newStreak;
   },
 
   async clearAll(): Promise<void> {

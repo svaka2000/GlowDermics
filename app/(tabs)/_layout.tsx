@@ -54,6 +54,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }) => <TabIcon name={focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'} focused={focused} />,
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ focused }) => <TabIcon name={focused ? 'person-circle' : 'person-circle-outline'} focused={focused} />,
+        }}
+      />
     </Tabs>
   );
 }

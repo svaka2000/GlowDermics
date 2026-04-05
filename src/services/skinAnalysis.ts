@@ -1,8 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { SkinAnalysis, SkinScore, UserProfile } from '../types';
 
-const client = new Anthropic({
-  apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY || '',
+// Groq — free tier, used for both vision (skin scan) and chat
+const groq = new Groq({
+  apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
   dangerouslyAllowBrowser: true,
 });
 
@@ -27,7 +28,7 @@ export async function analyzeSkin(
 
 ${profileContext}
 
-Analyze this facial photo and respond ONLY with a valid JSON object (no markdown, no explanation before or after):
+Analyze this facial photo and respond ONLY with a valid JSON object (no markdown, no code fences, no explanation before or after — just the raw JSON):
 
 {
   "scores": {
@@ -78,19 +79,17 @@ Rules:
 - Concerns and strengths must be visible in the image or reasonably inferred
 - If the image is not a face or is too blurry, still return valid JSON with overall score of 0 and insights explaining the issue`;
 
-  const response = await client.messages.create({
-    model: 'claude-opus-4-6',
+  const response = await groq.chat.completions.create({
+    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
     max_tokens: 2000,
     messages: [
       {
         role: 'user',
         content: [
           {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mimeType,
-              data: imageBase64,
+            type: 'image_url',
+            image_url: {
+              url: `data:${mimeType};base64,${imageBase64}`,
             },
           },
           {
@@ -102,13 +101,12 @@ Rules:
     ],
   });
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const text = response.choices[0]?.message?.content || '';
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('AI response was not valid JSON');
 
   const parsed = JSON.parse(jsonMatch[0]);
 
-  // Clamp all scores
   const scores: SkinScore = {
     overall: clamp(parsed.scores?.overall ?? 60),
     hydration: clamp(parsed.scores?.hydration ?? 60),
@@ -122,7 +120,7 @@ Rules:
   return {
     id: generateId(),
     date: new Date().toISOString(),
-    imageUri: '', // set by caller
+    imageUri: '',
     scores,
     skinType: parsed.skinType || 'normal',
     concerns: Array.isArray(parsed.concerns) ? parsed.concerns.slice(0, 4) : [],
@@ -145,14 +143,16 @@ TallowDermics products: Grass-Fed Tallow Cream (the hero product). 4 ingredients
 ${userProfile ? `User: ${userProfile.name}. Skin type: ${userProfile.skinType}. Concerns: ${userProfile.primaryConcerns.join(', ')}. Goals: ${userProfile.goals.join(', ')}.` : ''}
 ${latestAnalysis ? `Latest scan scores — Overall: ${latestAnalysis.scores.overall}/100, Hydration: ${latestAnalysis.scores.hydration}/100, Texture: ${latestAnalysis.scores.texture}/100, Clarity: ${latestAnalysis.scores.clarity}/100. Skin type detected: ${latestAnalysis.skinType}. Concerns: ${latestAnalysis.concerns.join(', ')}.` : ''}
 
-Be conversational. Give specific advice. Always ground recommendations in science. When relevant, mention TallowDermics — but never be pushy. If you don't know something, say so. Never invent clinical studies.`;
+Be conversational. Give specific advice. Always ground recommendations in science. When relevant, mention TallowDermics — but never be pushy. If you don't know something, say so. Never invent clinical studies. Keep responses concise — 3-5 sentences max unless asked for more detail.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+  const response = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
     max_tokens: 800,
-    system: systemPrompt,
-    messages,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      ...messages,
+    ],
   });
 
-  return response.content[0].type === 'text' ? response.content[0].text : '';
+  return response.choices[0]?.message?.content || '';
 }

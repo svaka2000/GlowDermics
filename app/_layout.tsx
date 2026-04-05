@@ -16,6 +16,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="scan/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="results/[id]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="scanner/index" options={{ animation: 'slide_from_bottom' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
