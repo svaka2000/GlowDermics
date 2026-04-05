@@ -41,12 +41,15 @@ async function saveChatHistory(messages: ChatMessage[]): Promise<void> {
   );
 }
 
+const SHELF_KEY = 'gd_product_shelf';
+
 export default function Coach() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [shelfContext, setShelfContext] = useState('');
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -55,9 +58,19 @@ export default function Coach() {
       Storage.getLatestAnalysis(),
       Storage.getUserProfile(),
       loadChatHistory(),
-    ]).then(([a, p, history]) => {
+      AsyncStorage.getItem(SHELF_KEY),
+    ]).then(([a, p, history, shelfRaw]) => {
       setAnalysis(a);
       setProfile(p);
+      if (shelfRaw) {
+        const shelf = JSON.parse(shelfRaw) as { name: string; brand: string; category: string; rating: number; notes: string }[];
+        if (shelf.length > 0) {
+          setShelfContext(
+            'Current product shelf: ' +
+            shelf.map(s => `${s.name}${s.brand ? ` by ${s.brand}` : ''} (${s.category}, rated ${s.rating}/5${s.notes ? `, note: ${s.notes}` : ''})`).join('; ')
+          );
+        }
+      }
       if (!historyLoaded) {
         setMessages(history);
         setHistoryLoaded(true);
@@ -86,7 +99,7 @@ export default function Coach() {
     try {
       // Only send last 20 messages to API to stay within token limits
       const apiMessages = newMessages.slice(-20).map(m => ({ role: m.role, content: m.content }));
-      const reply = await chatWithCoach(apiMessages, analysis, profile);
+      const reply = await chatWithCoach(apiMessages, analysis, profile, shelfContext || undefined);
       const assistantMsg: ChatMessage = {
         id: generateId(), role: 'assistant', content: reply,
         timestamp: new Date().toISOString(),
