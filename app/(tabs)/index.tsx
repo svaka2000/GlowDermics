@@ -217,9 +217,9 @@ export default function Home() {
               <Ionicons name="journal-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Journal</Text>
             </Pressable>
-            <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/coach')}>
-              <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.primary} />
-              <Text style={styles.quickLabel}>Ask{'\n'}Derm</Text>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/quiz')}>
+              <Ionicons name="help-circle-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Quiz</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/learn')}>
               <Ionicons name="book-outline" size={22} color={Colors.primary} />
@@ -251,7 +251,10 @@ export default function Home() {
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>✦</Text>
             <Text style={styles.emptyTitle}>Your skin story starts here</Text>
-            <Text style={styles.emptySub}>Take your first scan to get a full AI-powered analysis of your skin in under 30 seconds.</Text>
+            <Text style={styles.emptySub}>Take a photo scan for scored metrics, or try the quiz for instant text-based recommendations.</Text>
+            <Pressable style={styles.emptyQuizBtn} onPress={() => router.push('/quiz')}>
+              <Text style={styles.emptyQuizText}>Take Skin Quiz (no camera) →</Text>
+            </Pressable>
           </View>
         )}
 
@@ -355,6 +358,8 @@ const styles = StyleSheet.create({
     borderRadius: 14, borderWidth: 1, borderColor: 'rgba(196,98,45,0.12)',
     backgroundColor: 'rgba(196,98,45,0.05)', padding: 18, alignItems: 'center', gap: 6,
   },
+  emptyQuizBtn: { marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 12 },
+  emptyQuizText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
   brandTagline: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', fontStyle: 'italic' },
 });

@@ -24,6 +24,7 @@ export default function RootLayout() {
           <Stack.Screen name="learn/[slug]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="journal/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="products/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="quiz/index" options={{ animation: 'slide_from_bottom' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
