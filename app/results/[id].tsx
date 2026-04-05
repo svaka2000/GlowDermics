@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
-  ActivityIndicator,
+  ActivityIndicator, Share,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -61,6 +61,31 @@ export default function Results() {
 
   const scoreEntries = Object.entries(analysis.scores).filter(([k]) => k !== 'overall') as [string, number][];
 
+  const handleShare = async () => {
+    const scoreLines = [
+      `Hydration: ${analysis.scores.hydration}`,
+      `Texture: ${analysis.scores.texture}`,
+      `Clarity: ${analysis.scores.clarity}`,
+      `Evenness: ${analysis.scores.evenness}`,
+      `Firmness: ${analysis.scores.firmness}`,
+      `Pores: ${analysis.scores.pores}`,
+    ].join('  ·  ');
+
+    const message = [
+      `🌿 My Skin Score: ${analysis.scores.overall}/100`,
+      '',
+      scoreLines,
+      '',
+      `Skin Type: ${analysis.skinType ? analysis.skinType.charAt(0).toUpperCase() + analysis.skinType.slice(1) : '—'}`,
+      analysis.strengths.length ? `Strengths: ${analysis.strengths.slice(0, 2).join(', ')}` : '',
+      '',
+      'Powered by GlowDermics × TallowDermics',
+      'trytallowdermics.com',
+    ].filter(Boolean).join('\n');
+
+    await Share.share({ message });
+  };
+
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']} style={styles.safeTop}>
@@ -69,7 +94,9 @@ export default function Results() {
             <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Report</Text>
-          <View style={{ width: 40 }} />
+          <Pressable style={styles.shareBtn} onPress={handleShare}>
+            <Ionicons name="share-outline" size={20} color={Colors.primary} />
+          </Pressable>
         </View>
       </SafeAreaView>
 
@@ -234,6 +261,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  shareBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20 },
   scroll: { paddingBottom: 40 },
   heroCard: { height: 340, position: 'relative', marginBottom: 16 },
   heroImage: { width: '100%', height: '100%' },

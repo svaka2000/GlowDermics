@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  Image, ActivityIndicator, RefreshControl,
+  Image, ActivityIndicator, RefreshControl, Alert,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +12,31 @@ import { Storage } from '../../src/services/storage';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
+
+const WATER_KEY = 'gd_water';
+const WATER_GOAL = 8;
+
+async function getWaterToday(): Promise<number> {
+  try {
+    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+    const today = new Date().toDateString();
+    const raw = await AsyncStorage.getItem(WATER_KEY);
+    if (!raw) return 0;
+    const data = JSON.parse(raw);
+    return data[today] ?? 0;
+  } catch { return 0; }
+}
+
+async function setWaterToday(glasses: number): Promise<void> {
+  try {
+    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+    const today = new Date().toDateString();
+    const raw = await AsyncStorage.getItem(WATER_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    data[today] = Math.max(0, Math.min(glasses, 12));
+    await AsyncStorage.setItem(WATER_KEY, JSON.stringify(data));
+  } catch {}
+}
 
 const SKIN_TIPS = [
   { tip: 'Less is more. A 2-step routine done consistently beats a 10-step routine done once a week.', tag: 'ROUTINE' },
@@ -43,18 +68,21 @@ export default function Home() {
   const [latest, setLatest] = useState<SkinAnalysis | null>(null);
   const [streak, setStreak] = useState(0);
   const [habitScore, setHabitScore] = useState(0);
+  const [waterGlasses, setWaterGlasses] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = async () => {
-    const [p, a, s] = await Promise.all([
+    const [p, a, s, w] = await Promise.all([
       Storage.getUserProfile(),
       Storage.getLatestAnalysis(),
       Storage.getStreak(),
+      getWaterToday(),
     ]);
     setProfile(p);
     setLatest(a);
     setStreak(s);
+    setWaterGlasses(w);
     // Load today's habit score
     try {
       const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
@@ -69,6 +97,12 @@ export default function Home() {
       }
     } catch {}
     setLoading(false);
+  };
+
+  const adjustWater = async (delta: number) => {
+    const next = Math.max(0, Math.min(12, waterGlasses + delta));
+    setWaterGlasses(next);
+    await setWaterToday(next);
   };
 
   useFocusEffect(useCallback(() => { load(); }, []));
@@ -243,6 +277,60 @@ export default function Home() {
               <Ionicons name="book-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Lab</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/habits')}>
+              <Ionicons name="checkmark-done-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Daily{'\n'}Habits</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/milestones')}>
+              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="trophy-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Mile{'\n'}stones</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/products')}>
+              <Ionicons name="cube-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>My{'\n'}Shelf</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Water tracker */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Hydration Tracker</Text>
+          <View style={styles.waterCard}>
+            <LinearGradient colors={['rgba(96,165,250,0.10)', 'rgba(96,165,250,0.03)']} style={StyleSheet.absoluteFill} />
+            <View style={styles.waterTop}>
+              <View>
+                <Text style={styles.waterCount}>{waterGlasses}<Text style={styles.waterGoal}> / {WATER_GOAL}</Text></Text>
+                <Text style={styles.waterLabel}>glasses today</Text>
+              </View>
+              <View style={styles.waterControls}>
+                <Pressable style={styles.waterBtn} onPress={() => adjustWater(-1)}>
+                  <Ionicons name="remove" size={18} color={Colors.textPrimary} />
+                </Pressable>
+                <Pressable style={[styles.waterBtn, styles.waterBtnAdd]} onPress={() => adjustWater(1)}>
+                  <Ionicons name="add" size={18} color={Colors.white} />
+                </Pressable>
+              </View>
+            </View>
+            <View style={styles.waterTrack}>
+              {Array.from({ length: WATER_GOAL }).map((_, i) => (
+                <Pressable key={i} onPress={() => adjustWater(i + 1 - waterGlasses)} style={[styles.waterDrop, i < waterGlasses && styles.waterDropFull]}>
+                  <Text style={styles.waterDropIcon}>{i < waterGlasses ? '💧' : '○'}</Text>
+                </Pressable>
+              ))}
+            </View>
+            {waterGlasses >= WATER_GOAL && (
+              <View style={styles.waterDone}>
+                <Ionicons name="checkmark-circle" size={14} color="#60A5FA" />
+                <Text style={styles.waterDoneText}>Daily goal reached! Great for your skin.</Text>
+              </View>
+            )}
+            {waterGlasses < WATER_GOAL && waterGlasses > 0 && (
+              <Text style={styles.waterProgress}>{WATER_GOAL - waterGlasses} more glasses to hit your goal</Text>
+            )}
+            {waterGlasses === 0 && (
+              <Text style={styles.waterProgress}>Tap + to log your first glass</Text>
+            )}
           </View>
         </View>
 
@@ -380,4 +468,27 @@ const styles = StyleSheet.create({
   emptyQuizText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
   brandTagline: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', fontStyle: 'italic' },
+
+  waterCard: {
+    borderRadius: 18, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(96,165,250,0.2)', padding: 18,
+  },
+  waterTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  waterCount: { fontSize: 34, fontWeight: '800', color: Colors.textPrimary },
+  waterGoal: { fontSize: 18, fontWeight: '500', color: Colors.textMuted },
+  waterLabel: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  waterControls: { flexDirection: 'row', gap: 10 },
+  waterBtn: {
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  waterBtnAdd: { backgroundColor: '#60A5FA', borderColor: '#60A5FA' },
+  waterTrack: { flexDirection: 'row', gap: 6, marginBottom: 10 },
+  waterDrop: { flex: 1, alignItems: 'center' },
+  waterDropFull: {},
+  waterDropIcon: { fontSize: 18 },
+  waterDone: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  waterDoneText: { fontSize: 12, color: '#60A5FA', fontWeight: '600' },
+  waterProgress: { fontSize: 12, color: Colors.textMuted },
 });

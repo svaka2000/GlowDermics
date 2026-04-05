@@ -54,7 +54,20 @@ export default function IngredientDecoder() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (name) decode(decodeURIComponent(name));
+    if (name) {
+      const decoded = decodeURIComponent(name);
+      decode(decoded);
+      // Track for achievements
+      import('@react-native-async-storage/async-storage').then(({ default: AsyncStorage }) => {
+        AsyncStorage.getItem('gd_ingredients_viewed').then(raw => {
+          const list: string[] = raw ? JSON.parse(raw) : [];
+          if (!list.includes(decoded)) {
+            list.push(decoded);
+            AsyncStorage.setItem('gd_ingredients_viewed', JSON.stringify(list));
+          }
+        }).catch(() => {});
+      }).catch(() => {});
+    }
   }, [name]);
 
   const decode = async (ingredientName: string) => {

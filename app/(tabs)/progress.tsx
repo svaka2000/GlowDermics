@@ -102,6 +102,10 @@ export default function Progress() {
             <Ionicons name="analytics-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>AI Report</Text>
           </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/milestones')}>
+            <Ionicons name="trophy-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Milestones</Text>
+          </Pressable>
         </View>
 
         {/* AI Trend Report CTA */}

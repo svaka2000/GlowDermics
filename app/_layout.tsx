@@ -33,6 +33,7 @@ export default function RootLayout() {
           <Stack.Screen name="skin-type/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-type/[type]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="compare/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="milestones/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
