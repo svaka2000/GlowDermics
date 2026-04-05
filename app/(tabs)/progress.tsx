@@ -92,6 +92,18 @@ export default function Progress() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
+        {/* Quick access row */}
+        <View style={styles.quickRow}>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/compare')}>
+            <Ionicons name="git-compare-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Compare</Text>
+          </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/report')}>
+            <Ionicons name="analytics-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>AI Report</Text>
+          </Pressable>
+        </View>
+
         {/* AI Trend Report CTA */}
         <Pressable style={styles.reportCta} onPress={() => router.push('/report')}>
           <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
@@ -272,6 +284,9 @@ const styles = StyleSheet.create({
   scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
   scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
 
+  quickRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginBottom: 10 },
+  quickBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingVertical: 12 },
+  quickBtnText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
   reportCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     marginHorizontal: 16, borderRadius: 16, overflow: 'hidden',
