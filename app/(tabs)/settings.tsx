@@ -171,6 +171,15 @@ export default function Settings() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Tools</Text>
+          <View style={styles.card}>
+            <LinkRow icon="flask-outline" label="Ingredient Scanner" onPress={() => router.push('/scanner')} />
+            <LinkRow icon="cash-outline" label="Dupe Finder" onPress={() => router.push('/dupes')} />
+            <LinkRow icon="flag-outline" label="Skin Goals" onPress={() => router.push('/goals')} last />
+          </View>
+        </View>
+
         {/* Danger zone */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: Colors.scorePoor }]}>Data</Text>
@@ -195,9 +204,9 @@ function Row({ label, value, last = false }: { label: string; value: string; las
   );
 }
 
-function LinkRow({ icon, label, last = false }: { icon: any; label: string; last?: boolean }) {
+function LinkRow({ icon, label, last = false, onPress }: { icon: any; label: string; last?: boolean; onPress?: () => void }) {
   return (
-    <Pressable style={[rowStyles.wrap, !last && rowStyles.border]}>
+    <Pressable style={[rowStyles.wrap, !last && rowStyles.border]} onPress={onPress}>
       <Ionicons name={icon} size={16} color={Colors.primary} style={{ marginRight: 10 }} />
       <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>{label}</Text>
       <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />

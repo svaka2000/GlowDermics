@@ -17,6 +17,8 @@ export default function RootLayout() {
           <Stack.Screen name="scan/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="results/[id]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="scanner/index" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="dupes/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="goals/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

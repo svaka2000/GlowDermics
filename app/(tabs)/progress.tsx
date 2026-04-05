@@ -3,20 +3,33 @@ import { View, Text, StyleSheet, ScrollView, Image, Pressable } from 'react-nati
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
+import { ScoreChart } from '../../src/components/ScoreChart';
 
-const METRICS = ['overall', 'hydration', 'texture', 'clarity', 'evenness', 'firmness', 'pores'] as const;
+type Metric = 'overall' | 'hydration' | 'texture' | 'clarity' | 'evenness' | 'firmness' | 'pores';
 
-function getDelta(current: number, previous: number): { val: number; positive: boolean } {
+const METRICS: { key: Metric; label: string }[] = [
+  { key: 'overall', label: 'Overall' },
+  { key: 'hydration', label: 'Hydration' },
+  { key: 'texture', label: 'Texture' },
+  { key: 'clarity', label: 'Clarity' },
+  { key: 'evenness', label: 'Evenness' },
+  { key: 'firmness', label: 'Firmness' },
+  { key: 'pores', label: 'Pores' },
+];
+
+function getDelta(current: number, previous: number) {
   const val = current - previous;
   return { val: Math.round(val), positive: val >= 0 };
 }
 
 export default function Progress() {
   const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
+  const [selectedMetric, setSelectedMetric] = useState<Metric>('overall');
 
   useFocusEffect(useCallback(() => {
     Storage.getScanHistory().then(setHistory);
@@ -24,6 +37,15 @@ export default function Progress() {
 
   const latest = history[0];
   const previous = history[1];
+  const oldest = history[history.length - 1];
+
+  // Build chart data for selected metric (chronological order for chart)
+  const chartData = [...history]
+    .reverse()
+    .map(h => ({
+      date: h.date,
+      value: selectedMetric === 'overall' ? h.overallScore : h.scores[selectedMetric],
+    }));
 
   if (!history.length) {
     return (
@@ -50,91 +72,109 @@ export default function Progress() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Progress</Text>
-          <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} total</Text>
+          <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {history.length >= 2 ? `${Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000)} days` : 'just started'}</Text>
         </View>
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
-        {/* Latest vs previous comparison */}
-        {latest && previous && (
-          <View style={styles.compareCard}>
-            <Text style={styles.cardTitle}>Latest vs Previous</Text>
-            <View style={styles.compareRow}>
-              <View style={styles.compareItem}>
-                <Text style={styles.compareLabel}>Previous</Text>
-                <ScoreRing score={previous.overallScore} size={76} strokeWidth={6} />
-                <Text style={styles.compareDate}>
-                  {new Date(previous.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </Text>
-              </View>
-              <View style={styles.compareDivider}>
-                <Ionicons name="arrow-forward" size={20} color={Colors.primary} />
-              </View>
-              <View style={styles.compareItem}>
-                <Text style={styles.compareLabel}>Latest</Text>
-                <ScoreRing score={latest.overallScore} size={76} strokeWidth={6} />
-                <Text style={styles.compareDate}>
-                  {new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </Text>
-              </View>
-              <View style={styles.deltaWrap}>
-                {(() => {
-                  const d = getDelta(latest.overallScore, previous.overallScore);
-                  return (
-                    <View style={[styles.deltaBadge, { backgroundColor: d.positive ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)' }]}>
-                      <Ionicons
-                        name={d.positive ? 'trending-up' : 'trending-down'}
-                        size={16}
-                        color={d.positive ? Colors.scoreExcellent : Colors.scorePoor}
-                      />
-                      <Text style={[styles.deltaText, { color: d.positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
-                        {d.positive ? '+' : ''}{d.val}
-                      </Text>
-                    </View>
-                  );
-                })()}
-                <Text style={styles.deltaLabel}>Overall</Text>
-              </View>
-            </View>
+        {/* Metric selector */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.metricScroll}>
+          {METRICS.map(m => (
+            <Pressable
+              key={m.key}
+              style={[styles.metricChip, selectedMetric === m.key && styles.metricChipActive]}
+              onPress={() => setSelectedMetric(m.key)}
+            >
+              <Text style={[styles.metricChipText, selectedMetric === m.key && styles.metricChipTextActive]}>
+                {m.label}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
 
-            {/* Per-metric deltas */}
-            <View style={styles.metricDeltas}>
-              {(Object.keys(latest.scores) as Array<keyof typeof latest.scores>)
-                .filter(k => k !== 'overall')
-                .map(key => {
-                  const d = getDelta(latest.scores[key], previous.scores[key]);
-                  return (
-                    <View key={key} style={styles.metricDelta}>
-                      <Text style={styles.metricDeltaLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
-                      <Text style={[styles.metricDeltaVal, { color: d.positive ? Colors.scoreGood : Colors.scorePoor }]}>
-                        {d.positive ? '+' : ''}{d.val}
+        {/* Trend chart */}
+        <View style={styles.chartCard}>
+          <View style={styles.chartHeader}>
+            <Text style={styles.chartTitle}>{METRICS.find(m => m.key === selectedMetric)?.label} Over Time</Text>
+            {latest && previous && (() => {
+              const val = selectedMetric === 'overall' ? latest.overallScore : latest.scores[selectedMetric];
+              const prevVal = selectedMetric === 'overall' ? previous.overallScore : previous.scores[selectedMetric];
+              const d = getDelta(val, prevVal);
+              return (
+                <View style={[styles.deltaPill, { backgroundColor: d.positive ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)' }]}>
+                  <Ionicons name={d.positive ? 'trending-up' : 'trending-down'} size={12} color={d.positive ? Colors.scoreExcellent : Colors.scorePoor} />
+                  <Text style={[styles.deltaPillText, { color: d.positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                    {d.positive ? '+' : ''}{d.val} from last scan
+                  </Text>
+                </View>
+              );
+            })()}
+          </View>
+          <ScoreChart data={chartData} color={Colors.primary} height={170} />
+        </View>
+
+        {/* All metric deltas vs previous scan */}
+        {latest && previous && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Score Changes</Text>
+            <Text style={styles.cardSub}>Compared to previous scan</Text>
+            <View style={styles.deltaGrid}>
+              {METRICS.map(m => {
+                const curr = m.key === 'overall' ? latest.overallScore : latest.scores[m.key];
+                const prev = m.key === 'overall' ? previous.overallScore : previous.scores[m.key];
+                const d = getDelta(curr, prev);
+                return (
+                  <View key={m.key} style={styles.deltaCell}>
+                    <Text style={styles.deltaCellLabel}>{m.label}</Text>
+                    <Text style={styles.deltaCellVal}>{curr}</Text>
+                    <View style={[styles.deltaChange, { backgroundColor: d.positive ? 'rgba(74,222,128,0.12)' : d.val === 0 ? 'rgba(250,243,224,0.06)' : 'rgba(248,113,113,0.12)' }]}>
+                      <Text style={[styles.deltaChangeText, { color: d.positive ? Colors.scoreExcellent : d.val === 0 ? Colors.textMuted : Colors.scorePoor }]}>
+                        {d.val === 0 ? '—' : `${d.positive ? '+' : ''}${d.val}`}
                       </Text>
                     </View>
-                  );
-                })}
+                  </View>
+                );
+              })}
             </View>
           </View>
         )}
 
-        {/* Before/after photo comparison */}
-        {history.length >= 2 && (
+        {/* Before/After photos */}
+        {history.length >= 2 && oldest.imageUri && latest.imageUri && (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Before & After</Text>
             <View style={styles.beforeAfterRow}>
               <View style={styles.beforeAfterItem}>
-                <Image source={{ uri: history[history.length - 1].imageUri }} style={styles.beforeAfterImg} />
-                <Text style={styles.beforeAfterLabel}>First Scan</Text>
-                <Text style={styles.beforeAfterDate}>
-                  {new Date(history[history.length - 1].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </Text>
+                <Image source={{ uri: oldest.imageUri }} style={styles.beforeAfterImg} />
+                <View style={styles.beforeAfterLabel}>
+                  <Text style={styles.beforeAfterTag}>FIRST SCAN</Text>
+                  <Text style={styles.beforeAfterDate}>
+                    {new Date(oldest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </Text>
+                  <Text style={[styles.beforeAfterScore, { color: Colors.scoreFair }]}>{oldest.overallScore}</Text>
+                </View>
+              </View>
+              <View style={styles.beforeAfterArrow}>
+                <Ionicons name="arrow-forward" size={18} color={Colors.primary} />
+                {history.length >= 2 && (() => {
+                  const d = getDelta(latest.overallScore, oldest.overallScore);
+                  return (
+                    <Text style={[styles.totalDelta, { color: d.positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                      {d.positive ? '+' : ''}{d.val}
+                    </Text>
+                  );
+                })()}
               </View>
               <View style={styles.beforeAfterItem}>
-                <Image source={{ uri: history[0].imageUri }} style={styles.beforeAfterImg} />
-                <Text style={styles.beforeAfterLabel}>Latest</Text>
-                <Text style={styles.beforeAfterDate}>
-                  {new Date(history[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </Text>
+                <Image source={{ uri: latest.imageUri }} style={styles.beforeAfterImg} />
+                <View style={styles.beforeAfterLabel}>
+                  <Text style={styles.beforeAfterTag}>LATEST</Text>
+                  <Text style={styles.beforeAfterDate}>
+                    {new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </Text>
+                  <Text style={[styles.beforeAfterScore, { color: Colors.scoreExcellent }]}>{latest.overallScore}</Text>
+                </View>
               </View>
             </View>
           </View>
@@ -146,24 +186,24 @@ export default function Progress() {
           {history.map((entry, i) => (
             <Pressable
               key={entry.id}
-              style={styles.historyItem}
+              style={[styles.historyItem, i < history.length - 1 && styles.historyBorder]}
               onPress={() => router.push(`/results/${entry.id}`)}
             >
               {entry.imageUri ? (
                 <Image source={{ uri: entry.imageUri }} style={styles.historyThumb} />
               ) : (
                 <View style={[styles.historyThumb, styles.historyThumbEmpty]}>
-                  <Ionicons name="person" size={18} color={Colors.textMuted} />
+                  <Ionicons name="person" size={16} color={Colors.textMuted} />
                 </View>
               )}
               <View style={styles.historyInfo}>
                 <Text style={styles.historyDate}>
                   {new Date(entry.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                 </Text>
-                {i === 0 && <Text style={styles.historyLatest}>Latest</Text>}
+                {i === 0 && <Text style={styles.historyLatestBadge}>Latest</Text>}
               </View>
-              <ScoreRing score={entry.overallScore} size={44} strokeWidth={4} />
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <ScoreRing score={entry.overallScore} size={42} strokeWidth={4} />
+              <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
             </Pressable>
           ))}
         </View>
@@ -179,51 +219,52 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 },
   headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
   headerSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
-  scroll: { paddingHorizontal: 16 },
+  scroll: { paddingBottom: 40 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
   emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
   emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 28 },
-  scanBtn: {
-    backgroundColor: Colors.primary, borderRadius: 16,
-    paddingHorizontal: 28, paddingVertical: 16,
-  },
+  scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
   scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
-  card: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border, padding: 20, marginBottom: 16,
-  },
-  compareCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border, padding: 20, marginBottom: 16, marginTop: 8,
-  },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 16 },
-  compareRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 },
-  compareItem: { alignItems: 'center', gap: 6 },
-  compareLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5 },
-  compareDate: { fontSize: 10, color: Colors.textMuted },
-  compareDivider: { flex: 0 },
-  deltaWrap: { flex: 1, alignItems: 'center', gap: 4 },
-  deltaBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
-  deltaText: { fontSize: 16, fontWeight: '800' },
-  deltaLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
-  metricDeltas: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  metricDelta: {
-    backgroundColor: Colors.bgElevated, borderRadius: 10, borderWidth: 1,
-    borderColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8,
-    alignItems: 'center', minWidth: 80,
-  },
-  metricDeltaLabel: { fontSize: 10, color: Colors.textMuted, marginBottom: 2 },
-  metricDeltaVal: { fontSize: 14, fontWeight: '700' },
-  beforeAfterRow: { flexDirection: 'row', gap: 12 },
-  beforeAfterItem: { flex: 1, gap: 6 },
-  beforeAfterImg: { width: '100%', aspectRatio: 1, borderRadius: 12, backgroundColor: Colors.bgElevated },
-  beforeAfterLabel: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
-  beforeAfterDate: { fontSize: 10, color: Colors.textMuted, textAlign: 'center' },
-  historyItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  historyThumb: { width: 44, height: 44, borderRadius: 10, backgroundColor: Colors.bgElevated },
+
+  metricScroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
+  metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard },
+  metricChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  metricChipText: { fontSize: 13, color: Colors.textMuted, fontWeight: '500' },
+  metricChipTextActive: { color: Colors.primary, fontWeight: '700' },
+
+  chartCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 16 },
+  chartHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  chartTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  deltaPill: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4 },
+  deltaPillText: { fontSize: 11, fontWeight: '600' },
+
+  card: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
+  cardSub: { fontSize: 11, color: Colors.textMuted, marginBottom: 16 },
+
+  deltaGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  deltaCell: { backgroundColor: Colors.bgElevated, borderRadius: 12, padding: 12, alignItems: 'center', minWidth: 80, gap: 4 },
+  deltaCellLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  deltaCellVal: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
+  deltaChange: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 },
+  deltaChangeText: { fontSize: 11, fontWeight: '700' },
+
+  beforeAfterRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  beforeAfterItem: { flex: 1, gap: 8 },
+  beforeAfterImg: { width: '100%', aspectRatio: 0.85, borderRadius: 12, backgroundColor: Colors.bgElevated },
+  beforeAfterLabel: { gap: 2 },
+  beforeAfterTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
+  beforeAfterDate: { fontSize: 11, color: Colors.textSecondary },
+  beforeAfterScore: { fontSize: 22, fontWeight: '800' },
+  beforeAfterArrow: { alignItems: 'center', gap: 6 },
+  totalDelta: { fontSize: 14, fontWeight: '800' },
+
+  historyItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  historyBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  historyThumb: { width: 42, height: 42, borderRadius: 10, backgroundColor: Colors.bgElevated },
   historyThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
-  historyInfo: { flex: 1, gap: 3 },
+  historyInfo: { flex: 1 },
   historyDate: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  historyLatest: { fontSize: 10, color: Colors.primary, fontWeight: '700', letterSpacing: 0.5 },
+  historyLatestBadge: { fontSize: 10, color: Colors.primary, fontWeight: '700', letterSpacing: 0.5, marginTop: 2 },
 });
