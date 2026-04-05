@@ -247,7 +247,8 @@ export default function Settings() {
             <LinkRow icon="cube-outline" label="My Product Shelf" onPress={() => router.push('/products')} />
             <LinkRow icon="git-compare-outline" label="Routine Analyzer" onPress={() => router.push('/routine-analyzer')} />
             <LinkRow icon="checkmark-done-outline" label="Daily Habits Tracker" onPress={() => router.push('/habits')} />
-            <LinkRow icon="search-outline" label="Ingredient Decoder" onPress={() => router.push('/ingredient')} last />
+            <LinkRow icon="search-outline" label="Ingredient Decoder" onPress={() => router.push('/ingredient')} />
+            <LinkRow icon="person-circle-outline" label="Skin Type Guides" onPress={() => router.push('/skin-type')} last />
           </View>
         </View>
 
