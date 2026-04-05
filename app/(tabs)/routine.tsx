@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { SkinAnalysis } from '../../src/types';
+import { HabitCalendar } from '../../src/components/HabitCalendar';
 
 type TimeFilter = 'morning' | 'evening';
 
@@ -16,6 +17,8 @@ export default function Routine() {
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [todayLog, setTodayLog] = useState({ morning: false, evening: false });
   const [routineStreak, setRoutineStreak] = useState(0);
+  const [routineLog, setRoutineLog] = useState<{ date: string; morning: boolean; evening: boolean }[]>([]);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useFocusEffect(useCallback(() => {
     (async () => {
@@ -28,6 +31,8 @@ export default function Routine() {
       setTodayLog(log);
       setRoutineStreak(streak);
       setCheckedSteps(new Set());
+      const fullLog = await Storage.getFullRoutineLog();
+      setRoutineLog(fullLog);
     })();
   }, []));
 
@@ -41,12 +46,14 @@ export default function Routine() {
   };
 
   const refreshLog = async () => {
-    const [log, streak] = await Promise.all([
+    const [log, streak, fullLog] = await Promise.all([
       Storage.getTodayRoutineLog(),
       Storage.getRoutineStreak(),
+      Storage.getFullRoutineLog(),
     ]);
     setTodayLog(log);
     setRoutineStreak(streak);
+    setRoutineLog(fullLog);
   };
 
   const handleComplete = async () => {
@@ -105,6 +112,18 @@ export default function Routine() {
             </View>
           </View>
         </View>
+
+        {/* Habit calendar toggle */}
+        <Pressable style={styles.calendarToggle} onPress={() => setShowCalendar(v => !v)}>
+          <Ionicons name="calendar-outline" size={16} color={Colors.textMuted} />
+          <Text style={styles.calendarToggleText}>Habit Calendar</Text>
+          <Ionicons name={showCalendar ? 'chevron-up' : 'chevron-down'} size={14} color={Colors.textMuted} />
+        </Pressable>
+        {showCalendar && (
+          <View style={{ marginBottom: 16 }}>
+            <HabitCalendar log={routineLog} />
+          </View>
+        )}
 
         {/* Time toggle */}
         <View style={styles.toggleWrap}>
@@ -196,6 +215,8 @@ export default function Routine() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
+  calendarToggle: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, marginBottom: 4 },
+  calendarToggleText: { flex: 1, fontSize: 13, color: Colors.textMuted, fontWeight: '600' },
   streakRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   streakBadge: { alignItems: 'center', backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 18, paddingVertical: 10 },
   streakNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },

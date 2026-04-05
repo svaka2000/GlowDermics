@@ -105,6 +105,11 @@ export const Storage = {
     return todayEntry ?? { morning: false, evening: false };
   },
 
+  async getFullRoutineLog(): Promise<{ date: string; morning: boolean; evening: boolean }[]> {
+    const raw = await AsyncStorage.getItem(KEYS.ROUTINE_LOG);
+    return raw ? JSON.parse(raw) : [];
+  },
+
   async getRoutineStreak(): Promise<number> {
     const raw = await AsyncStorage.getItem(KEYS.ROUTINE_LOG);
     if (!raw) return 0;
