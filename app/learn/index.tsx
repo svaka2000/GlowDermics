@@ -141,6 +141,20 @@ export default function Learn() {
           )}
         </View>
 
+        {/* Quick tools */}
+        <View style={styles.quickToolsRow}>
+          <Pressable style={styles.quickTool} onPress={() => router.push('/skin-type')}>
+            <Text style={styles.quickToolEmoji}>🌿</Text>
+            <Text style={styles.quickToolLabel}>Skin Type Guides</Text>
+            <Ionicons name="chevron-forward" size={12} color={Colors.textMuted} />
+          </Pressable>
+          <Pressable style={styles.quickTool} onPress={() => router.push('/ingredient')}>
+            <Text style={styles.quickToolEmoji}>⚗️</Text>
+            <Text style={styles.quickToolLabel}>Ingredient Decoder</Text>
+            <Ionicons name="chevron-forward" size={12} color={Colors.textMuted} />
+          </Pressable>
+        </View>
+
         {/* Science badge */}
         <View style={styles.scienceBadge}>
           <Ionicons name="shield-checkmark-outline" size={16} color={Colors.primary} />
@@ -222,6 +236,15 @@ const styles = StyleSheet.create({
   emptyState: { alignItems: 'center', paddingVertical: 48, gap: 12 },
   emptyIcon: { fontSize: 32 },
   emptyText: { fontSize: 15, color: Colors.textMuted },
+
+  quickToolsRow: { flexDirection: 'row', gap: 10, marginTop: 16, marginBottom: 10 },
+  quickTool: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: Colors.bgCard, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border, padding: 12,
+  },
+  quickToolEmoji: { fontSize: 18 },
+  quickToolLabel: { flex: 1, fontSize: 12, fontWeight: '600', color: Colors.textSecondary },
 
   scienceBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
