@@ -30,9 +30,23 @@ function getDelta(current: number, previous: number) {
 export default function Progress() {
   const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<Metric>('overall');
+  const [routineStreak, setRoutineStreak] = useState(0);
+  const [articlesRead, setArticlesRead] = useState(0);
+  const [journalCount, setJournalCount] = useState(0);
 
   useFocusEffect(useCallback(() => {
-    Storage.getScanHistory().then(setHistory);
+    (async () => {
+      const [h, rs, ar, journal] = await Promise.all([
+        Storage.getScanHistory(),
+        Storage.getRoutineStreak(),
+        Storage.getReadArticles(),
+        Storage.getJournal(),
+      ]);
+      setHistory(h);
+      setRoutineStreak(rs);
+      setArticlesRead(ar.length);
+      setJournalCount(journal.length);
+    })();
   }, []));
 
   const latest = history[0];
@@ -77,6 +91,26 @@ export default function Progress() {
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        {/* Activity stats */}
+        <View style={styles.activityRow}>
+          <View style={styles.activityCard}>
+            <Text style={styles.activityNum}>{history.length}</Text>
+            <Text style={styles.activityLabel}>Scans</Text>
+          </View>
+          <View style={styles.activityCard}>
+            <Text style={styles.activityNum}>{routineStreak}</Text>
+            <Text style={styles.activityLabel}>Routine Streak</Text>
+          </View>
+          <View style={styles.activityCard}>
+            <Text style={styles.activityNum}>{journalCount}</Text>
+            <Text style={styles.activityLabel}>Journal Entries</Text>
+          </View>
+          <View style={styles.activityCard}>
+            <Text style={styles.activityNum}>{articlesRead}</Text>
+            <Text style={styles.activityLabel}>Articles Read</Text>
+          </View>
+        </View>
 
         {/* Metric selector */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.metricScroll}>
@@ -226,6 +260,11 @@ const styles = StyleSheet.create({
   emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 28 },
   scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
   scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+
+  activityRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 4, gap: 8 },
+  activityCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
+  activityNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
+  activityLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 13 },
 
   metricScroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
   metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard },

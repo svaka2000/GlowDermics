@@ -74,3 +74,12 @@ export interface ScanHistoryEntry {
   overallScore: number;
   scores: SkinScore;
 }
+
+export interface JournalEntry {
+  id: string;
+  date: string;
+  mood: 'great' | 'good' | 'okay' | 'bad';
+  note: string;
+  tags: string[];
+  scanId?: string; // linked scan if same day
+}

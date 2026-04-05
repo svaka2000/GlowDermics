@@ -213,9 +213,9 @@ export default function Home() {
               <Ionicons name="flag-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Goals</Text>
             </Pressable>
-            <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/routine')}>
-              <Ionicons name="list-outline" size={22} color={Colors.primary} />
-              <Text style={styles.quickLabel}>My{'\n'}Routine</Text>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/journal')}>
+              <Ionicons name="journal-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Journal</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/(tabs)/coach')}>
               <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.primary} />

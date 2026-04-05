@@ -1,0 +1,323 @@
+import { useCallback, useState } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, Pressable,
+  TextInput, Alert, KeyboardAvoidingView, Platform,
+} from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '../../src/constants/colors';
+import { Storage } from '../../src/services/storage';
+import { JournalEntry } from '../../src/types';
+
+const MOODS = [
+  { key: 'great' as const, emoji: '✨', label: 'Great', color: '#4ADE80' },
+  { key: 'good' as const, emoji: '🌿', label: 'Good', color: '#86EFAC' },
+  { key: 'okay' as const, emoji: '🌤', label: 'Okay', color: '#FCD34D' },
+  { key: 'bad' as const, emoji: '🌧', label: 'Rough', color: '#F87171' },
+];
+
+const QUICK_TAGS = [
+  'Slept well', 'Stressed', 'Ate well', 'Lots of water', 'Wore SPF',
+  'Skipped routine', 'New product', 'Period', 'Gym', 'Travel',
+];
+
+function getMoodConfig(mood: JournalEntry['mood']) {
+  return MOODS.find(m => m.key === mood) ?? MOODS[1];
+}
+
+export default function Journal() {
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [writing, setWriting] = useState(false);
+  const [note, setNote] = useState('');
+  const [mood, setMood] = useState<JournalEntry['mood']>('good');
+  const [tags, setTags] = useState<string[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    Storage.getJournal().then(setEntries);
+    resetForm();
+  }, []));
+
+  const resetForm = () => {
+    setNote('');
+    setMood('good');
+    setTags([]);
+    setWriting(false);
+  };
+
+  const save = async () => {
+    if (!note.trim()) return;
+    const entry: JournalEntry = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      mood,
+      note: note.trim(),
+      tags,
+    };
+    await Storage.saveJournalEntry(entry);
+    const updated = await Storage.getJournal();
+    setEntries(updated);
+    resetForm();
+  };
+
+  const deleteEntry = (id: string) => {
+    Alert.alert('Delete Entry', 'Remove this journal entry?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete', style: 'destructive', onPress: async () => {
+          await Storage.deleteJournalEntry(id);
+          setEntries(prev => prev.filter(e => e.id !== id));
+        },
+      },
+    ]);
+  };
+
+  const toggleTag = (tag: string) => {
+    setTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
+
+  const todayStr = new Date().toDateString();
+  const hasTodayEntry = entries.some(e => new Date(e.date).toDateString() === todayStr);
+
+  // Group entries by month
+  const grouped: Record<string, JournalEntry[]> = {};
+  entries.forEach(e => {
+    const key = new Date(e.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(e);
+  });
+
+  return (
+    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <SafeAreaView edges={['top']}>
+        <View style={styles.header}>
+          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+          </Pressable>
+          <View>
+            <Text style={styles.headerTitle}>Skin Journal</Text>
+            <Text style={styles.headerSub}>{entries.length} entries</Text>
+          </View>
+          <Pressable
+            style={styles.addBtn}
+            onPress={() => setWriting(!writing)}
+          >
+            <Ionicons name={writing ? 'close' : 'add'} size={22} color={Colors.white} />
+          </Pressable>
+        </View>
+      </SafeAreaView>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+
+        {/* Write entry */}
+        {writing && (
+          <View style={styles.composeCard}>
+            <Text style={styles.composeTitle}>How's your skin today?</Text>
+
+            {/* Mood selector */}
+            <View style={styles.moodRow}>
+              {MOODS.map(m => (
+                <Pressable
+                  key={m.key}
+                  style={[styles.moodBtn, mood === m.key && { borderColor: m.color, backgroundColor: m.color + '18' }]}
+                  onPress={() => setMood(m.key)}
+                >
+                  <Text style={styles.moodEmoji}>{m.emoji}</Text>
+                  <Text style={[styles.moodLabel, mood === m.key && { color: m.color }]}>{m.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Quick tags */}
+            <Text style={styles.tagSectionLabel}>Quick tags</Text>
+            <View style={styles.tagWrap}>
+              {QUICK_TAGS.map(tag => (
+                <Pressable
+                  key={tag}
+                  style={[styles.tagChip, tags.includes(tag) && styles.tagChipActive]}
+                  onPress={() => toggleTag(tag)}
+                >
+                  <Text style={[styles.tagChipText, tags.includes(tag) && styles.tagChipTextActive]}>{tag}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Note */}
+            <Text style={styles.tagSectionLabel}>Note</Text>
+            <TextInput
+              style={styles.noteInput}
+              value={note}
+              onChangeText={setNote}
+              placeholder="How does your skin feel? Any new reactions, changes you noticed..."
+              placeholderTextColor={Colors.textMuted}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+
+            <View style={styles.composeBtns}>
+              <Pressable style={styles.cancelBtn} onPress={resetForm}>
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </Pressable>
+              <Pressable style={[styles.saveBtn, !note.trim() && { opacity: 0.4 }]} onPress={save} disabled={!note.trim()}>
+                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.saveBtnGrad}>
+                  <Text style={styles.saveBtnText}>Save Entry</Text>
+                </LinearGradient>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {/* Today nudge */}
+        {!writing && !hasTodayEntry && entries.length > 0 && (
+          <Pressable style={styles.nudgeCard} onPress={() => setWriting(true)}>
+            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+            <Ionicons name="create-outline" size={20} color={Colors.primary} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.nudgeTitle}>Log today's skin check-in</Text>
+              <Text style={styles.nudgeSub}>Track how your skin feels, what you noticed</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+          </Pressable>
+        )}
+
+        {/* Empty state */}
+        {entries.length === 0 && !writing && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>📓</Text>
+            <Text style={styles.emptyTitle}>Your skin story starts here</Text>
+            <Text style={styles.emptySub}>Daily check-ins let you track patterns, spot triggers, and celebrate your progress over time.</Text>
+            <Pressable style={styles.startBtn} onPress={() => setWriting(true)}>
+              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.startBtnGrad}>
+                <Text style={styles.startBtnText}>Write First Entry</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        )}
+
+        {/* Entry list grouped by month */}
+        {Object.entries(grouped).map(([month, monthEntries]) => (
+          <View key={month} style={styles.monthGroup}>
+            <Text style={styles.monthLabel}>{month}</Text>
+            <View style={styles.monthEntries}>
+              {monthEntries.map(entry => {
+                const m = getMoodConfig(entry.mood);
+                return (
+                  <View key={entry.id} style={styles.entryCard}>
+                    <View style={styles.entryHeader}>
+                      <View style={[styles.moodDot, { backgroundColor: m.color }]} />
+                      <Text style={styles.entryDate}>
+                        {new Date(entry.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                      </Text>
+                      <View style={[styles.moodBadge, { backgroundColor: m.color + '18' }]}>
+                        <Text style={styles.moodBadgeEmoji}>{m.emoji}</Text>
+                        <Text style={[styles.moodBadgeLabel, { color: m.color }]}>{m.label}</Text>
+                      </View>
+                      <Pressable onPress={() => deleteEntry(entry.id)} style={styles.deleteBtn}>
+                        <Ionicons name="trash-outline" size={14} color={Colors.textMuted} />
+                      </Pressable>
+                    </View>
+
+                    {entry.tags.length > 0 && (
+                      <View style={styles.entryTags}>
+                        {entry.tags.map(tag => (
+                          <View key={tag} style={styles.entryTag}>
+                            <Text style={styles.entryTagText}>{tag}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+
+                    <Text style={styles.entryNote}>{entry.note}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        ))}
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: Colors.bg },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  scroll: { paddingHorizontal: 16 },
+
+  composeCard: {
+    backgroundColor: Colors.bgCard, borderRadius: 20,
+    borderWidth: 1, borderColor: Colors.borderStrong,
+    padding: 20, marginBottom: 20, gap: 16,
+  },
+  composeTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  moodRow: { flexDirection: 'row', gap: 8 },
+  moodBtn: {
+    flex: 1, alignItems: 'center', gap: 6, paddingVertical: 12,
+    borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.bgElevated,
+  },
+  moodEmoji: { fontSize: 20 },
+  moodLabel: { fontSize: 11, fontWeight: '600', color: Colors.textMuted },
+  tagSectionLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5 },
+  tagWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  tagChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
+  tagChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipText: { fontSize: 12, color: Colors.textMuted },
+  tagChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  noteInput: {
+    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 14, padding: 14, fontSize: 14, color: Colors.textPrimary,
+    minHeight: 100, lineHeight: 22,
+  },
+  composeBtns: { flexDirection: 'row', gap: 10 },
+  cancelBtn: { flex: 1, backgroundColor: Colors.bgElevated, borderRadius: 14, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderWidth: 1, borderColor: Colors.border },
+  cancelBtnText: { fontSize: 15, fontWeight: '600', color: Colors.textMuted },
+  saveBtn: { flex: 1.5, borderRadius: 14, overflow: 'hidden' },
+  saveBtnGrad: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14 },
+  saveBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+
+  nudgeCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderRadius: 16, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    padding: 16, marginBottom: 20,
+  },
+  nudgeTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  nudgeSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+
+  emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
+  emptyEmoji: { fontSize: 52 },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
+  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
+  startBtn: { borderRadius: 16, overflow: 'hidden', marginTop: 8 },
+  startBtnGrad: { paddingHorizontal: 28, paddingVertical: 15 },
+  startBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+
+  monthGroup: { marginBottom: 24 },
+  monthLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 10, textTransform: 'uppercase' },
+  monthEntries: { gap: 10 },
+
+  entryCard: {
+    backgroundColor: Colors.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10,
+  },
+  entryHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  moodDot: { width: 8, height: 8, borderRadius: 4 },
+  entryDate: { fontSize: 12, color: Colors.textMuted, flex: 1 },
+  moodBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4 },
+  moodBadgeEmoji: { fontSize: 12 },
+  moodBadgeLabel: { fontSize: 11, fontWeight: '600' },
+  deleteBtn: { padding: 4 },
+  entryTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  entryTag: { backgroundColor: Colors.bgElevated, borderRadius: 20, paddingHorizontal: 9, paddingVertical: 4, borderWidth: 1, borderColor: Colors.border },
+  entryTagText: { fontSize: 11, color: Colors.textSecondary },
+  entryNote: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+});

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SkinAnalysis, UserProfile, ScanHistoryEntry } from '../types';
+import { SkinAnalysis, UserProfile, ScanHistoryEntry, JournalEntry } from '../types';
 
 const KEYS = {
   USER_PROFILE: 'gd_user_profile',
@@ -10,6 +10,7 @@ const KEYS = {
   LAST_SCAN_DATE: 'gd_last_scan_date',
   ROUTINE_LOG: 'gd_routine_log', // { date: string, morning: boolean, evening: boolean }[]
   ARTICLES_READ: 'gd_articles_read', // string[] of slugs
+  JOURNAL: 'gd_journal', // JournalEntry[]
 };
 
 export const Storage = {
@@ -136,6 +137,23 @@ export const Storage = {
   async getReadArticles(): Promise<string[]> {
     const raw = await AsyncStorage.getItem(KEYS.ARTICLES_READ);
     return raw ? JSON.parse(raw) : [];
+  },
+
+  // Journal
+  async getJournal(): Promise<JournalEntry[]> {
+    const raw = await AsyncStorage.getItem(KEYS.JOURNAL);
+    return raw ? JSON.parse(raw) : [];
+  },
+
+  async saveJournalEntry(entry: JournalEntry): Promise<void> {
+    const existing = await this.getJournal();
+    const updated = [entry, ...existing.filter(e => e.id !== entry.id)].slice(0, 365);
+    await AsyncStorage.setItem(KEYS.JOURNAL, JSON.stringify(updated));
+  },
+
+  async deleteJournalEntry(id: string): Promise<void> {
+    const existing = await this.getJournal();
+    await AsyncStorage.setItem(KEYS.JOURNAL, JSON.stringify(existing.filter(e => e.id !== id)));
   },
 
   async clearAll(): Promise<void> {
