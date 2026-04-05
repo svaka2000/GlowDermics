@@ -221,9 +221,9 @@ export default function Home() {
               <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Ask{'\n'}Derm</Text>
             </Pressable>
-            <Pressable style={styles.quickCard} onPress={() => router.push('/product')}>
-              <Ionicons name="leaf-outline" size={22} color={Colors.primary} />
-              <Text style={styles.quickLabel}>The{'\n'}Formula</Text>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/learn')}>
+              <Ionicons name="book-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Lab</Text>
             </Pressable>
           </View>
         </View>

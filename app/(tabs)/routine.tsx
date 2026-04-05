@@ -14,10 +14,21 @@ export default function Routine() {
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('morning');
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
+  const [todayLog, setTodayLog] = useState({ morning: false, evening: false });
+  const [routineStreak, setRoutineStreak] = useState(0);
 
   useFocusEffect(useCallback(() => {
-    Storage.getLatestAnalysis().then(setAnalysis);
-    setCheckedSteps(new Set());
+    (async () => {
+      const [a, log, streak] = await Promise.all([
+        Storage.getLatestAnalysis(),
+        Storage.getTodayRoutineLog(),
+        Storage.getRoutineStreak(),
+      ]);
+      setAnalysis(a);
+      setTodayLog(log);
+      setRoutineStreak(streak);
+      setCheckedSteps(new Set());
+    })();
   }, []));
 
   const toggleStep = (idx: number) => {
@@ -27,6 +38,20 @@ export default function Routine() {
       else next.add(idx);
       return next;
     });
+  };
+
+  const refreshLog = async () => {
+    const [log, streak] = await Promise.all([
+      Storage.getTodayRoutineLog(),
+      Storage.getRoutineStreak(),
+    ]);
+    setTodayLog(log);
+    setRoutineStreak(streak);
+  };
+
+  const handleComplete = async () => {
+    await Storage.logRoutineCompletion(timeFilter);
+    await refreshLog();
   };
 
   if (!analysis) {
@@ -63,6 +88,24 @@ export default function Routine() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
+        {/* Streak row */}
+        <View style={styles.streakRow}>
+          <View style={styles.streakBadge}>
+            <Text style={styles.streakNum}>{routineStreak}</Text>
+            <Text style={styles.streakLabel}>Day Streak</Text>
+          </View>
+          <View style={styles.todayBadges}>
+            <View style={[styles.todayChip, todayLog.morning && styles.todayChipDone]}>
+              <Ionicons name="sunny-outline" size={12} color={todayLog.morning ? Colors.scoreExcellent : Colors.textMuted} />
+              <Text style={[styles.todayChipText, todayLog.morning && { color: Colors.scoreExcellent }]}>Morning</Text>
+            </View>
+            <View style={[styles.todayChip, todayLog.evening && styles.todayChipDone]}>
+              <Ionicons name="moon-outline" size={12} color={todayLog.evening ? Colors.scoreExcellent : Colors.textMuted} />
+              <Text style={[styles.todayChipText, todayLog.evening && { color: Colors.scoreExcellent }]}>Evening</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Time toggle */}
         <View style={styles.toggleWrap}>
           {(['morning', 'evening'] as const).map(t => (
@@ -89,8 +132,13 @@ export default function Routine() {
               <Text style={styles.progressText}>
                 {completedCount} of {steps.length} steps done
               </Text>
-              {completedCount === steps.length && (
-                <Text style={styles.progressComplete}>✓ Complete!</Text>
+              {completedCount === steps.length && todayLog[timeFilter] && (
+                <Text style={styles.progressComplete}>✓ Logged!</Text>
+              )}
+              {completedCount === steps.length && !todayLog[timeFilter] && (
+                <Pressable onPress={handleComplete}>
+                  <Text style={styles.logBtn}>Log Complete ✓</Text>
+                </Pressable>
               )}
             </View>
             <View style={styles.progressTrack}>
@@ -148,6 +196,14 @@ export default function Routine() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
+  streakRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  streakBadge: { alignItems: 'center', backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 18, paddingVertical: 10 },
+  streakNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },
+  streakLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', marginTop: 2 },
+  todayBadges: { flexDirection: 'row', gap: 8 },
+  todayChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8 },
+  todayChipDone: { borderColor: Colors.scoreExcellent + '40', backgroundColor: Colors.scoreExcellent + '10' },
+  todayChipText: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
   header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
   headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
   headerSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
@@ -171,6 +227,7 @@ const styles = StyleSheet.create({
   progressRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
   progressText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   progressComplete: { fontSize: 13, color: Colors.scoreExcellent, fontWeight: '700' },
+  logBtn: { fontSize: 13, color: Colors.primary, fontWeight: '700' },
   progressTrack: { height: 5, backgroundColor: 'rgba(250,243,224,0.08)', borderRadius: 3 },
   progressFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 3 },
   stepsWrap: { gap: 10 },

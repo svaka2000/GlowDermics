@@ -241,7 +241,8 @@ export default function Settings() {
           <View style={styles.card}>
             <LinkRow icon="flask-outline" label="Ingredient Scanner" onPress={() => router.push('/scanner')} />
             <LinkRow icon="cash-outline" label="Dupe Finder" onPress={() => router.push('/dupes')} />
-            <LinkRow icon="flag-outline" label="Skin Goals" onPress={() => router.push('/goals')} last />
+            <LinkRow icon="flag-outline" label="Skin Goals" onPress={() => router.push('/goals')} />
+            <LinkRow icon="book-outline" label="Skin Lab — Articles" onPress={() => router.push('/learn')} last />
           </View>
         </View>
 

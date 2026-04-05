@@ -8,6 +8,8 @@ const KEYS = {
   ONBOARDED: 'gd_onboarded',
   STREAK: 'gd_streak',
   LAST_SCAN_DATE: 'gd_last_scan_date',
+  ROUTINE_LOG: 'gd_routine_log', // { date: string, morning: boolean, evening: boolean }[]
+  ARTICLES_READ: 'gd_articles_read', // string[] of slugs
 };
 
 export const Storage = {
@@ -77,6 +79,63 @@ export const Storage = {
     await AsyncStorage.setItem(KEYS.STREAK, String(newStreak));
     await AsyncStorage.setItem(KEYS.LAST_SCAN_DATE, today);
     return newStreak;
+  },
+
+  // Routine log
+  async logRoutineCompletion(time: 'morning' | 'evening'): Promise<void> {
+    const today = new Date().toDateString();
+    const raw = await AsyncStorage.getItem(KEYS.ROUTINE_LOG);
+    const log: { date: string; morning: boolean; evening: boolean }[] = raw ? JSON.parse(raw) : [];
+    const existing = log.find(e => e.date === today);
+    if (existing) {
+      existing[time] = true;
+    } else {
+      log.unshift({ date: today, morning: time === 'morning', evening: time === 'evening' });
+    }
+    // Keep 90 days
+    await AsyncStorage.setItem(KEYS.ROUTINE_LOG, JSON.stringify(log.slice(0, 90)));
+  },
+
+  async getTodayRoutineLog(): Promise<{ morning: boolean; evening: boolean }> {
+    const today = new Date().toDateString();
+    const raw = await AsyncStorage.getItem(KEYS.ROUTINE_LOG);
+    const log: { date: string; morning: boolean; evening: boolean }[] = raw ? JSON.parse(raw) : [];
+    const todayEntry = log.find(e => e.date === today);
+    return todayEntry ?? { morning: false, evening: false };
+  },
+
+  async getRoutineStreak(): Promise<number> {
+    const raw = await AsyncStorage.getItem(KEYS.ROUTINE_LOG);
+    if (!raw) return 0;
+    const log: { date: string; morning: boolean; evening: boolean }[] = JSON.parse(raw);
+    let streak = 0;
+    const today = new Date();
+    for (let i = 0; i < log.length; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const entry = log.find(e => e.date === d.toDateString());
+      if (entry && (entry.morning || entry.evening)) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  },
+
+  // Article reading tracking
+  async markArticleRead(slug: string): Promise<void> {
+    const raw = await AsyncStorage.getItem(KEYS.ARTICLES_READ);
+    const read: string[] = raw ? JSON.parse(raw) : [];
+    if (!read.includes(slug)) {
+      read.push(slug);
+      await AsyncStorage.setItem(KEYS.ARTICLES_READ, JSON.stringify(read));
+    }
+  },
+
+  async getReadArticles(): Promise<string[]> {
+    const raw = await AsyncStorage.getItem(KEYS.ARTICLES_READ);
+    return raw ? JSON.parse(raw) : [];
   },
 
   async clearAll(): Promise<void> {

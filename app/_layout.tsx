@@ -20,6 +20,8 @@ export default function RootLayout() {
           <Stack.Screen name="dupes/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="goals/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="product/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="learn/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="learn/[slug]" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -1,0 +1,279 @@
+import { useEffect, useState } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, Pressable,
+} from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '../../src/constants/colors';
+import { ARTICLES, Article } from '../../src/data/articles';
+import { Storage } from '../../src/services/storage';
+
+const TAG_COLORS: Record<string, string> = {
+  'SKIN SCIENCE': '#4ADE80',
+  'INGREDIENTS': '#60A5FA',
+  'GUIDE': '#C4622D',
+  'PHILOSOPHY': '#D4A96A',
+  'SKIN TYPE': '#A78BFA',
+  'TIMELINE': '#F59E0B',
+  'HISTORY': '#FB923C',
+  'PROTECTION': '#38BDF8',
+};
+
+export default function ArticleDetail() {
+  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [readProgress, setReadProgress] = useState(0);
+
+  useEffect(() => {
+    const found = ARTICLES.find(a => a.slug === slug);
+    setArticle(found || null);
+    if (slug) Storage.markArticleRead(slug);
+  }, [slug]);
+
+  if (!article) {
+    return (
+      <View style={styles.root}>
+        <SafeAreaView edges={['top']}>
+          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+          </Pressable>
+        </SafeAreaView>
+        <View style={styles.notFound}>
+          <Text style={styles.notFoundText}>Article not found</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const tagColor = TAG_COLORS[article.tag] || Colors.primary;
+  const relatedArticles = ARTICLES.filter(a => a.slug !== article.slug && (a.tag === article.tag || a.tallowDermicsAngle)).slice(0, 2);
+
+  return (
+    <View style={styles.root}>
+      {/* Progress bar */}
+      <View style={styles.progressBar}>
+        <View style={[styles.progressFill, { width: `${readProgress}%` as any }]} />
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={50}
+        onScroll={(e) => {
+          const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+          const progress = (contentOffset.y / (contentSize.height - layoutMeasurement.height)) * 100;
+          setReadProgress(Math.min(100, Math.max(0, progress)));
+        }}
+      >
+        {/* Hero */}
+        <View style={styles.hero}>
+          <LinearGradient
+            colors={['rgba(10,10,15,0)', Colors.bg]}
+            style={styles.heroFade}
+            start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
+          />
+          <SafeAreaView edges={['top']}>
+            <Pressable style={styles.backBtnHero} onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            </Pressable>
+          </SafeAreaView>
+          <View style={styles.heroContent}>
+            <Text style={styles.heroEmoji}>{article.hero}</Text>
+          </View>
+        </View>
+
+        <View style={styles.content}>
+          {/* Tag + meta */}
+          <View style={styles.metaRow}>
+            <View style={[styles.tagPill, { backgroundColor: tagColor + '18' }]}>
+              <Text style={[styles.tagText, { color: tagColor }]}>{article.tag}</Text>
+            </View>
+            <View style={styles.readTimePill}>
+              <Ionicons name="time-outline" size={11} color={Colors.textMuted} />
+              <Text style={styles.readTimeText}>{article.readTime} min read</Text>
+            </View>
+          </View>
+
+          {/* Title */}
+          <Text style={styles.title}>{article.title}</Text>
+          <Text style={styles.subtitle}>{article.subtitle}</Text>
+
+          <View style={styles.divider} />
+
+          {/* Body sections */}
+          {article.sections.map((section, i) => (
+            <View key={i} style={styles.section}>
+              {section.heading && (
+                <Text style={styles.sectionHeading}>{section.heading}</Text>
+              )}
+              <Text style={styles.sectionBody}>{section.body}</Text>
+            </View>
+          ))}
+
+          {/* Key takeaways */}
+          <View style={styles.takeawaysCard}>
+            <LinearGradient
+              colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.takeawaysHeader}>
+              <Ionicons name="bulb-outline" size={18} color={Colors.gold} />
+              <Text style={styles.takeawaysTitle}>Key Takeaways</Text>
+            </View>
+            {article.keyTakeaways.map((item, i) => (
+              <View key={i} style={styles.takeawayRow}>
+                <View style={styles.takeawayDot} />
+                <Text style={styles.takeawayText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* TallowDermics angle */}
+          {article.tallowDermicsAngle && (
+            <View style={styles.tdCard}>
+              <LinearGradient
+                colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.tdHeader}>
+                <Text style={styles.tdEyebrow}>TALLOWDERMICS</Text>
+              </View>
+              <Text style={styles.tdBody}>{article.tallowDermicsAngle}</Text>
+              <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
+                <Text style={styles.tdCtaText}>Learn about the formula →</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Related articles */}
+          {relatedArticles.length > 0 && (
+            <View style={styles.relatedSection}>
+              <Text style={styles.relatedTitle}>Continue Reading</Text>
+              <View style={styles.relatedList}>
+                {relatedArticles.map(a => (
+                  <Pressable
+                    key={a.slug}
+                    style={styles.relatedCard}
+                    onPress={() => router.push(`/learn/${a.slug}`)}
+                  >
+                    <Text style={styles.relatedEmoji}>{a.hero}</Text>
+                    <View style={styles.relatedBody}>
+                      <Text style={styles.relatedName} numberOfLines={2}>{a.title}</Text>
+                      <Text style={styles.relatedMeta}>{a.readTime} min read</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Ask coach */}
+          <Pressable style={styles.coachBanner} onPress={() => router.push('/(tabs)/coach')}>
+            <LinearGradient
+              colors={[Colors.primaryDark, Colors.primary]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+            />
+            <View style={styles.coachBannerInner}>
+              <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.white} />
+              <View>
+                <Text style={styles.coachBannerTitle}>Have questions?</Text>
+                <Text style={styles.coachBannerSub}>Ask your AI skin coach</Text>
+              </View>
+            </View>
+            <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+          </Pressable>
+
+          <View style={{ height: 100 }} />
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: Colors.bg },
+  progressBar: { height: 3, backgroundColor: 'rgba(250,243,224,0.06)', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 },
+  progressFill: { height: '100%', backgroundColor: Colors.primary },
+
+  hero: {
+    height: 220, backgroundColor: Colors.bgCard,
+    alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  heroFade: { ...StyleSheet.absoluteFillObject },
+  backBtnHero: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    alignItems: 'center', justifyContent: 'center',
+    marginLeft: 16,
+  },
+  backBtn: { margin: 16, width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  heroContent: { alignItems: 'center', justifyContent: 'center', flex: 1 },
+  heroEmoji: { fontSize: 72, marginTop: -20 },
+
+  content: { paddingHorizontal: 20, paddingTop: 24 },
+
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 },
+  tagPill: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
+  tagText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
+  readTimePill: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  readTimeText: { fontSize: 11, color: Colors.textMuted },
+
+  title: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary, lineHeight: 34, marginBottom: 10 },
+  subtitle: { fontSize: 15, color: Colors.textSecondary, lineHeight: 23, marginBottom: 24 },
+  divider: { height: 1, backgroundColor: Colors.border, marginBottom: 28 },
+
+  section: { marginBottom: 24 },
+  sectionHeading: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10, lineHeight: 22 },
+  sectionBody: { fontSize: 15, color: Colors.textSecondary, lineHeight: 26 },
+
+  takeawaysCard: {
+    borderRadius: 18, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.15)',
+    padding: 20, marginBottom: 20, gap: 12,
+  },
+  takeawaysHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  takeawaysTitle: { fontSize: 14, fontWeight: '700', color: Colors.gold },
+  takeawayRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  takeawayDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary, marginTop: 8 },
+  takeawayText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, flex: 1 },
+
+  tdCard: {
+    borderRadius: 18, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    padding: 20, marginBottom: 20, gap: 10,
+  },
+  tdHeader: { marginBottom: 2 },
+  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
+  tdBody: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  tdCta: { alignSelf: 'flex-start', marginTop: 4 },
+  tdCtaText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+
+  relatedSection: { marginBottom: 20 },
+  relatedTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
+  relatedList: { gap: 10 },
+  relatedCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: Colors.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: Colors.border, padding: 14,
+  },
+  relatedEmoji: { fontSize: 24 },
+  relatedBody: { flex: 1, gap: 4 },
+  relatedName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, lineHeight: 18 },
+  relatedMeta: { fontSize: 11, color: Colors.textMuted },
+
+  coachBanner: {
+    borderRadius: 18, overflow: 'hidden',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    padding: 18, marginBottom: 8,
+  },
+  coachBannerInner: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  coachBannerTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  coachBannerSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
+
+  notFound: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  notFoundText: { fontSize: 16, color: Colors.textMuted },
+});
