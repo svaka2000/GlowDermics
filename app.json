@@ -16,10 +16,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.tallowdermics.glowdermics",
+      "buildNumber": "1",
       "infoPlist": {
-        "NSCameraUsageDescription": "GlowDermics uses your camera to scan and analyze your skin.",
-        "NSPhotoLibraryUsageDescription": "GlowDermics accesses your photos to analyze your skin progress.",
-        "NSPhotoLibraryAddUsageDescription": "GlowDermics saves your skin scan results to your photo library."
+        "NSCameraUsageDescription": "GlowDermics uses your camera to take a skin scan for AI analysis.",
+        "NSPhotoLibraryUsageDescription": "GlowDermics accesses your photos so you can upload a skin scan image.",
+        "NSPhotoLibraryAddUsageDescription": "GlowDermics saves your skin scan results to your photo library.",
+        "NSFaceIDUsageDescription": "GlowDermics uses Face ID to protect your skin health data."
       }
     },
     "android": {
@@ -28,16 +30,42 @@
         "backgroundColor": "#0A0A0F"
       },
       "package": "com.tallowdermics.glowdermics",
-      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "USE_EXACT_ALARM"
+      ]
     },
     "plugins": [
       "expo-router",
-      "expo-camera",
-      "expo-image-picker",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "GlowDermics uses your camera to take a skin scan photo for AI analysis."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "GlowDermics accesses your photo library so you can upload a skin photo for analysis."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#C4622D",
+          "sounds": []
+        }
+      ],
       [
         "expo-secure-store",
         {
-          "faceIDPermission": "Allow GlowDermics to access Face ID to secure your account."
+          "faceIDPermission": "Allow GlowDermics to use Face ID to secure your profile."
         }
       ]
     ],
