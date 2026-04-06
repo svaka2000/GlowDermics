@@ -302,7 +302,7 @@ export default function Settings() {
           <View style={styles.card}>
             <Row label="App" value="GlowDermics" />
             <Row label="Version" value="1.0.0" />
-            <Row label="Powered by" value="Groq AI + Llama 4" />
+            <Row label="Powered by" value="GlowDermics AI" />
             <Row label="Brand" value="TallowDermics™" />
             <LinkRow icon="lock-closed-outline" label="Privacy Policy" onPress={() => router.push('/privacy')} last />
           </View>
