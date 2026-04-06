@@ -354,7 +354,10 @@ export default function Settings() {
             <LinkRow icon="restaurant-outline" label="Foods for Skin" onPress={() => router.push('/skin-foods')} />
             <LinkRow icon="bug-outline" label="Gut-Skin Axis" onPress={() => router.push('/gut-skin')} />
             <LinkRow icon="shield-outline" label="Antioxidant Guide" onPress={() => router.push('/antioxidants')} />
-            <LinkRow icon="build-outline" label="Collagen Science" onPress={() => router.push('/collagen-guide')} last />
+            <LinkRow icon="build-outline" label="Collagen Science" onPress={() => router.push('/collagen-guide')} />
+            <LinkRow icon="fitness-outline" label="Exercise & Skin" onPress={() => router.push('/exercise-skin')} />
+            <LinkRow icon="flask-outline" label="Zinc for Skin" onPress={() => router.push('/zinc-guide')} />
+            <LinkRow icon="water-outline" label="Essential Fatty Acids" onPress={() => router.push('/efa-guide')} last />
           </View>
         </View>
 
