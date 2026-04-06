@@ -25,6 +25,23 @@ const STARTER_PROMPTS = [
   "What's the difference between tallow and regular moisturizer?",
 ];
 
+const QUICK_PROMPTS_BASE = [
+  { label: 'My biggest issue?', icon: '🎯' },
+  { label: 'Best routine for me?', icon: '🌅' },
+  { label: 'Ingredients to avoid?', icon: '⛔' },
+  { label: 'When will I see results?', icon: '⏱️' },
+  { label: 'Why tallow?', icon: '🧪' },
+  { label: 'Morning vs evening?', icon: '☀️' },
+  { label: 'Fix my barrier?', icon: '🛡️' },
+];
+
+const SCAN_PROMPTS = [
+  { label: 'Explain my score', icon: '📊' },
+  { label: 'My skin strengths?', icon: '💪' },
+  { label: "What's causing my low scores?", icon: '🔍' },
+  { label: 'Routine from my results?', icon: '📋' },
+];
+
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
@@ -263,6 +280,24 @@ export default function Coach() {
           <View style={{ height: 16 }} />
         </ScrollView>
 
+        {/* Quick prompts bar */}
+        {!loading && (
+          <View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickPromptsContent}>
+              {(analysis ? [...SCAN_PROMPTS, ...QUICK_PROMPTS_BASE] : QUICK_PROMPTS_BASE).map(p => (
+                <Pressable
+                  key={p.label}
+                  style={styles.quickPromptChip}
+                  onPress={() => send(p.label)}
+                >
+                  <Text style={styles.quickPromptIcon}>{p.icon}</Text>
+                  <Text style={styles.quickPromptText}>{p.label}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         {/* Message count indicator */}
         {messages.length > 0 && (
           <View style={styles.msgCount}>
@@ -357,6 +392,15 @@ const styles = StyleSheet.create({
   typingBubble: { paddingVertical: 16, paddingHorizontal: 16 },
   typingDots: { flexDirection: 'row', gap: 4 },
   typingDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: Colors.primary },
+  quickPromptsContent: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
+  quickPromptChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: Colors.bgCard, borderRadius: 20,
+    borderWidth: 1, borderColor: Colors.borderStrong,
+    paddingHorizontal: 12, paddingVertical: 8,
+  },
+  quickPromptIcon: { fontSize: 13 },
+  quickPromptText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
   msgCount: { alignItems: 'center', paddingVertical: 4 },
   msgCountText: { fontSize: 10, color: Colors.textMuted },
   inputBar: {

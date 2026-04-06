@@ -69,20 +69,27 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
   const [habitScore, setHabitScore] = useState(0);
   const [waterGlasses, setWaterGlasses] = useState(0);
+  const [routineToday, setRoutineToday] = useState({ morning: false, evening: false });
+  const [journalToday, setJournalToday] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = async () => {
-    const [p, a, s, w] = await Promise.all([
+    const [p, a, s, w, routineLog, journal] = await Promise.all([
       Storage.getUserProfile(),
       Storage.getLatestAnalysis(),
       Storage.getStreak(),
       getWaterToday(),
+      Storage.getTodayRoutineLog(),
+      Storage.getJournal(),
     ]);
     setProfile(p);
     setLatest(a);
     setStreak(s);
     setWaterGlasses(w);
+    setRoutineToday(routineLog);
+    const today = new Date().toDateString();
+    setJournalToday(journal.some(j => new Date(j.date).toDateString() === today));
     // Load today's habit score
     try {
       const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
@@ -164,6 +171,58 @@ export default function Home() {
             <Text style={styles.statLabel}>Concerns</Text>
           </Pressable>
         </View>
+
+        {/* Smart Today Focus */}
+        {(() => {
+          const hour = new Date().getHours();
+          const daysSinceScan = latest
+            ? Math.floor((Date.now() - new Date(latest.date).getTime()) / 86400000)
+            : 999;
+
+          // Determine priority focus
+          if (!latest && !profile?.onboardingComplete) return null;
+
+          const items: { icon: string; label: string; action: () => void; color: string }[] = [];
+
+          if (hour >= 5 && hour < 12 && !routineToday.morning) {
+            items.push({ icon: '🌅', label: 'Log morning routine', action: () => router.push('/(tabs)/routine'), color: Colors.gold });
+          }
+          if (hour >= 18 && !routineToday.evening) {
+            items.push({ icon: '🌙', label: 'Log evening routine', action: () => router.push('/(tabs)/routine'), color: '#A78BFA' });
+          }
+          if (waterGlasses < 4 && hour >= 14) {
+            items.push({ icon: '💧', label: 'Drink more water — only ' + waterGlasses + ' glasses so far', action: () => adjustWater(1), color: '#60A5FA' });
+          }
+          if (!journalToday) {
+            items.push({ icon: '📝', label: 'Log today\'s mood', action: () => router.push('/journal'), color: Colors.primary });
+          }
+          if (daysSinceScan >= 7) {
+            items.push({ icon: '📸', label: `No scan in ${daysSinceScan} days — check your progress`, action: () => router.push('/scan'), color: Colors.scoreGood });
+          }
+
+          if (items.length === 0) return (
+            <View style={styles.focusCard}>
+              <Text style={styles.focusEmoji}>✨</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.focusTitle}>You're all caught up!</Text>
+                <Text style={styles.focusSub}>Routines logged · Journal done · Hydrated</Text>
+              </View>
+            </View>
+          );
+
+          const top = items[0];
+          return (
+            <Pressable style={styles.focusCard} onPress={top.action}>
+              <Text style={styles.focusEmoji}>{top.icon}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.focusTag, { color: top.color }]}>TODAY'S FOCUS</Text>
+                <Text style={styles.focusTitle}>{top.label}</Text>
+                {items.length > 1 && <Text style={styles.focusSub}>+{items.length - 1} more action{items.length > 2 ? 's' : ''} pending</Text>}
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            </Pressable>
+          );
+        })()}
 
         {/* Primary scan CTA */}
         <Pressable style={styles.scanCard} onPress={() => router.push('/scan')}>
@@ -468,6 +527,17 @@ const styles = StyleSheet.create({
   emptyQuizText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
   brandTagline: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', fontStyle: 'italic' },
+
+  focusCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: Colors.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: Colors.borderStrong,
+    padding: 14, marginBottom: 14,
+  },
+  focusEmoji: { fontSize: 22 },
+  focusTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, marginBottom: 2 },
+  focusTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  focusSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
 
   waterCard: {
     borderRadius: 18, overflow: 'hidden',

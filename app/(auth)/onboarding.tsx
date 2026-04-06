@@ -16,14 +16,38 @@ const SKIN_TYPES = ['Oily', 'Dry', 'Combination', 'Normal', 'Sensitive'];
 const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Redness', 'Large Pores', 'Dullness', 'Sensitivity'];
 const GOALS = ['Clear Skin', 'Deep Hydration', 'Anti-Aging', 'Even Tone', 'Barrier Repair', 'Natural Glow', 'Reduce Redness'];
 
+const SLEEP_OPTIONS = [
+  { value: 5, label: '< 6 hrs', emoji: '😴', sub: 'Sleep-deprived' },
+  { value: 6, label: '6–7 hrs', emoji: '😐', sub: 'Under-slept' },
+  { value: 7, label: '7–8 hrs', emoji: '😊', sub: 'Getting there' },
+  { value: 8, label: '8+ hrs', emoji: '🌟', sub: 'Optimal' },
+];
+
+const WATER_OPTIONS = [
+  { value: 'low', label: 'Rarely', emoji: '🏜️', sub: '1–3 glasses/day' },
+  { value: 'moderate', label: 'Some', emoji: '💧', sub: '4–6 glasses/day' },
+  { value: 'good', label: 'Good', emoji: '🌊', sub: '7–8 glasses/day' },
+  { value: 'high', label: 'Excellent', emoji: '💦', sub: '8+ glasses/day' },
+];
+
+const DIET_OPTIONS = [
+  { value: 'processed', label: 'Mostly processed', emoji: '🍔' },
+  { value: 'mixed', label: 'Mixed', emoji: '🥗' },
+  { value: 'balanced', label: 'Balanced whole foods', emoji: '🌿' },
+  { value: 'clean', label: 'Clean / ancestral', emoji: '🥩' },
+];
+
 export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [skinType, setSkinType] = useState('');
   const [concerns, setConcerns] = useState<string[]>([]);
   const [goals, setGoals] = useState<string[]>([]);
+  const [sleepHours, setSleepHours] = useState(7);
+  const [waterIntake, setWaterIntake] = useState('moderate');
+  const [diet, setDiet] = useState('balanced');
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const toggleItem = (item: string, list: string[], setList: (l: string[]) => void) => {
     if (list.includes(item)) setList(list.filter(i => i !== item));
@@ -35,6 +59,7 @@ export default function Onboarding() {
     if (step === 1) return skinType !== '';
     if (step === 2) return concerns.length > 0;
     if (step === 3) return goals.length > 0;
+    if (step === 4) return true; // lifestyle has defaults
     return false;
   };
 
@@ -44,7 +69,7 @@ export default function Onboarding() {
       skinType: skinType.toLowerCase(),
       primaryConcerns: concerns,
       goals,
-      lifestyle: { sleepHours: 7, waterIntake: 'moderate', sunExposure: 'moderate', diet: 'balanced' },
+      lifestyle: { sleepHours, waterIntake, sunExposure: 'moderate', diet },
       onboardingComplete: true,
     };
     await Storage.saveUserProfile(profile);
@@ -85,7 +110,7 @@ export default function Onboarding() {
 
             {step === 1 && (
               <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 2 OF 4</Text>
+                <Text style={styles.eyebrow}>STEP 2 OF 5</Text>
                 <Text style={styles.heading}>What's your skin type?</Text>
                 <Text style={styles.sub}>We'll personalize everything around this.</Text>
                 <View style={styles.chipGrid}>
@@ -104,7 +129,7 @@ export default function Onboarding() {
 
             {step === 2 && (
               <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 3 OF 4</Text>
+                <Text style={styles.eyebrow}>STEP 3 OF 5</Text>
                 <Text style={styles.heading}>Your biggest concerns?</Text>
                 <Text style={styles.sub}>Pick up to 3. We'll target these first.</Text>
                 <View style={styles.chipGrid}>
@@ -123,7 +148,7 @@ export default function Onboarding() {
 
             {step === 3 && (
               <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 4 OF 4</Text>
+                <Text style={styles.eyebrow}>STEP 4 OF 5</Text>
                 <Text style={styles.heading}>What are your skin goals?</Text>
                 <Text style={styles.sub}>Pick up to 3. Your routine will be built around these.</Text>
                 <View style={styles.chipGrid}>
@@ -134,6 +159,57 @@ export default function Onboarding() {
                       onPress={() => toggleItem(g, goals, setGoals)}
                     >
                       <Text style={[styles.chipText, goals.includes(g) && styles.chipTextActive]}>{g}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {step === 4 && (
+              <View style={styles.stepWrap}>
+                <Text style={styles.eyebrow}>STEP 5 OF 5</Text>
+                <Text style={styles.heading}>Your lifestyle</Text>
+                <Text style={styles.sub}>Your skin reflects your life. This helps the AI give better advice.</Text>
+
+                <Text style={styles.lifestyleLabel}>How much do you sleep?</Text>
+                <View style={styles.lifestyleRow}>
+                  {SLEEP_OPTIONS.map(opt => (
+                    <Pressable
+                      key={opt.value}
+                      style={[styles.lifestyleCard, sleepHours === opt.value && styles.lifestyleCardActive]}
+                      onPress={() => setSleepHours(opt.value)}
+                    >
+                      <Text style={styles.lifestyleEmoji}>{opt.emoji}</Text>
+                      <Text style={[styles.lifestyleCardLabel, sleepHours === opt.value && styles.lifestyleCardLabelActive]}>{opt.label}</Text>
+                      <Text style={styles.lifestyleCardSub}>{opt.sub}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+
+                <Text style={[styles.lifestyleLabel, { marginTop: 24 }]}>Daily water intake?</Text>
+                <View style={styles.lifestyleRow}>
+                  {WATER_OPTIONS.map(opt => (
+                    <Pressable
+                      key={opt.value}
+                      style={[styles.lifestyleCard, waterIntake === opt.value && styles.lifestyleCardActive]}
+                      onPress={() => setWaterIntake(opt.value)}
+                    >
+                      <Text style={styles.lifestyleEmoji}>{opt.emoji}</Text>
+                      <Text style={[styles.lifestyleCardLabel, waterIntake === opt.value && styles.lifestyleCardLabelActive]}>{opt.label}</Text>
+                      <Text style={styles.lifestyleCardSub}>{opt.sub}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+
+                <Text style={[styles.lifestyleLabel, { marginTop: 24 }]}>How would you describe your diet?</Text>
+                <View style={styles.chipGrid}>
+                  {DIET_OPTIONS.map(opt => (
+                    <Pressable
+                      key={opt.value}
+                      style={[styles.chip, diet === opt.value && styles.chipActive]}
+                      onPress={() => setDiet(opt.value)}
+                    >
+                      <Text style={styles.chipText}>{opt.emoji} {opt.label}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -161,6 +237,7 @@ export default function Onboarding() {
                 <Text style={styles.nextText}>{step === totalSteps - 1 ? 'Start My Journey →' : 'Continue →'}</Text>
               </LinearGradient>
             </Pressable>
+
           </View>
 
         </KeyboardAvoidingView>
@@ -196,6 +273,17 @@ const styles = StyleSheet.create({
   chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
   chipText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '500' },
   chipTextActive: { color: Colors.primary, fontWeight: '600' },
+  lifestyleLabel: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
+  lifestyleRow: { flexDirection: 'row', gap: 8 },
+  lifestyleCard: {
+    flex: 1, alignItems: 'center', padding: 12, borderRadius: 16,
+    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard, gap: 4,
+  },
+  lifestyleCardActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  lifestyleEmoji: { fontSize: 20 },
+  lifestyleCardLabel: { fontSize: 12, fontWeight: '700', color: Colors.textSecondary, textAlign: 'center' },
+  lifestyleCardLabelActive: { color: Colors.primary },
+  lifestyleCardSub: { fontSize: 9, color: Colors.textMuted, textAlign: 'center', fontWeight: '500' },
   footer: { padding: 24, flexDirection: 'row', gap: 12, alignItems: 'center' },
   backBtn: { paddingHorizontal: 16, paddingVertical: 14 },
   backText: { color: Colors.textMuted, fontSize: 15 },
