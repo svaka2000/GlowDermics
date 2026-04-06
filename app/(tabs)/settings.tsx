@@ -272,7 +272,8 @@ export default function Settings() {
             <LinkRow icon="checkmark-done-outline" label="Daily Habits Tracker" onPress={() => router.push('/habits')} />
             <LinkRow icon="cube-outline" label="My Product Shelf" onPress={() => router.push('/products')} />
             <LinkRow icon="trophy-outline" label="Milestones" onPress={() => router.push('/milestones')} />
-            <LinkRow icon="calendar-outline" label="Skin Calendar" onPress={() => router.push('/calendar')} last />
+            <LinkRow icon="calendar-outline" label="Skin Calendar" onPress={() => router.push('/calendar')} />
+            <LinkRow icon="newspaper-outline" label="Weekly Digest" onPress={() => router.push('/weekly-digest')} last />
           </View>
         </View>
 
