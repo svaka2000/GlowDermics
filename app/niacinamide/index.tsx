@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar,
+  SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 
@@ -65,19 +65,29 @@ export default function NiacinamideScreen() {
   const [expandedBenefit, setExpandedBenefit] = useState<number | null>(null);
   const [expandedCombo, setExpandedCombo] = useState<number | null>(null);
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
+
   const evidenceColor = (e: string) => e === 'strong' ? Colors.green : e === 'moderate' ? Colors.gold : Colors.blue;
   const verdictColor = (v: string) => v === 'Excellent' ? Colors.green : v === 'Compatible' ? Colors.teal : Colors.gold;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Niacinamide Guide</Text>
         <View style={{ width: 60 }} />
-      </View>
+      </Animated.View>
 
       <View style={styles.hero}>
         <Text style={styles.heroTitle}>💊 Niacinamide (B3)</Text>
@@ -92,7 +102,7 @@ export default function NiacinamideScreen() {
         ))}
       </ScrollView>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView style={[styles.scroll, { opacity: contentAnim }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {activeTab === 0 && (
           <View>
@@ -181,7 +191,7 @@ export default function NiacinamideScreen() {
         )}
 
         <View style={{ height: 40 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
