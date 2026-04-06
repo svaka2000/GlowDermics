@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -33,9 +33,23 @@ export default function SkinTrendReport() {
   const [latest, setLatest] = useState<any>(null);
   const [oldest, setOldest] = useState<any>(null);
 
+  const reportAnim = useRef(new Animated.Value(0)).current;
+  const headerAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     generate();
   }, []);
+
+  useEffect(() => {
+    if (report) {
+      reportAnim.setValue(0);
+      headerAnim.setValue(0);
+      Animated.stagger(80, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(reportAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    }
+  }, [report]);
 
   const generate = async () => {
     setLoading(true);
@@ -169,7 +183,10 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+        }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -177,10 +194,14 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
           <Pressable style={styles.refreshBtn} onPress={generate}>
             <Ionicons name="refresh-outline" size={18} color={Colors.textMuted} />
           </Pressable>
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scroll}
+        style={{ opacity: reportAnim }}
+      >
 
         {/* Headline card */}
         <View style={styles.headlineCard}>
@@ -288,7 +309,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
         </View>
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
