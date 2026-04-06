@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, TextInput, KeyboardAvoidingView,
-  Platform, Alert,
+  Platform, Alert, Animated, Easing,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -85,9 +85,18 @@ export default function SkinJournalScreen() {
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   const todayEntry = entries.find(e => e.date === today());
 
   useFocusEffect(useCallback(() => {
+    headerAnim.setValue(0);
+    contentAnim.setValue(0);
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
     loadEntries();
   }, []));
 
@@ -177,13 +186,13 @@ export default function SkinJournalScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Skin Journal</Text>
           <View style={{ width: 60 }} />
-        </View>
+        </Animated.View>
 
         <View style={styles.tabBar}>
           {(['log', 'history'] as const).map(t => (
@@ -199,7 +208,7 @@ export default function SkinJournalScreen() {
           ))}
         </View>
 
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <Animated.ScrollView style={[styles.scroll, { opacity: contentAnim }]} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {view === 'log' && (
             <>
               <View style={styles.dateHeader}>
@@ -333,7 +342,7 @@ export default function SkinJournalScreen() {
             </>
           )}
           <View style={{ height: 40 }} />
-        </ScrollView>
+        </Animated.ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
