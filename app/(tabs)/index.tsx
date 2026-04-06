@@ -84,6 +84,8 @@ export default function Home() {
   const statsAnim = useRef(new Animated.Value(0)).current;
   const scanCardAnim = useRef(new Animated.Value(0)).current;
   const scanCardScale = useRef(new Animated.Value(0.96)).current;
+  const quickAnim = useRef(new Animated.Value(0)).current;
+  const lowerAnim = useRef(new Animated.Value(0)).current;
   const glowPulse = useRef(new Animated.Value(0.6)).current;
 
   useEffect(() => {
@@ -101,6 +103,8 @@ export default function Home() {
     statsAnim.setValue(0);
     scanCardAnim.setValue(0);
     scanCardScale.setValue(0.96);
+    quickAnim.setValue(0);
+    lowerAnim.setValue(0);
     Animated.stagger(80, [
       Animated.timing(headerAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       Animated.timing(statsAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
@@ -108,6 +112,8 @@ export default function Home() {
         Animated.timing(scanCardAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
         Animated.timing(scanCardScale, { toValue: 1, duration: 500, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
       ]),
+      Animated.timing(quickAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(lowerAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
     ]).start();
   };
 
@@ -447,6 +453,10 @@ export default function Home() {
         )}
 
         {/* Quick actions — 2 rows of 3 */}
+        <Animated.View style={{
+          opacity: quickAnim,
+          transform: [{ translateY: quickAnim.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }],
+        }}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickGrid}>
@@ -511,7 +521,12 @@ export default function Home() {
             </Pressable>
           </View>
         </View>
+        </Animated.View>
 
+        <Animated.View style={{
+          opacity: lowerAnim,
+          transform: [{ translateY: lowerAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) }],
+        }}>
         {/* Water tracker */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hydration Tracker</Text>
@@ -601,6 +616,8 @@ export default function Home() {
             </Pressable>
           </View>
         )}
+
+        </Animated.View>
 
         {/* Brand strip */}
         <View style={styles.brandStrip}>
