@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable,
+  View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -127,6 +127,15 @@ export default function BaumannTest() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<string | null>(null);
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const handleAnswer = (score: number) => {
     const q = QUESTIONS[currentQ];
@@ -170,16 +179,16 @@ export default function BaumannTest() {
     return (
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
-          <View style={styles.header}>
+          <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Baumann Skin Type</Text>
             <View style={{ width: 36 }} />
-          </View>
+          </Animated.View>
         </SafeAreaView>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
           <View style={styles.introHero}>
             <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <Text style={styles.introEmoji}>🧬</Text>
@@ -213,7 +222,7 @@ export default function BaumannTest() {
           </Pressable>
 
           <View style={{ height: 100 }} />
-        </ScrollView>
+        </Animated.ScrollView>
       </View>
     );
   }
