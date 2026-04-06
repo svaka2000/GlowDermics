@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
-  ActivityIndicator, KeyboardAvoidingView, Platform,
+  ActivityIndicator, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,6 +46,15 @@ export default function RoutineAnalyzer() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RoutineAnalysis | null>(null);
   const [error, setError] = useState('');
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const analyze = async () => {
     if (!input.trim()) return;
@@ -108,7 +117,7 @@ If there are no conflicts/redundancies/gaps/orderIssues, return empty arrays for
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -117,10 +126,10 @@ If there are no conflicts/redundancies/gaps/orderIssues, return empty arrays for
             <Text style={styles.headerSub}>Detect conflicts & optimize order</Text>
           </View>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" style={{ opacity: contentAnim }}>
 
         {/* Time of day toggle */}
         <View style={styles.toggleWrap}>
@@ -307,7 +316,7 @@ If there are no conflicts/redundancies/gaps/orderIssues, return empty arrays for
         )}
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </KeyboardAvoidingView>
   );
 }
