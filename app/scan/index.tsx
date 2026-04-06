@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ActivityIndicator,
   Alert, Image, ScrollView,
@@ -13,7 +13,9 @@ import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth } from '../../src/services/auth';
 import { analyzeSkin } from '../../src/services/skinAnalysis';
+import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
 
 type Mode = 'choose' | 'camera' | 'analyzing';
 
@@ -22,8 +24,31 @@ export default function Scan() {
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
+  const [scanInfo, setScanInfo] = useState<{ used: number; limit: number; isPremium: boolean } | null>(null);
+  const [showGate, setShowGate] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const user = await Auth.getCurrentUser();
+      if (!user) return;
+      const { used, limit } = await Auth.canScan();
+      setScanInfo({ used, limit, isPremium: user.isPremium });
+    })();
+  }, []);
+
+  const checkScanLimit = async (): Promise<boolean> => {
+    const { allowed, used, limit } = await Auth.canScan();
+    const user = await Auth.getCurrentUser();
+    setScanInfo({ used, limit, isPremium: user?.isPremium ?? false });
+    if (!allowed) {
+      setShowGate(true);
+      return false;
+    }
+    return true;
+  };
 
   const handlePickPhoto = async () => {
+    if (!(await checkScanLimit())) return;
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
@@ -39,6 +64,7 @@ export default function Scan() {
   };
 
   const handleOpenCamera = async () => {
+    if (!(await checkScanLimit())) return;
     if (!permission?.granted) {
       const { granted } = await requestPermission();
       if (!granted) {
@@ -79,6 +105,7 @@ export default function Scan() {
       const analysis = await analyzeSkin(base64, 'image/jpeg', profile);
       analysis.imageUri = uri;
 
+      await Auth.recordScan();
       await Storage.saveAnalysis(analysis);
       router.replace(`/results/${analysis.id}`);
     } catch (err: any) {
@@ -138,6 +165,12 @@ export default function Scan() {
 
   return (
     <View style={styles.root}>
+      <PremiumGate
+        visible={showGate}
+        onClose={() => setShowGate(false)}
+        feature="skin scans"
+        reason={scanInfo ? `You've used ${scanInfo.used}/${scanInfo.limit} free scans this month` : undefined}
+      />
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
@@ -178,6 +211,13 @@ export default function Scan() {
               </View>
             ))}
           </View>
+
+          {scanInfo && !scanInfo.isPremium && scanInfo.used >= 2 && (
+            <PremiumBanner
+              message={`${scanInfo.used}/${scanInfo.limit} free scans used this month`}
+              onUpgrade={() => setShowGate(true)}
+            />
+          )}
 
           <View style={styles.btnGroup}>
             <Pressable style={styles.mainBtn} onPress={handleOpenCamera}>

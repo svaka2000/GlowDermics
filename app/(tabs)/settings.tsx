@@ -9,7 +9,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth, AuthUser } from '../../src/services/auth';
 import { UserProfile } from '../../src/types';
+import { PremiumGate } from '../../src/components/PremiumGate';
 import {
   requestNotificationPermission,
   scheduleRoutineReminder,
@@ -22,6 +24,7 @@ const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Re
 
 export default function Settings() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   const [skinType, setSkinType] = useState('');
@@ -29,13 +32,17 @@ export default function Settings() {
   const [scanCount, setScanCount] = useState(0);
   const [notifsEnabled, setNotifsEnabled] = useState(false);
   const [notifHour, setNotifHour] = useState(8);
+  const [showPremiumGate, setShowPremiumGate] = useState(false);
+  const [scanInfo, setScanInfo] = useState<{ used: number; limit: number } | null>(null);
 
   useFocusEffect(useCallback(() => {
     (async () => {
       const p = await Storage.getUserProfile();
       const history = await Storage.getScanHistory();
       const notifSettings = await getNotificationSettings();
+      const user = await Auth.getCurrentUser();
       setProfile(p);
+      setAuthUser(user);
       setScanCount(history.length);
       setNotifsEnabled(notifSettings.enabled);
       setNotifHour(notifSettings.hour);
@@ -43,6 +50,10 @@ export default function Settings() {
         setName(p.name);
         setSkinType(p.skinType);
         setConcerns(p.primaryConcerns);
+      }
+      if (user) {
+        const info = await Auth.canScan();
+        setScanInfo({ used: info.used, limit: info.limit });
       }
     })();
   }, []));
@@ -78,6 +89,21 @@ export default function Settings() {
     );
   };
 
+  const handleLogout = async () => {
+    const doLogout = async () => {
+      await Auth.logout();
+      router.replace('/(auth)/login' as any);
+    };
+    if (Platform.OS === 'web') {
+      if (window.confirm('Sign out of GlowDermics?')) await doLogout();
+    } else {
+      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: doLogout },
+      ]);
+    }
+  };
+
   const toggleConcern = (c: string) => {
     if (concerns.includes(c)) setConcerns(concerns.filter(x => x !== c));
     else if (concerns.length < 3) setConcerns([...concerns, c]);
@@ -85,6 +111,14 @@ export default function Settings() {
 
   return (
     <View style={styles.root}>
+      <PremiumGate
+        visible={showPremiumGate}
+        onClose={async () => {
+          setShowPremiumGate(false);
+          const user = await Auth.getCurrentUser();
+          setAuthUser(user);
+        }}
+      />
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Settings</Text>
@@ -96,17 +130,60 @@ export default function Settings() {
         {/* Profile card */}
         <View style={styles.profileCard}>
           <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.avatar}>
-            <Text style={styles.avatarText}>{profile?.name?.[0]?.toUpperCase() || '?'}</Text>
+            <Text style={styles.avatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
           </LinearGradient>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{profile?.name || '—'}</Text>
-            <Text style={styles.profileSub}>{profile?.skinType ? profile.skinType.charAt(0).toUpperCase() + profile.skinType.slice(1) + ' Skin' : '—'}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text style={styles.profileName}>{authUser?.name || profile?.name || '—'}</Text>
+              {authUser?.isPremium && (
+                <View style={styles.premiumBadge}>
+                  <Ionicons name="star" size={10} color="#fff" />
+                  <Text style={styles.premiumBadgeText}>PRO</Text>
+                </View>
+              )}
+            </View>
+            <Text style={styles.profileSub}>{authUser?.email || (profile?.skinType ? profile.skinType.charAt(0).toUpperCase() + profile.skinType.slice(1) + ' Skin' : '—')}</Text>
           </View>
           <View style={styles.statBadge}>
             <Text style={styles.statNum}>{scanCount}</Text>
             <Text style={styles.statLabel}>Scans</Text>
           </View>
         </View>
+
+        {/* Premium card */}
+        {authUser && !authUser.isPremium ? (
+          <Pressable style={styles.premiumCard} onPress={() => setShowPremiumGate(true)}>
+            <LinearGradient
+              colors={['#F0C94A', '#D4A96A', '#C4622D']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            />
+            <View style={styles.premiumCardIcon}>
+              <Ionicons name="star" size={18} color="#fff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.premiumCardTitle}>Upgrade to Premium</Text>
+              <Text style={styles.premiumCardSub}>
+                {scanInfo ? `${scanInfo.used}/${scanInfo.limit} scans used · ` : ''}Unlimited scans, AI coach & more
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.85)" />
+          </Pressable>
+        ) : authUser?.isPremium ? (
+          <View style={styles.premiumActiveCard}>
+            <LinearGradient
+              colors={['rgba(22,163,74,0.1)', 'rgba(22,163,74,0.05)']}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={[styles.premiumCardIcon, { backgroundColor: '#16A34A' }]}>
+              <Ionicons name="checkmark" size={18} color="#fff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.premiumCardTitle, { color: '#16A34A' }]}>Premium Active</Text>
+              <Text style={styles.premiumCardSub}>Unlimited scans, full AI coach access</Text>
+            </View>
+          </View>
+        ) : null}
 
         {/* Edit Profile */}
         <View style={styles.section}>
@@ -364,6 +441,21 @@ export default function Settings() {
           </View>
         </View>
 
+        {/* Account */}
+        {authUser && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Account</Text>
+            <View style={styles.card}>
+              <Row label="Email" value={authUser.email} />
+              <Row label="Member since" value={new Date(authUser.createdAt).toLocaleDateString()} last />
+            </View>
+            <Pressable style={[styles.dangerBtn, { marginTop: 12 }]} onPress={handleLogout}>
+              <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
+              <Text style={styles.dangerText}>Sign Out</Text>
+            </Pressable>
+          </View>
+        )}
+
         {/* Danger zone */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: Colors.scorePoor }]}>Data</Text>
@@ -463,4 +555,26 @@ const styles = StyleSheet.create({
   dnaEmoji: { fontSize: 28 },
   dnaTitle: { fontSize: 17, fontWeight: '800', color: Colors.white },
   dnaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
+  premiumBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: Colors.primary, borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
+  premiumBadgeText: { fontSize: 9, fontWeight: '800', color: '#fff', letterSpacing: 0.5 },
+  premiumCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+  },
+  premiumActiveCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+    borderWidth: 1, borderColor: 'rgba(22,163,74,0.25)',
+  },
+  premiumCardIcon: {
+    width: 40, height: 40, borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  premiumCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff' },
+  premiumCardSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
 });

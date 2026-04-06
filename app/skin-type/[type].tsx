@@ -98,7 +98,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     return (
       <View style={styles.root}>
         <SafeAreaView>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
+          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -114,7 +114,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     return (
       <View style={styles.root}>
         <SafeAreaView>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
+          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -133,7 +133,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Type Guide</Text>

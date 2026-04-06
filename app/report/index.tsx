@@ -111,7 +111,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
     return (
       <View style={styles.root}>
         <SafeAreaView>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
+          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -128,7 +128,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
     return (
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
+          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -148,7 +148,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
     return (
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.back()}>
+          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -170,7 +170,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Trend Report</Text>

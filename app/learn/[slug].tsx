@@ -36,7 +36,7 @@ export default function ArticleDetail() {
     return (
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
-          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -74,7 +74,7 @@ export default function ArticleDetail() {
             start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
           />
           <SafeAreaView edges={['top']}>
-            <Pressable style={styles.backBtnHero} onPress={() => router.back()}>
+            <Pressable style={styles.backBtnHero} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
             </Pressable>
           </SafeAreaView>

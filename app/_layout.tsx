@@ -13,7 +13,7 @@ export default function RootLayout() {
           <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="scan/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="results/[id]" options={{ animation: 'slide_from_right' }} />

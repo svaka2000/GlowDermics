@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-nati
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Storage } from '../src/services/storage';
+import { Auth } from '../src/services/auth';
 
 const { width, height } = Dimensions.get('window');
 const PRIMARY = '#C4622D';
@@ -110,10 +111,20 @@ export default function Index() {
       Animated.timing(barProgress, { toValue: 1, duration: 1300, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
     ]).start();
 
-    // Navigate
+    // Navigate — check auth first, then onboarding state
     const timer = setTimeout(async () => {
-      const onboarded = await Storage.isOnboarded();
-      router.replace(onboarded ? '/(tabs)' : '/(auth)/onboarding');
+      const [isLoggedIn, onboarded] = await Promise.all([
+        Auth.isLoggedIn(),
+        Storage.isOnboarded(),
+      ]);
+
+      if (!isLoggedIn) {
+        router.replace('/(auth)/login' as any);
+      } else if (!onboarded) {
+        router.replace('/(auth)/onboarding');
+      } else {
+        router.replace('/(tabs)');
+      }
     }, 2600);
 
     return () => clearTimeout(timer);

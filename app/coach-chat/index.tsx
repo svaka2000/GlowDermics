@@ -10,6 +10,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Groq from 'groq-sdk';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth } from '../../src/services/auth';
+import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const FREE_MSG_LIMIT = 10;
+const todayKey = () => `gd_coach_msgs_${new Date().toISOString().slice(0, 10)}`;
 
 const groq = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
@@ -50,11 +56,19 @@ export default function CoachChat() {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<{ skinType?: string; concerns?: string[] } | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [msgsUsed, setMsgsUsed] = useState(0);
+  const [showGate, setShowGate] = useState(false);
 
   useFocusEffect(useCallback(() => {
     (async () => {
       const p = await Storage.getUserProfile();
       if (p) setProfile({ skinType: p.skinType, concerns: p.primaryConcerns });
+
+      const user = await Auth.getCurrentUser();
+      setIsPremium(user?.isPremium ?? false);
+      const stored = await AsyncStorage.getItem(todayKey());
+      setMsgsUsed(stored ? parseInt(stored, 10) : 0);
 
       if (messages.length === 0) {
         const greeting = p
@@ -68,6 +82,12 @@ export default function CoachChat() {
   const sendMessage = async (text?: string) => {
     const userText = (text ?? input).trim();
     if (!userText || loading) return;
+
+    // Check daily limit for free users
+    if (!isPremium && msgsUsed >= FREE_MSG_LIMIT) {
+      setShowGate(true);
+      return;
+    }
 
     setInput('');
     const userMsg: Message = { role: 'user', content: userText };
@@ -94,6 +114,12 @@ export default function CoachChat() {
 
       const reply = response.choices[0]?.message?.content ?? 'I had trouble responding. Please try again.';
       setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+      // Track message count for free users
+      if (!isPremium) {
+        const newCount = msgsUsed + 1;
+        setMsgsUsed(newCount);
+        await AsyncStorage.setItem(todayKey(), String(newCount));
+      }
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Something went wrong. Please check your connection and try again.' }]);
     } finally {
@@ -111,9 +137,19 @@ export default function CoachChat() {
 
   return (
     <View style={styles.root}>
+      <PremiumGate
+        visible={showGate}
+        onClose={async () => {
+          setShowGate(false);
+          const user = await Auth.getCurrentUser();
+          setIsPremium(user?.isPremium ?? false);
+        }}
+        feature="AI coach messages"
+        reason={`You've used ${msgsUsed}/${FREE_MSG_LIMIT} free messages today`}
+      />
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <View style={styles.headerCenter}>
@@ -204,6 +240,16 @@ export default function CoachChat() {
 
           <View style={{ height: 20 }} />
         </ScrollView>
+
+        {/* Usage indicator for free users */}
+        {!isPremium && msgsUsed >= FREE_MSG_LIMIT - 3 && msgsUsed < FREE_MSG_LIMIT && (
+          <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
+            <PremiumBanner
+              message={`${msgsUsed}/${FREE_MSG_LIMIT} free messages used today`}
+              onUpgrade={() => setShowGate(true)}
+            />
+          </View>
+        )}
 
         {/* Input */}
         <View style={styles.inputWrap}>
