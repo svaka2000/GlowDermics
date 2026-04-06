@@ -172,6 +172,19 @@ export default function Home() {
           </Pressable>
         </View>
 
+        {/* Daily Check-In CTA */}
+        {!journalToday && (
+          <Pressable style={styles.checkInCta} onPress={() => router.push('/checkin')}>
+            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <Text style={styles.checkInEmoji}>✦</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.checkInTitle}>Daily Check-In</Text>
+              <Text style={styles.checkInSub}>Log routine · water · habits · mood</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+          </Pressable>
+        )}
+
         {/* Smart Today Focus */}
         {(() => {
           const hour = new Date().getHours();
@@ -539,6 +552,14 @@ const styles = StyleSheet.create({
   emptyQuizText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
   brandTagline: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', fontStyle: 'italic' },
+
+  checkInCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderRadius: 16, overflow: 'hidden', padding: 14, marginBottom: 10,
+  },
+  checkInEmoji: { fontSize: 20, color: Colors.white },
+  checkInTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  checkInSub: { fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
 
   focusCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
