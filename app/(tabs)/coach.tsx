@@ -4,7 +4,7 @@ import {
   KeyboardAvoidingView, Platform, ActivityIndicator, Alert,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -66,6 +66,7 @@ async function saveChatHistory(messages: ChatMessage[]): Promise<void> {
 const SHELF_KEY = 'gd_product_shelf';
 
 export default function Coach() {
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -242,7 +243,7 @@ export default function Coach() {
 
       <KeyboardAvoidingView
         style={styles.kav}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={0}
       >
         <ScrollView
@@ -358,7 +359,7 @@ export default function Coach() {
         )}
 
         {/* Input bar */}
-        <View style={styles.inputBar}>
+        <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 12) + 8 }]}>
           <TextInput
             style={styles.input}
             placeholder="Ask Derm anything…"
@@ -457,10 +458,9 @@ const styles = StyleSheet.create({
   msgCountText: { fontSize: 10, color: Colors.textMuted },
   inputBar: {
     flexDirection: 'row', alignItems: 'flex-end', gap: 10,
-    paddingHorizontal: 16, paddingVertical: 12,
+    paddingHorizontal: 16, paddingTop: 12,
     borderTopWidth: 1, borderTopColor: Colors.border,
     backgroundColor: Colors.bgSheet,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
   },
   input: {
     flex: 1, backgroundColor: Colors.bgCard, borderWidth: 1,
