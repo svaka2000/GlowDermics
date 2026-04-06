@@ -274,7 +274,8 @@ export default function Settings() {
             <LinkRow icon="cube-outline" label="My Product Shelf" onPress={() => router.push('/products')} />
             <LinkRow icon="trophy-outline" label="Milestones" onPress={() => router.push('/milestones')} />
             <LinkRow icon="calendar-outline" label="Skin Calendar" onPress={() => router.push('/calendar')} />
-            <LinkRow icon="newspaper-outline" label="Weekly Digest" onPress={() => router.push('/weekly-digest')} last />
+            <LinkRow icon="newspaper-outline" label="Weekly Digest" onPress={() => router.push('/weekly-digest')} />
+            <LinkRow icon="flash-outline" label="30-Day Challenges" onPress={() => router.push('/challenge')} last />
           </View>
         </View>
 
