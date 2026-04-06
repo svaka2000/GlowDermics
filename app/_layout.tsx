@@ -61,6 +61,9 @@ export default function RootLayout() {
           <Stack.Screen name="hydration/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="coach-chat/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="hormonal-log/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="uv-log/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="patch-test/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="gua-sha/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
