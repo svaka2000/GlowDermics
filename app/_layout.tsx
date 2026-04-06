@@ -40,6 +40,8 @@ export default function RootLayout() {
           <Stack.Screen name="sensitivity/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="checkin/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="calendar/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-dna/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="diet/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

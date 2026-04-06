@@ -236,6 +236,17 @@ export default function Settings() {
           </View>
         </View>
 
+        {/* Skin DNA featured card */}
+        <Pressable style={styles.dnaCard} onPress={() => router.push('/skin-dna')}>
+          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <Text style={styles.dnaEmoji}>🧬</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.dnaTitle}>My Skin DNA</Text>
+            <Text style={styles.dnaSub}>Your AI-generated skin identity profile</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+        </Pressable>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Analysis Tools</Text>
           <View style={styles.card}>
@@ -269,7 +280,8 @@ export default function Settings() {
             <LinkRow icon="search-outline" label="Ingredient Decoder" onPress={() => router.push('/ingredient')} />
             <LinkRow icon="person-circle-outline" label="Skin Type Guides" onPress={() => router.push('/skin-type')} />
             <LinkRow icon="help-circle-outline" label="Skin Type Quiz" onPress={() => router.push('/quiz')} />
-            <LinkRow icon="sunny-outline" label="Seasonal Skin Guide" onPress={() => router.push('/seasonal')} last />
+            <LinkRow icon="sunny-outline" label="Seasonal Skin Guide" onPress={() => router.push('/seasonal')} />
+            <LinkRow icon="restaurant-outline" label="Diet for Skin" onPress={() => router.push('/diet')} last />
           </View>
         </View>
 
@@ -365,4 +377,11 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', padding: 16,
   },
   dangerText: { fontSize: 15, fontWeight: '600', color: Colors.scorePoor },
+  dnaCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+  },
+  dnaEmoji: { fontSize: 28 },
+  dnaTitle: { fontSize: 17, fontWeight: '800', color: Colors.white },
+  dnaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
 });
