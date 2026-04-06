@@ -106,6 +106,9 @@ export default function RootLayout() {
           <Stack.Screen name="niacinamide/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="exfoliation/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="peptides/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="hyaluronic-acid/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="dehydrated-skin/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="cleansing-guide/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
