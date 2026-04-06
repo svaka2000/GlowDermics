@@ -245,7 +245,8 @@ export default function Settings() {
             <LinkRow icon="analytics-outline" label="AI Trend Report" onPress={() => router.push('/report')} />
             <LinkRow icon="bar-chart-outline" label="Compare Scans" onPress={() => router.push('/compare')} />
             <LinkRow icon="sparkles-outline" label="90-Day Skin Forecast" onPress={() => router.push('/forecast')} />
-            <LinkRow icon="git-network-outline" label="Ingredient Conflict Checker" onPress={() => router.push('/ingredient-check')} last />
+            <LinkRow icon="git-network-outline" label="Ingredient Conflict Checker" onPress={() => router.push('/ingredient-check')} />
+            <LinkRow icon="shield-checkmark-outline" label="Sensitivity Test" onPress={() => router.push('/sensitivity')} last />
           </View>
         </View>
 

@@ -37,6 +37,7 @@ export default function RootLayout() {
           <Stack.Screen name="forecast/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="ingredient-check/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="seasonal/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="sensitivity/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
