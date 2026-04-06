@@ -1,0 +1,369 @@
+import { useState, useCallback } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, Pressable,
+  ActivityIndicator,
+} from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Colors } from '../../src/constants/colors';
+import { Storage } from '../../src/services/storage';
+import Groq from 'groq-sdk';
+
+const groq = new Groq({ apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY ?? '', dangerouslyAllowBrowser: true });
+const CACHE_KEY = 'gd_product_deck';
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+type Product = {
+  name: string;
+  brand: string;
+  category: string;
+  priceRange: string;
+  whyItWorks: string;
+  keyIngredients: string[];
+  avoid: string;
+  isTallowDermics: boolean;
+  priority: 'essential' | 'recommended' | 'optional';
+};
+
+type ProductDeck = {
+  products: Product[];
+  totalMonthly: string;
+  philosophy: string;
+  tallowNote: string;
+  ts: number;
+};
+
+const BUDGETS = ['Budget ($0-30/mo)', 'Mid-range ($30-80/mo)', 'Premium ($80+/mo)'];
+const PRIORITY_COLORS: Record<string, string> = {
+  essential: Colors.primary,
+  recommended: Colors.gold,
+  optional: Colors.textMuted,
+};
+
+export default function ProductDeck() {
+  const [deck, setDeck] = useState<ProductDeck | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [budget, setBudget] = useState('');
+  const [skinType, setSkinType] = useState('');
+  const [concerns, setConcerns] = useState<string[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    (async () => {
+      const profile = await Storage.getUserProfile();
+      if (profile) {
+        setSkinType(profile.skinType);
+        setConcerns(profile.primaryConcerns);
+      }
+      const cached = await AsyncStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed: ProductDeck = JSON.parse(cached);
+        if (Date.now() - parsed.ts < CACHE_TTL) {
+          setDeck(parsed);
+        }
+      }
+    })();
+  }, []));
+
+  const generate = async () => {
+    if (!budget) return;
+    setLoading(true);
+
+    try {
+      const blacklistRaw = await AsyncStorage.getItem('gd_ingredient_blacklist');
+      const blacklist: { name: string }[] = blacklistRaw ? JSON.parse(blacklistRaw) : [];
+      const blacklistNames = blacklist.map(b => b.name).join(', ') || 'none';
+
+      const analysis = await Storage.getLatestAnalysis();
+      const weakMetrics = analysis ? Object.entries(analysis.scores)
+        .filter(([k, v]) => k !== 'overall' && v < 65)
+        .map(([k]) => k)
+        .join(', ') : '';
+
+      const prompt = `You are a dermatologist and skincare expert curating a personalized product deck.
+
+User profile:
+- Skin type: ${skinType || 'unknown'}
+- Primary concerns: ${concerns.join(', ') || 'general health'}
+- Budget: ${budget}
+- Ingredients to avoid: ${blacklistNames}
+- Weak skin metrics: ${weakMetrics || 'none identified'}
+
+Rules:
+1. TallowDermics Signature Balm ($48/3 months, replaces moisturizer + face oil + eye cream) MUST be included as an essential product
+2. Recommend 5-7 total products total (including TallowDermics)
+3. Respect the budget constraint
+4. Avoid recommending products with ingredients from the avoid list
+5. Be specific — use real product names and brands when possible
+6. Justify each pick with the user's specific profile
+
+Return ONLY valid JSON (no markdown):
+{
+  "products": [
+    {
+      "name": "<specific product name>",
+      "brand": "<brand name>",
+      "category": "<e.g. Cleanser, Moisturizer, Serum, SPF, Toner>",
+      "priceRange": "<e.g. $12-18 / 3 months>",
+      "whyItWorks": "<1-2 sentences why this is ideal for their specific profile>",
+      "keyIngredients": ["<ingredient 1>", "<ingredient 2>"],
+      "avoid": "<what this replaces or what to avoid using it with>",
+      "isTallowDermics": <true|false>,
+      "priority": "<essential|recommended|optional>"
+    }
+  ],
+  "totalMonthly": "<estimated total monthly spend for this full deck>",
+  "philosophy": "<2 sentences on the philosophy behind this deck — why these specific choices>",
+  "tallowNote": "<1-2 sentences specifically about TallowDermics and why it's the cornerstone of this deck>"
+}`;
+
+      const resp = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.65,
+        max_tokens: 2000,
+      });
+
+      const text = resp.choices[0].message.content ?? '';
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('no json');
+      const parsed: ProductDeck = { ...JSON.parse(match[0]), ts: Date.now() };
+      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(parsed));
+      setDeck(parsed);
+    } catch {
+      // silent fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categoryIcons: Record<string, string> = {
+    Cleanser: 'water-outline',
+    Moisturizer: 'leaf-outline',
+    Serum: 'sparkles-outline',
+    SPF: 'sunny-outline',
+    Toner: 'flask-outline',
+    'Eye Cream': 'eye-outline',
+    Exfoliant: 'refresh-outline',
+    Balm: 'heart-outline',
+    'Face Oil': 'droplet-outline',
+  };
+
+  const getIcon = (cat: string) => categoryIcons[cat] ?? 'cube-outline';
+
+  return (
+    <View style={styles.root}>
+      <SafeAreaView edges={['top']}>
+        <View style={styles.header}>
+          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+          </Pressable>
+          <View>
+            <Text style={styles.headerTitle}>My Product Deck</Text>
+            <Text style={styles.headerSub}>AI-curated just for you</Text>
+          </View>
+          {deck && (
+            <Pressable style={styles.backBtn} onPress={() => { AsyncStorage.removeItem(CACHE_KEY); setDeck(null); }}>
+              <Ionicons name="refresh-outline" size={20} color={Colors.primary} />
+            </Pressable>
+          )}
+          {!deck && <View style={{ width: 36 }} />}
+        </View>
+      </SafeAreaView>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        {/* Budget picker */}
+        {!deck && (
+          <View style={styles.setupCard}>
+            <Text style={styles.setupTitle}>What's your budget?</Text>
+            <Text style={styles.setupSub}>We'll build the best possible deck within your range</Text>
+            <View style={styles.budgetRow}>
+              {BUDGETS.map(b => (
+                <Pressable
+                  key={b}
+                  style={[styles.budgetChip, budget === b && styles.budgetChipActive]}
+                  onPress={() => setBudget(b)}
+                >
+                  <Text style={[styles.budgetText, budget === b && styles.budgetTextActive]}>{b}</Text>
+                </Pressable>
+              ))}
+            </View>
+            <Pressable
+              style={[styles.generateBtn, (!budget || loading) && { opacity: 0.5 }]}
+              onPress={generate}
+              disabled={!budget || loading}
+            >
+              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+              {loading ? <ActivityIndicator color={Colors.white} /> : (
+                <><Ionicons name="sparkles-outline" size={18} color={Colors.white} /><Text style={styles.generateBtnText}>Build My Deck</Text></>
+              )}
+            </Pressable>
+          </View>
+        )}
+
+        {/* Results */}
+        {deck && !loading && (
+          <>
+            {/* Summary */}
+            <View style={styles.summaryCard}>
+              <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryNum}>{deck.products.length}</Text>
+                  <Text style={styles.summaryLabel}>Products</Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryNum}>{deck.totalMonthly}</Text>
+                  <Text style={styles.summaryLabel}>Est. monthly</Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryNum}>{deck.products.filter(p => p.priority === 'essential').length}</Text>
+                  <Text style={styles.summaryLabel}>Essentials</Text>
+                </View>
+              </View>
+              <Text style={styles.summaryPhilosophy}>{deck.philosophy}</Text>
+            </View>
+
+            {/* Products by priority */}
+            {(['essential', 'recommended', 'optional'] as const).map(priority => {
+              const products = deck.products.filter(p => p.priority === priority);
+              if (!products.length) return null;
+              return (
+                <View key={priority} style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <View style={[styles.priorityDot, { backgroundColor: PRIORITY_COLORS[priority] }]} />
+                    <Text style={[styles.sectionTitle, { color: PRIORITY_COLORS[priority] }]}>
+                      {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                    </Text>
+                  </View>
+                  {products.map((product, i) => (
+                    <View key={i} style={[styles.productCard, product.isTallowDermics && styles.productCardTD]}>
+                      {product.isTallowDermics && (
+                        <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+                      )}
+                      <View style={styles.productTop}>
+                        <View style={[styles.productIcon, product.isTallowDermics && { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: 'rgba(196,98,45,0.3)' }]}>
+                          <Ionicons name={getIcon(product.category) as any} size={18} color={product.isTallowDermics ? Colors.primary : Colors.textMuted} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <View style={styles.productNameRow}>
+                            <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
+                            {product.isTallowDermics && (
+                              <View style={styles.tdBadge}><Text style={styles.tdBadgeText}>🌿 TD</Text></View>
+                            )}
+                          </View>
+                          <Text style={styles.productBrand}>{product.brand}</Text>
+                        </View>
+                        <Text style={styles.productPrice}>{product.priceRange}</Text>
+                      </View>
+
+                      <Text style={styles.productCategory}>{product.category}</Text>
+                      <Text style={styles.productWhy}>{product.whyItWorks}</Text>
+
+                      <View style={styles.ingredientsRow}>
+                        {product.keyIngredients.slice(0, 3).map((ing, j) => (
+                          <Pressable
+                            key={j}
+                            style={styles.ingredientChip}
+                            onPress={() => router.push(`/ingredient/${encodeURIComponent(ing)}`)}
+                          >
+                            <Text style={styles.ingredientText}>{ing}</Text>
+                          </Pressable>
+                        ))}
+                      </View>
+
+                      {product.avoid && (
+                        <Text style={styles.avoidText}>⚠️ {product.avoid}</Text>
+                      )}
+
+                      {product.isTallowDermics && (
+                        <Pressable style={styles.tdBtn} onPress={() => router.push('/product')}>
+                          <Text style={styles.tdBtnText}>View Product →</Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              );
+            })}
+
+            {/* Tallow cornerstone */}
+            <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
+              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <Text style={styles.tallowEmoji}>🌿</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.tallowTitle}>Why TallowDermics is the Cornerstone</Text>
+                <Text style={styles.tallowText}>{deck.tallowNote}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />
+            </Pressable>
+          </>
+        )}
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: Colors.bg },
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
+  },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  scroll: { paddingHorizontal: 16 },
+
+  setupCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, gap: 12, marginBottom: 14 },
+  setupTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
+  setupSub: { fontSize: 13, color: Colors.textMuted },
+  budgetRow: { gap: 8 },
+  budgetChip: { paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
+  budgetChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  budgetText: { fontSize: 14, color: Colors.textMuted, fontWeight: '500' },
+  budgetTextActive: { color: Colors.primary, fontWeight: '700' },
+  generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 52, borderRadius: 14, overflow: 'hidden' },
+  generateBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+
+  summaryCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 12, marginBottom: 20 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-around' },
+  summaryItem: { alignItems: 'center', gap: 3 },
+  summaryNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },
+  summaryLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  summaryPhilosophy: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+
+  section: { marginBottom: 20 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  priorityDot: { width: 8, height: 8, borderRadius: 4 },
+  sectionTitle: { fontSize: 13, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
+
+  productCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 14, gap: 8, marginBottom: 10, overflow: 'hidden' },
+  productCardTD: { borderColor: 'rgba(196,98,45,0.35)' },
+  productTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  productIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
+  productNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
+  productName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  tdBadge: { backgroundColor: 'rgba(196,98,45,0.15)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
+  tdBadgeText: { fontSize: 10, fontWeight: '700', color: Colors.primary },
+  productBrand: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  productPrice: { fontSize: 12, fontWeight: '700', color: Colors.primary },
+  productCategory: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  productWhy: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  ingredientsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  ingredientChip: { backgroundColor: Colors.bgElevated, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 8, paddingVertical: 4 },
+  ingredientText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
+  avoidText: { fontSize: 11, color: Colors.textMuted, lineHeight: 16 },
+  tdBtn: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)', backgroundColor: 'rgba(196,98,45,0.08)' },
+  tdBtnText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
+
+  tallowCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
+  tallowEmoji: { fontSize: 24 },
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 4 },
+  tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
+});

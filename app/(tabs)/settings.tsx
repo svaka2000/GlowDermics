@@ -262,7 +262,8 @@ export default function Settings() {
             <LinkRow icon="calculator-outline" label="Budget Calculator" onPress={() => router.push('/budget')} />
             <LinkRow icon="body-outline" label="Skin Age Estimator" onPress={() => router.push('/skin-age')} />
             <LinkRow icon="construct-outline" label="Routine Builder" onPress={() => router.push('/routine-builder')} />
-            <LinkRow icon="ban-outline" label="Ingredient Blacklist" onPress={() => router.push('/blacklist')} last />
+            <LinkRow icon="ban-outline" label="Ingredient Blacklist" onPress={() => router.push('/blacklist')} />
+            <LinkRow icon="layers-outline" label="My Product Deck" onPress={() => router.push('/product-deck')} last />
           </View>
         </View>
 
