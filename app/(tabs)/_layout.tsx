@@ -69,12 +69,15 @@ const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: 'rgba(28,24,20,0.07)',
     height: Platform.OS === 'ios' ? 88 : 68,
     paddingBottom: Platform.OS === 'ios' ? 28 : 10,
     paddingTop: 10,
     elevation: 0,
-    shadowOpacity: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
     backgroundColor: 'transparent',
   },
   tabBarBg: {
@@ -82,6 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bgSheet,
   },
   iconWrap: { width: 38, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 14 },
-  iconWrapActive: { backgroundColor: 'rgba(196,98,45,0.12)' },
+  iconWrapActive: { backgroundColor: 'rgba(196,98,45,0.10)' },
   label: { fontSize: 10, fontWeight: '600', marginTop: 2 },
 });

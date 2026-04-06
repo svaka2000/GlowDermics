@@ -440,11 +440,11 @@ export default function Home() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hydration Tracker</Text>
           <View style={styles.waterCard}>
-            <LinearGradient colors={['rgba(96,165,250,0.10)', 'rgba(96,165,250,0.03)']} style={StyleSheet.absoluteFill} />
             <View style={styles.waterTop}>
-              <View>
-                <Text style={styles.waterCount}>{waterGlasses}<Text style={styles.waterGoal}> / {WATER_GOAL}</Text></Text>
-                <Text style={styles.waterLabel}>glasses today</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
+                <Ionicons name="water" size={20} color="#4A90D9" />
+                <Text style={styles.waterCount}>{waterGlasses}</Text>
+                <Text style={styles.waterGoal}>/ {WATER_GOAL} glasses</Text>
               </View>
               <View style={styles.waterControls}>
                 <Pressable style={styles.waterBtn} onPress={() => adjustWater(-1)}>
@@ -455,25 +455,44 @@ export default function Home() {
                 </Pressable>
               </View>
             </View>
-            <View style={styles.waterTrack}>
+
+            {/* Fill bar */}
+            <View style={styles.waterBarTrack}>
+              <LinearGradient
+                colors={['#60A5FA', '#3B82F6', '#2563EB']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                style={[styles.waterBarFill, { width: `${Math.min(100, (waterGlasses / WATER_GOAL) * 100)}%` as any }]}
+              />
+              {waterGlasses >= WATER_GOAL && (
+                <View style={styles.waterBarShine} />
+              )}
+            </View>
+
+            {/* Glass markers */}
+            <View style={styles.waterMarkers}>
               {Array.from({ length: WATER_GOAL }).map((_, i) => (
-                <Pressable key={i} onPress={() => adjustWater(i + 1 - waterGlasses)} style={[styles.waterDrop, i < waterGlasses && styles.waterDropFull]}>
-                  <Text style={styles.waterDropIcon}>{i < waterGlasses ? '💧' : '○'}</Text>
+                <Pressable key={i} onPress={() => adjustWater(i + 1 - waterGlasses)} style={styles.waterMarkerBtn}>
+                  <View style={[styles.waterMarkerTick, i < waterGlasses && styles.waterMarkerTickFilled]} />
+                  {(i === 0 || i === Math.floor(WATER_GOAL / 2) - 1 || i === WATER_GOAL - 1) && (
+                    <Text style={styles.waterMarkerLabel}>{i + 1}</Text>
+                  )}
                 </Pressable>
               ))}
             </View>
-            {waterGlasses >= WATER_GOAL && (
-              <View style={styles.waterDone}>
-                <Ionicons name="checkmark-circle" size={14} color="#60A5FA" />
-                <Text style={styles.waterDoneText}>Daily goal reached! Great for your skin.</Text>
-              </View>
-            )}
-            {waterGlasses < WATER_GOAL && waterGlasses > 0 && (
-              <Text style={styles.waterProgress}>{WATER_GOAL - waterGlasses} more glasses to hit your goal</Text>
-            )}
-            {waterGlasses === 0 && (
-              <Text style={styles.waterProgress}>Tap + to log your first glass</Text>
-            )}
+
+            <View style={styles.waterFooter}>
+              {waterGlasses >= WATER_GOAL ? (
+                <View style={styles.waterDone}>
+                  <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
+                  <Text style={styles.waterDoneText}>Daily goal reached — great for your skin!</Text>
+                </View>
+              ) : waterGlasses > 0 ? (
+                <Text style={styles.waterProgress}>{WATER_GOAL - waterGlasses} more to reach your goal</Text>
+              ) : (
+                <Text style={styles.waterProgress}>Tap + to log your first glass today</Text>
+              )}
+              <Text style={styles.waterPct}>{Math.round((waterGlasses / WATER_GOAL) * 100)}%</Text>
+            </View>
           </View>
         </View>
 
@@ -533,8 +552,9 @@ const styles = StyleSheet.create({
 
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 18 },
   statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14,
+    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 16,
     borderWidth: 1, borderColor: Colors.border, padding: 14, alignItems: 'center', gap: 4,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 1,
   },
   statNum: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
   statLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
@@ -561,6 +581,7 @@ const styles = StyleSheet.create({
   analysisCard: {
     backgroundColor: Colors.bgCard, borderRadius: 18,
     borderWidth: 1, borderColor: Colors.border, padding: 16,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   analysisTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 },
   analysisThumb: { width: 66, height: 66, borderRadius: 12, backgroundColor: Colors.bgElevated },
@@ -584,6 +605,7 @@ const styles = StyleSheet.create({
     width: '31%', backgroundColor: Colors.bgCard, borderRadius: 16,
     borderWidth: 1, borderColor: Colors.border, padding: 14,
     alignItems: 'center', gap: 8, overflow: 'hidden',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1,
   },
   quickLabel: { fontSize: 11, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center', lineHeight: 15 },
 
@@ -632,27 +654,43 @@ const styles = StyleSheet.create({
   focusSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
 
   waterCard: {
-    borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(96,165,250,0.2)', padding: 18,
+    borderRadius: 18,
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: Colors.border,
+    padding: 18,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   waterTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  waterCount: { fontSize: 34, fontWeight: '800', color: Colors.textPrimary },
-  waterGoal: { fontSize: 18, fontWeight: '500', color: Colors.textMuted },
+  waterCount: { fontSize: 30, fontWeight: '800', color: '#2563EB' },
+  waterGoal: { fontSize: 14, fontWeight: '500', color: Colors.textMuted, paddingBottom: 3 },
   waterLabel: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
   waterControls: { flexDirection: 'row', gap: 10 },
   waterBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  waterBtnAdd: { backgroundColor: '#60A5FA', borderColor: '#60A5FA' },
-  waterTrack: { flexDirection: 'row', gap: 6, marginBottom: 10 },
-  waterDrop: { flex: 1, alignItems: 'center' },
-  waterDropFull: {},
-  waterDropIcon: { fontSize: 18 },
+  waterBtnAdd: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  waterBarTrack: {
+    height: 14, borderRadius: 7,
+    backgroundColor: '#EAF0FA',
+    overflow: 'hidden', marginBottom: 6,
+  },
+  waterBarFill: { height: 14, borderRadius: 7, minWidth: 8 },
+  waterBarShine: {
+    position: 'absolute', top: 2, left: 8, right: 8, height: 4,
+    borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.45)',
+  },
+  waterMarkers: { flexDirection: 'row', marginBottom: 10 },
+  waterMarkerBtn: { flex: 1, alignItems: 'center', gap: 3 },
+  waterMarkerTick: { width: 2, height: 6, borderRadius: 1, backgroundColor: '#D4DCF0' },
+  waterMarkerTickFilled: { backgroundColor: '#3B82F6' },
+  waterMarkerLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600' },
+  waterFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   waterDone: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  waterDoneText: { fontSize: 12, color: '#60A5FA', fontWeight: '600' },
+  waterDoneText: { fontSize: 12, color: '#3B82F6', fontWeight: '600' },
   waterProgress: { fontSize: 12, color: Colors.textMuted },
+  waterPct: { fontSize: 13, fontWeight: '800', color: '#3B82F6' },
 
   challengeWidget: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.25)', padding: 14, marginBottom: 10 },
   challengeEmoji: { fontSize: 24 },

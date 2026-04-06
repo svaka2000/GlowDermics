@@ -1,38 +1,38 @@
 export const Colors = {
   // Primary brand
   primary: '#C4622D',       // TallowDermics burnt orange
-  primaryLight: '#E8834A',
-  primaryDark: '#9E4D22',
+  primaryLight: '#E08250',
+  primaryDark: '#A04D24',
 
-  // Backgrounds
-  bg: '#0A0A0F',            // near-black base
-  bgCard: '#131318',
-  bgElevated: '#1C1C24',
-  bgSheet: '#18181F',
+  // Backgrounds — marble white
+  bg: '#F5F0EA',            // warm marble base
+  bgCard: '#FFFFFF',        // pure white cards
+  bgElevated: '#EDE9E2',   // slightly deeper for elevated areas
+  bgSheet: '#FAFAF7',       // tab bar / bottom sheet
 
-  // Text
-  textPrimary: '#FAF3E0',   // warm cream (TD brand)
-  textSecondary: 'rgba(250,243,224,0.6)',
-  textMuted: 'rgba(250,243,224,0.35)',
+  // Text — dark warm
+  textPrimary: '#1C1814',
+  textSecondary: 'rgba(28,24,20,0.55)',
+  textMuted: 'rgba(28,24,20,0.32)',
 
   // Accent gold
-  gold: '#D4A96A',
-  goldLight: '#F0C98A',
+  gold: '#B8882E',
+  goldLight: '#D4A84A',
 
   // Skin score colors
-  scoreExcellent: '#4ADE80',
-  scoreGood: '#86EFAC',
-  scoreFair: '#FCD34D',
-  scorePoor: '#F87171',
+  scoreExcellent: '#16A34A',
+  scoreGood: '#22C55E',
+  scoreFair: '#D97706',
+  scorePoor: '#DC2626',
 
   // Borders
-  border: 'rgba(250,243,224,0.08)',
-  borderStrong: 'rgba(196,98,45,0.3)',
+  border: 'rgba(28,24,20,0.07)',
+  borderStrong: 'rgba(196,98,45,0.25)',
 
   // Glass
-  glass: 'rgba(28,28,36,0.85)',
+  glass: 'rgba(255,255,255,0.9)',
 
-  // White
+  // White / black
   white: '#FFFFFF',
   black: '#000000',
 };
