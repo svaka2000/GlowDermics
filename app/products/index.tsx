@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, KeyboardAvoidingView, Platform,
+  TextInput, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -54,8 +54,19 @@ export default function ProductShelf() {
   const [notes, setNotes] = useState('');
   const [filterCat, setFilterCat] = useState('All');
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
-    getShelf().then(setShelf);
+    getShelf().then(data => {
+      setShelf(data);
+      headerAnim.setValue(0);
+      contentAnim.setValue(0);
+      Animated.stagger(100, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    });
     resetForm();
   }, []));
 
@@ -103,22 +114,32 @@ export default function ProductShelf() {
 
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-          </Pressable>
-          <View>
-            <Text style={styles.headerTitle}>My Shelf</Text>
-            <Text style={styles.headerSub}>{shelf.length} product{shelf.length !== 1 ? 's' : ''} saved</Text>
+      <Animated.View style={{
+        opacity: headerAnim,
+        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
+      }}>
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            </Pressable>
+            <View>
+              <Text style={styles.headerTitle}>My Shelf</Text>
+              <Text style={styles.headerSub}>{shelf.length} product{shelf.length !== 1 ? 's' : ''} saved</Text>
+            </View>
+            <Pressable style={styles.addBtn} onPress={() => setAdding(!adding)}>
+              <Ionicons name={adding ? 'close' : 'add'} size={22} color={Colors.white} />
+            </Pressable>
           </View>
-          <Pressable style={styles.addBtn} onPress={() => setAdding(!adding)}>
-            <Ionicons name={adding ? 'close' : 'add'} size={22} color={Colors.white} />
-          </Pressable>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </Animated.View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        style={{ opacity: contentAnim }}
+      >
 
         {/* Add form */}
         {adding && (
@@ -275,7 +296,7 @@ export default function ProductShelf() {
         )}
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </KeyboardAvoidingView>
   );
 }
