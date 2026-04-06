@@ -44,7 +44,7 @@ const HARD_WATER_SCIENCE = [
   },
   {
     title: 'pH incompatibility',
-    content: 'Tap water is typically pH 7–8 (alkaline). Your skin's acid mantle sits at pH 4.5–5.5. Repeated alkaline water contact raises skin pH, disrupting barrier enzyme function and creating conditions favorable for bacterial overgrowth.',
+    content: "Tap water is typically pH 7–8 (alkaline). Your skin's acid mantle sits at pH 4.5–5.5. Repeated alkaline water contact raises skin pH, disrupting barrier enzyme function and creating conditions favorable for bacterial overgrowth.",
   },
   {
     title: 'Who is most affected?',
