@@ -321,7 +321,10 @@ export default function Settings() {
             <LinkRow icon="leaf-outline" label="Minimal Routine Builder" onPress={() => router.push('/minimal-routine')} />
             <LinkRow icon="water-outline" label="Skin Detox Protocols" onPress={() => router.push('/skin-detox')} />
             <LinkRow icon="radio-button-off-outline" label="Pore Guide" onPress={() => router.push('/pore-guide')} />
-            <LinkRow icon="water-outline" label="Water Quality & Skin" onPress={() => router.push('/water-quality')} last />
+            <LinkRow icon="water-outline" label="Water Quality & Skin" onPress={() => router.push('/water-quality')} />
+            <LinkRow icon="map-outline" label="Face Mapping" onPress={() => router.push('/face-mapping')} />
+            <LinkRow icon="bug-outline" label="Skin Microbiome Guide" onPress={() => router.push('/microbiome')} />
+            <LinkRow icon="repeat-outline" label="Skin Cycling Tracker" onPress={() => router.push('/skin-cycling')} last />
           </View>
         </View>
 

@@ -82,6 +82,9 @@ export default function RootLayout() {
           <Stack.Screen name="skin-journal/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="morning-checklist/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="water-quality/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="face-mapping/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="microbiome/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-cycling/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
