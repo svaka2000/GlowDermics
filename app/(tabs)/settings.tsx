@@ -294,7 +294,8 @@ export default function Settings() {
             <LinkRow icon="restaurant-outline" label="Diet for Skin" onPress={() => router.push('/diet')} />
             <LinkRow icon="bulb-outline" label="Skin IQ Quiz" onPress={() => router.push('/skin-iq')} />
             <LinkRow icon="fitness-outline" label="Supplement Guide" onPress={() => router.push('/supplements')} />
-            <LinkRow icon="hand-left-outline" label="Guided Facial" onPress={() => router.push('/guided-facial')} last />
+            <LinkRow icon="hand-left-outline" label="Guided Facial" onPress={() => router.push('/guided-facial')} />
+            <LinkRow icon="partly-sunny-outline" label="Skin Weather Report" onPress={() => router.push('/skin-weather')} last />
           </View>
         </View>
 

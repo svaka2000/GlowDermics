@@ -424,6 +424,15 @@ export default function Home() {
               <Ionicons name="sunny-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>Seasonal{'\n'}Guide</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/skin-weather')}>
+              <Ionicons name="partly-sunny-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Weather</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/challenge')}>
+              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="flash-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>30-Day{'\n'}Challenge</Text>
+            </Pressable>
           </View>
         </View>
 
