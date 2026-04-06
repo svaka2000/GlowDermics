@@ -163,7 +163,7 @@ function getWeatherReport(data: {
   return { condition, conditionIcon, headline, summary, stats, forecast, skinAdvice, gradientColors };
 }
 
-const STAT_COLORS = { good: '#4ADE80', medium: Colors.gold, low: Colors.scorePoor };
+const STAT_COLORS: Record<string, string> = { good: '#4ADE80', medium: Colors.gold, low: Colors.scorePoor, high: '#4ADE80' };
 
 export default function SkinWeather() {
   const [report, setReport] = useState<WeatherReport | null>(null);

@@ -25,7 +25,14 @@ const Colors = {
 const STEPS_KEY = 'gd_checklist_steps';
 const LOG_KEY = 'gd_checklist_log';
 
-const DEFAULT_AM_STEPS = [
+interface Step {
+  id: string;
+  label: string;
+  time: 'AM' | 'PM';
+  icon: string;
+}
+
+const DEFAULT_AM_STEPS: Step[] = [
   { id: 'am1', label: 'Rinse face with cool water', time: 'AM', icon: '💧' },
   { id: 'am2', label: 'Apply tallow balm / moisturizer', time: 'AM', icon: '🌿' },
   { id: 'am3', label: 'Apply SPF 30+', time: 'AM', icon: '☀️' },
@@ -33,20 +40,13 @@ const DEFAULT_AM_STEPS = [
   { id: 'am5', label: 'Take supplements (if any)', time: 'AM', icon: '💊' },
 ];
 
-const DEFAULT_PM_STEPS = [
+const DEFAULT_PM_STEPS: Step[] = [
   { id: 'pm1', label: 'Remove makeup / SPF (oil cleanse)', time: 'PM', icon: '🧴' },
   { id: 'pm2', label: 'Gentle cleanser', time: 'PM', icon: '🫧' },
   { id: 'pm3', label: 'Active treatment (BHA / retinol / etc)', time: 'PM', icon: '⚗️' },
   { id: 'pm4', label: 'Tallow balm / moisturizer', time: 'PM', icon: '🌿' },
   { id: 'pm5', label: 'Eye cream (if using)', time: 'PM', icon: '👁️' },
 ];
-
-interface Step {
-  id: string;
-  label: string;
-  time: 'AM' | 'PM';
-  icon: string;
-}
 
 interface DayLog {
   date: string;

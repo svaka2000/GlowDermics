@@ -42,7 +42,7 @@ const SUBTYPES = [
   {
     type: 'Papulopustular',
     number: '2',
-    color: Colors.orange,
+    color: '#FB923C',
     signs: ['Central redness plus bumps (papules) and pustules', 'Often mistaken for acne', 'No comedones (blackheads/whiteheads)', 'Sensitive and reactive skin'],
     notes: 'Rosacea pustules are different from acne. They respond to anti-inflammatory treatment, not antibacterial. Benzoyl peroxide often makes it worse.',
   },
