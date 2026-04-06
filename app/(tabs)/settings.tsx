@@ -336,7 +336,10 @@ export default function Settings() {
             <LinkRow icon="timer-outline" label="Anti-Aging Protocol" onPress={() => router.push('/anti-aging')} />
             <LinkRow icon="color-filter-outline" label="Hyperpigmentation Guide" onPress={() => router.push('/hyperpigmentation')} />
             <LinkRow icon="git-compare-outline" label="Ingredient Conflicts" onPress={() => router.push('/ingredient-conflicts')} />
-            <LinkRow icon="water-outline" label="Eczema Guide" onPress={() => router.push('/eczema-guide')} last />
+            <LinkRow icon="water-outline" label="Eczema Guide" onPress={() => router.push('/eczema-guide')} />
+            <LinkRow icon="medical-outline" label="Acne Types Guide" onPress={() => router.push('/acne-types')} />
+            <LinkRow icon="sparkles-outline" label="Retinol Guide" onPress={() => router.push('/retinol-guide')} />
+            <LinkRow icon="help-circle-outline" label="Purging vs Breakout" onPress={() => router.push('/purging-guide')} last />
           </View>
         </View>
 
