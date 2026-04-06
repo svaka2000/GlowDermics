@@ -9,6 +9,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
@@ -27,12 +28,13 @@ export default function Scan() {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.8,
-      base64: false,
+      quality: 0.7,
+      base64: true, // get base64 directly — works on web + native
     });
     if (!result.canceled && result.assets[0]) {
-      setCapturedUri(result.assets[0].uri);
-      await runAnalysis(result.assets[0].uri);
+      const asset = result.assets[0];
+      setCapturedUri(asset.uri);
+      await runAnalysis(asset.uri, asset.base64 ?? null);
     }
   };
 
@@ -49,22 +51,30 @@ export default function Scan() {
 
   const handleCapture = async () => {
     if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
+    const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: true });
     if (photo) {
       setCapturedUri(photo.uri);
-      await runAnalysis(photo.uri);
+      await runAnalysis(photo.uri, photo.base64 ?? null);
     }
   };
 
-  const runAnalysis = async (uri: string) => {
+  const runAnalysis = async (uri: string, inlineBase64: string | null) => {
     setMode('analyzing');
     try {
       const profile = await Storage.getUserProfile();
 
-      // Read image as base64
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+      let base64 = inlineBase64;
+
+      // Fallback: read from filesystem (native only — web already has base64)
+      if (!base64 && Platform.OS !== 'web') {
+        base64 = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+      }
+
+      if (!base64) {
+        throw new Error('Could not read image data. Please try uploading again.');
+      }
 
       const analysis = await analyzeSkin(base64, 'image/jpeg', profile);
       analysis.imageUri = uri;
@@ -130,7 +140,7 @@ export default function Scan() {
     <View style={styles.root}>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Scan</Text>

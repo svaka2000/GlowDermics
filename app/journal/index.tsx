@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, KeyboardAvoidingView, Platform,
+  TextInput, Alert, KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -61,16 +61,23 @@ export default function Journal() {
     resetForm();
   };
 
-  const deleteEntry = (id: string) => {
-    Alert.alert('Delete Entry', 'Remove this journal entry?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete', style: 'destructive', onPress: async () => {
-          await Storage.deleteJournalEntry(id);
-          setEntries(prev => prev.filter(e => e.id !== id));
-        },
-      },
-    ]);
+  const deleteEntry = async (id: string) => {
+    const doDelete = async () => {
+      await Storage.deleteJournalEntry(id);
+      setEntries(prev => prev.filter(e => e.id !== id));
+    };
+
+    if (Platform.OS === 'web') {
+      // Alert.alert doesn't work on web — use browser confirm
+      if (typeof window !== 'undefined' && window.confirm('Delete this journal entry?')) {
+        await doDelete();
+      }
+    } else {
+      Alert.alert('Delete Entry', 'Remove this journal entry?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: doDelete },
+      ]);
+    }
   };
 
   const toggleTag = (tag: string) => {
@@ -92,7 +99,7 @@ export default function Journal() {
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <View>

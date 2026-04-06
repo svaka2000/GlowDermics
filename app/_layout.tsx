@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { PhoneFrame } from '../src/components/PhoneFrame';
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
+    <PhoneFrame>
+      <GestureHandlerRootView style={styles.root}>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" />
@@ -122,8 +123,9 @@ export default function RootLayout() {
           <Stack.Screen name="aging-timeline/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="mens-skin/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </PhoneFrame>
   );
 }
 
