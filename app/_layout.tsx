@@ -51,6 +51,7 @@ export default function RootLayout() {
           <Stack.Screen name="skin-story/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="privacy/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="stress-log/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-iq/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
