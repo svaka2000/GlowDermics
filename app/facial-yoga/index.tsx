@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar, Animated,
+  SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 
@@ -262,6 +262,8 @@ export default function FacialYogaScreen() {
 
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
 
   const currentEx = selectedRoutine.exercises[currentExIdx];
 
@@ -286,6 +288,13 @@ export default function FacialYogaScreen() {
     setSessionComplete(false);
     startPulse();
   };
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   useEffect(() => {
     if (!sessionActive) {
@@ -350,13 +359,13 @@ export default function FacialYogaScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Facial Yoga</Text>
         <View style={{ width: 60 }} />
-      </View>
+      </Animated.View>
 
       {sessionActive || sessionComplete ? (
         <ScrollView contentContainerStyle={styles.sessionContent}>
@@ -398,7 +407,7 @@ export default function FacialYogaScreen() {
           )}
         </ScrollView>
       ) : (
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Animated.ScrollView style={[styles.scroll, { opacity: contentAnim }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <Text style={styles.intro}>
             Facial yoga uses targeted muscle exercises to tone, lift, and relax the face. Like body fitness — results come with consistency over weeks and months.
           </Text>
@@ -444,7 +453,7 @@ export default function FacialYogaScreen() {
           </TouchableOpacity>
 
           <View style={{ height: 40 }} />
-        </ScrollView>
+        </Animated.ScrollView>
       )}
     </SafeAreaView>
   );
