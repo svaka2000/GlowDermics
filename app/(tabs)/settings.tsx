@@ -260,7 +260,8 @@ export default function Settings() {
             <LinkRow icon="shield-checkmark-outline" label="Sensitivity Test" onPress={() => router.push('/sensitivity')} />
             <LinkRow icon="calculator-outline" label="Budget Calculator" onPress={() => router.push('/budget')} />
             <LinkRow icon="body-outline" label="Skin Age Estimator" onPress={() => router.push('/skin-age')} />
-            <LinkRow icon="construct-outline" label="Routine Builder" onPress={() => router.push('/routine-builder')} last />
+            <LinkRow icon="construct-outline" label="Routine Builder" onPress={() => router.push('/routine-builder')} />
+            <LinkRow icon="ban-outline" label="Ingredient Blacklist" onPress={() => router.push('/blacklist')} last />
           </View>
         </View>
 
