@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar,
+  SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 
@@ -74,19 +74,29 @@ export default function CollagenGuideScreen() {
   const [expandedType, setExpandedType] = useState<number | null>(null);
   const [expandedDestroyer, setExpandedDestroyer] = useState<number | null>(null);
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
+
   const severityColor = (s: string) => s === 'critical' ? Colors.red : s === 'high' ? Colors.primary : Colors.gold;
   const strengthColor = (s: string) => s.includes('very strong') ? Colors.green : s === 'strong' || s === 'strong (foundational)' ? Colors.teal : Colors.gold;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Collagen Guide</Text>
         <View style={{ width: 60 }} />
-      </View>
+      </Animated.View>
 
       <View style={styles.hero}>
         <Text style={styles.heroTitle}>🏗️ Collagen Science</Text>
@@ -101,7 +111,7 @@ export default function CollagenGuideScreen() {
         ))}
       </ScrollView>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView style={[styles.scroll, { opacity: contentAnim }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {activeTab === 0 && (
           <View>
@@ -207,7 +217,7 @@ export default function CollagenGuideScreen() {
         )}
 
         <View style={{ height: 40 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
