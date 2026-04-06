@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, Image,
+  View, Text, StyleSheet, ScrollView, Pressable, Image, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,8 +27,16 @@ export default function Compare() {
   const [leftIdx, setLeftIdx] = useState(1); // older scan
   const [rightIdx, setRightIdx] = useState(0); // newer scan
   const [pickingFor, setPickingFor] = useState<'left' | 'right' | null>(null);
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
 
   useFocusEffect(useCallback(() => {
+    headerAnim.setValue(0);
+    contentAnim.setValue(0);
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
     Storage.getScanHistory().then(h => {
       setHistory(h);
       if (h.length >= 2) {
@@ -113,16 +121,16 @@ export default function Compare() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Compare Scans</Text>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
 
         {/* Scan selectors */}
         {left && right && (
@@ -230,7 +238,7 @@ export default function Compare() {
         )}
 
         <View style={{ height: 80 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
