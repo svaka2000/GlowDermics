@@ -277,7 +277,8 @@ export default function Settings() {
             <LinkRow icon="calendar-outline" label="Skin Calendar" onPress={() => router.push('/calendar')} />
             <LinkRow icon="newspaper-outline" label="Weekly Digest" onPress={() => router.push('/weekly-digest')} />
             <LinkRow icon="flash-outline" label="30-Day Challenges" onPress={() => router.push('/challenge')} />
-            <LinkRow icon="book-outline" label="My Skin Story" onPress={() => router.push('/skin-story')} last />
+            <LinkRow icon="book-outline" label="My Skin Story" onPress={() => router.push('/skin-story')} />
+            <LinkRow icon="stats-chart-outline" label="Stress & Trigger Log" onPress={() => router.push('/stress-log')} last />
           </View>
         </View>
 
