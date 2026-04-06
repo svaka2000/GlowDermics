@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -106,10 +106,29 @@ export default function SkinQuiz() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState('');
 
+  const screenAnim = useRef(new Animated.Value(0)).current;
+  const questionAnim = useRef(new Animated.Value(1)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(screenAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  }, []);
+
   const q = QUESTIONS[step];
   const isMulti = !!q?.multi;
   const current = answers[q?.id] ?? (isMulti ? [] : '');
   const progress = (step / QUESTIONS.length) * 100;
+
+  const animateQuestionTransition = (callback: () => void) => {
+    Animated.timing(questionAnim, { toValue: 0, duration: 120, easing: Easing.in(Easing.cubic), useNativeDriver: true }).start(() => {
+      callback();
+      Animated.timing(progressAnim, {
+        toValue: ((step + 1) / QUESTIONS.length),
+        duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: false,
+      }).start();
+      Animated.timing(questionAnim, { toValue: 1, duration: 250, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+    });
+  };
 
   const select = (value: string) => {
     if (isMulti) {
@@ -129,8 +148,11 @@ export default function SkinQuiz() {
     : !!current;
 
   const next = () => {
-    if (step < QUESTIONS.length - 1) setStep(s => s + 1);
-    else submit();
+    if (step < QUESTIONS.length - 1) {
+      animateQuestionTransition(() => setStep(s => s + 1));
+    } else {
+      submit();
+    }
   };
 
   const submit = async () => {
@@ -276,16 +298,28 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
     );
   }
 
+  // back button handler for quiz steps with animation
+  const handleBack = () => {
+    if (step > 0) {
+      animateQuestionTransition(() => setStep(s => s - 1));
+    } else {
+      router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
+    }
+  };
+
   return (
-    <View style={styles.root}>
+    <Animated.View style={[styles.root, {
+      opacity: screenAnim,
+      transform: [{ translateY: screenAnim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+    }]}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={step > 0 ? () => setStep(s => s - 1) : () => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable style={styles.backBtn} onPress={handleBack}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
           <View style={{ flex: 1, paddingHorizontal: 16 }}>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${progress}%` as any }]} />
+              <Animated.View style={[styles.progressFill, { width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) as any }]} />
             </View>
             <Text style={styles.stepCounter}>{step + 1} of {QUESTIONS.length}</Text>
           </View>
@@ -293,7 +327,11 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         </View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.quizScroll}>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.quizScroll}
+        style={{ opacity: questionAnim, transform: [{ translateX: questionAnim.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }] }}
+      >
         <Text style={styles.question}>{q?.question}</Text>
         {isMulti && <Text style={styles.multiHint}>Select up to 3</Text>}
 
@@ -332,8 +370,8 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
             <Ionicons name="arrow-forward" size={18} color={Colors.white} />
           </LinearGradient>
         </Pressable>
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+    </Animated.View>
   );
 }
 
