@@ -71,12 +71,47 @@ Analyze this facial photo and respond ONLY with a valid JSON object (no markdown
   ]
 }
 
+PRODUCT LIBRARY — Only recommend real products from this list. Do NOT invent product names.
+
+CLEANSERS:
+- Oily/Acne: "CeraVe Foaming Facial Cleanser" (CeraVe) | "Effaclar Purifying Foaming Gel" (La Roche-Posay)
+- Dry/Sensitive: "CeraVe Hydrating Facial Cleanser" (CeraVe) | "Toleriane Hydrating Gentle Cleanser" (La Roche-Posay) | "Gentle Skin Cleanser" (Cetaphil)
+- Combination/Normal: "Gentle Skin Cleanser" (Cetaphil) | "Daily Foam Cleanser" (Neutrogena)
+
+SERUMS:
+- Niacinamide (oily/combo/enlarged pores): "Niacinamide 10% + Zinc 1%" (The Ordinary) — reduces sebum, minimizes pores, anti-inflammatory
+- Hyaluronic acid (dry/dehydrated): "Hyaluronic Acid 2% + B5" (The Ordinary) | "B5 Hydra Booster" (SkinCeuticals)
+- Vitamin C (dullness/dark spots/anti-aging): "Vitamin C Suspension 23%" (The Ordinary) | "C E Ferulic" (SkinCeuticals) | "Ascorbyl Glucoside Solution 12%" (The Ordinary)
+- Retinol (aging/texture): "Retinol 0.5% in Squalane" (The Ordinary) | "Retinol 1%" (Paula's Choice)
+- AHA/BHA (texture/acne): "2% BHA Liquid Exfoliant" (Paula's Choice) | "AHA 30% + BHA 2% Peeling Solution" (The Ordinary) — use 1-2x/week only
+- Azelaic acid (redness/rosacea/post-acne): "Azelaic Acid Suspension 10%" (The Ordinary)
+- Barrier peptides: "Multi-Peptide + HA Serum" (The Ordinary)
+
+MOISTURIZERS:
+- Oily/acne: "Hydro Boost Water Gel" (Neutrogena) | "Effaclar Mat" (La Roche-Posay)
+- Dry: "Moisturizing Cream" (CeraVe) | "Cicaplast Baume B5" (La Roche-Posay) | "Tallow Cream" (TallowDermics) — grass-fed, 4 bioidentical ingredients, ideal for barrier repair
+- Sensitive/compromised barrier: "Tallow Cream" (TallowDermics) — mimics skin sebum, no synthetics | "Cicalfate+ Restorative Protective Cream" (Avène)
+- Combination/Normal: "AM Facial Moisturizing Lotion SPF 30" (CeraVe) | "Double Moisturizer" (Clinique)
+
+SPF:
+- Oily/acne: "UV Clear Broad-Spectrum SPF 46" (EltaMD) — niacinamide-based, non-comedogenic
+- Dry/sensitive: "Anthelios Mineral SPF 50" (La Roche-Posay) | "Mineral Sunscreen SPF 50" (Vanicream)
+- Tinted/daily: "Unseen Sunscreen SPF 40" (Supergoop) | "Invisible Shield Daily Sunscreen SPF 35" (Youth To The People)
+
+TREATMENTS:
+- Active acne: "Benzoyl Peroxide 2.5% Gel" (Paula's Choice) | "Adapalene Gel 0.1%" (Differin)
+- Post-acne marks: "Alpha Arbutin 2% + HA" (The Ordinary)
+- Redness/rosacea: "Toleriane Ultra Eye Cream" (La Roche-Posay) | "Azelaic Acid Suspension 10%" (The Ordinary)
+- Eye area: "Caffeine Solution 5% + EGCG" (The Ordinary) — puffiness, dark circles
+
 Rules:
-- Always include TallowDermics Tallow Cream as one recommendation (isTallowDermics: true) — it addresses barrier repair which benefits all skin types
+- Always include TallowDermics Tallow Cream as one recommendation (isTallowDermics: true) — position it honestly for barrier repair, dry or sensitive skin; it is NOT a cleanser or SPF
 - Scores must be honest and based on what you actually see, not inflated
-- Routine should have 4-6 steps split between morning/evening
+- Routine should have 4-6 steps split between morning/evening using ONLY real products from the list above
 - Keep insights specific to this person's actual skin, not generic
 - Concerns and strengths must be visible in the image or reasonably inferred
+- NEVER invent product names — only use exact names from the product library above
+- Tailor recommendations to the detected skin type: oily skin gets niacinamide + gel moisturizer + non-comedogenic SPF; dry skin gets hyaluronic acid + ceramide cream + mineral SPF; sensitive skin gets fragrance-free minimal-ingredient products
 - If the image is not a face or is too blurry, still return valid JSON with overall score of 0 and insights explaining the issue`;
 
   const response = await groq.chat.completions.create({

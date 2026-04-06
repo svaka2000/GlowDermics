@@ -106,26 +106,26 @@ export default function Results() {
         {/* Hero card */}
         <View style={styles.heroCard}>
           {analysis.imageUri ? (
-            <Image source={{ uri: analysis.imageUri }} style={styles.heroImage} />
+            <Image source={{ uri: analysis.imageUri }} style={styles.heroImage} resizeMode="cover" />
           ) : (
             <View style={styles.heroImageEmpty}>
               <Ionicons name="person" size={48} color={Colors.textMuted} />
             </View>
           )}
-          <LinearGradient
-            colors={['transparent', 'rgba(10,10,15,0.95)']}
-            style={styles.heroGradient}
-          />
-          <View style={styles.heroContent}>
+        </View>
+
+        {/* Score + summary below photo */}
+        <View style={styles.heroMeta}>
+          <View style={styles.heroMetaTop}>
             <View style={styles.heroLeft}>
               <Text style={styles.heroBadge}>{analysis.skinType?.toUpperCase()} SKIN</Text>
               <Text style={styles.heroDate}>
                 {new Date(analysis.date).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}
               </Text>
-              <Text style={styles.heroInsights}>{analysis.insights}</Text>
             </View>
-            <ScoreRing score={analysis.scores.overall} size={88} strokeWidth={7} />
+            <ScoreRing score={analysis.scores.overall} size={80} strokeWidth={6} />
           </View>
+          <Text style={styles.heroInsights}>{analysis.insights}</Text>
         </View>
 
         {/* Strengths & Concerns */}
@@ -283,21 +283,22 @@ const styles = StyleSheet.create({
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   shareBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20 },
   scroll: { paddingBottom: 40 },
-  heroCard: { height: 340, position: 'relative', marginBottom: 16 },
+  heroCard: { height: 300, backgroundColor: Colors.bgCard },
   heroImage: { width: '100%', height: '100%' },
   heroImageEmpty: {
     width: '100%', height: '100%', backgroundColor: Colors.bgCard,
     alignItems: 'center', justifyContent: 'center',
   },
-  heroGradient: { ...StyleSheet.absoluteFillObject },
-  heroContent: {
-    position: 'absolute', bottom: 0, left: 0, right: 0,
-    flexDirection: 'row', alignItems: 'flex-end', padding: 20, gap: 16,
+  heroMeta: {
+    backgroundColor: Colors.bgCard, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20,
+    marginBottom: 16,
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
+  heroMetaTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   heroLeft: { flex: 1 },
   heroBadge: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 4 },
-  heroDate: { fontSize: 12, color: Colors.textMuted, marginBottom: 8 },
-  heroInsights: { fontSize: 14, color: Colors.textSecondary, lineHeight: 20 },
+  heroDate: { fontSize: 12, color: Colors.textMuted },
+  heroInsights: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
   row: { flexDirection: 'row', gap: 12, marginHorizontal: 16, marginBottom: 16 },
   halfCard: {
     flex: 1, backgroundColor: Colors.bgCard, borderRadius: 16,

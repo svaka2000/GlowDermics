@@ -59,7 +59,8 @@ export default function Scan() {
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
       setCapturedUri(asset.uri);
-      await runAnalysis(asset.uri, asset.base64 ?? null);
+      const mime = (asset.mimeType === 'image/png') ? 'image/png' : 'image/jpeg';
+      await runAnalysis(asset.uri, asset.base64 ?? null, mime);
     }
   };
 
@@ -80,21 +81,42 @@ export default function Scan() {
     const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: true });
     if (photo) {
       setCapturedUri(photo.uri);
-      await runAnalysis(photo.uri, photo.base64 ?? null);
+      // photo.base64 may be null on web — runAnalysis handles the blob fallback
+      await runAnalysis(photo.uri, photo.base64 ?? null, 'image/jpeg');
     }
   };
 
-  const runAnalysis = async (uri: string, inlineBase64: string | null) => {
+  const runAnalysis = async (uri: string, inlineBase64: string | null, mimeType: 'image/jpeg' | 'image/png' = 'image/jpeg') => {
     setMode('analyzing');
     try {
       const profile = await Storage.getUserProfile();
 
       let base64 = inlineBase64;
 
-      // Fallback: read from filesystem (native only — web already has base64 from ImagePicker)
+      // Strip data URI prefix if ImagePicker returned a full data URL
+      if (base64 && base64.includes(';base64,')) {
+        base64 = base64.split(';base64,')[1];
+      }
+
+      // Fallback for native: read from filesystem
       if (!base64 && Platform.OS !== 'web') {
         base64 = await FileSystem.readAsStringAsync(uri, {
           encoding: 'base64' as any,
+        });
+      }
+
+      // Fallback for web: fetch the blob/data URL and convert to base64
+      if (!base64 && Platform.OS === 'web') {
+        const resp = await fetch(uri);
+        const blob = await resp.blob();
+        base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new (window as any).FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result as string;
+            resolve(dataUrl.split(';base64,')[1]);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
         });
       }
 
@@ -102,7 +124,7 @@ export default function Scan() {
         throw new Error('Could not read image data. Please try uploading again.');
       }
 
-      const analysis = await analyzeSkin(base64, 'image/jpeg', profile);
+      const analysis = await analyzeSkin(base64, mimeType, profile);
       analysis.imageUri = uri;
 
       await Auth.recordScan();
