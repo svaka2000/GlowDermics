@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
-  ActivityIndicator, Share, Linking,
+  ActivityIndicator, Share, Linking, Animated, Easing,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -35,12 +35,23 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'scores' | 'routine' | 'recommendations'>('scores');
 
+  // Entrance animations
+  const heroAnim = useRef(new Animated.Value(0)).current;
+  const scoreRingScale = useRef(new Animated.Value(0.3)).current;
+  const bodyAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     (async () => {
       const all = await Storage.getAnalyses();
       const found = all.find(a => a.id === id) || null;
       setAnalysis(found);
       setLoading(false);
+      // Trigger staggered entrance after data loads
+      Animated.stagger(120, [
+        Animated.timing(heroAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.spring(scoreRingScale, { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
+        Animated.timing(bodyAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
     })();
   }, [id]);
 
@@ -104,31 +115,36 @@ export default function Results() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* Hero card */}
-        <View style={styles.heroCard}>
-          {analysis.imageUri ? (
-            <Image source={{ uri: analysis.imageUri }} style={styles.heroImage} resizeMode="cover" />
-          ) : (
-            <View style={styles.heroImageEmpty}>
-              <Ionicons name="person" size={48} color={Colors.textMuted} />
-            </View>
-          )}
-        </View>
-
-        {/* Score + summary below photo */}
-        <View style={styles.heroMeta}>
-          <View style={styles.heroMetaTop}>
-            <View style={styles.heroLeft}>
-              <Text style={styles.heroBadge}>{analysis.skinType?.toUpperCase()} SKIN</Text>
-              <Text style={styles.heroDate}>
-                {new Date(analysis.date).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}
-              </Text>
-            </View>
-            <ScoreRing score={analysis.scores.overall} size={80} strokeWidth={6} />
+        <Animated.View style={{ opacity: heroAnim, transform: [{ translateY: heroAnim.interpolate({ inputRange: [0,1], outputRange: [-12, 0] }) }] }}>
+          <View style={styles.heroCard}>
+            {analysis.imageUri ? (
+              <Image source={{ uri: analysis.imageUri }} style={styles.heroImage} resizeMode="cover" />
+            ) : (
+              <View style={styles.heroImageEmpty}>
+                <Ionicons name="person" size={48} color={Colors.textMuted} />
+              </View>
+            )}
           </View>
-          <Text style={styles.heroInsights}>{analysis.insights}</Text>
-        </View>
 
-        {/* Strengths & Concerns */}
+          {/* Score + summary below photo */}
+          <View style={styles.heroMeta}>
+            <View style={styles.heroMetaTop}>
+              <View style={styles.heroLeft}>
+                <Text style={styles.heroBadge}>{analysis.skinType?.toUpperCase()} SKIN</Text>
+                <Text style={styles.heroDate}>
+                  {new Date(analysis.date).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}
+                </Text>
+              </View>
+              <Animated.View style={{ transform: [{ scale: scoreRingScale }] }}>
+                <ScoreRing score={analysis.scores.overall} size={80} strokeWidth={6} />
+              </Animated.View>
+            </View>
+            <Text style={styles.heroInsights}>{analysis.insights}</Text>
+          </View>
+        </Animated.View>
+
+        {/* Strengths & Concerns + Tabs + Content */}
+        <Animated.View style={{ opacity: bodyAnim, transform: [{ translateY: bodyAnim.interpolate({ inputRange: [0,1], outputRange: [24, 0] }) }] }}>
         <View style={styles.row}>
           <View style={[styles.halfCard, { borderColor: 'rgba(74,222,128,0.2)' }]}>
             <Text style={[styles.halfTitle, { color: Colors.scoreExcellent }]}>Strengths</Text>
@@ -266,6 +282,7 @@ export default function Results() {
         )}
 
         <View style={{ height: 100 }} />
+        </Animated.View>
       </ScrollView>
     </View>
   );

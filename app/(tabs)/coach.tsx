@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput, Pressable,
-  KeyboardAvoidingView, Platform, ActivityIndicator, Alert,
+  KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Animated, Easing,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -49,6 +49,40 @@ const SCAN_PROMPTS = [
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function TypingDots() {
+  const dots = [useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current];
+
+  useEffect(() => {
+    const anims = dots.map((dot, i) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(i * 160),
+          Animated.timing(dot, { toValue: -6, duration: 280, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(dot, { toValue: 0, duration: 280, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+          Animated.delay(400),
+        ])
+      )
+    );
+    anims.forEach(a => a.start());
+    return () => anims.forEach(a => a.stop());
+  }, []);
+
+  return (
+    <View style={{ flexDirection: 'row', gap: 5, paddingVertical: 4 }}>
+      {dots.map((dot, i) => (
+        <Animated.View
+          key={i}
+          style={{
+            width: 7, height: 7, borderRadius: 3.5,
+            backgroundColor: Colors.primary,
+            transform: [{ translateY: dot }],
+          }}
+        />
+      ))}
+    </View>
+  );
 }
 
 async function loadChatHistory(): Promise<ChatMessage[]> {
@@ -304,18 +338,14 @@ export default function Coach() {
             </View>
           ))}
 
-          {/* Loading indicator */}
+          {/* Animated typing indicator */}
           {loading && (
             <View style={styles.msgRow}>
               <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.msgAvatar}>
                 <Text style={styles.msgAvatarText}>D</Text>
               </LinearGradient>
               <View style={[styles.bubbleAssistant, styles.typingBubble]}>
-                <View style={styles.typingDots}>
-                  <View style={[styles.typingDot, { opacity: 0.4 }]} />
-                  <View style={[styles.typingDot, { opacity: 0.65 }]} />
-                  <View style={[styles.typingDot, { opacity: 0.9 }]} />
-                </View>
+                <TypingDots />
               </View>
             </View>
           )}

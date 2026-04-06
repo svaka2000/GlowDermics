@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, Modal, Platform, ScrollView,
+  View, Text, StyleSheet, Pressable, Modal, Platform, ScrollView, Alert,
 } from 'react-native';
+import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/colors';
@@ -27,6 +28,27 @@ export function PremiumGate({ visible, onClose, feature, reason }: PremiumGatePr
   const [activated, setActivated] = useState(false);
 
   const handleActivate = async () => {
+    // Guests can't have premium — send them to register
+    const isGuest = await Auth.isGuest();
+    const user = await Auth.getCurrentUser();
+    if (isGuest || !user) {
+      onClose();
+      if (Platform.OS === 'web') {
+        // Small delay so modal closes first
+        setTimeout(() => router.push('/(auth)/register'), 100);
+      } else {
+        Alert.alert(
+          'Create an Account',
+          'Premium is available to registered users. Create a free account to activate Premium.',
+          [
+            { text: 'Not now', style: 'cancel' },
+            { text: 'Sign Up', onPress: () => router.push('/(auth)/register') },
+          ]
+        );
+      }
+      return;
+    }
+
     setActivating(true);
     try {
       await Auth.activatePremium();
@@ -35,7 +57,13 @@ export function PremiumGate({ visible, onClose, feature, reason }: PremiumGatePr
         setActivated(false);
         onClose();
       }, 1800);
-    } catch {}
+    } catch (e: any) {
+      if (Platform.OS === 'web') {
+        window.alert('Could not activate premium. Please try again.');
+      } else {
+        Alert.alert('Error', 'Could not activate premium. Please try again.');
+      }
+    }
     setActivating(false);
   };
 

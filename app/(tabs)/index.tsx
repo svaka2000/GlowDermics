@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   Image, ActivityIndicator, RefreshControl, Alert,
+  Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -78,6 +79,38 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeChallenge, setActiveChallenge] = useState<{ title: string; emoji: string; daysComplete: number; duration: number; todayDone: boolean } | null>(null);
 
+  // Entrance animations
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const statsAnim = useRef(new Animated.Value(0)).current;
+  const scanCardAnim = useRef(new Animated.Value(0)).current;
+  const scanCardScale = useRef(new Animated.Value(0.96)).current;
+  const glowPulse = useRef(new Animated.Value(0.6)).current;
+
+  useEffect(() => {
+    // Pulsing glow on scan card
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowPulse, { toValue: 1, duration: 2200, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(glowPulse, { toValue: 0.6, duration: 2200, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  const runEntranceAnims = () => {
+    headerAnim.setValue(0);
+    statsAnim.setValue(0);
+    scanCardAnim.setValue(0);
+    scanCardScale.setValue(0.96);
+    Animated.stagger(80, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(statsAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.parallel([
+        Animated.timing(scanCardAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(scanCardScale, { toValue: 1, duration: 500, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
+      ]),
+    ]).start();
+  };
+
   const load = async () => {
     const [p, a, s, w, routineLog, journal, user] = await Promise.all([
       Storage.getUserProfile(),
@@ -138,6 +171,7 @@ export default function Home() {
       }
     } catch {}
     setLoading(false);
+    runEntranceAnims();
   };
 
   const adjustWater = async (delta: number) => {
@@ -172,28 +206,37 @@ export default function Home() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
       >
         {/* Header */}
-        <SafeAreaView edges={['top']}>
-          <View style={styles.header}>
-            <View>
-              <Text style={styles.greeting}>{getGreeting()},</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={styles.name}>{authUser?.name || profile?.name || 'Friend'}</Text>
-                {authUser?.isPremium && (
-                  <View style={styles.premiumBadge}>
-                    <Text style={styles.premiumBadgeText}>PRO</Text>
-                  </View>
-                )}
+        <Animated.View style={{
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
+        }}>
+          <SafeAreaView edges={['top']}>
+            <View style={styles.header}>
+              <View>
+                <Text style={styles.greeting}>{getGreeting()},</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.name}>{authUser?.name || profile?.name || 'Friend'}</Text>
+                  {authUser?.isPremium && (
+                    <View style={styles.premiumBadge}>
+                      <Text style={styles.premiumBadgeText}>PRO</Text>
+                    </View>
+                  )}
+                </View>
               </View>
+              <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
+                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.profileAvatar}>
+                  <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
+                </LinearGradient>
+              </Pressable>
             </View>
-            <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.profileAvatar}>
-                <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
-              </LinearGradient>
-            </Pressable>
-          </View>
-        </SafeAreaView>
+          </SafeAreaView>
+        </Animated.View>
 
         {/* Streak + stats row */}
+        <Animated.View style={{
+          opacity: statsAnim,
+          transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+        }}>
         <View style={styles.statsRow}>
           <Pressable style={styles.statCard} onPress={() => router.push('/habits')}>
             <Text style={styles.statNum}>{streak}</Text>
@@ -212,6 +255,7 @@ export default function Home() {
             <Text style={styles.statLabel}>Concerns</Text>
           </Pressable>
         </View>
+        </Animated.View>
 
         {/* Active Challenge widget */}
         {activeChallenge && (
@@ -299,29 +343,50 @@ export default function Home() {
         })()}
 
         {/* Primary scan CTA */}
-        <Pressable style={styles.scanCard} onPress={() => router.push('/scan')}>
-          <LinearGradient
-            colors={[Colors.primary, Colors.primaryDark]}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-          />
-          <View style={styles.scanCardContent}>
-            <View>
-              <Text style={styles.scanCardEyebrow}>AI SKIN SCAN</Text>
-              <Text style={styles.scanCardTitle}>
-                {latest ? 'Scan Again' : 'Take Your First Scan'}
-              </Text>
-              <Text style={styles.scanCardSub}>
-                {latest
-                  ? `Last scanned ${new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-                  : 'Get your full skin analysis in 30 seconds'}
-              </Text>
+        <Animated.View style={{
+          opacity: scanCardAnim,
+          transform: [{ scale: scanCardScale }],
+        }}>
+          <Pressable style={styles.scanCard} onPress={() => router.push('/scan')}>
+            <LinearGradient
+              colors={[Colors.primary, Colors.primaryDark]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            />
+            {/* Pulsing glow overlay */}
+            <Animated.View
+              style={[StyleSheet.absoluteFill, {
+                opacity: glowPulse,
+                borderRadius: 22,
+              }]}
+              pointerEvents="none"
+            >
+              <LinearGradient
+                colors={['rgba(255,255,255,0.12)', 'transparent', 'rgba(255,255,255,0.06)']}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+              />
+            </Animated.View>
+            <View style={styles.scanCardContent}>
+              <View>
+                <Text style={styles.scanCardEyebrow}>AI SKIN SCAN</Text>
+                <Text style={styles.scanCardTitle}>
+                  {latest ? 'Scan Again' : 'Take Your First Scan'}
+                </Text>
+                <Text style={styles.scanCardSub}>
+                  {latest
+                    ? `Last scanned ${new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                    : 'Get your full skin analysis in 30 seconds'}
+                </Text>
+              </View>
+              <Animated.View style={[styles.scanIconCircle, {
+                transform: [{ scale: glowPulse.interpolate({ inputRange: [0.6, 1], outputRange: [1, 1.06] }) }],
+              }]}>
+                <Ionicons name="scan" size={30} color={Colors.white} />
+              </Animated.View>
             </View>
-            <View style={styles.scanIconCircle}>
-              <Ionicons name="scan" size={30} color={Colors.white} />
-            </View>
-          </View>
-        </Pressable>
+          </Pressable>
+        </Animated.View>
 
         {/* Latest scan summary */}
         {latest && (

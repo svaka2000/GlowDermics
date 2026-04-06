@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TextInput, Pressable,
-  KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Animated,
+  KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,6 +17,31 @@ export default function Login() {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
   const shakeX = useRef(new Animated.Value(0)).current;
+  const glowScale = useRef(new Animated.Value(1)).current;
+  const glowOpacity = useRef(new Animated.Value(0.5)).current;
+  const cardSlide = useRef(new Animated.Value(30)).current;
+  const cardOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Logo glow pulse
+    Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(glowScale, { toValue: 1.18, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(glowOpacity, { toValue: 0.85, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(glowScale, { toValue: 1, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(glowOpacity, { toValue: 0.5, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ]),
+      ])
+    ).start();
+    // Card entrance
+    Animated.parallel([
+      Animated.timing(cardSlide, { toValue: 0, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(cardOpacity, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const shake = () => {
     Animated.sequence([
@@ -52,19 +77,29 @@ export default function Login() {
         <SafeAreaView edges={['top']}>
           {/* Logo area */}
           <View style={styles.logoWrap}>
-            <LinearGradient
-              colors={['#E8834A', '#C4622D', '#9E4D22']}
-              style={styles.logoGrad}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-            >
-              <Text style={styles.logoMark}>✦</Text>
-            </LinearGradient>
+            <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+              {/* Pulsing glow behind logo */}
+              <Animated.View style={[styles.logoGlow, {
+                transform: [{ scale: glowScale }],
+                opacity: glowOpacity,
+              }]} />
+              <LinearGradient
+                colors={['#E8834A', '#C4622D', '#9E4D22']}
+                style={styles.logoGrad}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+              >
+                <Text style={styles.logoMark}>✦</Text>
+              </LinearGradient>
+            </View>
             <Text style={styles.appName}>GlowDermics</Text>
             <Text style={styles.tagline}>Your skin, decoded.</Text>
           </View>
 
           {/* Card */}
-          <Animated.View style={[styles.card, { transform: [{ translateX: shakeX }] }]}>
+          <Animated.View style={[styles.card, {
+            transform: [{ translateX: shakeX }, { translateY: cardSlide }],
+            opacity: cardOpacity,
+          }]}>
             <Text style={styles.cardTitle}>Welcome back</Text>
             <Text style={styles.cardSub}>Sign in to continue your skin journey</Text>
 
@@ -162,6 +197,11 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 40 },
 
   logoWrap: { alignItems: 'center', paddingTop: 48, paddingBottom: 32, gap: 10 },
+  logoGlow: {
+    position: 'absolute',
+    width: 110, height: 110, borderRadius: 55,
+    backgroundColor: '#C4622D',
+  },
   logoGrad: {
     width: 72, height: 72, borderRadius: 22,
     alignItems: 'center', justifyContent: 'center',
