@@ -39,7 +39,7 @@ const OILS: Oil[] = [
     keyFattyAcids: 'Oleic (40%), Stearic (25%), Palmitic (25%), CLA, Palmitoleic',
     bestFor: ['dry', 'sensitive', 'mature', 'eczema', 'normal'],
     avoid: [],
-    benefits: 'Bioidentical to human sebum. Contains fat-soluble vitamins A, D, E, K2. Full barrier repair. Absorbs like skin's own oil.',
+    benefits: "Bioidentical to human sebum. Contains fat-soluble vitamins A, D, E, K2. Full barrier repair. Absorbs like skin's own oil.",
     layering: 'last',
     tallowNote: 'Our hero ingredient. Use as the final occlusive step. All other oils are layered before tallow.',
   },
