@@ -54,6 +54,7 @@ export default function RootLayout() {
           <Stack.Screen name="skin-iq/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="product-deck/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="supplements/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="guided-facial/index" options={{ animation: 'slide_from_bottom' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
