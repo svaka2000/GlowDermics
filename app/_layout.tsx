@@ -43,6 +43,7 @@ export default function RootLayout() {
           <Stack.Screen name="skin-dna/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="diet/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="budget/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-age/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
