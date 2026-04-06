@@ -44,6 +44,7 @@ export default function RootLayout() {
           <Stack.Screen name="diet/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="budget/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-age/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="routine-builder/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
