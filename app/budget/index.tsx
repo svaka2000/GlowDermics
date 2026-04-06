@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, TextInput,
+  View, Text, StyleSheet, ScrollView, Pressable, TextInput, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -37,6 +37,15 @@ const TALLOW_PRODUCT = {
 export default function BudgetCalculator() {
   const [prices, setPrices] = useState<Record<string, string>>({});
   const [showResult, setShowResult] = useState(false);
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const updatePrice = (label: string, val: string) => {
     setPrices(prev => ({ ...prev, [label]: val }));
@@ -65,7 +74,7 @@ export default function BudgetCalculator() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -74,10 +83,10 @@ export default function BudgetCalculator() {
             <Text style={styles.headerSub}>Conventional vs TallowDermics</Text>
           </View>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
 
         {/* Intro */}
         <View style={styles.introCard}>
@@ -213,7 +222,7 @@ export default function BudgetCalculator() {
         </Pressable>
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
