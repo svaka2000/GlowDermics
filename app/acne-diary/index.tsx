@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable,
+  View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -59,7 +59,16 @@ export default function AcneDiary() {
   const [todayTypes, setTodayTypes] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
+    headerAnim.setValue(0);
+    contentAnim.setValue(0);
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
     load();
   }, []));
 
@@ -120,7 +129,10 @@ export default function AcneDiary() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+        }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -129,10 +141,10 @@ export default function AcneDiary() {
             <Text style={styles.headerSub}>Track, analyze, and clear</Text>
           </View>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
 
         {/* Today's log */}
         <View style={styles.todayCard}>
@@ -290,7 +302,7 @@ export default function AcneDiary() {
         </Pressable>
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
