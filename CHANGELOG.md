@@ -4,6 +4,46 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-04-06 (Session 2)
+
+### Animations & Visual Polish (Pass 3)
+
+**Habits screen (`app/habits/index.tsx`)**
+- Entrance stagger: header, score card, week bars, habit list all fade+slide in on load
+- Progress bar animates to current score with `Animated.Value` (useNativeDriver: false)
+- Week bar fills animate individually with staggered timing (80ms each)
+- Per-habit row bounce animation on toggle (scale to 0.93, spring back)
+- All animations refresh when a habit is toggled
+
+**Journal screen (`app/journal/index.tsx`)**
+- Header slides down from above on load
+- Entry groups fade+slide up (staggered by group index)
+- Compose card slides in from below when opened
+- Add button now calls `openCompose()` which triggers slide animation
+
+**Settings tab (`app/(tabs)/settings.tsx`)**
+- Header slides down on load
+- Profile card fades+slides up
+- All sections (profile, premium, notifications, etc.) animate in together
+
+**Tab bar (`app/(tabs)/_layout.tsx`)**
+- Active tab now shows a terracotta top indicator pill (28px × 3px rounded bar)
+- Tighter icon layout with consistent padding
+
+**ScoreRing (`src/components/ScoreRing.tsx`)**
+- SVG `linearGradient` for the progress arc (color to full opacity)
+- Ambient glow layer behind the ring (score-colored, 8% opacity circle)
+- Score label now shows contextual text: EXCELLENT / GOOD / FAIR / NEEDS WORK
+- Optional `animate` prop: animates the arc from 0 on mount using `Animated.Value`
+
+**Coach screen (`app/(tabs)/coach.tsx`)**
+- User message bubbles have a soft terracotta shadow glow
+- Rounder bubble corners (20px, 5px on corner)
+- Quick prompt chips are slightly elevated with shadow
+- Line-height improved on bubble text for readability
+
+---
+
 ## 2026-04-06
 
 ### Animations & Visual Polish (Pass 2)
