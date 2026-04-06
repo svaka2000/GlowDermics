@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar, TextInput, Alert, Modal,
+  SafeAreaView, StatusBar, TextInput, Alert, Modal, Platform,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -249,8 +249,9 @@ export default function ProductShelfScreen() {
       </ScrollView>
 
       {/* Add Product Modal */}
-      <Modal visible={adding} animationType="slide">
-        <SafeAreaView style={styles.modalContainer}>
+      {(Platform.OS === 'web' ? adding : false) && (
+        <View style={[StyleSheet.absoluteFillObject, { zIndex: 9999, backgroundColor: Colors.bg }]}>
+          <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setAdding(false)}>
               <Text style={styles.modalCancel}>Cancel</Text>
@@ -304,11 +305,64 @@ export default function ProductShelfScreen() {
             />
           </ScrollView>
         </SafeAreaView>
-      </Modal>
+        </View>
+      )}
+      {Platform.OS !== 'web' && (
+        <Modal visible={adding} animationType="slide">
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={() => setAdding(false)}>
+                <Text style={styles.modalCancel}>Cancel</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Add Product</Text>
+              <TouchableOpacity onPress={addProduct}>
+                <Text style={styles.modalSave}>Save</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView contentContainerStyle={{ padding: 16, gap: 14 }}>
+              <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Product name *" placeholderTextColor={Colors.textMuted} />
+              <TextInput style={styles.input} value={brand} onChangeText={setBrand} placeholder="Brand (optional)" placeholderTextColor={Colors.textMuted} />
+              <Text style={styles.fieldLabel}>Category</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                {CATEGORIES.map(c => (
+                  <TouchableOpacity key={c} style={[styles.optionChip, category === c && styles.optionChipActive]} onPress={() => setCategory(c)}>
+                    <Text style={[styles.optionChipText, category === c && styles.optionChipTextActive]}>{categoryEmoji[c]} {c}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <Text style={styles.fieldLabel}>When do you use it?</Text>
+              <View style={styles.timeRow}>
+                {TIMES.map(t => (
+                  <TouchableOpacity key={t} style={[styles.optionChip, timeOfUse === t && styles.optionChipActive]} onPress={() => setTimeOfUse(t)}>
+                    <Text style={[styles.optionChipText, timeOfUse === t && styles.optionChipTextActive]}>{t}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={styles.fieldLabel}>Rating</Text>
+              <View style={styles.ratingRow}>
+                {RATINGS.map(r => (
+                  <TouchableOpacity key={r.value} style={[styles.ratingChip, rating === r.value && styles.ratingChipActive]} onPress={() => setRating(r.value)}>
+                    <Text style={[styles.ratingChipText, rating === r.value && { color: ratingColor(r.value) }]}>{r.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={styles.fieldLabel}>Skin reactions (optional)</Text>
+              <View style={styles.reactionsGrid}>
+                {REACTION_OPTIONS.map(r => (
+                  <TouchableOpacity key={r} style={[styles.reactionChip, reactions.includes(r) && styles.reactionChipActive]} onPress={() => toggleReaction(r)}>
+                    <Text style={[styles.reactionChipText, reactions.includes(r) && { color: Colors.primary }]}>{r}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TextInput style={[styles.input, { height: 80, textAlignVertical: 'top' }]} value={notes} onChangeText={setNotes} placeholder="Notes (optional)" placeholderTextColor={Colors.textMuted} multiline />
+            </ScrollView>
+          </SafeAreaView>
+        </Modal>
+      )}
 
       {/* View Product Modal */}
-      {viewingProduct && (
-        <Modal visible={!!viewingProduct} animationType="slide">
+      {viewingProduct && (Platform.OS === 'web' ? (
+        <View style={[StyleSheet.absoluteFillObject, { zIndex: 9999, backgroundColor: Colors.bg }]}>
           <SafeAreaView style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <TouchableOpacity onPress={() => setViewingProduct(null)}>
@@ -359,8 +413,57 @@ export default function ProductShelfScreen() {
               </TouchableOpacity>
             </ScrollView>
           </SafeAreaView>
+        </View>
+      ) : (
+        <Modal visible={!!viewingProduct} animationType="slide">
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={() => setViewingProduct(null)}>
+                <Text style={styles.modalCancel}>← Back</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>{categoryEmoji[viewingProduct.category]}</Text>
+              <TouchableOpacity onPress={() => deleteProduct(viewingProduct.id)}>
+                <Text style={[styles.modalCancel, { color: Colors.red }]}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView contentContainerStyle={{ padding: 16 }}>
+              <Text style={styles.viewName}>{viewingProduct.name}</Text>
+              {viewingProduct.brand ? <Text style={styles.viewBrand}>{viewingProduct.brand}</Text> : null}
+              <View style={styles.viewMeta}>
+                <Text style={styles.viewMetaItem}>{viewingProduct.category}</Text>
+                <Text style={styles.viewMetaItem}>{viewingProduct.timeOfUse}</Text>
+                <Text style={styles.viewMetaItem}>Since {formatDate(viewingProduct.dateAdded)}</Text>
+              </View>
+              <Text style={[styles.viewDays, { color: ratingColor(viewingProduct.rating) }]}>
+                {'★'.repeat(viewingProduct.rating)} {RATINGS.find(r => r.value === viewingProduct.rating)?.label}
+              </Text>
+              <Text style={styles.viewDays}>{daysSince(viewingProduct.dateAdded)} days on your shelf</Text>
+              {viewingProduct.reactions.length > 0 && (
+                <View style={styles.viewSection}>
+                  <Text style={styles.viewSectionTitle}>Reactions Noted</Text>
+                  <View style={styles.viewChips}>
+                    {viewingProduct.reactions.map(r => (<View key={r} style={styles.viewChip}><Text style={styles.viewChipText}>{r}</Text></View>))}
+                  </View>
+                </View>
+              )}
+              {viewingProduct.notes ? (
+                <View style={styles.viewSection}>
+                  <Text style={styles.viewSectionTitle}>Notes</Text>
+                  <Text style={styles.viewNotes}>{viewingProduct.notes}</Text>
+                </View>
+              ) : null}
+              <TouchableOpacity
+                style={[styles.toggleActiveBtn, viewingProduct.isActive && { backgroundColor: Colors.border }]}
+                onPress={() => toggleActive(viewingProduct.id)}
+              >
+                <Text style={styles.toggleActiveBtnText}>
+                  {viewingProduct.isActive ? '📦 Move to Retired' : '✅ Mark as Active'}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </SafeAreaView>
         </Modal>
-      )}
+      ))}
     </SafeAreaView>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, Modal, Animated,
+  View, Text, StyleSheet, Pressable, Modal, Platform, ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,86 +39,87 @@ export function PremiumGate({ visible, onClose, feature, reason }: PremiumGatePr
     setActivating(false);
   };
 
+  const sheetContent = (
+    <View style={styles.sheet}>
+      <View style={styles.handle} />
+      {activated ? (
+        <View style={styles.successWrap}>
+          <View style={styles.successCircle}>
+            <Ionicons name="checkmark" size={36} color="#fff" />
+          </View>
+          <Text style={styles.successTitle}>Premium Activated!</Text>
+          <Text style={styles.successSub}>Welcome to the full GlowDermics experience.</Text>
+        </View>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+          <LinearGradient colors={['rgba(196,98,45,0.12)', 'transparent']} style={styles.heroGlow} />
+          <View style={styles.hero}>
+            <View style={styles.crownWrap}>
+              <LinearGradient colors={['#F0C94A', '#D4A96A']} style={styles.crownGrad}>
+                <Ionicons name="star" size={24} color="#fff" />
+              </LinearGradient>
+            </View>
+            <Text style={styles.heroTitle}>GlowDermics Premium</Text>
+            <Text style={styles.heroPrice}>$4.99 / month</Text>
+          </View>
+          {reason && (
+            <View style={styles.reasonBox}>
+              <Ionicons name="information-circle" size={14} color={Colors.primary} />
+              <Text style={styles.reasonText}>{reason}</Text>
+            </View>
+          )}
+          <View style={styles.featureList}>
+            {PREMIUM_FEATURES.map(f => (
+              <View key={f.label} style={styles.featureRow}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name={f.icon as any} size={16} color={Colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.featureLabel}>{f.label}</Text>
+                  <Text style={styles.featureSub}>{f.sub}</Text>
+                </View>
+                <Ionicons name="checkmark-circle" size={16} color="#16A34A" />
+              </View>
+            ))}
+          </View>
+          <Pressable style={styles.upgradeBtn} onPress={handleActivate} disabled={activating}>
+            <LinearGradient
+              colors={['#F0C94A', '#D4A96A', '#C4622D']}
+              style={styles.upgradeBtnGrad}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            >
+              <Ionicons name="star" size={16} color="#fff" />
+              <Text style={styles.upgradeBtnText}>
+                {activating ? 'Activating…' : 'Activate Premium'}
+              </Text>
+            </LinearGradient>
+          </Pressable>
+          <Pressable onPress={onClose} style={styles.dismissBtn}>
+            <Text style={styles.dismissText}>Maybe later</Text>
+          </Pressable>
+          <Text style={styles.finePrint}>Cancel anytime · No commitment · Data stays private</Text>
+        </ScrollView>
+      )}
+    </View>
+  );
+
+  // On web, Modal renders as a browser-level portal and escapes the phone frame.
+  // Use an in-tree absolutely-positioned overlay instead so it stays inside the frame.
+  if (Platform.OS === 'web') {
+    if (!visible) return null;
+    return (
+      <View style={[StyleSheet.absoluteFillObject, styles.webOverlay]}>
+        <Pressable style={[StyleSheet.absoluteFill, styles.backdrop]} onPress={onClose} />
+        {sheetContent}
+      </View>
+    );
+  }
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.backdrop}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        <View style={styles.sheet}>
-          {/* Handle */}
-          <View style={styles.handle} />
-
-          {activated ? (
-            <View style={styles.successWrap}>
-              <View style={styles.successCircle}>
-                <Ionicons name="checkmark" size={36} color="#fff" />
-              </View>
-              <Text style={styles.successTitle}>Premium Activated!</Text>
-              <Text style={styles.successSub}>Welcome to the full GlowDermics experience.</Text>
-            </View>
-          ) : (
-            <>
-              {/* Hero */}
-              <LinearGradient
-                colors={['rgba(196,98,45,0.12)', 'transparent']}
-                style={styles.heroGlow}
-              />
-              <View style={styles.hero}>
-                <View style={styles.crownWrap}>
-                  <LinearGradient colors={['#F0C94A', '#D4A96A']} style={styles.crownGrad}>
-                    <Ionicons name="star" size={24} color="#fff" />
-                  </LinearGradient>
-                </View>
-                <Text style={styles.heroTitle}>GlowDermics Premium</Text>
-                <Text style={styles.heroPrice}>$4.99 / month</Text>
-              </View>
-
-              {reason && (
-                <View style={styles.reasonBox}>
-                  <Ionicons name="information-circle" size={14} color={Colors.primary} />
-                  <Text style={styles.reasonText}>{reason}</Text>
-                </View>
-              )}
-
-              {/* Feature list */}
-              <View style={styles.featureList}>
-                {PREMIUM_FEATURES.map(f => (
-                  <View key={f.label} style={styles.featureRow}>
-                    <View style={styles.featureIcon}>
-                      <Ionicons name={f.icon as any} size={16} color={Colors.primary} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.featureLabel}>{f.label}</Text>
-                      <Text style={styles.featureSub}>{f.sub}</Text>
-                    </View>
-                    <Ionicons name="checkmark-circle" size={16} color="#16A34A" />
-                  </View>
-                ))}
-              </View>
-
-              {/* CTA */}
-              <Pressable style={styles.upgradeBtn} onPress={handleActivate} disabled={activating}>
-                <LinearGradient
-                  colors={['#F0C94A', '#D4A96A', '#C4622D']}
-                  style={styles.upgradeBtnGrad}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                >
-                  <Ionicons name="star" size={16} color="#fff" />
-                  <Text style={styles.upgradeBtnText}>
-                    {activating ? 'Activating…' : 'Activate Premium'}
-                  </Text>
-                </LinearGradient>
-              </Pressable>
-
-              <Pressable onPress={onClose} style={styles.dismissBtn}>
-                <Text style={styles.dismissText}>Maybe later</Text>
-              </Pressable>
-
-              <Text style={styles.finePrint}>
-                Cancel anytime · No commitment · Data stays private
-              </Text>
-            </>
-          )}
-        </View>
+        {sheetContent}
       </View>
     </Modal>
   );
@@ -144,6 +145,10 @@ export function PremiumBanner({ onUpgrade, message }: { onUpgrade: () => void; m
 }
 
 const styles = StyleSheet.create({
+  webOverlay: {
+    zIndex: 9999,
+    justifyContent: 'flex-end',
+  },
   backdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
@@ -153,6 +158,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32, borderTopRightRadius: 32,
     paddingHorizontal: 24, paddingBottom: 40,
     overflow: 'hidden',
+    maxHeight: '85%',
   },
   handle: {
     width: 36, height: 4, borderRadius: 2,

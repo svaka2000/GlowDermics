@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar, Alert, TextInput, Modal,
+  SafeAreaView, StatusBar, Alert, TextInput, Modal, Platform, Pressable,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -343,39 +343,56 @@ export default function MorningChecklistScreen() {
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      <Modal visible={addingStep} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Add Step</Text>
-            <View style={styles.modalTabRow}>
-              {(['AM', 'PM'] as const).map(t => (
-                <TouchableOpacity
-                  key={t}
-                  style={[styles.modalTab, newStepTime === t && styles.modalTabActive]}
-                  onPress={() => setNewStepTime(t)}
-                >
-                  <Text style={[styles.modalTabText, newStepTime === t && styles.modalTabTextActive]}>{t}</Text>
+      {Platform.OS === 'web' ? (
+        addingStep ? (
+          <View style={[StyleSheet.absoluteFillObject, styles.modalOverlay, { zIndex: 9999 }]}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => { setAddingStep(false); setNewStepLabel(''); }} />
+            <View style={styles.modalCard}>
+              <Text style={styles.modalTitle}>Add Step</Text>
+              <View style={styles.modalTabRow}>
+                {(['AM', 'PM'] as const).map(t => (
+                  <TouchableOpacity key={t} style={[styles.modalTab, newStepTime === t && styles.modalTabActive]} onPress={() => setNewStepTime(t)}>
+                    <Text style={[styles.modalTabText, newStepTime === t && styles.modalTabTextActive]}>{t}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TextInput style={styles.modalInput} value={newStepLabel} onChangeText={setNewStepLabel} placeholder="Step description..." placeholderTextColor={Colors.textMuted} />
+              <View style={styles.modalBtns}>
+                <TouchableOpacity style={styles.modalCancel} onPress={() => { setAddingStep(false); setNewStepLabel(''); }}>
+                  <Text style={styles.modalCancelText}>Cancel</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-            <TextInput
-              style={styles.modalInput}
-              value={newStepLabel}
-              onChangeText={setNewStepLabel}
-              placeholder="Step description..."
-              placeholderTextColor={Colors.textMuted}
-            />
-            <View style={styles.modalBtns}>
-              <TouchableOpacity style={styles.modalCancel} onPress={() => { setAddingStep(false); setNewStepLabel(''); }}>
-                <Text style={styles.modalCancelText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalConfirm} onPress={addStep}>
-                <Text style={styles.modalConfirmText}>Add</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.modalConfirm} onPress={addStep}>
+                  <Text style={styles.modalConfirmText}>Add</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        ) : null
+      ) : (
+        <Modal visible={addingStep} transparent animationType="slide">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <Text style={styles.modalTitle}>Add Step</Text>
+              <View style={styles.modalTabRow}>
+                {(['AM', 'PM'] as const).map(t => (
+                  <TouchableOpacity key={t} style={[styles.modalTab, newStepTime === t && styles.modalTabActive]} onPress={() => setNewStepTime(t)}>
+                    <Text style={[styles.modalTabText, newStepTime === t && styles.modalTabTextActive]}>{t}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TextInput style={styles.modalInput} value={newStepLabel} onChangeText={setNewStepLabel} placeholder="Step description..." placeholderTextColor={Colors.textMuted} />
+              <View style={styles.modalBtns}>
+                <TouchableOpacity style={styles.modalCancel} onPress={() => { setAddingStep(false); setNewStepLabel(''); }}>
+                  <Text style={styles.modalCancelText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.modalConfirm} onPress={addStep}>
+                  <Text style={styles.modalConfirmText}>Add</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
