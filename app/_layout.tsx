@@ -91,6 +91,9 @@ export default function RootLayout() {
           <Stack.Screen name="oil-guide/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="hormonal-acne/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="speed-routine/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="spf-guide/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="rosacea-guide/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="anti-aging/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

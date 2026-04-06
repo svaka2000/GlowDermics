@@ -330,7 +330,10 @@ export default function Settings() {
             <LinkRow icon="body-outline" label="Facial Yoga" onPress={() => router.push('/facial-yoga')} />
             <LinkRow icon="flask-outline" label="Facial Oil Guide" onPress={() => router.push('/oil-guide')} />
             <LinkRow icon="moon-outline" label="Hormonal Acne Guide" onPress={() => router.push('/hormonal-acne')} />
-            <LinkRow icon="flash-outline" label="Speed Routines" onPress={() => router.push('/speed-routine')} last />
+            <LinkRow icon="flash-outline" label="Speed Routines" onPress={() => router.push('/speed-routine')} />
+            <LinkRow icon="sunny-outline" label="Complete SPF Guide" onPress={() => router.push('/spf-guide')} />
+            <LinkRow icon="rose-outline" label="Rosacea Guide" onPress={() => router.push('/rosacea-guide')} />
+            <LinkRow icon="timer-outline" label="Anti-Aging Protocol" onPress={() => router.push('/anti-aging')} last />
           </View>
         </View>
 
