@@ -287,7 +287,9 @@ export default function Settings() {
             <LinkRow icon="sunny-outline" label="UV & Sun Log" onPress={() => router.push('/uv-log')} />
             <LinkRow icon="flask-outline" label="Patch Test Tracker" onPress={() => router.push('/patch-test')} />
             <LinkRow icon="alarm-outline" label="Product Expiry Tracker" onPress={() => router.push('/expiry-tracker')} />
-            <LinkRow icon="leaf-outline" label="Environment Log" onPress={() => router.push('/environment-log')} last />
+            <LinkRow icon="leaf-outline" label="Environment Log" onPress={() => router.push('/environment-log')} />
+            <LinkRow icon="book-outline" label="Skin Journal" onPress={() => router.push('/skin-journal')} />
+            <LinkRow icon="checkmark-circle-outline" label="Routine Checklist" onPress={() => router.push('/morning-checklist')} last />
           </View>
         </View>
 
@@ -318,7 +320,8 @@ export default function Settings() {
             <LinkRow icon="flask-outline" label="The Science of Tallow" onPress={() => router.push('/tallow-science')} />
             <LinkRow icon="leaf-outline" label="Minimal Routine Builder" onPress={() => router.push('/minimal-routine')} />
             <LinkRow icon="water-outline" label="Skin Detox Protocols" onPress={() => router.push('/skin-detox')} />
-            <LinkRow icon="radio-button-off-outline" label="Pore Guide" onPress={() => router.push('/pore-guide')} last />
+            <LinkRow icon="radio-button-off-outline" label="Pore Guide" onPress={() => router.push('/pore-guide')} />
+            <LinkRow icon="water-outline" label="Water Quality & Skin" onPress={() => router.push('/water-quality')} last />
           </View>
         </View>
 
