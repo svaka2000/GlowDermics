@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +20,11 @@ export default function Routine() {
   const [routineLog, setRoutineLog] = useState<{ date: string; morning: boolean; evening: boolean }[]>([]);
   const [showCalendar, setShowCalendar] = useState(false);
 
+  // Progress bar animation
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const stepsAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
     (async () => {
       const [a, log, streak] = await Promise.all([
@@ -33,14 +38,23 @@ export default function Routine() {
       setCheckedSteps(new Set());
       const fullLog = await Storage.getFullRoutineLog();
       setRoutineLog(fullLog);
+      // Entrance animations
+      headerAnim.setValue(0);
+      stepsAnim.setValue(0);
+      Animated.stagger(120, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(stepsAnim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
     })();
   }, []));
 
-  const toggleStep = (idx: number) => {
+  const toggleStep = (idx: number, totalSteps: number) => {
     setCheckedSteps(prev => {
       const next = new Set(prev);
       if (next.has(idx)) next.delete(idx);
       else next.add(idx);
+      const pct = totalSteps > 0 ? next.size / totalSteps : 0;
+      Animated.timing(progressAnim, { toValue: pct, duration: 350, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
       return next;
     });
   };
@@ -86,12 +100,23 @@ export default function Routine() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Routine</Text>
-          <Text style={styles.headerSub}>Based on your latest scan</Text>
-        </View>
-      </SafeAreaView>
+      <Animated.View style={{
+        opacity: headerAnim,
+        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
+      }}>
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.headerTitle}>My Routine</Text>
+              <Text style={styles.headerSub}>Based on your latest scan</Text>
+            </View>
+            <View style={[styles.streakBadge, { marginBottom: 0 }]}>
+              <Text style={styles.streakNum}>{routineStreak}🔥</Text>
+              <Text style={styles.streakLabel}>Streak</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      </Animated.View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
@@ -161,18 +186,21 @@ export default function Routine() {
               )}
             </View>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${(completedCount / steps.length) * 100}%` as any }]} />
+              <Animated.View style={[styles.progressFill, { width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) as any }]} />
             </View>
           </View>
         )}
 
         {/* Steps */}
         {steps.length > 0 ? (
-          <View style={styles.stepsWrap}>
+          <Animated.View style={[styles.stepsWrap, {
+            opacity: stepsAnim,
+            transform: [{ translateY: stepsAnim.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }],
+          }]}>
             {steps.map((step, i) => {
               const checked = checkedSteps.has(i);
               return (
-                <Pressable key={i} style={[styles.stepCard, checked && styles.stepCardChecked]} onPress={() => toggleStep(i)}>
+                <Pressable key={i} style={[styles.stepCard, checked && styles.stepCardChecked]} onPress={() => toggleStep(i, steps.length)}>
                   <View style={[styles.stepCheck, checked && styles.stepCheckDone]}>
                     {checked && <Ionicons name="checkmark" size={14} color={Colors.white} />}
                   </View>
@@ -190,7 +218,7 @@ export default function Routine() {
                 </Pressable>
               );
             })}
-          </View>
+          </Animated.View>
         ) : (
           <View style={styles.noSteps}>
             <Text style={styles.noStepsText}>No {timeFilter} steps in your routine.</Text>
@@ -225,7 +253,7 @@ const styles = StyleSheet.create({
   todayChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8 },
   todayChipDone: { borderColor: Colors.scoreExcellent + '40', backgroundColor: Colors.scoreExcellent + '10' },
   todayChipText: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
-  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
+  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
   headerSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
   scroll: { paddingHorizontal: 16 },

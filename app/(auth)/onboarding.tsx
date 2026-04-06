@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ScrollView,
-  Dimensions, TextInput, KeyboardAvoidingView, Platform,
+  Dimensions, TextInput, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -50,6 +50,49 @@ export default function Onboarding() {
 
   const totalSteps = 5;
 
+  // Step transition animation
+  const stepOpacity = useRef(new Animated.Value(1)).current;
+  const stepSlide = useRef(new Animated.Value(0)).current;
+  const progressWidth = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    // Animate progress bar
+    Animated.timing(progressWidth, {
+      toValue: (step + 1) / totalSteps,
+      duration: 400,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [step]);
+
+  useEffect(() => {
+    // Pulsing ambient glow
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, { toValue: 0.9, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0.4, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  const animateStepChange = (newStep: number) => {
+    const direction = newStep > step ? 1 : -1;
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(stepOpacity, { toValue: 0, duration: 160, useNativeDriver: true }),
+        Animated.timing(stepSlide, { toValue: -30 * direction, duration: 160, useNativeDriver: true }),
+      ]),
+    ]).start(() => {
+      stepSlide.setValue(30 * direction);
+      setStep(newStep);
+      Animated.parallel([
+        Animated.timing(stepOpacity, { toValue: 1, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(stepSlide, { toValue: 0, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    });
+  };
+
   const toggleItem = (item: string, list: string[], setList: (l: string[]) => void) => {
     if (list.includes(item)) setList(list.filter(i => i !== item));
     else if (list.length < 3) setList([...list, item]);
@@ -90,17 +133,28 @@ export default function Onboarding() {
 
   return (
     <LinearGradient colors={['#0A0A0F', '#12080A']} style={styles.gradient}>
+      {/* Ambient glow */}
+      <Animated.View style={[styles.ambientGlow, { opacity: glowAnim }]} pointerEvents="none" />
+
       <SafeAreaView style={styles.safe}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.kav}>
 
-          {/* Progress bar */}
+          {/* Progress bar — animated gradient fill */}
           <View style={styles.progressWrap}>
-            {Array.from({ length: totalSteps }).map((_, i) => (
-              <View key={i} style={[styles.progressDot, i <= step && styles.progressDotActive]} />
-            ))}
+            <View style={styles.progressTrack}>
+              <Animated.View style={[styles.progressFill, {
+                width: progressWidth.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) as any,
+              }]} />
+            </View>
+            <Text style={styles.progressLabel}>{step + 1} / {totalSteps}</Text>
           </View>
 
-          <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <Animated.ScrollView
+            contentContainerStyle={styles.scroll}
+            keyboardShouldPersistTaps="handled"
+            style={{ opacity: stepOpacity, transform: [{ translateX: stepSlide }] }}
+            showsVerticalScrollIndicator={false}
+          >
 
             {step === 0 && (
               <View style={styles.stepWrap}>
@@ -227,17 +281,17 @@ export default function Onboarding() {
               </View>
             )}
 
-          </ScrollView>
+          </Animated.ScrollView>
 
           <View style={styles.footer}>
             {step > 0 && (
-              <Pressable style={styles.backBtn} onPress={() => setStep(s => s - 1)}>
+              <Pressable style={styles.backBtn} onPress={() => animateStepChange(step - 1)}>
                 <Text style={styles.backText}>← Back</Text>
               </Pressable>
             )}
             <Pressable
               style={[styles.nextBtn, !canProceed() && styles.nextBtnDisabled]}
-              onPress={() => step < totalSteps - 1 ? setStep(s => s + 1) : handleFinish()}
+              onPress={() => step < totalSteps - 1 ? animateStepChange(step + 1) : handleFinish()}
               disabled={!canProceed()}
             >
               <LinearGradient
@@ -261,7 +315,24 @@ const styles = StyleSheet.create({
   gradient: { flex: 1 },
   safe: { flex: 1 },
   kav: { flex: 1 },
-  progressWrap: { flexDirection: 'row', gap: 8, paddingHorizontal: 28, paddingTop: 20, paddingBottom: 8 },
+  ambientGlow: {
+    position: 'absolute',
+    top: -80,
+    left: '50%',
+    marginLeft: -160,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: '#C4622D',
+  },
+  progressWrap: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 28, paddingTop: 20, paddingBottom: 12 },
+  progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.1)', overflow: 'hidden' },
+  progressFill: {
+    height: '100%',
+    borderRadius: 2,
+    backgroundColor: Colors.primary,
+  },
+  progressLabel: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.35)', letterSpacing: 0.5 },
   progressDot: { flex: 1, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)' },
   progressDotActive: { backgroundColor: Colors.primary },
   scroll: { flexGrow: 1, paddingHorizontal: 28, paddingTop: 32 },

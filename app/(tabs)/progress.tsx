@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, Pressable, Animated, Easing } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +34,33 @@ export default function Progress() {
   const [articlesRead, setArticlesRead] = useState(0);
   const [journalCount, setJournalCount] = useState(0);
 
+  // Entrance animations
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const statsAnim = useRef(new Animated.Value(0)).current;
+  const chartAnim = useRef(new Animated.Value(0)).current;
+  const chipGlow = useRef(new Animated.Value(1)).current;
+
+  const runEntrance = () => {
+    headerAnim.setValue(0);
+    statsAnim.setValue(0);
+    chartAnim.setValue(0);
+    Animated.stagger(100, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(statsAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(chartAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  };
+
+  useEffect(() => {
+    // Pulse the active metric chip
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(chipGlow, { toValue: 1.08, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(chipGlow, { toValue: 1, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
   useFocusEffect(useCallback(() => {
     (async () => {
       const [h, rs, ar, journal] = await Promise.all([
@@ -46,6 +73,7 @@ export default function Progress() {
       setRoutineStreak(rs);
       setArticlesRead(ar.length);
       setJournalCount(journal.length);
+      runEntrance();
     })();
   }, []));
 
@@ -83,12 +111,25 @@ export default function Progress() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Progress</Text>
-          <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {history.length >= 2 ? `${Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000)} days` : 'just started'}</Text>
-        </View>
-      </SafeAreaView>
+      <Animated.View style={{
+        opacity: headerAnim,
+        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+      }}>
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.headerTitle}>Progress</Text>
+              <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {history.length >= 2 ? `${Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000)} days` : 'just started'}</Text>
+            </View>
+            {latest && (
+              <View style={styles.headerScore}>
+                <Text style={styles.headerScoreNum}>{latest.overallScore}</Text>
+                <Text style={styles.headerScoreLabel}>Overall</Text>
+              </View>
+            )}
+          </View>
+        </SafeAreaView>
+      </Animated.View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
@@ -128,41 +169,48 @@ export default function Progress() {
         </Pressable>
 
         {/* Activity stats */}
-        <View style={styles.activityRow}>
-          <View style={styles.activityCard}>
-            <Text style={styles.activityNum}>{history.length}</Text>
+        <Animated.View style={[styles.activityRow, {
+          opacity: statsAnim,
+          transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
+        }]}>
+          <View style={[styles.activityCard, { borderColor: 'rgba(196,98,45,0.25)', backgroundColor: 'rgba(196,98,45,0.06)' }]}>
+            <Text style={[styles.activityNum, { color: Colors.primary }]}>{history.length}</Text>
             <Text style={styles.activityLabel}>Scans</Text>
           </View>
-          <View style={styles.activityCard}>
-            <Text style={styles.activityNum}>{routineStreak}</Text>
-            <Text style={styles.activityLabel}>Routine Streak</Text>
+          <View style={[styles.activityCard, { borderColor: 'rgba(251,191,36,0.3)', backgroundColor: 'rgba(251,191,36,0.07)' }]}>
+            <Text style={[styles.activityNum, { color: Colors.gold }]}>{routineStreak}🔥</Text>
+            <Text style={styles.activityLabel}>Streak</Text>
           </View>
-          <View style={styles.activityCard}>
-            <Text style={styles.activityNum}>{journalCount}</Text>
-            <Text style={styles.activityLabel}>Journal Entries</Text>
+          <View style={[styles.activityCard, { borderColor: 'rgba(96,165,250,0.3)', backgroundColor: 'rgba(96,165,250,0.07)' }]}>
+            <Text style={[styles.activityNum, { color: '#60A5FA' }]}>{journalCount}</Text>
+            <Text style={styles.activityLabel}>Journal</Text>
           </View>
-          <View style={styles.activityCard}>
-            <Text style={styles.activityNum}>{articlesRead}</Text>
-            <Text style={styles.activityLabel}>Articles Read</Text>
+          <View style={[styles.activityCard, { borderColor: 'rgba(74,222,128,0.3)', backgroundColor: 'rgba(74,222,128,0.07)' }]}>
+            <Text style={[styles.activityNum, { color: Colors.scoreExcellent }]}>{articlesRead}</Text>
+            <Text style={styles.activityLabel}>Articles</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Metric selector */}
+        <Animated.View style={{ opacity: chartAnim }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.metricScroll}>
           {METRICS.map(m => (
-            <Pressable
-              key={m.key}
-              style={[styles.metricChip, selectedMetric === m.key && styles.metricChipActive]}
-              onPress={() => setSelectedMetric(m.key)}
-            >
-              <Text style={[styles.metricChipText, selectedMetric === m.key && styles.metricChipTextActive]}>
-                {m.label}
-              </Text>
-            </Pressable>
+            <Animated.View key={m.key} style={selectedMetric === m.key ? { transform: [{ scale: chipGlow }] } : {}}>
+              <Pressable
+                style={[styles.metricChip, selectedMetric === m.key && styles.metricChipActive]}
+                onPress={() => setSelectedMetric(m.key)}
+              >
+                <Text style={[styles.metricChipText, selectedMetric === m.key && styles.metricChipTextActive]}>
+                  {m.label}
+                </Text>
+              </Pressable>
+            </Animated.View>
           ))}
         </ScrollView>
+        </Animated.View>
 
         {/* Trend chart */}
+        <Animated.View style={{ opacity: chartAnim, transform: [{ translateY: chartAnim.interpolate({ inputRange: [0,1], outputRange: [20, 0] }) }] }}>
         <View style={styles.chartCard}>
           <View style={styles.chartHeader}>
             <Text style={styles.chartTitle}>{METRICS.find(m => m.key === selectedMetric)?.label} Over Time</Text>
@@ -182,6 +230,7 @@ export default function Progress() {
           </View>
           <ScoreChart data={chartData} color={Colors.primary} height={170} />
         </View>
+        </Animated.View>
 
         {/* All metric deltas vs previous scan */}
         {latest && previous && (
@@ -317,9 +366,12 @@ export default function Progress() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
-  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 },
+  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
   headerSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
+  headerScore: { alignItems: 'center', backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
+  headerScoreNum: { fontSize: 24, fontWeight: '900', color: Colors.primary },
+  headerScoreLabel: { fontSize: 9, color: Colors.primary, fontWeight: '700', letterSpacing: 1 },
   scroll: { paddingBottom: 40 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
