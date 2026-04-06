@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable,
+  View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -71,23 +71,63 @@ async function getWeekHistory(): Promise<{ date: string; score: number }[]> {
   return result;
 }
 
-const CATEGORY_COLORS = {
-  protection: Colors.scoreGood,
-  hydration: '#60A5FA',
-  sleep: '#818CF8',
-  diet: Colors.scoreExcellent,
-  routine: Colors.primary,
-};
-
 export default function DailyHabits() {
   const [checked, setChecked] = useState<string[]>([]);
   const [weekHistory, setWeekHistory] = useState<{ date: string; score: number }[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  // Entrance animations
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const scoreAnim = useRef(new Animated.Value(0)).current;
+  const weekAnim = useRef(new Animated.Value(0)).current;
+  const listAnim = useRef(new Animated.Value(0)).current;
+
+  // Animated progress width (0–1 fraction)
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  // Per-habit bounce scale map
+  const habitScales = useRef<Record<string, Animated.Value>>(
+    Object.fromEntries(HABITS.map(h => [h.id, new Animated.Value(1)]))
+  ).current;
+
+  // Bar chart fill animations (one per day)
+  const barAnims = useRef(Array.from({ length: 7 }, () => new Animated.Value(0))).current;
 
   useFocusEffect(useCallback(() => {
     (async () => {
       const [today, week] = await Promise.all([getTodayLog(), getWeekHistory()]);
       setChecked(today);
       setWeekHistory(week);
+      setLoaded(true);
+
+      const ratio = today.length / HABITS.length;
+      Animated.timing(progressAnim, {
+        toValue: ratio,
+        duration: 900,
+        delay: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start();
+
+      // Stagger bar fills
+      const barFills = week.map((day, i) =>
+        Animated.timing(barAnims[i], {
+          toValue: day.score / 100,
+          duration: 600,
+          delay: 500 + i * 80,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        })
+      );
+      Animated.parallel(barFills).start();
+
+      // Entrance stagger
+      Animated.stagger(80, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(scoreAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(weekAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(listAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
     })();
   }, []));
 
@@ -95,9 +135,35 @@ export default function DailyHabits() {
     const updated = checked.includes(id) ? checked.filter(c => c !== id) : [...checked, id];
     setChecked(updated);
     await setTodayLog(updated);
-    // Refresh week history for the bar chart
+
+    // Bounce the habit row
+    const scale = habitScales[id];
+    Animated.sequence([
+      Animated.timing(scale, { toValue: 0.93, duration: 80, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 4, tension: 200, useNativeDriver: true }),
+    ]).start();
+
+    // Animate progress bar
+    const ratio = updated.length / HABITS.length;
+    Animated.timing(progressAnim, {
+      toValue: ratio,
+      duration: 400,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+
+    // Refresh week history
     const week = await getWeekHistory();
     setWeekHistory(week);
+    const barFills = week.map((day, i) =>
+      Animated.timing(barAnims[i], {
+        toValue: day.score / 100,
+        duration: 500,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      })
+    );
+    Animated.parallel(barFills).start();
   };
 
   const score = Math.round((checked.length / HABITS.length) * 100);
@@ -105,10 +171,15 @@ export default function DailyHabits() {
   const mediumImpact = HABITS.filter(h => h.impact === 'medium');
   const highChecked = highImpact.filter(h => checked.includes(h.id)).length;
 
+  const progressWidth = progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
+        }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -117,13 +188,16 @@ export default function DailyHabits() {
             <Text style={styles.headerSub}>Skin health beyond products</Text>
           </View>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* Today's score */}
-        <View style={styles.scoreCard}>
+        <Animated.View style={[styles.scoreCard, {
+          opacity: scoreAnim,
+          transform: [{ translateY: scoreAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+        }]}>
           <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
           <View style={styles.scoreLeft}>
             <Text style={styles.scoreDateLabel}>TODAY</Text>
@@ -134,20 +208,23 @@ export default function DailyHabits() {
             <Text style={styles.scoreBreakdown}>{highChecked}/{highImpact.length} high-impact</Text>
             <Text style={styles.scoreBreakdown}>{checked.length}/{HABITS.length} total</Text>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${score}%` as any }]} />
+              <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
             </View>
           </View>
-        </View>
+        </Animated.View>
 
         {/* 7-day history */}
-        <View style={styles.weekCard}>
+        <Animated.View style={[styles.weekCard, {
+          opacity: weekAnim,
+          transform: [{ translateY: weekAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+        }]}>
           <Text style={styles.weekTitle}>This Week</Text>
           <View style={styles.weekBars}>
             {weekHistory.map((day, i) => (
               <View key={i} style={styles.weekBarWrap}>
                 <View style={styles.weekBarTrack}>
-                  <View style={[styles.weekBarFill, {
-                    height: `${day.score}%` as any,
+                  <Animated.View style={[styles.weekBarFill, {
+                    height: barAnims[i].interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
                     backgroundColor: day.score >= 70 ? Colors.scoreExcellent : day.score >= 40 ? Colors.scoreFair : Colors.border,
                   }]} />
                 </View>
@@ -155,10 +232,13 @@ export default function DailyHabits() {
               </View>
             ))}
           </View>
-        </View>
+        </Animated.View>
 
         {/* High impact habits */}
-        <View style={styles.section}>
+        <Animated.View style={[styles.section, {
+          opacity: listAnim,
+          transform: [{ translateY: listAnim.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }],
+        }]}>
           <View style={styles.sectionHeader}>
             <View style={styles.impactBadge}>
               <Text style={styles.impactBadgeText}>HIGH IMPACT</Text>
@@ -168,19 +248,24 @@ export default function DailyHabits() {
           {highImpact.map(habit => {
             const done = checked.includes(habit.id);
             return (
-              <Pressable key={habit.id} style={[styles.habitCard, done && styles.habitCardDone]} onPress={() => toggle(habit.id)}>
-                <Text style={styles.habitIcon}>{habit.icon}</Text>
-                <Text style={[styles.habitLabel, done && styles.habitLabelDone]}>{habit.label}</Text>
-                <View style={[styles.checkbox, done && styles.checkboxDone]}>
-                  {done && <Ionicons name="checkmark" size={14} color={Colors.white} />}
-                </View>
-              </Pressable>
+              <Animated.View key={habit.id} style={{ transform: [{ scale: habitScales[habit.id] }] }}>
+                <Pressable style={[styles.habitCard, done && styles.habitCardDone]} onPress={() => toggle(habit.id)}>
+                  <Text style={styles.habitIcon}>{habit.icon}</Text>
+                  <Text style={[styles.habitLabel, done && styles.habitLabelDone]}>{habit.label}</Text>
+                  <View style={[styles.checkbox, done && styles.checkboxDone]}>
+                    {done && <Ionicons name="checkmark" size={14} color={Colors.white} />}
+                  </View>
+                </Pressable>
+              </Animated.View>
             );
           })}
-        </View>
+        </Animated.View>
 
         {/* Medium impact habits */}
-        <View style={styles.section}>
+        <Animated.View style={[styles.section, {
+          opacity: listAnim,
+          transform: [{ translateY: listAnim.interpolate({ inputRange: [0, 1], outputRange: [32, 0] }) }],
+        }]}>
           <View style={styles.sectionHeader}>
             <View style={[styles.impactBadge, { backgroundColor: 'rgba(250,243,224,0.08)' }]}>
               <Text style={[styles.impactBadgeText, { color: Colors.textMuted }]}>GOOD TO DO</Text>
@@ -190,16 +275,18 @@ export default function DailyHabits() {
           {mediumImpact.map(habit => {
             const done = checked.includes(habit.id);
             return (
-              <Pressable key={habit.id} style={[styles.habitCard, done && styles.habitCardDone]} onPress={() => toggle(habit.id)}>
-                <Text style={styles.habitIcon}>{habit.icon}</Text>
-                <Text style={[styles.habitLabel, done && styles.habitLabelDone]}>{habit.label}</Text>
-                <View style={[styles.checkbox, done && styles.checkboxDone]}>
-                  {done && <Ionicons name="checkmark" size={14} color={Colors.white} />}
-                </View>
-              </Pressable>
+              <Animated.View key={habit.id} style={{ transform: [{ scale: habitScales[habit.id] }] }}>
+                <Pressable style={[styles.habitCard, done && styles.habitCardDone]} onPress={() => toggle(habit.id)}>
+                  <Text style={styles.habitIcon}>{habit.icon}</Text>
+                  <Text style={[styles.habitLabel, done && styles.habitLabelDone]}>{habit.label}</Text>
+                  <View style={[styles.checkbox, done && styles.checkboxDone]}>
+                    {done && <Ionicons name="checkmark" size={14} color={Colors.white} />}
+                  </View>
+                </Pressable>
+              </Animated.View>
             );
           })}
-        </View>
+        </Animated.View>
 
         {/* Science note */}
         <View style={styles.scienceNote}>
@@ -233,7 +320,7 @@ const styles = StyleSheet.create({
   scoreLabel: { fontSize: 11, color: Colors.textMuted },
   scoreRight: { flex: 1, gap: 6 },
   scoreBreakdown: { fontSize: 12, color: Colors.textSecondary },
-  progressTrack: { height: 5, backgroundColor: Colors.bgElevated, borderRadius: 3, marginTop: 4 },
+  progressTrack: { height: 5, backgroundColor: Colors.bgElevated, borderRadius: 3, marginTop: 4, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 3 },
 
   weekCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 14 },

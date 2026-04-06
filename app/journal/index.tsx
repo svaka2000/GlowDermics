@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, KeyboardAvoidingView, Platform, Animated,
+  TextInput, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,10 +34,28 @@ export default function Journal() {
   const [mood, setMood] = useState<JournalEntry['mood']>('good');
   const [tags, setTags] = useState<string[]>([]);
 
+  // Entrance animations
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+  // Compose card slide-in
+  const composeAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
-    Storage.getJournal().then(setEntries);
+    Storage.getJournal().then(data => {
+      setEntries(data);
+      Animated.stagger(80, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(contentAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    });
     resetForm();
   }, []));
+
+  const openCompose = () => {
+    composeAnim.setValue(0);
+    setWriting(true);
+    Animated.timing(composeAnim, { toValue: 1, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  };
 
   const resetForm = () => {
     setNote('');
@@ -98,7 +116,10 @@ export default function Journal() {
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+        }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -108,18 +129,21 @@ export default function Journal() {
           </View>
           <Pressable
             style={styles.addBtn}
-            onPress={() => setWriting(!writing)}
+            onPress={() => writing ? resetForm() : openCompose()}
           >
             <Ionicons name={writing ? 'close' : 'add'} size={22} color={Colors.white} />
           </Pressable>
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
 
         {/* Write entry */}
         {writing && (
-          <View style={styles.composeCard}>
+          <Animated.View style={[styles.composeCard, {
+            opacity: composeAnim,
+            transform: [{ translateY: composeAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
+          }]}>
             <Text style={styles.composeTitle}>How's your skin today?</Text>
 
             {/* Mood selector */}
@@ -173,12 +197,12 @@ export default function Journal() {
                 </LinearGradient>
               </Pressable>
             </View>
-          </View>
+          </Animated.View>
         )}
 
         {/* Today nudge */}
         {!writing && !hasTodayEntry && entries.length > 0 && (
-          <Pressable style={styles.nudgeCard} onPress={() => setWriting(true)}>
+          <Pressable style={styles.nudgeCard} onPress={openCompose}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
             <Ionicons name="create-outline" size={20} color={Colors.primary} />
             <View style={{ flex: 1 }}>
@@ -195,7 +219,7 @@ export default function Journal() {
             <Text style={styles.emptyEmoji}>📓</Text>
             <Text style={styles.emptyTitle}>Your skin story starts here</Text>
             <Text style={styles.emptySub}>Daily check-ins let you track patterns, spot triggers, and celebrate your progress over time.</Text>
-            <Pressable style={styles.startBtn} onPress={() => setWriting(true)}>
+            <Pressable style={styles.startBtn} onPress={openCompose}>
               <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.startBtnGrad}>
                 <Text style={styles.startBtnText}>Write First Entry</Text>
               </LinearGradient>
@@ -204,8 +228,11 @@ export default function Journal() {
         )}
 
         {/* Entry list grouped by month */}
-        {Object.entries(grouped).map(([month, monthEntries]) => (
-          <View key={month} style={styles.monthGroup}>
+        {Object.entries(grouped).map(([month, monthEntries], groupIdx) => (
+          <Animated.View key={month} style={[styles.monthGroup, {
+            opacity: contentAnim,
+            transform: [{ translateY: contentAnim.interpolate({ inputRange: [0, 1], outputRange: [20 + groupIdx * 8, 0] }) }],
+          }]}>
             <Text style={styles.monthLabel}>{month}</Text>
             <View style={styles.monthEntries}>
               {monthEntries.map(entry => {
@@ -241,7 +268,7 @@ export default function Journal() {
                 );
               })}
             </View>
-          </View>
+          </Animated.View>
         ))}
 
         <View style={{ height: 100 }} />
