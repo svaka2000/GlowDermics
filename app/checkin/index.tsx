@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert,
+  View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -39,6 +39,7 @@ function generateId() {
 }
 
 export default function DailyCheckIn() {
+  const screenAnim = useRef(new Animated.Value(0)).current;
   const [step, setStep] = useState(0);
   const [routineLog, setRoutineLog] = useState({ morning: false, evening: false });
   const [waterGlasses, setWaterGlasses] = useState(0);
@@ -54,6 +55,8 @@ export default function DailyCheckIn() {
   const isEvening = hour >= 18;
 
   useFocusEffect(useCallback(() => {
+    screenAnim.setValue(0);
+    Animated.timing(screenAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
     (async () => {
       const [rLog, journal] = await Promise.all([
         Storage.getTodayRoutineLog(),
@@ -178,7 +181,10 @@ export default function DailyCheckIn() {
   }
 
   return (
-    <View style={styles.root}>
+    <Animated.View style={[styles.root, {
+      opacity: screenAnim,
+      transform: [{ translateY: screenAnim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+    }]}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
@@ -386,7 +392,7 @@ export default function DailyCheckIn() {
           </Pressable>
         )}
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
