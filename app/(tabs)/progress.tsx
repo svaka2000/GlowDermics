@@ -110,6 +110,10 @@ export default function Progress() {
             <Ionicons name="sparkles-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Forecast</Text>
           </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/calendar')}>
+            <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Calendar</Text>
+          </Pressable>
         </View>
 
         {/* AI Trend Report CTA */}
