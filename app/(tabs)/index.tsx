@@ -7,6 +7,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { SkinAnalysis, UserProfile } from '../../src/types';
@@ -73,6 +74,7 @@ export default function Home() {
   const [journalToday, setJournalToday] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeChallenge, setActiveChallenge] = useState<{ title: string; emoji: string; daysComplete: number; duration: number; todayDone: boolean } | null>(null);
 
   const load = async () => {
     const [p, a, s, w, routineLog, journal] = await Promise.all([
@@ -101,6 +103,34 @@ export default function Home() {
         const today = new Date().toDateString();
         const todayLog = logs.find((l: any) => l.date === today);
         if (todayLog) setHabitScore(Math.round((todayLog.checked.length / TOTAL_HABITS) * 100));
+      }
+    } catch {}
+    // Load active challenge
+    try {
+      const CHALLENGE_KEY = 'gd_active_challenge';
+      const CHALLENGES_MAP: Record<string, { title: string; emoji: string; duration: number }> = {
+        'tallow-30': { title: '30-Day Tallow Switch', emoji: '🌿', duration: 30 },
+        'full-routine-21': { title: '21-Day Routine Reset', emoji: '🌅', duration: 21 },
+        'hydration-14': { title: '14-Day Glow Hydration', emoji: '💧', duration: 14 },
+        'minimal-7': { title: '7-Day Minimal Routine', emoji: '✨', duration: 7 },
+        'sleep-skin-14': { title: '14-Day Sleep for Skin', emoji: '🌙', duration: 14 },
+        'no-touch-7': { title: '7-Day No-Touch Face', emoji: '🤲', duration: 7 },
+      };
+      const raw = await AsyncStorage.getItem(CHALLENGE_KEY);
+      if (raw) {
+        const ch = JSON.parse(raw);
+        const meta = CHALLENGES_MAP[ch.challengeId];
+        if (meta) {
+          const today = new Date().toDateString();
+          setActiveChallenge({
+            title: meta.title, emoji: meta.emoji,
+            daysComplete: ch.completedDays.length,
+            duration: meta.duration,
+            todayDone: ch.completedDays.includes(today),
+          });
+        }
+      } else {
+        setActiveChallenge(null);
       }
     } catch {}
     setLoading(false);
@@ -171,6 +201,26 @@ export default function Home() {
             <Text style={styles.statLabel}>Concerns</Text>
           </Pressable>
         </View>
+
+        {/* Active Challenge widget */}
+        {activeChallenge && (
+          <Pressable style={styles.challengeWidget} onPress={() => router.push('/challenge')}>
+            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+            <Text style={styles.challengeEmoji}>{activeChallenge.emoji}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.challengeLabel}>ACTIVE CHALLENGE</Text>
+              <Text style={styles.challengeTitle}>{activeChallenge.title}</Text>
+              <View style={styles.challengeBarWrap}>
+                <View style={[styles.challengeBarFill, { width: `${Math.min(100, (activeChallenge.daysComplete / activeChallenge.duration) * 100)}%` as any }]} />
+              </View>
+              <Text style={styles.challengeProgress}>{activeChallenge.daysComplete}/{activeChallenge.duration} days</Text>
+            </View>
+            {activeChallenge.todayDone
+              ? <Ionicons name="checkmark-circle" size={24} color="#4ADE80" />
+              : <View style={styles.challengeCheckBtn}><Text style={styles.challengeCheckBtnText}>Check In</Text></View>
+            }
+          </Pressable>
+        )}
 
         {/* Daily Check-In CTA */}
         {!journalToday && (
@@ -594,4 +644,14 @@ const styles = StyleSheet.create({
   waterDone: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   waterDoneText: { fontSize: 12, color: '#60A5FA', fontWeight: '600' },
   waterProgress: { fontSize: 12, color: Colors.textMuted },
+
+  challengeWidget: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.25)', padding: 14, marginBottom: 10 },
+  challengeEmoji: { fontSize: 24 },
+  challengeLabel: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
+  challengeTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 6 },
+  challengeBarWrap: { height: 4, backgroundColor: Colors.border, borderRadius: 2, marginBottom: 3 },
+  challengeBarFill: { height: 4, backgroundColor: Colors.primary, borderRadius: 2 },
+  challengeProgress: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  challengeCheckBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 },
+  challengeCheckBtnText: { fontSize: 11, fontWeight: '700', color: Colors.white },
 });
