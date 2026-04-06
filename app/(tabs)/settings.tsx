@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, Switch, Platform, Linking,
+  TextInput, Alert, Switch, Platform, Linking, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,6 +23,10 @@ const SKIN_TYPES = ['Oily', 'Dry', 'Combination', 'Normal', 'Sensitive'];
 const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Redness', 'Large Pores', 'Dullness', 'Sensitivity'];
 
 export default function Settings() {
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const profileAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [editing, setEditing] = useState(false);
@@ -55,6 +59,13 @@ export default function Settings() {
         const info = await Auth.canScan();
         setScanInfo({ used: info.used, limit: info.limit });
       }
+
+      // Entrance animations
+      Animated.stagger(90, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(profileAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(contentAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
     })();
   }, []));
 
@@ -124,15 +135,21 @@ export default function Settings() {
         }}
       />
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
+        }]}>
           <Text style={styles.headerTitle}>Settings</Text>
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* Profile card */}
-        <View style={styles.profileCard}>
+        <Animated.View style={[styles.profileCard, {
+          opacity: profileAnim,
+          transform: [{ translateY: profileAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
+        }]}>
           <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.avatar}>
             <Text style={styles.avatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
           </LinearGradient>
@@ -152,7 +169,7 @@ export default function Settings() {
             <Text style={styles.statNum}>{scanCount}</Text>
             <Text style={styles.statLabel}>Scans</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Premium / auth card */}
         {authUser?.isPremium ? (
@@ -183,6 +200,7 @@ export default function Settings() {
         )}
 
         {/* Edit Profile */}
+        <Animated.View style={{ opacity: contentAnim, transform: [{ translateY: contentAnim.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }] }}>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Profile</Text>
@@ -512,6 +530,7 @@ export default function Settings() {
         </View>
 
         <View style={{ height: 100 }} />
+        </Animated.View>
       </ScrollView>
     </View>
   );
