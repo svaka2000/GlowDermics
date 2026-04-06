@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ScrollView,
-  ActivityIndicator, Alert, TextInput, KeyboardAvoidingView, Platform,
+  ActivityIndicator, Alert, TextInput, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +19,15 @@ export default function Scanner() {
   const [mode, setMode] = useState<Mode>('choose');
   const [report, setReport] = useState<IngredientReport | null>(null);
   const [manualText, setManualText] = useState('');
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const handlePickPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -135,16 +144,16 @@ export default function Scanner() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Ingredient Scanner</Text>
           <View style={{ width: 40 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView contentContainerStyle={styles.content} style={{ opacity: contentAnim }}>
         <View style={styles.hero}>
           <LinearGradient colors={['rgba(196,98,45,0.15)', 'transparent']} style={styles.heroGlow} />
           <View style={styles.heroIconWrap}>
@@ -188,7 +197,7 @@ export default function Scanner() {
             <Text style={styles.secondaryBtnText}>Type Ingredients Manually</Text>
           </Pressable>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }

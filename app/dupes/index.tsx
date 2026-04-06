@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, ActivityIndicator, Alert, KeyboardAvoidingView, Platform,
+  TextInput, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,6 +23,15 @@ export default function Dupes() {
   const [brand, setBrand] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DupeResult | null>(null);
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(90, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 340, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const search = async (name = productName, b = brand) => {
     if (!name.trim()) return;
@@ -51,17 +60,17 @@ export default function Dupes() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Dupe Finder</Text>
           <View style={{ width: 40 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Animated.ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" style={{ opacity: contentAnim }}>
 
           <View style={styles.hero}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'transparent']} style={styles.heroGlow} />
@@ -129,7 +138,7 @@ export default function Dupes() {
             ))}
           </View>
 
-        </ScrollView>
+        </Animated.ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
