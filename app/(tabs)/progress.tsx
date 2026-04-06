@@ -106,6 +106,10 @@ export default function Progress() {
             <Ionicons name="trophy-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Milestones</Text>
           </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/forecast')}>
+            <Ionicons name="sparkles-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Forecast</Text>
+          </Pressable>
         </View>
 
         {/* AI Trend Report CTA */}
