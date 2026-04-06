@@ -315,7 +315,10 @@ export default function Settings() {
             <LinkRow icon="restaurant-outline" label="Face Food Guide" onPress={() => router.push('/face-food')} />
             <LinkRow icon="sync-outline" label="Active Rotation Schedule" onPress={() => router.push('/active-rotation')} />
             <LinkRow icon="search-outline" label="Label Reading Guide" onPress={() => router.push('/label-guide')} />
-            <LinkRow icon="flask-outline" label="The Science of Tallow" onPress={() => router.push('/tallow-science')} last />
+            <LinkRow icon="flask-outline" label="The Science of Tallow" onPress={() => router.push('/tallow-science')} />
+            <LinkRow icon="leaf-outline" label="Minimal Routine Builder" onPress={() => router.push('/minimal-routine')} />
+            <LinkRow icon="water-outline" label="Skin Detox Protocols" onPress={() => router.push('/skin-detox')} />
+            <LinkRow icon="radio-button-off-outline" label="Pore Guide" onPress={() => router.push('/pore-guide')} last />
           </View>
         </View>
 
