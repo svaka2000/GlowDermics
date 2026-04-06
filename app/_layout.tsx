@@ -70,6 +70,9 @@ export default function RootLayout() {
           <Stack.Screen name="environment-log/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="baumann-test/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-report/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="barrier-quiz/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="travel-planner/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="face-food/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
