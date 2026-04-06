@@ -333,7 +333,10 @@ export default function Settings() {
             <LinkRow icon="flash-outline" label="Speed Routines" onPress={() => router.push('/speed-routine')} />
             <LinkRow icon="sunny-outline" label="Complete SPF Guide" onPress={() => router.push('/spf-guide')} />
             <LinkRow icon="rose-outline" label="Rosacea Guide" onPress={() => router.push('/rosacea-guide')} />
-            <LinkRow icon="timer-outline" label="Anti-Aging Protocol" onPress={() => router.push('/anti-aging')} last />
+            <LinkRow icon="timer-outline" label="Anti-Aging Protocol" onPress={() => router.push('/anti-aging')} />
+            <LinkRow icon="color-filter-outline" label="Hyperpigmentation Guide" onPress={() => router.push('/hyperpigmentation')} />
+            <LinkRow icon="git-compare-outline" label="Ingredient Conflicts" onPress={() => router.push('/ingredient-conflicts')} />
+            <LinkRow icon="water-outline" label="Eczema Guide" onPress={() => router.push('/eczema-guide')} last />
           </View>
         </View>
 
