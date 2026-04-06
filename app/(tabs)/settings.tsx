@@ -342,7 +342,10 @@ export default function Settings() {
             <LinkRow icon="help-circle-outline" label="Purging vs Breakout" onPress={() => router.push('/purging-guide')} />
             <LinkRow icon="shield-outline" label="Barrier Repair Guide" onPress={() => router.push('/barrier-repair')} />
             <LinkRow icon="moon-outline" label="Sleep & Skin Science" onPress={() => router.push('/sleep-skin')} />
-            <LinkRow icon="sunny-outline" label="Vitamin C Guide" onPress={() => router.push('/vitamin-c')} last />
+            <LinkRow icon="sunny-outline" label="Vitamin C Guide" onPress={() => router.push('/vitamin-c')} />
+            <LinkRow icon="flask-outline" label="Niacinamide Guide" onPress={() => router.push('/niacinamide')} />
+            <LinkRow icon="layers-outline" label="Exfoliation Guide" onPress={() => router.push('/exfoliation')} />
+            <LinkRow icon="link-outline" label="Peptide Guide" onPress={() => router.push('/peptides')} last />
           </View>
         </View>
 
