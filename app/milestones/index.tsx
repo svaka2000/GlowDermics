@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable,
+  View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -245,8 +245,17 @@ export default function Milestones() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
-    computeAchievements().then(setAchievements);
+    computeAchievements().then(data => {
+      setAchievements(data);
+      Animated.stagger(90, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(contentAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    });
   }, []));
 
   const categories = ['all', 'scanning', 'routine', 'learning', 'tracking', 'lifestyle'];
@@ -261,7 +270,10 @@ export default function Milestones() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+        }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </Pressable>
@@ -270,10 +282,11 @@ export default function Milestones() {
             <Text style={styles.headerSub}>Your skin journey achievements</Text>
           </View>
           <View style={{ width: 36 }} />
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <Animated.View style={{ opacity: contentAnim, transform: [{ translateY: contentAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }}>
 
         {/* Progress card */}
         <View style={styles.progressCard}>
@@ -370,6 +383,7 @@ export default function Milestones() {
         </View>
 
         <View style={{ height: 100 }} />
+        </Animated.View>
       </ScrollView>
     </View>
   );
