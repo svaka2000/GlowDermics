@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert,
+  TextInput, Alert, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -61,8 +61,17 @@ export default function Goals() {
   const [targetScore, setTargetScore] = useState('80');
   const [weeksAway, setWeeksAway] = useState('8');
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
-    loadGoals().then(setGoals);
+    loadGoals().then(data => {
+      setGoals(data);
+      Animated.stagger(80, [
+        Animated.timing(headerAnim, { toValue: 1, duration: 360, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(contentAnim, { toValue: 1, duration: 360, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    });
   }, []));
 
   const addGoal = async () => {
@@ -147,7 +156,10 @@ export default function Goals() {
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, {
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
+        }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
           </Pressable>
@@ -155,10 +167,12 @@ export default function Goals() {
           <Pressable onPress={() => setShowAdd(true)} style={styles.addBtn}>
             <Ionicons name="add" size={24} color={Colors.primary} />
           </Pressable>
-        </View>
+        </Animated.View>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        style={{ opacity: contentAnim }}>
 
         {/* Add goal form */}
         {showAdd && (
@@ -319,7 +333,7 @@ export default function Goals() {
         )}
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
@@ -360,7 +374,7 @@ const styles = StyleSheet.create({
   presetContent: { flex: 1 },
   presetTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 3 },
   presetMeta: { fontSize: 11, color: Colors.textMuted },
-  goalCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 10 },
+  goalCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderLeftWidth: 3, borderLeftColor: Colors.primary, padding: 16, marginBottom: 10 },
   goalCardCompleted: { opacity: 0.6 },
   goalTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 },
   goalInfo: { flex: 1 },
