@@ -7,8 +7,12 @@ type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function TabIcon({ name, focused }: { name: IoniconName; focused: boolean }) {
   return (
-    <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-      <Ionicons name={name} size={22} color={focused ? Colors.primary : Colors.textMuted} />
+    <View style={styles.iconOuter}>
+      {/* Top indicator bar */}
+      {focused && <View style={styles.topIndicator} />}
+      <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+        <Ionicons name={name} size={21} color={focused ? Colors.primary : Colors.textMuted} />
+      </View>
     </View>
   );
 }
@@ -84,7 +88,16 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Colors.bgSheet,
   },
-  iconWrap: { width: 38, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 14 },
-  iconWrapActive: { backgroundColor: 'rgba(196,98,45,0.10)' },
-  label: { fontSize: 10, fontWeight: '600', marginTop: 2 },
+  iconOuter: { alignItems: 'center', paddingTop: 4 },
+  topIndicator: {
+    position: 'absolute',
+    top: 0,
+    width: 28,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: Colors.primary,
+  },
+  iconWrap: { width: 38, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 14, marginTop: 4 },
+  iconWrapActive: { backgroundColor: 'rgba(196,98,45,0.12)' },
+  label: { fontSize: 10, fontWeight: '600', marginTop: 1 },
 });
