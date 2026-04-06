@@ -67,6 +67,9 @@ export default function RootLayout() {
           <Stack.Screen name="expiry-tracker/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="diy-recipes/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="glossary/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="environment-log/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="baumann-test/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-report/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

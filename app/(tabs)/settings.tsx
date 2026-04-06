@@ -286,7 +286,8 @@ export default function Settings() {
             <LinkRow icon="rose-outline" label="Hormonal Skin Log" onPress={() => router.push('/hormonal-log')} />
             <LinkRow icon="sunny-outline" label="UV & Sun Log" onPress={() => router.push('/uv-log')} />
             <LinkRow icon="flask-outline" label="Patch Test Tracker" onPress={() => router.push('/patch-test')} />
-            <LinkRow icon="alarm-outline" label="Product Expiry Tracker" onPress={() => router.push('/expiry-tracker')} last />
+            <LinkRow icon="alarm-outline" label="Product Expiry Tracker" onPress={() => router.push('/expiry-tracker')} />
+            <LinkRow icon="leaf-outline" label="Environment Log" onPress={() => router.push('/environment-log')} last />
           </View>
         </View>
 
@@ -306,7 +307,9 @@ export default function Settings() {
             <LinkRow icon="chatbubble-ellipses-outline" label="Glow Coach — AI Chat" onPress={() => router.push('/coach-chat')} />
             <LinkRow icon="water-outline" label="Gua Sha Guide" onPress={() => router.push('/gua-sha')} />
             <LinkRow icon="flask-outline" label="DIY Tallow Recipes" onPress={() => router.push('/diy-recipes')} />
-            <LinkRow icon="book-outline" label="Skin Glossary" onPress={() => router.push('/glossary')} last />
+            <LinkRow icon="book-outline" label="Skin Glossary" onPress={() => router.push('/glossary')} />
+            <LinkRow icon="trophy-outline" label="Baumann Skin Type Test" onPress={() => router.push('/baumann-test')} />
+            <LinkRow icon="document-text-outline" label="Monthly Skin Report" onPress={() => router.push('/skin-report')} last />
           </View>
         </View>
 
