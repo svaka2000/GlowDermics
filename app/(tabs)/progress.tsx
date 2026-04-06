@@ -245,6 +245,38 @@ export default function Progress() {
           </View>
         )}
 
+        {/* Personal Records */}
+        {history.length >= 2 && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Personal Records</Text>
+            <Text style={styles.cardSub}>Your best scores across all scans</Text>
+            <View style={styles.deltaGrid}>
+              {(['overall', 'hydration', 'texture', 'clarity', 'evenness', 'firmness', 'pores'] as const).map(metric => {
+                const allVals = history.map(h => metric === 'overall' ? h.overallScore : h.scores[metric]);
+                const best = Math.max(...allVals);
+                const current = metric === 'overall' ? latest.overallScore : latest.scores[metric];
+                const isCurrentBest = current === best;
+                return (
+                  <View key={metric} style={[styles.deltaCell, isCurrentBest && { borderColor: Colors.scoreExcellent + '40', borderWidth: 1 }]}>
+                    <Text style={styles.deltaCellLabel}>{metric === 'overall' ? 'Overall' : metric.charAt(0).toUpperCase() + metric.slice(1)}</Text>
+                    <Text style={[styles.deltaCellVal, { color: Colors.scoreExcellent }]}>{best}</Text>
+                    {isCurrentBest && (
+                      <View style={[styles.deltaChange, { backgroundColor: 'rgba(74,222,128,0.12)' }]}>
+                        <Text style={[styles.deltaChangeText, { color: Colors.scoreExcellent }]}>PR ✓</Text>
+                      </View>
+                    )}
+                    {!isCurrentBest && (
+                      <View style={styles.deltaChange}>
+                        <Text style={[styles.deltaChangeText, { color: Colors.textMuted }]}>Now: {current}</Text>
+                      </View>
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
         {/* Scan history list */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Scan History</Text>

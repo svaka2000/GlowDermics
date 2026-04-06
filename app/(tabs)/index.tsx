@@ -349,6 +349,18 @@ export default function Home() {
               <Ionicons name="cube-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>My{'\n'}Shelf</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/sensitivity')}>
+              <Ionicons name="shield-checkmark-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Sensitivity{'\n'}Test</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/forecast')}>
+              <Ionicons name="sparkles-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Forecast</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/seasonal')}>
+              <Ionicons name="sunny-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Seasonal{'\n'}Guide</Text>
+            </Pressable>
           </View>
         </View>
 
