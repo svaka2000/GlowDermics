@@ -118,6 +118,7 @@ export default function RootLayout() {
           <Stack.Screen name="exercise-skin/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="zinc-guide/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="efa-guide/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="pregnancy-skin/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

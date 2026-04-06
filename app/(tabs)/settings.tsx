@@ -357,7 +357,8 @@ export default function Settings() {
             <LinkRow icon="build-outline" label="Collagen Science" onPress={() => router.push('/collagen-guide')} />
             <LinkRow icon="fitness-outline" label="Exercise & Skin" onPress={() => router.push('/exercise-skin')} />
             <LinkRow icon="flask-outline" label="Zinc for Skin" onPress={() => router.push('/zinc-guide')} />
-            <LinkRow icon="water-outline" label="Essential Fatty Acids" onPress={() => router.push('/efa-guide')} last />
+            <LinkRow icon="water-outline" label="Essential Fatty Acids" onPress={() => router.push('/efa-guide')} />
+            <LinkRow icon="heart-outline" label="Pregnancy-Safe Skincare" onPress={() => router.push('/pregnancy-skin')} last />
           </View>
         </View>
 
