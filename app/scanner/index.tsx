@@ -46,7 +46,7 @@ export default function Scanner() {
     setMode('analyzing');
     try {
       const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: 'base64' as any,
       });
       const result = await scanIngredients(base64, 'image/jpeg');
       setReport(result);

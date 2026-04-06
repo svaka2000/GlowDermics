@@ -246,7 +246,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             <View style={styles.lifestyleCard}>
               <View style={styles.lifestyleLeft}>
                 <Text style={styles.lifestyleLabel}>LIFESTYLE IMPACT</Text>
-                <Text style={styles.lifestyleScore} style={[styles.lifestyleScore, { color: lifecycleColor(dna.lifestyleScore) }]}>
+                <Text style={[styles.lifestyleScore, { color: lifecycleColor(dna.lifestyleScore) }]}>
                   {dna.lifestyleScore}<Text style={styles.lifestyleOf}>/100</Text>
                 </Text>
               </View>
