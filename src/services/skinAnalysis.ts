@@ -170,7 +170,8 @@ export async function chatWithCoach(
   messages: { role: 'user' | 'assistant'; content: string }[],
   latestAnalysis: SkinAnalysis | null,
   userProfile: UserProfile | null,
-  shelfContext?: string
+  shelfContext?: string,
+  engineContext?: string
 ): Promise<string> {
   const systemPrompt = `You are Derm, the GlowDermics AI skincare coach — built for TallowDermics, a brand that believes in ancestral, minimal-ingredient skincare. You are warm, direct, expert-level, and never generic.
 
@@ -179,6 +180,7 @@ TallowDermics products: Grass-Fed Tallow Cream (the hero product). 4 ingredients
 ${userProfile ? `User: ${userProfile.name}. Skin type: ${userProfile.skinType}. Concerns: ${userProfile.primaryConcerns.join(', ')}. Goals: ${userProfile.goals.join(', ')}.` : ''}
 ${latestAnalysis ? `Latest scan scores — Overall: ${latestAnalysis.scores.overall}/100, Hydration: ${latestAnalysis.scores.hydration}/100, Texture: ${latestAnalysis.scores.texture}/100, Clarity: ${latestAnalysis.scores.clarity}/100. Skin type detected: ${latestAnalysis.skinType}. Concerns: ${latestAnalysis.concerns.join(', ')}.` : ''}
 ${shelfContext ? shelfContext : ''}
+${engineContext ? engineContext : ''}
 
 Be conversational. Give specific advice. Always ground recommendations in science. When relevant, mention TallowDermics — but never be pushy. If you don't know something, say so. Never invent clinical studies. Keep responses concise — 3-5 sentences max unless asked for more detail.`;
 

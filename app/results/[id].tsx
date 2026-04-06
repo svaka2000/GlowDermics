@@ -13,6 +13,7 @@ import { SkinAnalysis } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
 import { getSkincareImage } from '../../src/services/imageSearch';
+import { runSkinProgressEngine, EngineReport } from '../../src/engine/SkinProgressEngine';
 
 const SCORE_LABELS: Record<string, string> = {
   hydration: 'Hydration',
@@ -32,6 +33,8 @@ const PRIORITY_COLORS = {
 export default function Results() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
+  const [prevAnalysis, setPrevAnalysis] = useState<SkinAnalysis | null>(null);
+  const [engineReport, setEngineReport] = useState<EngineReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'scores' | 'routine' | 'recommendations'>('scores');
 
@@ -42,11 +45,15 @@ export default function Results() {
 
   useEffect(() => {
     (async () => {
-      const all = await Storage.getAnalyses();
-      const found = all.find(a => a.id === id) || null;
+      const [all, report] = await Promise.all([Storage.getAnalyses(), runSkinProgressEngine()]);
+      const idx = all.findIndex(a => a.id === id);
+      const found = idx >= 0 ? all[idx] : null;
+      // previous scan is the one after it in the array (sorted newest first)
+      const prev = idx >= 0 && idx + 1 < all.length ? all[idx + 1] : null;
       setAnalysis(found);
+      setPrevAnalysis(prev);
+      setEngineReport(report);
       setLoading(false);
-      // Trigger staggered entrance after data loads
       Animated.stagger(120, [
         Animated.timing(heroAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
         Animated.spring(scoreRingScale, { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
@@ -140,6 +147,31 @@ export default function Results() {
               </Animated.View>
             </View>
             <Text style={styles.heroInsights}>{analysis.insights}</Text>
+
+            {/* Delta vs previous scan */}
+            {prevAnalysis && (() => {
+              const delta = analysis.scores.overall - prevAnalysis.scores.overall;
+              const positive = delta >= 0;
+              return (
+                <View style={styles.deltaBanner}>
+                  <Ionicons name={positive ? 'trending-up' : 'trending-down'} size={14} color={positive ? Colors.scoreExcellent : Colors.scorePoor} />
+                  <Text style={[styles.deltaBannerText, { color: positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                    {positive ? '+' : ''}{delta} vs. previous scan
+                  </Text>
+                  <View style={styles.deltaBannerSub}>
+                    {(['hydration', 'texture', 'clarity', 'evenness', 'firmness', 'pores'] as const).map(metric => {
+                      const d = analysis.scores[metric] - prevAnalysis.scores[metric];
+                      if (d === 0) return null;
+                      return (
+                        <Text key={metric} style={[styles.deltaMini, { color: d > 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                          {metric.slice(0, 3).toUpperCase()} {d > 0 ? '+' : ''}{d}
+                        </Text>
+                      );
+                    })}
+                  </View>
+                </View>
+              );
+            })()}
           </View>
         </Animated.View>
 
@@ -183,14 +215,55 @@ export default function Results() {
 
         {/* Scores tab */}
         {tab === 'scores' && (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Skin Scores</Text>
-            <View style={styles.scoresGrid}>
-              {scoreEntries.map(([key, val]) => (
-                <ScoreBar key={key} label={SCORE_LABELS[key] || key} value={val} />
-              ))}
+          <>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Skin Scores</Text>
+              {prevAnalysis && <Text style={styles.cardSub}>Arrows show change vs. previous scan</Text>}
+              <View style={styles.scoresGrid}>
+                {scoreEntries.map(([key, val]) => {
+                  const prev = prevAnalysis ? prevAnalysis.scores[key as keyof typeof prevAnalysis.scores] : null;
+                  const delta = prev !== null ? (val as number) - prev : null;
+                  return (
+                    <View key={key} style={styles.scoreBarRow}>
+                      <View style={{ flex: 1 }}>
+                        <ScoreBar label={SCORE_LABELS[key] || key} value={val as number} />
+                      </View>
+                      {delta !== null && delta !== 0 && (
+                        <View style={[styles.scoreDelta, { backgroundColor: delta > 0 ? 'rgba(22,163,74,0.1)' : 'rgba(220,38,38,0.1)' }]}>
+                          <Text style={[styles.scoreDeltaText, { color: delta > 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                            {delta > 0 ? '+' : ''}{delta}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
             </View>
-          </View>
+
+            {/* What's Working card */}
+            {engineReport && (engineReport.whatWorking.length > 0 || engineReport.whatNotWorking.length > 0) && (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>What's Working</Text>
+                {engineReport.whatWorking.slice(0, 3).map((f, i) => (
+                  <View key={i} style={styles.engineFactorRow}>
+                    <View style={[styles.engineFactorDot, { backgroundColor: 'rgba(22,163,74,0.15)' }]}>
+                      <Text style={{ fontSize: 10, color: Colors.scoreExcellent, fontWeight: '800' }}>✓</Text>
+                    </View>
+                    <Text style={styles.engineFactorText}>{f.factor}</Text>
+                  </View>
+                ))}
+                {engineReport.whatNotWorking.slice(0, 2).map((f, i) => (
+                  <View key={i} style={styles.engineFactorRow}>
+                    <View style={[styles.engineFactorDot, { backgroundColor: 'rgba(220,38,38,0.1)' }]}>
+                      <Text style={{ fontSize: 10, color: Colors.scorePoor, fontWeight: '800' }}>!</Text>
+                    </View>
+                    <Text style={styles.engineFactorText}>{f.factor}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </>
         )}
 
         {/* Routine tab */}
@@ -335,6 +408,20 @@ const styles = StyleSheet.create({
     borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 20,
   },
   cardTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 16 },
+  deltaBanner: {
+    marginTop: 12, backgroundColor: Colors.bgElevated, borderRadius: 12,
+    padding: 10, gap: 6, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
+  },
+  deltaBannerText: { fontSize: 13, fontWeight: '700' },
+  deltaBannerSub: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, width: '100%' },
+  deltaMini: { fontSize: 10, fontWeight: '700' },
+  scoreBarRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  scoreDelta: { borderRadius: 8, paddingHorizontal: 7, paddingVertical: 3, minWidth: 36, alignItems: 'center' },
+  scoreDeltaText: { fontSize: 11, fontWeight: '800' },
+  engineFactorRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  engineFactorDot: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  engineFactorText: { fontSize: 13, color: Colors.textSecondary, flex: 1 },
+  cardSub: { fontSize: 11, color: Colors.textMuted, marginBottom: 12, marginTop: -10 },
   scoresGrid: { gap: 14 },
   routineSection: { marginBottom: 20 },
   routineTimeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },

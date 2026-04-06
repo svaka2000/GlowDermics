@@ -9,6 +9,8 @@ import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreChart } from '../../src/components/ScoreChart';
+import { runSkinProgressEngine, EngineReport } from '../../src/engine/SkinProgressEngine';
+import { runRoutineOptimizer, OptimizedRoutine } from '../../src/engine/RoutineOptimizer';
 
 type Metric = 'overall' | 'hydration' | 'texture' | 'clarity' | 'evenness' | 'firmness' | 'pores';
 
@@ -33,6 +35,8 @@ export default function Progress() {
   const [routineStreak, setRoutineStreak] = useState(0);
   const [articlesRead, setArticlesRead] = useState(0);
   const [journalCount, setJournalCount] = useState(0);
+  const [engineReport, setEngineReport] = useState<EngineReport | null>(null);
+  const [optimizedRoutine, setOptimizedRoutine] = useState<OptimizedRoutine | null>(null);
 
   // Entrance animations
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -74,6 +78,18 @@ export default function Progress() {
       setArticlesRead(ar.length);
       setJournalCount(journal.length);
       runEntrance();
+
+      // Run engine in background after UI renders
+      const report = await runSkinProgressEngine();
+      setEngineReport(report);
+      if (report && h.length > 0) {
+        const allAnalyses = await Storage.getAnalyses();
+        const latest = allAnalyses[0];
+        if (latest) {
+          const routine = await runRoutineOptimizer(latest, report);
+          setOptimizedRoutine(routine);
+        }
+      }
     })();
   }, []));
 
@@ -190,6 +206,179 @@ export default function Progress() {
             <Text style={styles.activityLabel}>Articles</Text>
           </View>
         </Animated.View>
+
+        {/* AI Engine: Trend summary */}
+        {engineReport && (
+          <View style={styles.engineCard}>
+            <View style={styles.engineHeader}>
+              <View style={styles.engineTitleRow}>
+                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.engineIcon}>
+                  <Text style={styles.engineIconText}>✦</Text>
+                </LinearGradient>
+                <View>
+                  <Text style={styles.engineTitle}>Skin Progress Engine</Text>
+                  <Text style={styles.engineSub}>{engineReport.scanCount} scan{engineReport.scanCount !== 1 ? 's' : ''} · {engineReport.daysTracked} days tracked</Text>
+                </View>
+              </View>
+              <View style={[styles.trendBadge, {
+                backgroundColor: engineReport.overallTrend === 'improving'
+                  ? 'rgba(22,163,74,0.12)' : engineReport.overallTrend === 'declining'
+                  ? 'rgba(220,38,38,0.12)' : 'rgba(196,98,45,0.1)',
+              }]}>
+                <Ionicons
+                  name={engineReport.overallTrend === 'improving' ? 'trending-up' : engineReport.overallTrend === 'declining' ? 'trending-down' : 'remove'}
+                  size={12}
+                  color={engineReport.overallTrend === 'improving' ? Colors.scoreExcellent : engineReport.overallTrend === 'declining' ? Colors.scorePoor : Colors.primary}
+                />
+                <Text style={[styles.trendBadgeText, {
+                  color: engineReport.overallTrend === 'improving' ? Colors.scoreExcellent : engineReport.overallTrend === 'declining' ? Colors.scorePoor : Colors.primary,
+                }]}>
+                  {engineReport.overallTrend === 'improving' ? 'Improving' : engineReport.overallTrend === 'declining' ? 'Declining' : 'Stable'}
+                </Text>
+              </View>
+            </View>
+
+            {/* Predicted score */}
+            <View style={styles.predictRow}>
+              <View style={styles.predictItem}>
+                <Text style={styles.predictLabel}>Current</Text>
+                <Text style={styles.predictVal}>{history[0]?.overallScore ?? '—'}</Text>
+              </View>
+              <View style={styles.predictArrow}>
+                <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+                <Text style={styles.predictArrowLabel}>7 days</Text>
+              </View>
+              <View style={styles.predictItem}>
+                <Text style={styles.predictLabel}>Predicted</Text>
+                <Text style={[styles.predictVal, {
+                  color: engineReport.predictedOverall > (history[0]?.overallScore ?? 0)
+                    ? Colors.scoreExcellent : engineReport.predictedOverall < (history[0]?.overallScore ?? 0)
+                    ? Colors.scorePoor : Colors.primary,
+                }]}>{engineReport.predictedOverall}</Text>
+              </View>
+              {engineReport.scanCount >= 2 && (() => {
+                const delta = engineReport.predictedOverall - (history[0]?.overallScore ?? 0);
+                return (
+                  <View style={[styles.predictDelta, { backgroundColor: delta >= 0 ? 'rgba(22,163,74,0.1)' : 'rgba(220,38,38,0.1)' }]}>
+                    <Text style={[styles.predictDeltaText, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                      {delta >= 0 ? '+' : ''}{delta}
+                    </Text>
+                  </View>
+                );
+              })()}
+            </View>
+
+            {/* Per-metric trend row */}
+            {engineReport.scanCount >= 2 && (
+              <View style={styles.metricTrendRow}>
+                {engineReport.trajectories.filter(t => t.metric !== 'overall').map(t => (
+                  <View key={t.metric} style={styles.metricTrendCell}>
+                    <Text style={styles.metricTrendLabel}>{t.label.slice(0, 4)}</Text>
+                    <Ionicons
+                      name={t.trend > 1 ? 'trending-up' : t.trend < -1 ? 'trending-down' : 'remove'}
+                      size={11}
+                      color={t.trend > 1 ? Colors.scoreExcellent : t.trend < -1 ? Colors.scorePoor : Colors.textMuted}
+                    />
+                    <Text style={[styles.metricTrendVal, {
+                      color: t.trend > 1 ? Colors.scoreExcellent : t.trend < -1 ? Colors.scorePoor : Colors.textMuted,
+                    }]}>
+                      {t.trend > 0 ? '+' : ''}{t.trend}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* What's Working / Not */}
+        {engineReport && (engineReport.whatWorking.length > 0 || engineReport.whatNotWorking.length > 0) && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>What's Working</Text>
+            <Text style={styles.cardSub}>Correlated with your scan improvements</Text>
+            {engineReport.whatWorking.slice(0, 3).map((f, i) => (
+              <View key={i} style={styles.factorRow}>
+                <View style={[styles.factorIcon, { backgroundColor: 'rgba(22,163,74,0.12)' }]}>
+                  <Text style={styles.factorEmoji}>✓</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.factorLabel}>{f.factor}</Text>
+                  <Text style={styles.factorEvidence}>{f.evidence}</Text>
+                </View>
+              </View>
+            ))}
+            {engineReport.whatNotWorking.length > 0 && (
+              <>
+                <View style={styles.factorDivider} />
+                <Text style={[styles.cardTitle, { marginBottom: 8, fontSize: 13 }]}>Needs Attention</Text>
+                {engineReport.whatNotWorking.slice(0, 2).map((f, i) => (
+                  <View key={i} style={styles.factorRow}>
+                    <View style={[styles.factorIcon, { backgroundColor: 'rgba(220,38,38,0.1)' }]}>
+                      <Text style={styles.factorEmoji}>!</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.factorLabel}>{f.factor}</Text>
+                      <Text style={styles.factorEvidence}>{f.evidence}</Text>
+                    </View>
+                  </View>
+                ))}
+              </>
+            )}
+          </View>
+        )}
+
+        {/* Optimized Routine */}
+        {optimizedRoutine && (optimizedRoutine.gapAnalysis.length > 0 || optimizedRoutine.productRankings.length > 0) && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Routine Optimizer</Text>
+            <Text style={styles.cardSub}>Personalized to your scan data</Text>
+
+            {/* Product effectiveness rankings */}
+            {optimizedRoutine.productRankings.length > 0 && (
+              <>
+                <Text style={styles.optimizerSection}>YOUR SHELF — RANKED BY EFFECTIVENESS</Text>
+                {optimizedRoutine.productRankings.slice(0, 4).map((p, i) => (
+                  <View key={i} style={styles.productRankRow}>
+                    <View style={[styles.rankNum, { backgroundColor: i === 0 ? 'rgba(196,98,45,0.15)' : Colors.bgElevated }]}>
+                      <Text style={[styles.rankNumText, { color: i === 0 ? Colors.primary : Colors.textMuted }]}>#{i + 1}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.rankProductName}>{p.name}</Text>
+                      <Text style={styles.rankProductReason}>{p.reason}</Text>
+                    </View>
+                    <View style={[styles.scoreCircle, {
+                      borderColor: p.effectivenessScore >= 70 ? Colors.scoreExcellent : p.effectivenessScore >= 50 ? Colors.scoreFair : Colors.textMuted,
+                    }]}>
+                      <Text style={[styles.scoreCircleText, {
+                        color: p.effectivenessScore >= 70 ? Colors.scoreExcellent : p.effectivenessScore >= 50 ? Colors.scoreFair : Colors.textMuted,
+                      }]}>{p.effectivenessScore}</Text>
+                    </View>
+                  </View>
+                ))}
+              </>
+            )}
+
+            {/* Gap analysis */}
+            {optimizedRoutine.gapAnalysis.length > 0 && (
+              <>
+                <Text style={[styles.optimizerSection, { marginTop: 16 }]}>GAPS IN YOUR ROUTINE</Text>
+                {optimizedRoutine.gapAnalysis.map((gap, i) => (
+                  <View key={i} style={styles.gapRow}>
+                    <View style={[styles.gapPriority, { backgroundColor: gap.priority === 'high' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)' }]}>
+                      <Text style={[styles.gapPriorityText, { color: gap.priority === 'high' ? Colors.scorePoor : Colors.scoreFair }]}>
+                        {gap.priority.toUpperCase()}
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.gapCategory}>{gap.gap}</Text>
+                      <Text style={styles.gapRec}>{gap.recommendation}</Text>
+                    </View>
+                  </View>
+                ))}
+              </>
+            )}
+          </View>
+        )}
 
         {/* Metric selector */}
         <Animated.View style={{ opacity: chartAnim }}>
@@ -427,6 +616,48 @@ const styles = StyleSheet.create({
   beforeAfterScore: { fontSize: 22, fontWeight: '800' },
   beforeAfterArrow: { alignItems: 'center', gap: 6 },
   totalDelta: { fontSize: 14, fontWeight: '800' },
+
+  // Engine cards
+  engineCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.borderStrong, padding: 18 },
+  engineHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  engineTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  engineIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
+  engineIconText: { fontSize: 14, color: Colors.white, fontWeight: '800' },
+  engineTitle: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
+  engineSub: { fontSize: 10, color: Colors.textMuted, marginTop: 1 },
+  trendBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
+  trendBadgeText: { fontSize: 11, fontWeight: '700' },
+  predictRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.bgElevated, borderRadius: 14, padding: 14, gap: 10, marginBottom: 14 },
+  predictItem: { flex: 1, alignItems: 'center', gap: 3 },
+  predictLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '700', letterSpacing: 0.5 },
+  predictVal: { fontSize: 26, fontWeight: '900', color: Colors.textPrimary },
+  predictArrow: { alignItems: 'center', gap: 2 },
+  predictArrowLabel: { fontSize: 8, color: Colors.textMuted },
+  predictDelta: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
+  predictDeltaText: { fontSize: 13, fontWeight: '800' },
+  metricTrendRow: { flexDirection: 'row', gap: 6 },
+  metricTrendCell: { flex: 1, alignItems: 'center', backgroundColor: Colors.bgElevated, borderRadius: 10, paddingVertical: 8, gap: 2 },
+  metricTrendLabel: { fontSize: 8, color: Colors.textMuted, fontWeight: '700', letterSpacing: 0.3 },
+  metricTrendVal: { fontSize: 10, fontWeight: '700' },
+  factorRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
+  factorIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  factorEmoji: { fontSize: 12, fontWeight: '800', color: Colors.textPrimary },
+  factorLabel: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 1 },
+  factorEvidence: { fontSize: 11, color: Colors.textMuted },
+  factorDivider: { height: 1, backgroundColor: Colors.border, marginVertical: 12 },
+  optimizerSection: { fontSize: 9, fontWeight: '800', letterSpacing: 1.2, color: Colors.textMuted, marginBottom: 10 },
+  productRankRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  rankNum: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  rankNumText: { fontSize: 11, fontWeight: '800' },
+  rankProductName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 1 },
+  rankProductReason: { fontSize: 11, color: Colors.textMuted },
+  scoreCircle: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  scoreCircleText: { fontSize: 11, fontWeight: '800' },
+  gapRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
+  gapPriority: { borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, marginTop: 2 },
+  gapPriorityText: { fontSize: 8, fontWeight: '800', letterSpacing: 0.5 },
+  gapCategory: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
+  gapRec: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
 
   historyItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   historyBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },

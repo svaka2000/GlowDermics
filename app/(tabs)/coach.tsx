@@ -14,6 +14,7 @@ import { Auth } from '../../src/services/auth';
 import { chatWithCoach } from '../../src/services/skinAnalysis';
 import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
 import { ChatMessage, SkinAnalysis, UserProfile } from '../../src/types';
+import { runSkinProgressEngine } from '../../src/engine/SkinProgressEngine';
 
 const FREE_MSG_LIMIT = 10;
 const todayMsgKey = () => `gd_coach_msgs_${new Date().toISOString().slice(0, 10)}`;
@@ -107,6 +108,7 @@ export default function Coach() {
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [shelfContext, setShelfContext] = useState('');
+  const [engineContext, setEngineContext] = useState('');
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const [isPremium, setIsPremium] = useState(false);
@@ -127,7 +129,8 @@ export default function Coach() {
       Storage.getUserProfile(),
       loadChatHistory(),
       AsyncStorage.getItem(SHELF_KEY),
-    ]).then(([a, p, history, shelfRaw]) => {
+      runSkinProgressEngine(),
+    ]).then(([a, p, history, shelfRaw, engineReport]) => {
       setAnalysis(a);
       setProfile(p);
       if (shelfRaw) {
@@ -138,6 +141,9 @@ export default function Coach() {
             shelf.map(s => `${s.name}${s.brand ? ` by ${s.brand}` : ''} (${s.category}, rated ${s.rating}/5${s.notes ? `, note: ${s.notes}` : ''})`).join('; ')
           );
         }
+      }
+      if (engineReport) {
+        setEngineContext(engineReport.coachContext);
       }
       if (!historyLoaded) {
         setMessages(history);
@@ -174,7 +180,7 @@ export default function Coach() {
     try {
       // Only send last 20 messages to API to stay within token limits
       const apiMessages = newMessages.slice(-20).map(m => ({ role: m.role, content: m.content }));
-      const reply = await chatWithCoach(apiMessages, analysis, profile, shelfContext || undefined);
+      const reply = await chatWithCoach(apiMessages, analysis, profile, shelfContext || undefined, engineContext || undefined);
       const assistantMsg: ChatMessage = {
         id: generateId(), role: 'assistant', content: reply,
         timestamp: new Date().toISOString(),
