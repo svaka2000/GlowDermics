@@ -85,6 +85,9 @@ export default function RootLayout() {
           <Stack.Screen name="face-mapping/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="microbiome/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-cycling/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="product-shelf/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="cold-therapy/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="facial-yoga/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
