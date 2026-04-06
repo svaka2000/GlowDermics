@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
-  ActivityIndicator, Share,
+  ActivityIndicator, Share, Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +12,7 @@ import { Storage } from '../../src/services/storage';
 import { SkinAnalysis } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
+import { getSkincareImage } from '../../src/services/imageSearch';
 
 const SCORE_LABELS: Record<string, string> = {
   hydration: 'Hydration',
@@ -230,14 +231,33 @@ export default function Results() {
                 <Text style={styles.recDesc}>{rec.description}</Text>
                 {rec.product && (
                   <View style={styles.productTag}>
-                    {rec.product.isTallowDermics && (
-                      <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.tdBadge}>
-                        <Text style={styles.tdBadgeText}>TallowDermics</Text>
-                      </LinearGradient>
-                    )}
-                    <Text style={styles.productName}>{rec.product.name}</Text>
-                    <Text style={styles.productBrand}>{rec.product.brand}</Text>
-                    <Text style={styles.productWhy}>{rec.product.why}</Text>
+                    <View style={styles.productTagInner}>
+                      {/* Product image */}
+                      <Image
+                        source={{ uri: getSkincareImage(rec.product.category || 'skincare') }}
+                        style={styles.productImage}
+                        resizeMode="cover"
+                      />
+                      <View style={{ flex: 1 }}>
+                        {rec.product.isTallowDermics && (
+                          <View style={styles.tdBadge}>
+                            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={StyleSheet.absoluteFill} />
+                            <Text style={styles.tdBadgeText}>✦ TallowDermics</Text>
+                          </View>
+                        )}
+                        <Text style={styles.productName}>{rec.product.name}</Text>
+                        <Text style={styles.productBrand}>{rec.product.brand}</Text>
+                        <Text style={styles.productWhy}>{rec.product.why}</Text>
+                        {rec.product.isTallowDermics && (
+                          <Pressable
+                            style={styles.shopBtn}
+                            onPress={() => Linking.openURL('https://trytallowdermics.com')}
+                          >
+                            <Text style={styles.shopBtnText}>Shop TallowDermics →</Text>
+                          </Pressable>
+                        )}
+                      </View>
+                    </View>
                   </View>
                 )}
               </View>
@@ -326,12 +346,22 @@ const styles = StyleSheet.create({
   recTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 6 },
   recDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, marginBottom: 12 },
   productTag: {
-    backgroundColor: Colors.bgCard, borderRadius: 10,
-    padding: 12, gap: 4, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
   },
-  tdBadge: { alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, marginBottom: 4 },
+  productTagInner: { flexDirection: 'row', gap: 12, padding: 12, alignItems: 'flex-start' },
+  productImage: { width: 72, height: 72, borderRadius: 10, backgroundColor: Colors.bgElevated },
+  tdBadge: {
+    alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
+    marginBottom: 6, overflow: 'hidden',
+  },
   tdBadgeText: { fontSize: 10, fontWeight: '700', color: Colors.white, letterSpacing: 0.5 },
-  productName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  productBrand: { fontSize: 12, color: Colors.textMuted },
-  productWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, marginTop: 4 },
+  productName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
+  productBrand: { fontSize: 12, color: Colors.textMuted, marginBottom: 4 },
+  productWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  shopBtn: {
+    marginTop: 8, backgroundColor: Colors.primary, borderRadius: 8,
+    paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start',
+  },
+  shopBtnText: { fontSize: 11, fontWeight: '700', color: '#fff' },
 });

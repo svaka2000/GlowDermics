@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import Groq from 'groq-sdk';
+import { searchBeautyProducts, ProductResult, getSkincareImage } from '../../src/services/imageSearch';
 
 const groq = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
@@ -52,11 +53,19 @@ export default function IngredientDecoder() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<IngredientProfile | null>(null);
   const [error, setError] = useState('');
+  const [products, setProducts] = useState<ProductResult[]>([]);
+  const [heroImage, setHeroImage] = useState<string>('');
 
   useEffect(() => {
     if (name) {
       const decoded = decodeURIComponent(name);
       decode(decoded);
+      // Fetch real product data from Open Beauty Facts
+      searchBeautyProducts(decoded, 4).then(results => {
+        setProducts(results.filter(p => p.imageUrl));
+      }).catch(() => {});
+      // Set a curated hero image
+      setHeroImage(getSkincareImage(decoded));
       // Track for achievements
       import('@react-native-async-storage/async-storage').then(({ default: AsyncStorage }) => {
         AsyncStorage.getItem('gd_ingredients_viewed').then(raw => {
@@ -298,6 +307,29 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         )}
 
         {/* Scan CTA */}
+        {/* Real products from Open Beauty Facts */}
+        {products.length > 0 && (
+          <View style={styles.productsSection}>
+            <Text style={styles.productsSectionTitle}>Real Products Containing This</Text>
+            <Text style={styles.productsSectionSub}>From the Open Beauty Facts database</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
+              {products.map((p, i) => (
+                <View key={i} style={styles.productCard}>
+                  {p.imageUrl ? (
+                    <Image source={{ uri: p.imageUrl }} style={styles.productImg} resizeMode="contain" />
+                  ) : (
+                    <View style={[styles.productImg, styles.productImgPlaceholder]}>
+                      <Ionicons name="cube-outline" size={28} color={Colors.textMuted} />
+                    </View>
+                  )}
+                  <Text style={styles.productName} numberOfLines={2}>{p.name}</Text>
+                  {p.brand ? <Text style={styles.productBrand} numberOfLines={1}>{p.brand}</Text> : null}
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         <Pressable style={styles.scanCta} onPress={() => router.push('/scanner')}>
           <Ionicons name="flask-outline" size={18} color={Colors.primary} />
           <Text style={styles.scanCtaText}>Scan a product to check if it contains this</Text>
@@ -373,4 +405,15 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 8,
   },
   scanCtaText: { flex: 1, fontSize: 13, color: Colors.textSecondary },
+  productsSection: { marginBottom: 14 },
+  productsSectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
+  productsSectionSub: { fontSize: 11, color: Colors.textMuted, marginBottom: 10 },
+  productCard: {
+    width: 120, backgroundColor: Colors.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', padding: 8,
+  },
+  productImg: { width: '100%', height: 80, marginBottom: 6, borderRadius: 8 },
+  productImgPlaceholder: { backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center' },
+  productName: { fontSize: 11, fontWeight: '600', color: Colors.textPrimary, lineHeight: 15 },
+  productBrand: { fontSize: 10, color: Colors.textMuted, marginTop: 2 },
 });

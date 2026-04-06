@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
@@ -66,6 +67,7 @@ function getGreeting() {
 
 export default function Home() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [latest, setLatest] = useState<SkinAnalysis | null>(null);
   const [streak, setStreak] = useState(0);
   const [habitScore, setHabitScore] = useState(0);
@@ -77,15 +79,17 @@ export default function Home() {
   const [activeChallenge, setActiveChallenge] = useState<{ title: string; emoji: string; daysComplete: number; duration: number; todayDone: boolean } | null>(null);
 
   const load = async () => {
-    const [p, a, s, w, routineLog, journal] = await Promise.all([
+    const [p, a, s, w, routineLog, journal, user] = await Promise.all([
       Storage.getUserProfile(),
       Storage.getLatestAnalysis(),
       Storage.getStreak(),
       getWaterToday(),
       Storage.getTodayRoutineLog(),
       Storage.getJournal(),
+      Auth.getCurrentUser(),
     ]);
     setProfile(p);
+    setAuthUser(user);
     setLatest(a);
     setStreak(s);
     setWaterGlasses(w);
@@ -172,11 +176,18 @@ export default function Home() {
           <View style={styles.header}>
             <View>
               <Text style={styles.greeting}>{getGreeting()},</Text>
-              <Text style={styles.name}>{profile?.name || 'Friend'}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.name}>{authUser?.name || profile?.name || 'Friend'}</Text>
+                {authUser?.isPremium && (
+                  <View style={styles.premiumBadge}>
+                    <Text style={styles.premiumBadgeText}>PRO</Text>
+                  </View>
+                )}
+              </View>
             </View>
             <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
               <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.profileAvatar}>
-                <Text style={styles.profileAvatarText}>{profile?.name?.[0]?.toUpperCase() || '?'}</Text>
+                <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
               </LinearGradient>
             </Pressable>
           </View>
@@ -546,6 +557,11 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, paddingBottom: 20 },
   greeting: { fontSize: 13, color: Colors.textMuted },
   name: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, marginTop: 2 },
+  premiumBadge: {
+    backgroundColor: Colors.primary, borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'center',
+  },
+  premiumBadgeText: { fontSize: 8, fontWeight: '900', color: '#fff', letterSpacing: 0.8 },
   profileBtn: {},
   profileAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
   profileAvatarText: { fontSize: 18, fontWeight: '800', color: Colors.white },
