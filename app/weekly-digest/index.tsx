@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  ActivityIndicator, Share,
+  ActivityIndicator, Share, Animated, Easing,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -53,7 +53,16 @@ export default function WeeklyDigest() {
   const [loading, setLoading] = useState(false);
   const [weekStats, setWeekStats] = useState<any>(null);
 
+  const headerAnim = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+
   useFocusEffect(useCallback(() => {
+    headerAnim.setValue(0);
+    contentAnim.setValue(0);
+    Animated.stagger(100, [
+      Animated.timing(headerAnim, { toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(contentAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
     loadData();
   }, []));
 
@@ -230,26 +239,35 @@ Return ONLY valid JSON (no markdown):
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-          </Pressable>
-          <View>
-            <Text style={styles.headerTitle}>Weekly Digest</Text>
-            <Text style={styles.headerSub}>{weekLabel()}</Text>
-          </View>
-          {digest ? (
-            <Pressable style={styles.backBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={20} color={Colors.primary} />
+      <Animated.View style={{
+        opacity: headerAnim,
+        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
+      }}>
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
             </Pressable>
-          ) : (
-            <View style={{ width: 36 }} />
-          )}
-        </View>
-      </SafeAreaView>
+            <View>
+              <Text style={styles.headerTitle}>Weekly Digest</Text>
+              <Text style={styles.headerSub}>{weekLabel()}</Text>
+            </View>
+            {digest ? (
+              <Pressable style={styles.backBtn} onPress={handleShare}>
+                <Ionicons name="share-outline" size={20} color={Colors.primary} />
+              </Pressable>
+            ) : (
+              <View style={{ width: 36 }} />
+            )}
+          </View>
+        </SafeAreaView>
+      </Animated.View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scroll}
+        style={{ opacity: contentAnim }}
+      >
 
         {loading && (
           <View style={styles.loadingCard}>
@@ -396,7 +414,7 @@ Return ONLY valid JSON (no markdown):
         )}
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
