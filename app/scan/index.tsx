@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ActivityIndicator,
-  Alert, Image, ScrollView,
+  Alert, Image, ScrollView, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -26,6 +26,68 @@ export default function Scan() {
   const cameraRef = useRef<CameraView>(null);
   const [scanInfo, setScanInfo] = useState<{ used: number; limit: number; isPremium: boolean } | null>(null);
   const [showGate, setShowGate] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+  // Animation values
+  const scanLineY = useRef(new Animated.Value(0)).current;
+  const glowOpacity = useRef(new Animated.Value(0.3)).current;
+  const ringRotate = useRef(new Animated.Value(0)).current;
+  const ringScale = useRef(new Animated.Value(0.85)).current;
+  const overlayFade = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (mode !== 'analyzing') {
+      setCompletedSteps([]);
+      return;
+    }
+
+    // Fade in overlay
+    Animated.timing(overlayFade, { toValue: 1, duration: 400, useNativeDriver: true }).start();
+
+    // Scanning line loop
+    const lineAnim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(scanLineY, { toValue: 1, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(scanLineY, { toValue: 0, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    );
+    lineAnim.start();
+
+    // Glow pulse
+    const glowAnim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowOpacity, { toValue: 0.9, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(glowOpacity, { toValue: 0.3, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ])
+    );
+    glowAnim.start();
+
+    // Outer ring rotate
+    const rotateAnim = Animated.loop(
+      Animated.timing(ringRotate, { toValue: 1, duration: 3000, easing: Easing.linear, useNativeDriver: true })
+    );
+    rotateAnim.start();
+
+    // Ring breathe
+    const scaleAnim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(ringScale, { toValue: 1, duration: 1400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(ringScale, { toValue: 0.85, duration: 1400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ])
+    );
+    scaleAnim.start();
+
+    // Sequential step reveals
+    const STEP_DELAYS = [800, 2600, 4400, 6200];
+    const timers = STEP_DELAYS.map((delay, i) =>
+      setTimeout(() => setCompletedSteps(prev => [...prev, i]), delay)
+    );
+
+    return () => {
+      lineAnim.stop(); glowAnim.stop(); rotateAnim.stop(); scaleAnim.stop();
+      timers.forEach(clearTimeout);
+    };
+  }, [mode]);
 
   useEffect(() => {
     (async () => {
@@ -137,29 +199,93 @@ export default function Scan() {
   };
 
   if (mode === 'analyzing') {
+    const STEPS = [
+      { label: 'Detecting skin regions', icon: 'scan-outline' },
+      { label: 'Measuring hydration markers', icon: 'water-outline' },
+      { label: 'Scoring texture & clarity', icon: 'stats-chart-outline' },
+      { label: 'Building your routine', icon: 'list-outline' },
+    ];
+    const IMAGE_H = 300;
+    const scanLineTranslate = scanLineY.interpolate({ inputRange: [0, 1], outputRange: [0, IMAGE_H - 4] });
+    const ringRotateDeg = ringRotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+
     return (
-      <View style={styles.root}>
-        <SafeAreaView style={styles.analyzingWrap}>
-          {capturedUri && (
-            <Image source={{ uri: capturedUri }} style={styles.analyzingPreview} blurRadius={4} />
+      <Animated.View style={[styles.root, { opacity: overlayFade }]}>
+        {/* Face photo — full bleed */}
+        <View style={styles.analyzingPhotoWrap}>
+          {capturedUri ? (
+            <Image source={{ uri: capturedUri }} style={styles.analyzingPhoto} />
+          ) : (
+            <View style={[styles.analyzingPhoto, { backgroundColor: '#1C1814' }]} />
           )}
-          <View style={styles.analyzingOverlay}>
-            <View style={styles.analyzingCard}>
-              <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 20 }} />
-              <Text style={styles.analyzingTitle}>Analyzing your skin…</Text>
-              <Text style={styles.analyzingSub}>Our AI is scanning texture, hydration, clarity, evenness, firmness, and pore health.</Text>
-              <View style={styles.analyzingSteps}>
-                {['Detecting skin regions', 'Measuring hydration markers', 'Scoring texture & clarity', 'Building your routine'].map(s => (
-                  <View key={s} style={styles.analyzingStep}>
-                    <View style={styles.analyzingDot} />
-                    <Text style={styles.analyzingStepText}>{s}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
+
+          {/* Dark gradient bottom fade */}
+          <LinearGradient
+            colors={['transparent', 'rgba(10,8,6,0.92)']}
+            style={[StyleSheet.absoluteFillObject, { top: IMAGE_H * 0.4 }]}
+          />
+
+          {/* Scanning line */}
+          <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanLineTranslate }] }]}>
+            <LinearGradient
+              colors={['transparent', Colors.primary, 'transparent']}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFillObject}
+            />
+          </Animated.View>
+
+          {/* Corner brackets */}
+          <View style={[styles.bracket, styles.bracketTL]} />
+          <View style={[styles.bracket, styles.bracketTR]} />
+          <View style={[styles.bracket, styles.bracketBL]} />
+          <View style={[styles.bracket, styles.bracketBR]} />
+
+          {/* Pulsing glow ring around face */}
+          <Animated.View style={[styles.glowRingWrap, { transform: [{ scale: ringScale }, { rotate: ringRotateDeg }] }]}>
+            <Animated.View style={[styles.glowRing, { opacity: glowOpacity }]} />
+          </Animated.View>
+
+          {/* Scanning badge */}
+          <View style={styles.scanBadge}>
+            <View style={styles.scanBadgeDot} />
+            <Text style={styles.scanBadgeText}>AI SCANNING</Text>
           </View>
-        </SafeAreaView>
-      </View>
+        </View>
+
+        {/* Analysis steps */}
+        <View style={styles.analyzingBottom}>
+          <Text style={styles.analyzingTitle}>Reading your skin…</Text>
+          <View style={styles.analyzingSteps}>
+            {STEPS.map((s, i) => {
+              const done = completedSteps.includes(i);
+              const active = completedSteps.length === i;
+              return (
+                <View key={s.label} style={styles.analyzingStep}>
+                  <View style={[
+                    styles.stepIconWrap,
+                    done && styles.stepIconDone,
+                    active && styles.stepIconActive,
+                  ]}>
+                    {done
+                      ? <Ionicons name="checkmark" size={12} color="#fff" />
+                      : active
+                        ? <ActivityIndicator size="small" color={Colors.primary} />
+                        : <Ionicons name={s.icon as any} size={12} color={Colors.textMuted} />
+                    }
+                  </View>
+                  <Text style={[
+                    styles.analyzingStepText,
+                    done && styles.stepTextDone,
+                    active && styles.stepTextActive,
+                  ]}>
+                    {s.label}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </Animated.View>
     );
   }
 
@@ -307,25 +433,65 @@ const styles = StyleSheet.create({
   },
   secondaryBtnText: { fontSize: 16, fontWeight: '600', color: Colors.primary },
   disclaimer: { fontSize: 11, color: Colors.textMuted, textAlign: 'center', lineHeight: 17 },
-  // analyzing
-  analyzingWrap: { flex: 1 },
-  analyzingPreview: { ...StyleSheet.absoluteFillObject },
-  analyzingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(10,10,15,0.88)',
-    alignItems: 'center', justifyContent: 'center', padding: 32,
+  // analyzing — new animated version
+  analyzingPhotoWrap: { height: 300, position: 'relative', overflow: 'hidden' },
+  analyzingPhoto: { width: '100%', height: 300 },
+  scanLine: {
+    position: 'absolute', left: 0, right: 0, height: 3,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9, shadowRadius: 8,
   },
-  analyzingCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 24,
-    borderWidth: 1, borderColor: Colors.border, padding: 28,
-    width: '100%', alignItems: 'center',
+  bracket: {
+    position: 'absolute', width: 20, height: 20,
+    borderColor: Colors.primary, borderWidth: 2.5,
   },
-  analyzingTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginBottom: 10, textAlign: 'center' },
-  analyzingSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 21, marginBottom: 24 },
-  analyzingSteps: { width: '100%', gap: 12 },
-  analyzingStep: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  analyzingDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary },
-  analyzingStepText: { fontSize: 13, color: Colors.textSecondary },
+  bracketTL: { top: 16, left: 16, borderBottomWidth: 0, borderRightWidth: 0 },
+  bracketTR: { top: 16, right: 16, borderBottomWidth: 0, borderLeftWidth: 0 },
+  bracketBL: { bottom: 16, left: 16, borderTopWidth: 0, borderRightWidth: 0 },
+  bracketBR: { bottom: 16, right: 16, borderTopWidth: 0, borderLeftWidth: 0 },
+  glowRingWrap: {
+    position: 'absolute', top: '50%', left: '50%',
+    marginTop: -70, marginLeft: -70,
+  },
+  glowRing: {
+    width: 140, height: 140, borderRadius: 70,
+    borderWidth: 2, borderColor: Colors.primary,
+    borderStyle: 'dashed',
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1, shadowRadius: 12,
+  },
+  scanBadge: {
+    position: 'absolute', top: 16, right: 16,
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: 'rgba(10,8,6,0.75)',
+    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20,
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.4)',
+  },
+  scanBadgeDot: {
+    width: 6, height: 6, borderRadius: 3,
+    backgroundColor: Colors.primary,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1, shadowRadius: 4,
+  },
+  scanBadgeText: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1.5 },
+  analyzingBottom: {
+    flex: 1, backgroundColor: '#0D0B09',
+    paddingHorizontal: 24, paddingTop: 20, paddingBottom: 16,
+  },
+  analyzingTitle: { fontSize: 19, fontWeight: '800', color: '#FFFFFF', marginBottom: 16 },
+  analyzingSteps: { gap: 14 },
+  analyzingStep: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  stepIconWrap: {
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  stepIconActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  stepIconDone: { backgroundColor: Colors.scoreExcellent, borderColor: Colors.scoreExcellent },
+  analyzingStepText: { fontSize: 13, color: 'rgba(255,255,255,0.35)', fontWeight: '500' },
+  stepTextActive: { color: Colors.primary, fontWeight: '600' },
+  stepTextDone: { color: 'rgba(255,255,255,0.6)' },
   // camera
   cameraUi: { flex: 1, justifyContent: 'space-between', padding: 24 },
   cameraGuide: { alignItems: 'center' },

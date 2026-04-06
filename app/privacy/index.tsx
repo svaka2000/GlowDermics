@@ -71,7 +71,7 @@ Since we don't store data on our servers, there is no account to delete or data 
 • Groq AI (groq.com) — AI inference for skin analysis and coaching
 • Expo (expo.dev) — App development platform
 
-TallowDermics (trytallowdermics.com) — Referenced brand within the app. Visiting their website is subject to TallowDermics' own Privacy Policy.`,
+TallowDermics (tallowdermics.com) — Referenced brand within the app. Visiting their website is subject to TallowDermics' own Privacy Policy.`,
   },
   {
     title: '8. Changes to This Policy',
@@ -79,7 +79,7 @@ TallowDermics (trytallowdermics.com) — Referenced brand within the app. Visiti
   },
   {
     title: '9. Contact',
-    body: `Questions about this Privacy Policy? Contact us through the GlowDermics support channel or via TallowDermics at trytallowdermics.com.`,
+    body: `Questions about this Privacy Policy? Contact us through the GlowDermics support channel or via TallowDermics at tallowdermics.com.`,
   },
 ];
 

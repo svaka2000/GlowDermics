@@ -162,6 +162,10 @@ export const Storage = {
   },
 
   async clearAll(): Promise<void> {
-    await Promise.all(Object.values(KEYS).map(k => AsyncStorage.removeItem(k)));
+    // Clear all gd_ prefixed keys — covers Storage keys plus coach history,
+    // daily counters, water, habits, challenges, shelf, guest session, etc.
+    const allKeys = await AsyncStorage.getAllKeys();
+    const gdKeys = allKeys.filter(k => k.startsWith('gd_'));
+    await Promise.all(gdKeys.map(k => AsyncStorage.removeItem(k)));
   },
 };

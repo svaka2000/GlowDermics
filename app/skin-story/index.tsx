@@ -174,7 +174,7 @@ Return ONLY valid JSON (no markdown):
         `🌿 ${story.tallowMoment}`,
         '',
         '— Tracked with GlowDermics × TallowDermics',
-        'trytallowdermics.com',
+        'tallowdermics.com',
       ].join('\n'),
     });
   };

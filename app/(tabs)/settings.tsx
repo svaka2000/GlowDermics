@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, Alert, Switch, Platform,
+  TextInput, Alert, Switch, Platform, Linking,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -154,14 +154,21 @@ export default function Settings() {
           </View>
         </View>
 
-        {/* Premium card */}
-        {authUser && !authUser.isPremium ? (
+        {/* Premium / auth card */}
+        {authUser?.isPremium ? (
+          <View style={styles.premiumActiveCard}>
+            <LinearGradient colors={['rgba(22,163,74,0.1)', 'rgba(22,163,74,0.05)']} style={StyleSheet.absoluteFill} />
+            <View style={[styles.premiumCardIcon, { backgroundColor: '#16A34A' }]}>
+              <Ionicons name="checkmark" size={18} color="#fff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.premiumCardTitle, { color: '#16A34A' }]}>Premium Active</Text>
+              <Text style={styles.premiumCardSub}>Unlimited scans, full AI coach access</Text>
+            </View>
+          </View>
+        ) : (
           <Pressable style={styles.premiumCard} onPress={() => setShowPremiumGate(true)}>
-            <LinearGradient
-              colors={['#F0C94A', '#D4A96A', '#C4622D']}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-            />
+            <LinearGradient colors={['#F0C94A', '#D4A96A', '#C4622D']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <View style={styles.premiumCardIcon}>
               <Ionicons name="star" size={18} color="#fff" />
             </View>
@@ -173,21 +180,7 @@ export default function Settings() {
             </View>
             <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.85)" />
           </Pressable>
-        ) : authUser?.isPremium ? (
-          <View style={styles.premiumActiveCard}>
-            <LinearGradient
-              colors={['rgba(22,163,74,0.1)', 'rgba(22,163,74,0.05)']}
-              style={StyleSheet.absoluteFill}
-            />
-            <View style={[styles.premiumCardIcon, { backgroundColor: '#16A34A' }]}>
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.premiumCardTitle, { color: '#16A34A' }]}>Premium Active</Text>
-              <Text style={styles.premiumCardSub}>Unlimited scans, full AI coach access</Text>
-            </View>
-          </View>
-        ) : null}
+        )}
 
         {/* Edit Profile */}
         <View style={styles.section}>
@@ -312,9 +305,12 @@ export default function Settings() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>TallowDermics</Text>
           <View style={styles.card}>
-            <LinkRow icon="globe-outline" label="Visit trytallowdermics.com" />
+            <LinkRow icon="globe-outline" label="Visit tallowdermics.com" onPress={() => {
+              if (Platform.OS === 'web') window.open('https://tallowdermics.com', '_blank');
+              else Linking.openURL('https://tallowdermics.com');
+            }} />
             <LinkRow icon="leaf-outline" label="The Formula — 4 Ingredients" onPress={() => router.push('/product')} />
-            <LinkRow icon="book-outline" label="The Journal" last />
+            <LinkRow icon="book-outline" label="The Journal" onPress={() => router.push('/journal')} last />
           </View>
         </View>
 
@@ -446,29 +442,51 @@ export default function Settings() {
         </View>
 
         {/* Account */}
-        {authUser && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account</Text>
-            <View style={styles.card}>
-              <Row label="Email" value={authUser.email} />
-              <Row label="Member since" value={new Date(authUser.createdAt).toLocaleDateString()} last />
-            </View>
-            <Pressable style={[styles.dangerBtn, { marginTop: 12 }]} onPress={handleLogout}>
-              <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
-              <Text style={styles.dangerText}>Sign Out</Text>
-            </Pressable>
-          </View>
-        )}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account</Text>
+          {authUser ? (
+            <>
+              <View style={styles.card}>
+                <Row label="Email" value={authUser.email} />
+                <Row label="Member since" value={new Date(authUser.createdAt).toLocaleDateString()} last />
+              </View>
+              <Pressable style={[styles.dangerBtn, { marginTop: 12 }]} onPress={handleLogout}>
+                <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
+                <Text style={styles.dangerText}>Sign Out</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View style={styles.card}>
+                <Row label="Status" value="Guest session" last />
+              </View>
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+                <Pressable style={styles.signInBtn} onPress={() => router.push('/(auth)/login' as any)}>
+                  <Ionicons name="person-outline" size={16} color={Colors.primary} />
+                  <Text style={styles.signInBtnText}>Sign In</Text>
+                </Pressable>
+                <Pressable style={[styles.signInBtn, { backgroundColor: Colors.primary }]} onPress={() => router.push('/(auth)/register' as any)}>
+                  <Ionicons name="sparkles-outline" size={16} color="#fff" />
+                  <Text style={[styles.signInBtnText, { color: '#fff' }]}>Create Account</Text>
+                </Pressable>
+              </View>
+              <Pressable style={[styles.dangerBtn, { marginTop: 10 }]} onPress={handleLogout}>
+                <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
+                <Text style={styles.dangerText}>Leave Guest Session</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
 
         {/* TallowDermics promo */}
         <Pressable
           style={styles.tdPromoCard}
           onPress={() => {
             if (Platform.OS === 'web') {
-              window.open('https://trytallowdermics.com', '_blank');
+              window.open('https://tallowdermics.com', '_blank');
             } else {
               const { Linking } = require('react-native');
-              Linking.openURL('https://trytallowdermics.com');
+              Linking.openURL('https://tallowdermics.com');
             }
           }}
         >
@@ -570,6 +588,12 @@ const styles = StyleSheet.create({
   hourBtnActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
   hourText: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
   hourTextActive: { color: Colors.primary, fontWeight: '700' },
+  signInBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    backgroundColor: 'rgba(196,98,45,0.08)', borderRadius: 14,
+    borderWidth: 1, borderColor: Colors.borderStrong, padding: 14,
+  },
+  signInBtnText: { fontSize: 14, fontWeight: '700', color: Colors.primary },
   dangerBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14,

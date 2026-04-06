@@ -81,7 +81,7 @@ export default function Results() {
       analysis.strengths.length ? `Strengths: ${analysis.strengths.slice(0, 2).join(', ')}` : '',
       '',
       'Powered by GlowDermics × TallowDermics',
-      'trytallowdermics.com',
+      'tallowdermics.com',
     ].filter(Boolean).join('\n');
 
     await Share.share({ message });
@@ -251,7 +251,7 @@ export default function Results() {
                         {rec.product.isTallowDermics && (
                           <Pressable
                             style={styles.shopBtn}
-                            onPress={() => Linking.openURL('https://trytallowdermics.com')}
+                            onPress={() => Linking.openURL('https://tallowdermics.com')}
                           >
                             <Text style={styles.shopBtnText}>Shop TallowDermics →</Text>
                           </Pressable>

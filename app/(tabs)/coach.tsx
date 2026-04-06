@@ -358,8 +358,8 @@ export default function Coach() {
           </View>
         )}
 
-        {/* Input bar */}
-        <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 12) + 8 }]}>
+        {/* Input bar — on web the tab bar overlaps, add explicit clearance */}
+        <View style={[styles.inputBar, { paddingBottom: Platform.OS === 'web' ? 80 : Math.max(insets.bottom, 12) + 8 }]}>
           <TextInput
             style={styles.input}
             placeholder="Ask Derm anything…"
