@@ -91,10 +91,10 @@ export default function Scan() {
 
       let base64 = inlineBase64;
 
-      // Fallback: read from filesystem (native only — web already has base64)
+      // Fallback: read from filesystem (native only — web already has base64 from ImagePicker)
       if (!base64 && Platform.OS !== 'web') {
         base64 = await FileSystem.readAsStringAsync(uri, {
-          encoding: FileSystem.EncodingType.Base64,
+          encoding: 'base64' as any,
         });
       }
 

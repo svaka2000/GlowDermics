@@ -10,8 +10,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth } from '../../src/services/auth';
 import { chatWithCoach } from '../../src/services/skinAnalysis';
+import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
 import { ChatMessage, SkinAnalysis, UserProfile } from '../../src/types';
+
+const FREE_MSG_LIMIT = 10;
+const todayMsgKey = () => `gd_coach_msgs_${new Date().toISOString().slice(0, 10)}`;
 
 const CHAT_HISTORY_KEY = 'gd_chat_history';
 const MAX_STORED_MESSAGES = 60;
@@ -69,8 +74,19 @@ export default function Coach() {
   const [shelfContext, setShelfContext] = useState('');
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [msgsUsed, setMsgsUsed] = useState(0);
+  const [showGate, setShowGate] = useState(false);
 
   useFocusEffect(useCallback(() => {
+    // Load message limit state
+    (async () => {
+      const user = await Auth.getCurrentUser();
+      setIsPremium(user?.isPremium ?? false);
+      const stored = await AsyncStorage.getItem(todayMsgKey());
+      setMsgsUsed(stored ? parseInt(stored, 10) : 0);
+    })();
+
     Promise.all([
       Storage.getLatestAnalysis(),
       Storage.getUserProfile(),
@@ -103,6 +119,13 @@ export default function Coach() {
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return;
+
+    // Daily limit for free users
+    if (!isPremium && msgsUsed >= FREE_MSG_LIMIT) {
+      setShowGate(true);
+      return;
+    }
+
     setInput('');
 
     const userMsg: ChatMessage = {
@@ -124,6 +147,12 @@ export default function Coach() {
       const withReply = [...newMessages, assistantMsg];
       setMessages(withReply);
       await saveChatHistory(withReply);
+      // Track daily message count
+      if (!isPremium) {
+        const newCount = msgsUsed + 1;
+        setMsgsUsed(newCount);
+        await AsyncStorage.setItem(todayMsgKey(), String(newCount));
+      }
     } catch (err) {
       const errMsg: ChatMessage = {
         id: generateId(), role: 'assistant',
@@ -138,15 +167,18 @@ export default function Coach() {
     }
   };
 
-  const confirmClear = () => {
+  const confirmClear = async () => {
+    const doClear = async () => {
+      setMessages([]);
+      await AsyncStorage.removeItem(CHAT_HISTORY_KEY);
+    };
+    if (Platform.OS === 'web') {
+      if (window.confirm('Delete this entire conversation?')) await doClear();
+      return;
+    }
     Alert.alert('Clear Chat', 'Delete this entire conversation?', [
       { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Clear', style: 'destructive', onPress: async () => {
-          setMessages([]);
-          await AsyncStorage.removeItem(CHAT_HISTORY_KEY);
-        },
-      },
+      { text: 'Clear', style: 'destructive', onPress: doClear },
     ]);
   };
 
@@ -168,6 +200,16 @@ export default function Coach() {
 
   return (
     <View style={styles.root}>
+      <PremiumGate
+        visible={showGate}
+        onClose={async () => {
+          setShowGate(false);
+          const user = await Auth.getCurrentUser();
+          setIsPremium(user?.isPremium ?? false);
+        }}
+        feature="AI coach messages"
+        reason={`You've used ${msgsUsed}/${FREE_MSG_LIMIT} free messages today`}
+      />
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <View style={styles.avatarWrap}>
@@ -302,6 +344,16 @@ export default function Coach() {
         {messages.length > 0 && (
           <View style={styles.msgCount}>
             <Text style={styles.msgCountText}>{messages.length} messages · history saved</Text>
+          </View>
+        )}
+
+        {/* Free tier limit banner */}
+        {!isPremium && msgsUsed >= FREE_MSG_LIMIT - 3 && msgsUsed < FREE_MSG_LIMIT && (
+          <View style={{ paddingHorizontal: 12, paddingBottom: 4 }}>
+            <PremiumBanner
+              message={`${msgsUsed}/${FREE_MSG_LIMIT} free messages used today`}
+              onUpgrade={() => setShowGate(true)}
+            />
           </View>
         )}
 

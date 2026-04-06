@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Groq from 'groq-sdk';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { getFoodImage } from '../../src/services/imageSearch';
 
 const groq = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
@@ -205,23 +206,36 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             {/* Eat tab */}
             {tab === 'eat' && (
               <View style={styles.foodGrid}>
-                {guide.topFoods.map((food, i) => (
-                  <View key={i} style={styles.foodCard}>
-                    <LinearGradient colors={['rgba(74,222,128,0.08)', 'rgba(74,222,128,0.02)']} style={StyleSheet.absoluteFill} />
-                    <View style={styles.foodTop}>
-                      <Text style={styles.foodEmoji}>{food.emoji}</Text>
+                {guide.topFoods.map((food, i) => {
+                  const imgUrl = getFoodImage(food.name);
+                  const impactColor = IMPACT_COLORS[food.skinImpact?.toLowerCase()] || Colors.primary;
+                  return (
+                    <View key={i} style={styles.foodCard}>
+                      {/* Real food image */}
+                      <Image
+                        source={{ uri: imgUrl }}
+                        style={styles.foodCardImg}
+                        resizeMode="cover"
+                      />
+                      <LinearGradient
+                        colors={['transparent', 'rgba(0,0,0,0.75)']}
+                        style={styles.foodCardGrad}
+                      />
+                      {/* Impact badge */}
                       {food.skinImpact && (
-                        <View style={[styles.impactBadge, { backgroundColor: (IMPACT_COLORS[food.skinImpact.toLowerCase()] || Colors.primary) + '20' }]}>
-                          <Text style={[styles.impactText, { color: IMPACT_COLORS[food.skinImpact.toLowerCase()] || Colors.primary }]}>
-                            ↑ {food.skinImpact}
-                          </Text>
+                        <View style={[styles.impactBadge, { backgroundColor: impactColor }]}>
+                          <Text style={styles.impactText}>↑ {food.skinImpact}</Text>
                         </View>
                       )}
+                      {/* Bottom text overlay */}
+                      <View style={styles.foodCardText}>
+                        <Text style={styles.foodEmoji}>{food.emoji}</Text>
+                        <Text style={styles.foodName}>{food.name}</Text>
+                        <Text style={styles.foodBenefit} numberOfLines={2}>{food.benefit}</Text>
+                      </View>
                     </View>
-                    <Text style={styles.foodName}>{food.name}</Text>
-                    <Text style={styles.foodBenefit}>{food.benefit}</Text>
-                  </View>
-                ))}
+                  );
+                })}
               </View>
             )}
 
@@ -345,16 +359,28 @@ const styles = StyleSheet.create({
 
   foodGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 12 },
   foodCard: {
-    width: '47%', borderRadius: 14, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)',
-    backgroundColor: Colors.bgCard, padding: 14, gap: 6,
+    width: '47%', height: 160, borderRadius: 16, overflow: 'hidden',
+    backgroundColor: Colors.bgElevated, position: 'relative',
   },
-  foodTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  foodEmoji: { fontSize: 28 },
-  impactBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  impactText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
-  foodName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  foodBenefit: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
+  foodCardImg: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    width: '100%', height: '100%',
+  },
+  foodCardGrad: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+  },
+  foodCardText: {
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    padding: 10, gap: 2,
+  },
+  foodEmoji: { fontSize: 18 },
+  impactBadge: {
+    position: 'absolute', top: 8, right: 8,
+    borderRadius: 20, paddingHorizontal: 7, paddingVertical: 3,
+  },
+  impactText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5, color: '#fff' },
+  foodName: { fontSize: 13, fontWeight: '700', color: '#fff', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  foodBenefit: { fontSize: 10, color: 'rgba(255,255,255,0.8)', lineHeight: 14 },
 
   card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 12 },
   cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },

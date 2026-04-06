@@ -16,6 +16,7 @@ export interface AuthUser {
 const KEYS = {
   USERS: 'gd_auth_users_v1',
   SESSION: 'gd_auth_session_v1',
+  GUEST: 'gd_auth_guest_v1', // flag for users who chose guest mode
 };
 
 // Very simple hash — this is a local app, no server transmission
@@ -77,6 +78,7 @@ export const Auth = {
 
   async logout(): Promise<void> {
     await AsyncStorage.removeItem(KEYS.SESSION);
+    await AsyncStorage.removeItem(KEYS.GUEST);
   },
 
   async getCurrentUser(): Promise<AuthUser | null> {
@@ -88,7 +90,22 @@ export const Auth = {
 
   async isLoggedIn(): Promise<boolean> {
     const id = await AsyncStorage.getItem(KEYS.SESSION);
-    return !!id;
+    if (id) return true;
+    // Guest users (no account, just completed onboarding) count as "logged in"
+    const guest = await AsyncStorage.getItem(KEYS.GUEST);
+    return guest === 'true';
+  },
+
+  async loginAsGuest(): Promise<void> {
+    await AsyncStorage.setItem(KEYS.GUEST, 'true');
+    await AsyncStorage.removeItem(KEYS.SESSION);
+  },
+
+  async isGuest(): Promise<boolean> {
+    const id = await AsyncStorage.getItem(KEYS.SESSION);
+    if (id) return false;
+    const guest = await AsyncStorage.getItem(KEYS.GUEST);
+    return guest === 'true';
   },
 
   async updateUser(updates: Partial<AuthUser>): Promise<AuthUser> {
@@ -113,7 +130,16 @@ export const Auth = {
   // Check & track scan usage for free tier (3 scans/month)
   async canScan(): Promise<{ allowed: boolean; used: number; limit: number }> {
     const user = await this.getCurrentUser();
-    if (!user) return { allowed: false, used: 0, limit: 3 };
+
+    // Guests: track via AsyncStorage directly
+    if (!user) {
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      const raw = await AsyncStorage.getItem('gd_guest_scans_v1');
+      const data = raw ? JSON.parse(raw) : { month: '', count: 0 };
+      const count = data.month === currentMonth ? data.count : 0;
+      return { allowed: count < 3, used: count, limit: 3 };
+    }
+
     if (user.isPremium) return { allowed: true, used: 0, limit: Infinity };
 
     const currentMonth = new Date().toISOString().slice(0, 7);
@@ -123,8 +149,17 @@ export const Auth = {
 
   async recordScan(): Promise<void> {
     const user = await this.getCurrentUser();
-    if (!user) return;
     const currentMonth = new Date().toISOString().slice(0, 7);
+
+    if (!user) {
+      // Guest scan tracking
+      const raw = await AsyncStorage.getItem('gd_guest_scans_v1');
+      const data = raw ? JSON.parse(raw) : { month: '', count: 0 };
+      const count = data.month === currentMonth ? data.count + 1 : 1;
+      await AsyncStorage.setItem('gd_guest_scans_v1', JSON.stringify({ month: currentMonth, count }));
+      return;
+    }
+
     const count = user.scanMonthKey === currentMonth ? user.scanCount + 1 : 1;
     await this.updateUser({ scanCount: count, scanMonthKey: currentMonth });
   },

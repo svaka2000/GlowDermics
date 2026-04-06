@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { Auth } from '../../src/services/auth';
 import { UserProfile } from '../../src/types';
 
 const { width } = Dimensions.get('window');
@@ -74,6 +75,16 @@ export default function Onboarding() {
     };
     await Storage.saveUserProfile(profile);
     await Storage.setOnboarded();
+
+    // Sync name to auth account if logged in, otherwise ensure guest session exists
+    const user = await Auth.getCurrentUser();
+    if (user) {
+      await Auth.updateUser({ name: name.trim() });
+    } else {
+      // Ensure guests can get past the login screen next time they open the app
+      await Auth.loginAsGuest();
+    }
+
     router.replace('/(tabs)');
   };
 

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar,
+  SafeAreaView, StatusBar, Image, Dimensions,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { getFoodImage } from '../../src/services/imageSearch';
 import { router } from 'expo-router';
 
 const Colors = {
@@ -190,6 +192,27 @@ export default function SkinFoodsScreen() {
         {activeTab === 1 && (
           <View>
             <Text style={styles.sectionNote}>Ranked by skin nutrient density and clinical evidence. Stars indicate overall skin benefit (5 = exceptional).</Text>
+            <View style={styles.foodImageGrid}>
+              {TOP_FOODS.slice(0, 4).map((f, i) => {
+                const imgUrl = getFoodImage(f.food);
+                return (
+                  <TouchableOpacity
+                    key={i}
+                    style={styles.foodImageCard}
+                    onPress={() => setExpandedFood(expandedFood === i ? null : i)}
+                    activeOpacity={0.85}
+                  >
+                    <Image source={{ uri: imgUrl }} style={styles.foodImage} resizeMode="cover" />
+                    <LinearGradient colors={['transparent', 'rgba(0,0,0,0.82)']} style={StyleSheet.absoluteFill} />
+                    <View style={styles.foodImageOverlay}>
+                      <Text style={styles.foodImageEmoji}>{f.emoji}</Text>
+                      <Text style={styles.foodImageName}>{f.food}</Text>
+                      <Text style={styles.foodImageRating}>{starRating(f.rating)}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
             {TOP_FOODS.map((f, i) => (
               <TouchableOpacity key={i} style={styles.card} onPress={() => setExpandedFood(expandedFood === i ? null : i)} activeOpacity={0.85}>
                 <View style={styles.cardRow}>
@@ -278,6 +301,13 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
   sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  foodImageGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
+  foodImageCard: { width: '47%', height: 130, borderRadius: 14, overflow: 'hidden', position: 'relative' },
+  foodImage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' },
+  foodImageOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 10 },
+  foodImageEmoji: { fontSize: 16, marginBottom: 2 },
+  foodImageName: { color: '#fff', fontSize: 12, fontWeight: '700', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  foodImageRating: { color: Colors.gold, fontSize: 10, letterSpacing: 1, marginTop: 1 },
   card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },

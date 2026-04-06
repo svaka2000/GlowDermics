@@ -71,22 +71,26 @@ export default function Settings() {
     setEditing(false);
   };
 
-  const confirmReset = () => {
-    Alert.alert(
-      'Reset All Data',
-      'This will delete all your scans, progress, and profile. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset Everything',
-          style: 'destructive',
-          onPress: async () => {
-            await Storage.clearAll();
-            router.replace('/(auth)/onboarding');
-          },
-        },
-      ]
-    );
+  const confirmReset = async () => {
+    const doReset = async () => {
+      await Storage.clearAll();
+      await Auth.logout();
+      router.replace('/(auth)/login' as any);
+    };
+    if (Platform.OS === 'web') {
+      if (window.confirm('Reset ALL data? This will delete all scans, progress, and your profile. This cannot be undone.')) {
+        await doReset();
+      }
+    } else {
+      Alert.alert(
+        'Reset All Data',
+        'This will delete all your scans, progress, and profile. This cannot be undone.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Reset Everything', style: 'destructive', onPress: doReset },
+        ]
+      );
+    }
   };
 
   const handleLogout = async () => {

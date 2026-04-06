@@ -141,7 +141,10 @@ export default function Login() {
           </Animated.View>
 
           {/* Skip / Guest */}
-          <Pressable style={styles.skipBtn} onPress={() => router.replace('/(auth)/onboarding')}>
+          <Pressable style={styles.skipBtn} onPress={async () => {
+            await Auth.loginAsGuest();
+            router.replace('/(auth)/onboarding');
+          }}>
             <Text style={styles.skipText}>Continue as guest</Text>
             <Ionicons name="chevron-forward" size={12} color={Colors.textMuted} />
           </Pressable>
