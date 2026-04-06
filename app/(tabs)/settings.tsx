@@ -280,7 +280,8 @@ export default function Settings() {
             <LinkRow icon="flash-outline" label="30-Day Challenges" onPress={() => router.push('/challenge')} />
             <LinkRow icon="book-outline" label="My Skin Story" onPress={() => router.push('/skin-story')} />
             <LinkRow icon="stats-chart-outline" label="Stress & Trigger Log" onPress={() => router.push('/stress-log')} />
-            <LinkRow icon="medical-outline" label="Acne Diary" onPress={() => router.push('/acne-diary')} last />
+            <LinkRow icon="medical-outline" label="Acne Diary" onPress={() => router.push('/acne-diary')} />
+            <LinkRow icon="moon-outline" label="Sleep Tracker" onPress={() => router.push('/sleep-log')} last />
           </View>
         </View>
 
