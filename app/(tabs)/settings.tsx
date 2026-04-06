@@ -281,7 +281,9 @@ export default function Settings() {
             <LinkRow icon="book-outline" label="My Skin Story" onPress={() => router.push('/skin-story')} />
             <LinkRow icon="stats-chart-outline" label="Stress & Trigger Log" onPress={() => router.push('/stress-log')} />
             <LinkRow icon="medical-outline" label="Acne Diary" onPress={() => router.push('/acne-diary')} />
-            <LinkRow icon="moon-outline" label="Sleep Tracker" onPress={() => router.push('/sleep-log')} last />
+            <LinkRow icon="moon-outline" label="Sleep Tracker" onPress={() => router.push('/sleep-log')} />
+            <LinkRow icon="water-outline" label="Hydration Tracker" onPress={() => router.push('/hydration')} />
+            <LinkRow icon="rose-outline" label="Hormonal Skin Log" onPress={() => router.push('/hormonal-log')} last />
           </View>
         </View>
 
@@ -297,7 +299,8 @@ export default function Settings() {
             <LinkRow icon="bulb-outline" label="Skin IQ Quiz" onPress={() => router.push('/skin-iq')} />
             <LinkRow icon="fitness-outline" label="Supplement Guide" onPress={() => router.push('/supplements')} />
             <LinkRow icon="hand-left-outline" label="Guided Facial" onPress={() => router.push('/guided-facial')} />
-            <LinkRow icon="partly-sunny-outline" label="Skin Weather Report" onPress={() => router.push('/skin-weather')} last />
+            <LinkRow icon="partly-sunny-outline" label="Skin Weather Report" onPress={() => router.push('/skin-weather')} />
+            <LinkRow icon="chatbubble-ellipses-outline" label="Glow Coach — AI Chat" onPress={() => router.push('/coach-chat')} last />
           </View>
         </View>
 
