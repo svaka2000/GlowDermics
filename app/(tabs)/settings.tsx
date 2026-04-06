@@ -266,7 +266,8 @@ export default function Settings() {
             <LinkRow icon="book-outline" label="Skin Lab — Articles" onPress={() => router.push('/learn')} />
             <LinkRow icon="search-outline" label="Ingredient Decoder" onPress={() => router.push('/ingredient')} />
             <LinkRow icon="person-circle-outline" label="Skin Type Guides" onPress={() => router.push('/skin-type')} />
-            <LinkRow icon="help-circle-outline" label="Skin Type Quiz" onPress={() => router.push('/quiz')} last />
+            <LinkRow icon="help-circle-outline" label="Skin Type Quiz" onPress={() => router.push('/quiz')} />
+            <LinkRow icon="sunny-outline" label="Seasonal Skin Guide" onPress={() => router.push('/seasonal')} last />
           </View>
         </View>
 
