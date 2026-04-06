@@ -460,6 +460,30 @@ export default function Settings() {
           </View>
         )}
 
+        {/* TallowDermics promo */}
+        <Pressable
+          style={styles.tdPromoCard}
+          onPress={() => {
+            if (Platform.OS === 'web') {
+              window.open('https://trytallowdermics.com', '_blank');
+            } else {
+              const { Linking } = require('react-native');
+              Linking.openURL('https://trytallowdermics.com');
+            }
+          }}
+        >
+          <View style={styles.tdPromoLeft}>
+            <Text style={styles.tdPromoEyebrow}>MADE BY THE SAME TEAM</Text>
+            <Text style={styles.tdPromoHeading}>TallowDermics</Text>
+            <Text style={styles.tdPromoSub}>Ancestral skincare. Grass-fed tallow, five clean ingredients. The product that inspired this app.</Text>
+            <View style={styles.tdPromoBtn}>
+              <Text style={styles.tdPromoBtnText}>Shop the Balm</Text>
+              <Ionicons name="arrow-forward" size={12} color="#C4622D" />
+            </View>
+          </View>
+          <Text style={styles.tdPromoEmoji}>🌿</Text>
+        </Pressable>
+
         {/* Danger zone */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: Colors.scorePoor }]}>Data</Text>
@@ -574,6 +598,19 @@ const styles = StyleSheet.create({
     borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
     borderWidth: 1, borderColor: 'rgba(22,163,74,0.25)',
   },
+  tdPromoCard: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#FDF6EC', borderRadius: 18,
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    padding: 20, marginBottom: 24,
+  },
+  tdPromoLeft: { flex: 1, paddingRight: 12 },
+  tdPromoEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 1.2, color: '#C4622D', textTransform: 'uppercase', marginBottom: 4 },
+  tdPromoHeading: { fontSize: 18, fontWeight: '800', color: '#3B1F0E', marginBottom: 6 },
+  tdPromoSub: { fontSize: 12, lineHeight: 17, color: 'rgba(59,31,14,0.6)', marginBottom: 12 },
+  tdPromoBtn: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  tdPromoBtnText: { fontSize: 12, fontWeight: '700', color: '#C4622D', textDecorationLine: 'underline' },
+  tdPromoEmoji: { fontSize: 36 },
   premiumCardIcon: {
     width: 40, height: 40, borderRadius: 12,
     backgroundColor: 'rgba(255,255,255,0.25)',
