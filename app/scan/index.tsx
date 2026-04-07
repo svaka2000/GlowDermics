@@ -99,52 +99,65 @@ export default function Scan() {
   }, []);
 
   const checkScanLimit = async (): Promise<boolean> => {
-    const { allowed, used, limit } = await Auth.canScan();
-    const user = await Auth.getCurrentUser();
-    setScanInfo({ used, limit, isPremium: user?.isPremium ?? false });
-    if (!allowed) {
-      setShowGate(true);
-      return false;
+    try {
+      const { allowed, used, limit } = await Auth.canScan();
+      const user = await Auth.getCurrentUser();
+      setScanInfo({ used, limit, isPremium: user?.isPremium ?? false });
+      if (!allowed) { setShowGate(true); return false; }
+      return true;
+    } catch {
+      return true; // don't block scanning on a limit-check error
     }
-    return true;
   };
 
   const handlePickPhoto = async () => {
-    if (!(await checkScanLimit())) return;
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-      base64: true, // get base64 directly — works on web + native
-    });
-    if (!result.canceled && result.assets[0]) {
-      const asset = result.assets[0];
-      setCapturedUri(asset.uri);
-      const mime = (asset.mimeType === 'image/png') ? 'image/png' : 'image/jpeg';
-      await runAnalysis(asset.uri, asset.base64 ?? null, mime);
+    try {
+      if (!(await checkScanLimit())) return;
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+        base64: true,
+      });
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        setCapturedUri(asset.uri);
+        const mime = (asset.mimeType === 'image/png') ? 'image/png' : 'image/jpeg';
+        await runAnalysis(asset.uri, asset.base64 ?? null, mime);
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err?.message || 'Could not open photo library.');
     }
   };
 
   const handleOpenCamera = async () => {
-    if (!(await checkScanLimit())) return;
-    if (!permission?.granted) {
-      const { granted } = await requestPermission();
-      if (!granted) {
-        Alert.alert('Camera Permission', 'Camera access is needed to scan your skin.');
-        return;
+    try {
+      if (!(await checkScanLimit())) return;
+      if (!permission?.granted) {
+        const result = await requestPermission();
+        if (!result.granted) {
+          Alert.alert('Camera Permission Needed', 'Go to Settings → GlowDermics → Camera and enable access, then try again.');
+          return;
+        }
       }
+      setMode('camera');
+    } catch (err: any) {
+      Alert.alert('Camera Error', err?.message || 'Could not open camera.');
     }
-    setMode('camera');
   };
 
   const handleCapture = async () => {
-    if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: true });
-    if (photo) {
-      setCapturedUri(photo.uri);
-      // photo.base64 may be null on web — runAnalysis handles the blob fallback
-      await runAnalysis(photo.uri, photo.base64 ?? null, 'image/jpeg');
+    try {
+      if (!cameraRef.current) return;
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: true });
+      if (photo) {
+        setCapturedUri(photo.uri);
+        await runAnalysis(photo.uri, photo.base64 ?? null, 'image/jpeg');
+      }
+    } catch (err: any) {
+      Alert.alert('Capture Error', err?.message || 'Could not take photo. Try uploading from gallery instead.');
+      setMode('choose');
     }
   };
 

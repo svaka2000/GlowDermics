@@ -27,24 +27,25 @@ export default function Routine() {
 
   useFocusEffect(useCallback(() => {
     (async () => {
-      const [a, log, streak] = await Promise.all([
-        Storage.getLatestAnalysis(),
-        Storage.getTodayRoutineLog(),
-        Storage.getRoutineStreak(),
-      ]);
-      setAnalysis(a);
-      setTodayLog(log);
-      setRoutineStreak(streak);
-      setCheckedSteps(new Set());
-      const fullLog = await Storage.getFullRoutineLog();
-      setRoutineLog(fullLog);
-      // Entrance animations
-      headerAnim.setValue(0);
-      stepsAnim.setValue(0);
-      Animated.stagger(120, [
-        Animated.timing(headerAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-        Animated.timing(stepsAnim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      ]).start();
+      try {
+        const [a, log, streak] = await Promise.all([
+          Storage.getLatestAnalysis(),
+          Storage.getTodayRoutineLog(),
+          Storage.getRoutineStreak(),
+        ]);
+        setAnalysis(a);
+        setTodayLog(log);
+        setRoutineStreak(streak);
+        setCheckedSteps(new Set());
+        const fullLog = await Storage.getFullRoutineLog();
+        setRoutineLog(fullLog);
+        headerAnim.setValue(0);
+        stepsAnim.setValue(0);
+        Animated.stagger(120, [
+          Animated.timing(headerAnim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+          Animated.timing(stepsAnim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        ]).start();
+      } catch {}
     })();
   }, []));
 

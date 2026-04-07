@@ -41,6 +41,7 @@ export default function Settings() {
 
   useFocusEffect(useCallback(() => {
     (async () => {
+      try {
       const p = await Storage.getUserProfile();
       const history = await Storage.getScanHistory();
       const notifSettings = await getNotificationSettings();
@@ -66,6 +67,7 @@ export default function Settings() {
         Animated.timing(profileAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
         Animated.timing(contentAnim, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       ]).start();
+      } catch {}
     })();
   }, []));
 

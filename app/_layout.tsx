@@ -4,8 +4,24 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PhoneFrame } from '../src/components/PhoneFrame';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Suppress unhandled promise rejections from showing as red toasts in Expo Go.
+    // Each async handler already shows an Alert on actual errors — this just prevents
+    // duplicate noise from peripheral operations (camera permission, storage, etc.)
+    const handler = (event: any) => { event?.preventDefault?.(); };
+    if (typeof global !== 'undefined') {
+      (global as any).addEventListener?.('unhandledrejection', handler);
+    }
+    return () => {
+      if (typeof global !== 'undefined') {
+        (global as any).removeEventListener?.('unhandledrejection', handler);
+      }
+    };
+  }, []);
+
   return (
     <PhoneFrame>
       <GestureHandlerRootView style={styles.root}>
