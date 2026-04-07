@@ -67,7 +67,8 @@
         {
           "faceIDPermission": "Allow GlowDermics to use Face ID to secure your profile."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "web": {
       "favicon": "./assets/favicon.png",
