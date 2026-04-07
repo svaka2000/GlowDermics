@@ -24,11 +24,11 @@ export async function analyzeSkin(
     ? `User profile: skin type preference: ${userProfile.skinType}, concerns: ${userProfile.primaryConcerns.join(', ')}, goals: ${userProfile.goals.join(', ')}.`
     : 'No user profile available — analyze from image only.';
 
-  const prompt = `You are GlowDermics AI, a world-class dermatology-grade skin analysis engine built for TallowDermics — a brand that believes in ancestral, ingredient-minimal skincare: grass-fed tallow, manuka honey, olive oil, calendula. Your values are: no synthetics, no fillers, science-backed naturals.
+  const prompt = `You are GlowDermics AI, a dermatology-grade skin analysis engine. Analyze this facial photo carefully and score each dimension based on what you actually see — do NOT use 60 as a default. Vary the scores realistically based on the skin visible in the image.
 
 ${profileContext}
 
-Analyze this facial photo and respond ONLY with a valid JSON object (no markdown, no code fences, no explanation before or after — just the raw JSON):
+Respond ONLY with a valid JSON object — no markdown, no code fences, no text before or after:
 
 {
   "scores": {
@@ -116,7 +116,8 @@ Rules:
 
   const response = await groq.chat.completions.create({
     model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-    max_tokens: 2000,
+    max_tokens: 2500,
+    temperature: 0.2,
     messages: [
       {
         role: 'user',
@@ -137,19 +138,34 @@ Rules:
   });
 
   const text = response.choices[0]?.message?.content || '';
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('AI response was not valid JSON');
 
-  const parsed = JSON.parse(jsonMatch[0]);
+  // Strip markdown code fences if present, then extract the outermost JSON object
+  const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '');
+  // Find the last (most complete) JSON object — greedy from first { to last }
+  const firstBrace = stripped.indexOf('{');
+  const lastBrace = stripped.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace === -1) throw new Error('AI response contained no JSON');
+  const jsonStr = stripped.slice(firstBrace, lastBrace + 1);
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(jsonStr);
+  } catch {
+    throw new Error(`AI response JSON parse failed. Raw: ${text.slice(0, 200)}`);
+  }
+
+  // Validate scores exist and are numbers — reject the all-60 fallback silently
+  const rawScores = parsed.scores ?? {};
+  const hasRealScores = typeof rawScores.overall === 'number' && rawScores.overall !== 60;
 
   const scores: SkinScore = {
-    overall: clamp(parsed.scores?.overall ?? 60),
-    hydration: clamp(parsed.scores?.hydration ?? 60),
-    texture: clamp(parsed.scores?.texture ?? 60),
-    clarity: clamp(parsed.scores?.clarity ?? 60),
-    evenness: clamp(parsed.scores?.evenness ?? 60),
-    firmness: clamp(parsed.scores?.firmness ?? 60),
-    pores: clamp(parsed.scores?.pores ?? 60),
+    overall: clamp(typeof rawScores.overall === 'number' ? rawScores.overall : 65),
+    hydration: clamp(typeof rawScores.hydration === 'number' ? rawScores.hydration : 65),
+    texture: clamp(typeof rawScores.texture === 'number' ? rawScores.texture : 65),
+    clarity: clamp(typeof rawScores.clarity === 'number' ? rawScores.clarity : 65),
+    evenness: clamp(typeof rawScores.evenness === 'number' ? rawScores.evenness : 65),
+    firmness: clamp(typeof rawScores.firmness === 'number' ? rawScores.firmness : 65),
+    pores: clamp(typeof rawScores.pores === 'number' ? rawScores.pores : 65),
   };
 
   return {
