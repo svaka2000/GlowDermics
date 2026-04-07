@@ -27,6 +27,7 @@ export default function Scan() {
   const [scanInfo, setScanInfo] = useState<{ used: number; limit: number; isPremium: boolean } | null>(null);
   const [showGate, setShowGate] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const isCapturing = useRef(false);
 
   // Animation values
   const scanLineY = useRef(new Animated.Value(0)).current;
@@ -148,16 +149,22 @@ export default function Scan() {
   };
 
   const handleCapture = async () => {
+    if (isCapturing.current) return; // prevent double-tap
     try {
       if (!cameraRef.current) return;
+      isCapturing.current = true;
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: true });
       if (photo) {
         setCapturedUri(photo.uri);
         await runAnalysis(photo.uri, photo.base64 ?? null, 'image/jpeg');
       }
     } catch (err: any) {
+      // Camera unmounted means user navigated away — not a user-facing error
+      if (err?.message?.toLowerCase().includes('unmounted')) return;
       Alert.alert('Capture Error', err?.message || 'Could not take photo. Try uploading from gallery instead.');
       setMode('choose');
+    } finally {
+      isCapturing.current = false;
     }
   };
 
