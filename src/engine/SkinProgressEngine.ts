@@ -76,7 +76,8 @@ export async function runSkinProgressEngine(): Promise<EngineReport | null> {
     : 0;
 
   // Average days between scans — used to convert per-scan slope to per-week
-  const avgDaysBetweenScans = scans.length > 1 ? daysTracked / (scans.length - 1) : 7;
+  // Guard against division-by-zero when multiple scans happen on the same day (daysTracked = 0)
+  const avgDaysBetweenScans = scans.length > 1 ? Math.max(1, daysTracked / (scans.length - 1)) : 7;
 
   // ── Trajectories ─────────────────────────────────────────────────────────
   const metrics: MetricKey[] = ['overall', 'hydration', 'texture', 'clarity', 'evenness', 'firmness', 'pores'];
@@ -85,7 +86,8 @@ export async function runSkinProgressEngine(): Promise<EngineReport | null> {
     const data = scans.map(s => ({ date: s.date, value: getScanValue(s, metric) }));
     const values = data.map(d => d.value);
     const slopePerScan = linearSlope(values);
-    const trendPerWeek = Math.round(slopePerScan * (7 / avgDaysBetweenScans) * 10) / 10;
+    const rawTrend = slopePerScan * (7 / avgDaysBetweenScans);
+    const trendPerWeek = isFinite(rawTrend) ? Math.round(rawTrend * 10) / 10 : 0;
     const current = values[values.length - 1];
     const prediction = Math.min(100, Math.max(0, Math.round(current + trendPerWeek)));
     return { metric, label: METRIC_LABELS[metric], data, trend: trendPerWeek, prediction, current };

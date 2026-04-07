@@ -135,7 +135,7 @@ export default function Progress() {
           <View style={styles.header}>
             <View>
               <Text style={styles.headerTitle}>Progress</Text>
-              <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {history.length >= 2 ? `${Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000)} days` : 'just started'}</Text>
+              <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {(() => { const d = history.length >= 2 ? Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000) : -1; return d > 0 ? `${d} days` : d === 0 ? 'same day' : 'just started'; })()}</Text>
             </View>
             {latest && (
               <View style={styles.headerScore}>
@@ -497,7 +497,8 @@ export default function Progress() {
                 const allVals = history.map(h => metric === 'overall' ? h.overallScore : h.scores[metric]);
                 const best = Math.max(...allVals);
                 const current = metric === 'overall' ? latest.overallScore : latest.scores[metric];
-                const isCurrentBest = current === best;
+                // Only show PR if current is best AND there's at least one lower score (not all tied)
+                const isCurrentBest = current === best && allVals.some(v => v < best);
                 return (
                   <View key={metric} style={[styles.deltaCell, isCurrentBest && { borderColor: Colors.scoreExcellent + '40', borderWidth: 1 }]}>
                     <Text style={styles.deltaCellLabel}>{metric === 'overall' ? 'Overall' : metric.charAt(0).toUpperCase() + metric.slice(1)}</Text>

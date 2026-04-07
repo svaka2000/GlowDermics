@@ -39,8 +39,12 @@ const DIET_OPTIONS = [
 ];
 
 export default function Onboarding() {
+  const PROFANITY = ['fuck','shit','ass','bitch','bastard','cunt','dick','cock','pussy','whore','slut','nigger','nigga','faggot','fag','retard','chink','kike','spic','wetback','crap','piss','twat'];
+  const hasProfanity = (s: string) => PROFANITY.some(w => s.toLowerCase().replace(/[^a-z]/g, '').includes(w));
+
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
   const [skinType, setSkinType] = useState('');
   const [concerns, setConcerns] = useState<string[]>([]);
   const [goals, setGoals] = useState<string[]>([]);
@@ -99,7 +103,7 @@ export default function Onboarding() {
   };
 
   const canProceed = () => {
-    if (step === 0) return name.trim().length > 1;
+    if (step === 0) return name.trim().length > 1 && !hasProfanity(name);
     if (step === 1) return skinType !== '';
     if (step === 2) return concerns.length > 0;
     if (step === 3) return goals.length > 0;
@@ -166,10 +170,11 @@ export default function Onboarding() {
                   placeholder="Your first name"
                   placeholderTextColor={Colors.textMuted}
                   value={name}
-                  onChangeText={setName}
+                  onChangeText={v => { setName(v); setNameError(hasProfanity(v) ? 'Please choose an appropriate name.' : ''); }}
                   autoFocus
                   returnKeyType="done"
                 />
+                {nameError ? <Text style={{ color: '#F87171', fontSize: 13, marginTop: 8 }}>{nameError}</Text> : null}
               </View>
             )}
 
