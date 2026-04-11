@@ -292,8 +292,8 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
               <Text style={styles.cardTitle}>🌙 Evening Routine</Text>
               {plan.eveningRoutine.map((step, i) => (
                 <View key={i} style={styles.routineRow}>
-                  <View style={[styles.stepNumBadge, { backgroundColor: '#A78BFA20' }]}>
-                    <Text style={[styles.stepNumText, { color: '#A78BFA' }]}>{i + 1}</Text>
+                  <View style={[styles.stepNumBadge, { backgroundColor: '#6B85A820' }]}>
+                    <Text style={[styles.stepNumText, { color: '#6B85A8' }]}>{i + 1}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.routineStep}>{step.step}</Text>

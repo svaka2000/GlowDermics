@@ -54,7 +54,7 @@ const FATTY_ACIDS = [
     type: 'Polyunsaturated',
     pct: '1-3%',
     skinRole: 'Anti-inflammatory',
-    color: '#A78BFA',
+    color: '#6B85A8',
     desc: 'Found almost exclusively in grass-fed ruminant fat — 3-5x higher in grass-fed vs grain-fed. Potent anti-inflammatory that reduces acne, eczema, and rosacea flares. Also shows anti-cancer properties in research.',
   },
 ];
@@ -84,7 +84,7 @@ const VITAMINS = [
   {
     name: 'Vitamin K (K2 — MK-4)',
     emoji: '💊',
-    color: '#A78BFA',
+    color: '#6B85A8',
     desc: 'K2 in particular (found in grass-fed animal products) activates proteins that regulate calcium in soft tissue. May reduce dark circles and vascular redness when applied topically.',
     comparison: 'K2 (menaquinone-4) is found only in grass-fed animal products — not in plant-based fats or conventional grain-fed tallow.',
   },

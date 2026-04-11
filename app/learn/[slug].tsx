@@ -15,7 +15,7 @@ const TAG_COLORS: Record<string, string> = {
   'INGREDIENTS': '#60A5FA',
   'GUIDE': '#C4622D',
   'PHILOSOPHY': '#D4A96A',
-  'SKIN TYPE': '#A78BFA',
+  'SKIN TYPE': '#6B85A8',
   'TIMELINE': '#F59E0B',
   'HISTORY': '#FB923C',
   'PROTECTION': '#38BDF8',

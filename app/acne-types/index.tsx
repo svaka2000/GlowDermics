@@ -9,7 +9,7 @@ const Colors = {
   bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
   primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
   textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#A78BFA', orange: '#FB923C',
+  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', orange: '#FB923C',
 };
 
 const ACNE_TYPES = [

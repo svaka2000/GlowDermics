@@ -267,8 +267,8 @@ export default function SkinCalendar() {
                   {selectedDay.hasMorning ? 'Morning done' : 'No morning'}
                 </Text>
               </View>
-              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasEvening ? '#A78BFA50' : Colors.border }]}>
-                <Ionicons name="moon-outline" size={18} color={selectedDay.hasEvening ? '#A78BFA' : Colors.textMuted} />
+              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasEvening ? '#6B85A850' : Colors.border }]}>
+                <Ionicons name="moon-outline" size={18} color={selectedDay.hasEvening ? '#6B85A8' : Colors.textMuted} />
                 <Text style={[styles.dayDetailItemLabel, !selectedDay.hasEvening && { color: Colors.textMuted }]}>
                   {selectedDay.hasEvening ? 'Evening done' : 'No evening'}
                 </Text>

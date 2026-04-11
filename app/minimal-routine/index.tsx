@@ -260,7 +260,7 @@ Return ONLY JSON:
                 style={[styles.tab, activeTab === 'evening' && styles.tabActive]}
                 onPress={() => setActiveTab('evening')}
               >
-                <Text style={[styles.tabText, activeTab === 'evening' && { color: '#A78BFA' }]}>🌙 Evening</Text>
+                <Text style={[styles.tabText, activeTab === 'evening' && { color: '#6B85A8' }]}>🌙 Evening</Text>
               </Pressable>
             </View>
 

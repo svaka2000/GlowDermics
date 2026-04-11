@@ -19,7 +19,7 @@ const Colors = {
   green: '#4ADE80',
   red: '#F87171',
   blue: '#60A5FA',
-  purple: '#A78BFA',
+  purple: '#6B85A8',
   pink: '#F472B6',
 };
 

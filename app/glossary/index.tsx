@@ -71,7 +71,7 @@ export default function Glossary() {
   const CATEGORY_COLORS: Record<string, string> = {
     Biology: '#4ADE80',
     Ingredient: Colors.primary,
-    Chemistry: '#A78BFA',
+    Chemistry: '#6B85A8',
     Function: Colors.gold,
     Rating: '#60A5FA',
     Process: '#F97316',

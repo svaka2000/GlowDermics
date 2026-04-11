@@ -312,7 +312,7 @@ export default function Home() {
             items.push({ icon: '🌅', label: 'Log morning routine', action: () => router.push('/(tabs)/routine'), color: Colors.gold });
           }
           if (hour >= 18 && !routineToday.evening) {
-            items.push({ icon: '🌙', label: 'Log evening routine', action: () => router.push('/(tabs)/routine'), color: '#A78BFA' });
+            items.push({ icon: '🌙', label: 'Log evening routine', action: () => router.push('/(tabs)/routine'), color: '#6B85A8' });
           }
           if (waterGlasses < 4 && hour >= 14) {
             items.push({ icon: '💧', label: 'Drink more water — only ' + waterGlasses + ' glasses so far', action: () => adjustWater(1), color: '#60A5FA' });

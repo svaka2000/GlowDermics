@@ -34,7 +34,7 @@ const ACTIVES: Active[] = [
   },
   {
     id: 'retinol', name: 'Retinol / Retinoids', abbr: 'Ret', emoji: '🔬',
-    color: '#A78BFA', whenToUse: 'PM', conflict: ['aha', 'bha', 'vitc', 'benzoyl'],
+    color: '#6B85A8', whenToUse: 'PM', conflict: ['aha', 'bha', 'vitc', 'benzoyl'],
     synergy: ['niacinamide', 'peptides', 'hyaluronic'],
     sensitivity: 'high', desc: 'Anti-aging, accelerates cell turnover, treats acne',
     howToUse: 'Apply after moisturizer or in "sandwich method" between moisturizer layers.',

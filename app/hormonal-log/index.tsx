@@ -52,7 +52,7 @@ const PHASES = [
     label: 'Luteal',
     days: 'Days 18-28',
     emoji: '🌙',
-    color: '#A78BFA',
+    color: '#6B85A8',
     desc: 'Progesterone rises, then drops. Increased oil, pore visibility, and breakouts.',
     skinTips: ['Prioritize anti-inflammatory ingredients', 'Tallow balm helps with breakout inflammation', 'Avoid heavy makeup', 'Zinc & B6 can help hormonally'],
   },

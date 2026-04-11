@@ -139,7 +139,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   const IMPACT_COLORS: Record<string, string> = {
     hydration: '#60A5FA',
     clarity: Colors.scoreExcellent,
-    texture: '#A78BFA',
+    texture: '#6B85A8',
     evenness: Colors.gold,
     firmness: Colors.primary,
   };

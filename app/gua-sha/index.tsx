@@ -83,7 +83,7 @@ const TECHNIQUES: Technique[] = [
     emoji: '😌',
     duration: '12 min',
     benefit: 'Relieves jaw tension and facial muscle tightness',
-    color: '#A78BFA',
+    color: '#6B85A8',
     steps: [
       {
         title: 'Scalp Massage',

@@ -16,7 +16,7 @@ const Colors = {
   textSecondary: '#9A9AAF',
   textMuted: '#5A5A6E',
   green: '#4ADE80',
-  purple: '#A78BFA',
+  purple: '#6B85A8',
   pink: '#F472B6',
 };
 

@@ -21,7 +21,7 @@ const Colors = {
   green: '#4ADE80',
   red: '#F87171',
   blue: '#60A5FA',
-  purple: '#A78BFA',
+  purple: '#6B85A8',
 };
 
 const STORAGE_KEY = 'gd_skin_cycling';
@@ -189,7 +189,7 @@ export default function SkinCyclingScreen() {
 
         {view === 'guide' && (
           <>
-            <LinearGradient colors={['#A78BFA22', '#0A0A0F']} style={styles.hero}>
+            <LinearGradient colors={['#6B85A822', '#0A0A0F']} style={styles.hero}>
               <Text style={styles.heroEmoji}>🔄</Text>
               <Text style={styles.heroTitle}>The 4-Night Cycle</Text>
               <Text style={styles.heroSub}>Max actives. Max recovery. No burnout.</Text>

@@ -48,7 +48,7 @@ const FOOD_GROUPS: FoodGroup[] = [
     id: 'antioxidants',
     name: 'Antioxidant-Rich Produce',
     emoji: '🫐',
-    color: '#A78BFA',
+    color: '#6B85A8',
     tagline: 'Nature\'s shield against UV and pollution damage',
     skinBenefit: 'Neutralize free radicals before they can break down collagen and trigger inflammation. Slow visible aging from environmental exposure.',
     keyNutrients: [

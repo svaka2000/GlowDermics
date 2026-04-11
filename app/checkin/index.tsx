@@ -234,7 +234,7 @@ export default function DailyCheckIn() {
                 style={[styles.routineCard, routineLog.evening && styles.routineCardDone]}
                 onPress={() => !routineLog.evening && logRoutine('evening')}
               >
-                <Ionicons name="moon-outline" size={24} color={routineLog.evening ? Colors.scoreExcellent : '#A78BFA'} />
+                <Ionicons name="moon-outline" size={24} color={routineLog.evening ? Colors.scoreExcellent : '#6B85A8'} />
                 <Text style={[styles.routineCardLabel, routineLog.evening && { color: Colors.scoreExcellent }]}>
                   Evening Routine
                 </Text>

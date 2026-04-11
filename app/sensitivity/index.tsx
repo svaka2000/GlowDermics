@@ -38,7 +38,7 @@ type SensitivityResult = {
 const CATEGORY_CONFIG: Record<string, { color: string; label: string; icon: string }> = {
   irritant: { color: Colors.scorePoor, label: 'Irritant', icon: 'flame-outline' },
   allergen: { color: '#F97316', label: 'Known Allergen', icon: 'medical-outline' },
-  comedogenic: { color: '#A78BFA', label: 'Pore-Clogging', icon: 'close-circle-outline' },
+  comedogenic: { color: '#6B85A8', label: 'Pore-Clogging', icon: 'close-circle-outline' },
   endocrine_disruptor: { color: '#EF4444', label: 'Endocrine Disruptor', icon: 'warning-outline' },
   fragrance: { color: Colors.scoreFair, label: 'Fragrance', icon: 'water-outline' },
   preservative: { color: Colors.gold, label: 'Preservative', icon: 'shield-outline' },

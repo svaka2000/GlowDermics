@@ -21,7 +21,7 @@ interface Achievement {
 
 const CATEGORY_COLORS: Record<string, string> = {
   scanning: Colors.primary,
-  routine: '#A78BFA',
+  routine: '#6B85A8',
   learning: '#60A5FA',
   tracking: '#4ADE80',
   lifestyle: '#F59E0B',

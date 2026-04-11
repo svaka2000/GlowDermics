@@ -259,13 +259,13 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 </View>
                 <View style={styles.card}>
                   <View style={styles.routineHeader}>
-                    <Ionicons name="moon-outline" size={16} color="#A78BFA" />
+                    <Ionicons name="moon-outline" size={16} color="#6B85A8" />
                     <Text style={styles.cardTitle}>Evening Adjustments</Text>
                   </View>
                   {guide.eveningRoutineAdjustments.map((a, i) => (
                     <View key={i} style={styles.adjustRow}>
                       <View style={[styles.adjustNum, { backgroundColor: 'rgba(167,139,250,0.15)' }]}>
-                        <Text style={[styles.adjustNumText, { color: '#A78BFA' }]}>{i + 1}</Text>
+                        <Text style={[styles.adjustNumText, { color: '#6B85A8' }]}>{i + 1}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.adjustStep}>{a.step}</Text>

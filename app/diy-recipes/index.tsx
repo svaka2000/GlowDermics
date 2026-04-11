@@ -97,7 +97,7 @@ const RECIPES: Recipe[] = [
     time: '10 min',
     difficulty: 'Easy',
     benefit: 'Reduces puffiness and fine lines under eyes',
-    color: '#A78BFA',
+    color: '#6B85A8',
     skinTypes: ['All skin types'],
     ingredients: [
       { name: 'Grass-fed beef tallow', amount: '1 tbsp' },

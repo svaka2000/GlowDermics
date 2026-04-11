@@ -83,7 +83,7 @@ const VC_FORMS = [
     bestFor: 'Hydration + vitamin C — has humectant properties alongside antioxidant action',
     avoid: 'Nothing',
     note: 'The most hydrating vitamin C form. Converts to ascorbic acid slowly in skin. At 10%, provides measurable antioxidant protection with a hydration boost. Often paired with hyaluronic acid.',
-    color: (Colors as any).purple ?? '#A78BFA',
+    color: (Colors as any).purple ?? '#6B85A8',
   },
 ];
 
