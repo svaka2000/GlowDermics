@@ -352,6 +352,7 @@ export default function Settings() {
             <LinkRow icon="cash-outline" label="Dupe Finder" onPress={() => router.push('/dupes')} />
             <LinkRow icon="git-compare-outline" label="Routine Analyzer" onPress={() => router.push('/routine-analyzer')} />
             <LinkRow icon="analytics-outline" label="AI Trend Report" onPress={() => router.push('/report')} />
+            <LinkRow icon="images-outline" label="Skin Photo Gallery" onPress={() => router.push('/scan-gallery')} />
             <LinkRow icon="bar-chart-outline" label="Compare Scans" onPress={() => router.push('/compare')} />
             <LinkRow icon="sparkles-outline" label="90-Day Skin Forecast" onPress={() => router.push('/forecast')} />
             <LinkRow icon="git-network-outline" label="Ingredient Conflict Checker" onPress={() => router.push('/ingredient-check')} />

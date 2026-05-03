@@ -1,5 +1,5 @@
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Pressable, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Pressable, Animated, Easing, RefreshControl, Share } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -149,8 +149,109 @@ export default function Progress() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
+        {/* XP / Level card */}
+        {(() => {
+          const xp = (history.length * 50) + (routineStreak * 10) + (journalCount * 5) + (articlesRead * 8);
+          const level = Math.floor(xp / 200) + 1;
+          const xpInLevel = xp % 200;
+          const levelLabel = level >= 10 ? '💎 Diamond' : level >= 7 ? '🥇 Gold' : level >= 4 ? '🥈 Silver' : '🥉 Bronze';
+          return (
+            <Pressable style={styles.xpCard} onPress={() => router.push('/milestones')}>
+              <LinearGradient
+                colors={[Colors.primaryDark, Colors.primary]}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <Text style={styles.xpLevel}>Level {level}</Text>
+                  <View style={styles.xpLevelBadge}>
+                    <Text style={styles.xpLevelBadgeText}>{levelLabel}</Text>
+                  </View>
+                </View>
+                <Text style={styles.xpTotal}>{xp.toLocaleString()} XP total</Text>
+                <View style={styles.xpBarTrack}>
+                  <View style={[styles.xpBarFill, { width: `${(xpInLevel / 200) * 100}%` as any }]} />
+                </View>
+                <Text style={styles.xpBarLabel}>{xpInLevel}/200 XP to Level {level + 1}</Text>
+              </View>
+              <View style={styles.xpRight}>
+                <Text style={styles.xpEmoji}>⭐</Text>
+                <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.6)" />
+              </View>
+            </Pressable>
+          );
+        })()}
+
+        {/* Transformation card — shows after 14+ days of tracking */}
+        {history.length >= 2 && oldest && latest && (() => {
+          const daysTracked = Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000);
+          if (daysTracked < 7) return null;
+          const delta = latest.overallScore - oldest.overallScore;
+          const handleShareTransformation = async () => {
+            const sign = delta >= 0 ? '+' : '';
+            await Share.share({
+              message: `My ${daysTracked}-day skin transformation with GlowDermics 🌿\n\nStarted: ${oldest.overallScore}/100\nNow: ${latest.overallScore}/100 (${sign}${delta} points)\n\n${history.length} scans · ${daysTracked} days tracked\n\n#GlowDermics #SkinTransformation #TallowDermics`,
+            });
+          };
+          return (
+            <View style={styles.transformCard}>
+              <LinearGradient colors={['rgba(196,98,45,0.08)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+              <View style={styles.transformHeader}>
+                <View>
+                  <Text style={styles.transformEyebrow}>YOUR TRANSFORMATION</Text>
+                  <Text style={styles.transformTitle}>{daysTracked} Days of Progress</Text>
+                </View>
+                <Pressable style={styles.transformShareBtn} onPress={handleShareTransformation}>
+                  <Ionicons name="share-outline" size={16} color={Colors.primary} />
+                </Pressable>
+              </View>
+              <View style={styles.transformRow}>
+                <View style={styles.transformSide}>
+                  {oldest.imageUri ? (
+                    <Image source={{ uri: oldest.imageUri }} style={styles.transformPhoto} resizeMode="cover" />
+                  ) : (
+                    <View style={[styles.transformPhoto, styles.transformPhotoEmpty]}>
+                      <Ionicons name="person-outline" size={22} color={Colors.textMuted} />
+                    </View>
+                  )}
+                  <View style={styles.transformScoreWrap}>
+                    <Text style={styles.transformScore}>{oldest.overallScore}</Text>
+                  </View>
+                  <Text style={styles.transformDateLabel}>Day 1</Text>
+                </View>
+                <View style={styles.transformMiddle}>
+                  <View style={[styles.transformDelta, { backgroundColor: delta >= 0 ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)' }]}>
+                    <Text style={[styles.transformDeltaNum, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                      {delta >= 0 ? '+' : ''}{delta}
+                    </Text>
+                    <Text style={[styles.transformDeltaLabel, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>pts</Text>
+                  </View>
+                  <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+                </View>
+                <View style={styles.transformSide}>
+                  {latest.imageUri ? (
+                    <Image source={{ uri: latest.imageUri }} style={styles.transformPhoto} resizeMode="cover" />
+                  ) : (
+                    <View style={[styles.transformPhoto, styles.transformPhotoEmpty]}>
+                      <Ionicons name="person-outline" size={22} color={Colors.textMuted} />
+                    </View>
+                  )}
+                  <View style={styles.transformScoreWrap}>
+                    <Text style={styles.transformScore}>{latest.overallScore}</Text>
+                  </View>
+                  <Text style={styles.transformDateLabel}>Now</Text>
+                </View>
+              </View>
+              <Pressable style={styles.transformCta} onPress={() => router.push('/scan-gallery')}>
+                <Text style={styles.transformCtaText}>View Full Gallery →</Text>
+              </Pressable>
+            </View>
+          );
+        })()}
+
         {/* Quick access row */}
-        <View style={styles.quickRow}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRowContent}>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/compare')}>
             <Ionicons name="git-compare-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Compare</Text>
@@ -163,6 +264,18 @@ export default function Progress() {
             <Ionicons name="trophy-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Milestones</Text>
           </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/skin-age')}>
+            <Ionicons name="hourglass-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Skin Age</Text>
+          </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/skin-scorecard')}>
+            <Ionicons name="ribbon-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Scorecard</Text>
+          </Pressable>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/community')}>
+            <Ionicons name="people-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Community</Text>
+          </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/forecast')}>
             <Ionicons name="sparkles-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Forecast</Text>
@@ -171,7 +284,11 @@ export default function Progress() {
             <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
             <Text style={styles.quickBtnText}>Calendar</Text>
           </Pressable>
-        </View>
+          <Pressable style={styles.quickBtn} onPress={() => router.push('/scan-gallery')}>
+            <Ionicons name="images-outline" size={16} color={Colors.primary} />
+            <Text style={styles.quickBtnText}>Gallery</Text>
+          </Pressable>
+        </ScrollView>
 
         {/* AI Trend Report CTA */}
         <Pressable style={styles.reportCta} onPress={() => router.push('/report')}>
@@ -206,6 +323,42 @@ export default function Progress() {
             <Text style={styles.activityLabel}>Articles</Text>
           </View>
         </Animated.View>
+
+        {/* Streak milestone celebration */}
+        {routineStreak > 0 && [7, 14, 21, 30, 60, 100].includes(routineStreak) && (
+          <LinearGradient
+            colors={routineStreak >= 30 ? ['#B8882E', '#D4A96A'] : [Colors.primaryDark, Colors.primary]}
+            style={styles.streakMilestone}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          >
+            <Text style={styles.streakMilestoneEmoji}>{routineStreak >= 100 ? '💎' : routineStreak >= 60 ? '🏆' : routineStreak >= 30 ? '🥇' : routineStreak >= 14 ? '🥈' : '🥉'}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.streakMilestoneLabel}>MILESTONE UNLOCKED</Text>
+              <Text style={styles.streakMilestoneTitle}>{routineStreak}-Day Streak!</Text>
+              <Text style={styles.streakMilestoneSub}>You're in the top {routineStreak >= 30 ? '5%' : '15%'} of GlowDermics users. Keep going.</Text>
+            </View>
+          </LinearGradient>
+        )}
+
+        {/* Streak encouragement for non-milestone days */}
+        {routineStreak > 0 && ![7, 14, 21, 30, 60, 100].includes(routineStreak) && (() => {
+          const next = [7, 14, 21, 30, 60, 100].find(m => m > routineStreak) ?? 0;
+          if (!next) return null;
+          return (
+            <View style={styles.streakNudge}>
+              <Text style={styles.streakNudgeEmoji}>🔥</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.streakNudgeTitle}>{routineStreak}-day streak</Text>
+                <Text style={styles.streakNudgeSub}>{next - routineStreak} more days to unlock the {next}-day badge</Text>
+              </View>
+              <View style={styles.streakNudgeBar}>
+                <View style={[styles.streakNudgeBarFill, {
+                  width: `${((routineStreak - ([7, 14, 21, 30, 60, 100].filter(m => m < routineStreak).pop() ?? 0)) / (next - ([7, 14, 21, 30, 60, 100].filter(m => m < routineStreak).pop() ?? 0))) * 100}%` as any
+                }]} />
+              </View>
+            </View>
+          );
+        })()}
 
         {/* AI Engine: Trend summary */}
         {engineReport && (
@@ -570,9 +723,25 @@ const styles = StyleSheet.create({
   scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
   scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
 
-  quickRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginBottom: 10 },
-  quickBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingVertical: 12 },
-  quickBtnText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
+  xpCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    marginHorizontal: 16, borderRadius: 20, overflow: 'hidden',
+    padding: 18, marginBottom: 12,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
+  },
+  xpLevel: { fontSize: 20, fontWeight: '900', color: '#fff' },
+  xpLevelBadge: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
+  xpLevelBadgeText: { fontSize: 11, fontWeight: '700', color: '#fff' },
+  xpTotal: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginBottom: 8 },
+  xpBarTrack: { height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden', marginBottom: 4 },
+  xpBarFill: { height: 6, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 3 },
+  xpBarLabel: { fontSize: 10, color: 'rgba(255,255,255,0.6)' },
+  xpRight: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  xpEmoji: { fontSize: 26 },
+
+  quickRowContent: { paddingHorizontal: 16, paddingVertical: 6, gap: 8, marginBottom: 4 },
+  quickBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingVertical: 10, paddingHorizontal: 14 },
+  quickBtnText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
   reportCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     marginHorizontal: 16, borderRadius: 16, overflow: 'hidden',
@@ -584,6 +753,50 @@ const styles = StyleSheet.create({
   activityCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
   activityNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
   activityLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 13 },
+
+  streakMilestone: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    marginHorizontal: 16, borderRadius: 18, padding: 18, marginBottom: 12, marginTop: 8,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+  },
+  streakMilestoneEmoji: { fontSize: 32 },
+  streakMilestoneLabel: { fontSize: 8, fontWeight: '900', color: 'rgba(255,255,255,0.7)', letterSpacing: 2, marginBottom: 3 },
+  streakMilestoneTitle: { fontSize: 20, fontWeight: '900', color: '#fff', marginBottom: 3 },
+  streakMilestoneSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 17 },
+
+  streakNudge: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginHorizontal: 16, borderRadius: 16, padding: 14, marginBottom: 10, marginTop: 6,
+    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: 'rgba(212,169,106,0.25)',
+  },
+  streakNudgeEmoji: { fontSize: 22 },
+  streakNudgeTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  streakNudgeSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  streakNudgeBar: { width: 48, height: 4, backgroundColor: Colors.border, borderRadius: 2, overflow: 'hidden', marginTop: 6, alignSelf: 'flex-end' },
+  streakNudgeBarFill: { height: 4, backgroundColor: Colors.gold, borderRadius: 2 },
+
+  transformCard: {
+    marginHorizontal: 16, borderRadius: 20, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    padding: 16, marginBottom: 12, marginTop: 4,
+  },
+  transformHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
+  transformEyebrow: { fontSize: 8, fontWeight: '900', letterSpacing: 2, color: Colors.primary, marginBottom: 3 },
+  transformTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
+  transformShareBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(196,98,45,0.1)', alignItems: 'center', justifyContent: 'center' },
+  transformRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  transformSide: { flex: 1, alignItems: 'center', gap: 6 },
+  transformPhoto: { width: '100%', height: 100, borderRadius: 14 },
+  transformPhotoEmpty: { backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center' },
+  transformScoreWrap: { position: 'absolute', top: 6, right: 6, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
+  transformScore: { fontSize: 14, fontWeight: '900', color: Colors.white },
+  transformDateLabel: { fontSize: 10, fontWeight: '700', color: Colors.textMuted },
+  transformMiddle: { alignItems: 'center', gap: 6 },
+  transformDelta: { borderRadius: 12, paddingHorizontal: 10, paddingVertical: 6, alignItems: 'center' },
+  transformDeltaNum: { fontSize: 18, fontWeight: '900' },
+  transformDeltaLabel: { fontSize: 9, fontWeight: '700' },
+  transformCta: { alignItems: 'center' },
+  transformCtaText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
 
   metricScroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
   metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard },

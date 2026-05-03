@@ -28,12 +28,11 @@ export default function Register() {
       Animated.timing(shakeX, { toValue: 0, duration: 60, useNativeDriver: true }),
     ]).start();
 
-  const PROFANITY = ['fuck','shit','ass','bitch','bastard','cunt','dick','cock','pussy','whore','slut','nigger','nigga','faggot','fag','retard','chink','kike','spic','wetback','crap','piss','twat'];
-  const hasProfanity = (s: string) => PROFANITY.some(w => s.toLowerCase().replace(/[^a-z]/g, '').includes(w));
+  const isInvalidName = (s: string) => /[^a-zA-Z0-9 '\-.]/.test(s.trim());
 
   const validate = () => {
     if (!name.trim() || name.trim().length < 2) return 'Please enter your name.';
-    if (hasProfanity(name)) return 'Please choose an appropriate name.';
+    if (isInvalidName(name)) return 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.';
     if (!email.includes('@') || !email.includes('.')) return 'Please enter a valid email.';
     if (password.length < 6) return 'Password must be at least 6 characters.';
     if (password !== confirm) return 'Passwords do not match.';

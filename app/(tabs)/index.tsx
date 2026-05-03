@@ -394,6 +394,26 @@ export default function Home() {
           </Pressable>
         </Animated.View>
 
+        {/* Skin Age + Scorecard teasers */}
+        {latest && (
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 24 }}>
+            <Pressable style={[styles.teaser, { flex: 1 }]} onPress={() => router.push('/skin-age')}>
+              <LinearGradient colors={['rgba(107,133,168,0.15)', 'rgba(107,133,168,0.05)']} style={StyleSheet.absoluteFill} />
+              <Text style={styles.teaserEmoji}>⏳</Text>
+              <Text style={styles.teaserTitle}>Skin Age</Text>
+              <Text style={styles.teaserSub}>Is your skin older or younger than you?</Text>
+              <Text style={styles.teaserCta}>Discover →</Text>
+            </Pressable>
+            <Pressable style={[styles.teaser, { flex: 1 }]} onPress={() => router.push('/skin-scorecard')}>
+              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Text style={styles.teaserEmoji}>📊</Text>
+              <Text style={styles.teaserTitle}>Scorecard</Text>
+              <Text style={styles.teaserSub}>Share your skin journey with the world</Text>
+              <Text style={styles.teaserCta}>Generate →</Text>
+            </Pressable>
+          </View>
+        )}
+
         {/* Latest scan summary */}
         {latest && (
           <View style={styles.section}>
@@ -519,6 +539,37 @@ export default function Home() {
               <Ionicons name="flash-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>30-Day{'\n'}Challenge</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/community')}>
+              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="people-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Commu{'\n'}nity</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/skin-scorecard')}>
+              <Ionicons name="ribbon-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Score{'\n'}Card</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/skin-age')}>
+              <Ionicons name="hourglass-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}Age</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/weekly-digest')}>
+              <Ionicons name="newspaper-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Weekly{'\n'}Digest</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/skin-report')}>
+              <LinearGradient colors={['rgba(212,169,106,0.15)', 'rgba(212,169,106,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="document-text-outline" size={22} color={Colors.gold} />
+              <Text style={[styles.quickLabel, { color: Colors.gold }]}>Skin{'\n'}Report</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/scan-gallery')}>
+              <Ionicons name="images-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Photo{'\n'}Gallery</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/skin-dna')}>
+              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="git-network-outline" size={22} color={Colors.primary} />
+              <Text style={styles.quickLabel}>Skin{'\n'}DNA</Text>
+            </Pressable>
           </View>
         </View>
         </Animated.View>
@@ -527,6 +578,48 @@ export default function Home() {
           opacity: lowerAnim,
           transform: [{ translateY: lowerAnim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) }],
         }}>
+
+        {/* Community Spotlight */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Community</Text>
+            <Pressable onPress={() => router.push('/community')}>
+              <Text style={styles.seeAll}>View All →</Text>
+            </Pressable>
+          </View>
+          <Pressable style={styles.communityCard} onPress={() => router.push('/community')}>
+            <LinearGradient
+              colors={[Colors.primary + '14', Colors.primary + '04']}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.communityStats}>
+              {[
+                { num: '24K+', label: 'Active Today' },
+                { num: '8.2K', label: 'Scans Today' },
+                { num: '#1', label: 'Skincare App' },
+              ].map(s => (
+                <View key={s.label} style={styles.communityStat}>
+                  <Text style={styles.communityStatNum}>{s.num}</Text>
+                  <Text style={styles.communityStatLabel}>{s.label}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={styles.communityBottom}>
+              <View style={styles.communityAvatars}>
+                {['S', 'A', 'M', 'Y', 'C'].map((l, i) => (
+                  <View key={i} style={[styles.communityAvatar, { marginLeft: i === 0 ? 0 : -8, zIndex: 5 - i }]}>
+                    <Text style={styles.communityAvatarText}>{l}</Text>
+                  </View>
+                ))}
+                <Text style={styles.communityAvatarMore}>+24K</Text>
+              </View>
+              <View style={styles.communityJoinBtn}>
+                <Text style={styles.communityJoinText}>See Leaderboard →</Text>
+              </View>
+            </View>
+          </Pressable>
+        </View>
+
         {/* Water tracker */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hydration Tracker</Text>
@@ -799,4 +892,37 @@ const styles = StyleSheet.create({
   challengeProgress: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
   challengeCheckBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 },
   challengeCheckBtnText: { fontSize: 11, fontWeight: '700', color: Colors.white },
+
+  teaser: {
+    borderRadius: 18, overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.border,
+    padding: 14, gap: 4,
+    backgroundColor: Colors.bgCard,
+  },
+  teaserEmoji: { fontSize: 20, marginBottom: 2 },
+  teaserTitle: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
+  teaserSub: { fontSize: 11, color: Colors.textSecondary, lineHeight: 15 },
+  teaserCta: { fontSize: 11, fontWeight: '700', color: Colors.primary, marginTop: 4 },
+
+  communityCard: {
+    borderRadius: 20, overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.borderStrong,
+    padding: 18,
+    backgroundColor: Colors.bgCard,
+  },
+  communityStats: { flexDirection: 'row', marginBottom: 16 },
+  communityStat: { flex: 1, alignItems: 'center' },
+  communityStatNum: { fontSize: 20, fontWeight: '900', color: Colors.textPrimary },
+  communityStatLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', marginTop: 1 },
+  communityBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  communityAvatars: { flexDirection: 'row', alignItems: 'center' },
+  communityAvatar: {
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: Colors.primary, borderWidth: 2, borderColor: Colors.bgCard,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  communityAvatarText: { fontSize: 11, fontWeight: '800', color: '#fff' },
+  communityAvatarMore: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', marginLeft: 8 },
+  communityJoinBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8 },
+  communityJoinText: { fontSize: 11, fontWeight: '700', color: '#fff' },
 });
