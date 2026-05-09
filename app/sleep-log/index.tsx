@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Animated, Easing,
+  Dimensions,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +10,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import {
+  GlassHero, Card, Badge, ScatterPlot,
+} from '../../src/components/ui';
+import { runSleepSkinAnalysis, SleepSkinReport } from '../../src/engine/SleepSkinEngine';
 
 const SLEEP_KEY = 'gd_sleep_log';
 
@@ -34,6 +39,7 @@ export default function SleepLog() {
   const [todayQuality, setTodayQuality] = useState(0);
   const [saved, setSaved] = useState(false);
   const [scanHistory, setScanHistory] = useState<{ date: string; overallScore: number }[]>([]);
+  const [report, setReport] = useState<SleepSkinReport | null>(null);
 
   const headerAnim = useRef(new Animated.Value(0)).current;
   const contentAnim = useRef(new Animated.Value(0)).current;
@@ -63,6 +69,10 @@ export default function SleepLog() {
       setTodayQuality(todayEntry.quality);
       setSaved(true);
     }
+
+    // Run the correlation engine in the background.
+    const r = await runSleepSkinAnalysis();
+    setReport(r);
   };
 
   const saveToday = async () => {
@@ -94,52 +104,32 @@ export default function SleepLog() {
     : 0;
   const sevenPlusNights = log.filter(e => e.hours >= 7).length;
 
-  // Correlation: high sleep (7+h) vs scan scores
-  const highSleepScanAvg = (() => {
-    const highSleepDates = new Set(log.filter(e => e.hours >= 7).map(e => e.date));
-    const relevant = scanHistory.filter(s => {
-      const d = new Date(s.date);
-      const prev = new Date(d); prev.setDate(d.getDate() - 1);
-      return highSleepDates.has(prev.toDateString());
-    });
-    return relevant.length > 0 ? Math.round(relevant.reduce((s, e) => s + e.overallScore, 0) / relevant.length) : null;
-  })();
-
-  const lowSleepScanAvg = (() => {
-    const lowSleepDates = new Set(log.filter(e => e.hours < 7).map(e => e.date));
-    const relevant = scanHistory.filter(s => {
-      const d = new Date(s.date);
-      const prev = new Date(d); prev.setDate(d.getDate() - 1);
-      return lowSleepDates.has(prev.toDateString());
-    });
-    return relevant.length > 0 ? Math.round(relevant.reduce((s, e) => s + e.overallScore, 0) / relevant.length) : null;
-  })();
-
   const chartMax = Math.max(10, ...last14.map(d => d.hours));
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <Animated.View style={[styles.header, {
-          opacity: headerAnim,
-          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
-        }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-          </Pressable>
-          <View>
-            <Text style={styles.headerTitle}>Sleep Tracker</Text>
-            <Text style={styles.headerSub}>Sleep drives skin repair</Text>
-          </View>
-          <View style={{ width: 36 }} />
-        </Animated.View>
-      </SafeAreaView>
-
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
         style={{ opacity: contentAnim }}
       >
+        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+          <SafeAreaView edges={['top']}>
+            <Animated.View style={[styles.heroHeader, {
+              opacity: headerAnim,
+              transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+            }]}>
+              <Pressable style={styles.heroBackBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+              </Pressable>
+              <View>
+                <Text style={styles.heroTitle}>Sleep Tracker</Text>
+                <Text style={styles.heroSub}>Sleep drives skin repair</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </Animated.View>
+          </SafeAreaView>
+        </GlassHero>
 
         {/* Today's log */}
         <View style={styles.todayCard}>
@@ -248,25 +238,94 @@ export default function SleepLog() {
           </View>
         )}
 
-        {/* Skin correlation */}
-        {highSleepScanAvg && lowSleepScanAvg && (
-          <View style={styles.correlationCard}>
-            <LinearGradient colors={['rgba(74,222,128,0.08)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.correlationTitle}>Sleep → Skin Score Correlation</Text>
-            <View style={styles.correlationRow}>
-              <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: '#4ADE80' }]}>{highSleepScanAvg}</Text>
-                <Text style={styles.correlationLabel}>After 7h+ sleep</Text>
+        {/* Skin correlation — Pearson-based with scatter plot */}
+        {report && (
+          <View style={styles.correlationCardV2}>
+            <View style={styles.correlationHeaderRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.correlationLabelTop}>SLEEP × SKIN CORRELATION</Text>
+                <Text style={styles.correlationTitle}>Does sleep move your score?</Text>
               </View>
-              <Ionicons name="arrow-forward" size={20} color={Colors.textMuted} />
-              <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: Colors.scorePoor }]}>{lowSleepScanAvg}</Text>
-                <Text style={styles.correlationLabel}>After &lt;7h sleep</Text>
-              </View>
+              {report.hasEnoughData && (
+                <Badge
+                  label={`r = ${report.correlationHours.toFixed(2)}`}
+                  tone={
+                    Math.abs(report.correlationHours) > 0.5
+                      ? report.correlationHours > 0 ? 'success' : 'danger'
+                      : Math.abs(report.correlationHours) > 0.25
+                      ? 'warning'
+                      : 'neutral'
+                  }
+                  size="sm"
+                />
+              )}
             </View>
-            <Text style={styles.correlationNote}>
-              Your skin scores {Math.abs(highSleepScanAvg - lowSleepScanAvg)} points {highSleepScanAvg > lowSleepScanAvg ? 'higher' : 'lower'} the day after 7+ hours of sleep.
-            </Text>
+
+            {report.hasEnoughData && report.points.length > 0 ? (
+              <View style={{ alignItems: 'center', marginTop: 14 }}>
+                <ScatterPlot
+                  data={report.points.map(p => ({ x: p.hours, y: p.skinScore }))}
+                  width={Math.min(Dimensions.get('window').width - 64, 360)}
+                  height={220}
+                  xLabel="Sleep hours"
+                  yLabel="Skin score"
+                  xRange={[3, 11]}
+                  yRange={[40, 100]}
+                  showTrendLine
+                  pointColor={Colors.primary}
+                  trendColor={Colors.gold}
+                />
+              </View>
+            ) : (
+              <View style={styles.notEnoughBox}>
+                <Ionicons name="hourglass-outline" size={18} color={Colors.textMuted} />
+                <Text style={styles.notEnoughText}>
+                  Need {Math.max(0, 8 - report.sampleSize)} more matched scans to compute a reliable trend.
+                  Each sleep entry pairs with the next scan within 36h.
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.correlationStatsRow}>
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>SAMPLE</Text>
+                <Text style={styles.correlationStatNum}>{report.sampleSize}</Text>
+              </View>
+              <View style={styles.correlationStatDiv} />
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>AVG SLEEP</Text>
+                <Text style={styles.correlationStatNum}>{report.avgHours.toFixed(1)}h</Text>
+              </View>
+              <View style={styles.correlationStatDiv} />
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>AVG SCORE</Text>
+                <Text style={styles.correlationStatNum}>{Math.round(report.avgSkinScore)}</Text>
+              </View>
+              {report.optimalRange && (
+                <>
+                  <View style={styles.correlationStatDiv} />
+                  <View style={styles.correlationStat}>
+                    <Text style={styles.correlationStatLabel}>YOUR BEST</Text>
+                    <Text style={[styles.correlationStatNum, { color: Colors.scoreExcellent }]}>
+                      {report.optimalRange}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View style={styles.verdictBox}>
+              <Ionicons
+                name="bulb"
+                size={14}
+                color={
+                  Math.abs(report.correlationHours) > 0.5
+                    ? Colors.scoreExcellent
+                    : report.hasEnoughData ? Colors.gold : Colors.textMuted
+                }
+              />
+              <Text style={styles.verdictText}>{report.verdict}</Text>
+            </View>
           </View>
         )}
 
@@ -295,14 +354,77 @@ export default function SleepLog() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
-  header: {
+
+  heroWrap: { marginHorizontal: -16, marginBottom: 14 },
+  heroHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
+    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  heroBackBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  heroTitle: {
+    fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.4,
+    textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', textAlign: 'center', marginTop: 2, fontWeight: '600' },
+
   scroll: { paddingHorizontal: 16 },
+
+  /* v2 correlation card */
+  correlationCardV2: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 16,
+    marginBottom: 14,
+    shadowColor: '#1C1814',
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  correlationHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
+  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4 },
+  notEnoughBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: Colors.bgElevated,
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 10,
+  },
+  notEnoughText: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 17, fontWeight: '500' },
+  correlationStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: Colors.bgElevated,
+    borderRadius: 14,
+    padding: 10,
+    marginTop: 14,
+  },
+  correlationStat: { flex: 1, alignItems: 'center', gap: 2 },
+  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1 },
+  correlationStatNum: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationStatDiv: { width: 1, height: 18, backgroundColor: 'rgba(28,24,20,0.10)' },
+  verdictBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: 'rgba(196,98,45,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(196,98,45,0.18)',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 14,
+  },
+  verdictText: { flex: 1, fontSize: 12.5, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
 
   todayCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 14 },
   todayHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -343,13 +465,7 @@ const styles = StyleSheet.create({
   refLine: { flex: 1, height: 1, borderTopWidth: 1, borderTopColor: 'rgba(74,222,128,0.3)', borderStyle: 'dashed' },
   refLabel: { fontSize: 9, color: '#4ADE80', marginLeft: 4 },
 
-  correlationCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 14 },
-  correlationTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  correlationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
-  correlationItem: { alignItems: 'center', gap: 4 },
-  correlationScore: { fontSize: 28, fontWeight: '900' },
-  correlationLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
-  correlationNote: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  correlationTitle: { fontSize: 15, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },

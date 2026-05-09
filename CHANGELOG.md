@@ -4,6 +4,74 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Sleep × Skin Correlation Engine (Autonomous Overnight Pass 8)
+
+A proper behavioral-data feature that competitor skincare apps don't have:
+**Pearson correlation** between the user's sleep log and their next-day skin
+score, surfaced as an animated scatter plot with a fitted trend line.
+
+### 🧠 `SleepSkinEngine`
+
+New file `src/engine/SleepSkinEngine.ts`. Pulls the user's sleep log and
+scan history, aligns each sleep entry with the **next scan within 36 hours**
+(dermatology consensus: poor sleep shows up the next morning, not the same
+morning), and returns a `SleepSkinReport`:
+
+- `points[]` — aligned (sleep, scan) pairs
+- `correlationHours` — Pearson r between sleep duration and skin score
+- `correlationQuality` — Pearson r between sleep quality (1-5) and skin score
+- `verdict` — plain-English summary keyed off whichever correlation is stronger
+- `optimalRange` — the user's best-sleep-score bucket (e.g. "7.5–8.0 hrs")
+- `avgHours`, `avgSkinScore`, `sampleSize`, `hasEnoughData`
+
+Requires ≥8 paired data points before computing a correlation; below that,
+`verdict` says exactly how many more matched scans are needed.
+
+### 📊 `<ScatterPlot>` component
+
+Generic Reanimated 4 SVG scatter plot. Used by sleep×skin today, ready to be
+reused for UV×skin (#7), water×skin, etc.
+
+- Auto-computed nice axes (forced y-range for skin scores, data-driven x)
+- Animated point entrance (delay-staggered scale spring with halo)
+- Animated trend line draw-on (left-to-right sweep after points settle,
+  dashed gold)
+- Grid lines, axis labels, optional x/y label captions
+- Linear regression for the trend line built-in
+
+File: `src/components/ui/ScatterPlot.tsx`.
+
+### 🌙 Sleep-log screen upgrade
+
+The previous "high vs low sleep average" card replaced with a real
+correlation card that:
+- Shows the Pearson r as a tonal Badge (`success` if strong-positive,
+  `danger` if strong-negative, `warning` if moderate, `neutral` otherwise)
+- Renders the full scatter plot when there are ≥8 pairs
+- Falls back to a "need N more matched scans" message otherwise
+- Stats row: SAMPLE / AVG SLEEP / AVG SCORE / YOUR BEST (the optimal range)
+- Verdict box with a bulb icon and the engine's plain-English summary
+
+Header replaced with `<GlassHero height={130}>` to match home/progress/habits/
+ingredient-conflicts.
+
+### 📁 Files
+
+**New**:
+- `src/engine/SleepSkinEngine.ts` (~150 lines)
+- `src/components/ui/ScatterPlot.tsx` (~210 lines)
+
+**Modified**:
+- `src/components/ui/index.ts` — export `ScatterPlot`
+- `app/sleep-log/index.tsx` — wired correlation engine + scatter plot,
+  reskinned header to GlassHero, removed dead high/low correlation code
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — AI Routine Conflict Analyzer (Autonomous Overnight Pass 7)
 
 First Tier 2 feature shipped. The ingredient-conflicts screen had 15 hand-
