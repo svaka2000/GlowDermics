@@ -4,6 +4,85 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Compare Screen v2 (Autonomous Overnight Pass 2)
+
+### 🎚️ PhotoCompareSlider (the marquee feature)
+
+A draggable wipe between two photos — the signature interaction of every
+top-tier skincare app (Lóvi / SkinPal). Built with **Reanimated 4 + Gesture
+Handler 2** so every frame stays on the UI thread (60fps even mid-drag).
+Tap-to-jump and drag-to-wipe both supported. Includes "Drag to compare" hint
+that fades on first interaction, before/after caption pills, terracotta drag
+handle with inset chevrons.
+
+File: [`src/components/ui/PhotoCompareSlider.tsx`](src/components/ui/PhotoCompareSlider.tsx)
+
+### 🗺️ RegionalDeltaMap
+
+Anatomically-grounded face SVG showing **per-region delta** between two scans.
+Each of the 7 zones (forehead, L/R cheek, nose, chin, eye area, jawline) is
+colored by severity change: green = improved, neutral = unchanged, red =
+regressed. Region opacity reflects magnitude of change. Below the face: summary
+pills (X improved · Y same · Z regressed) plus a sorted detail list of what
+changed in each zone, ordered by impact.
+
+File: [`src/components/ui/RegionalDeltaMap.tsx`](src/components/ui/RegionalDeltaMap.tsx)
+
+### 📊 DeltaGrid
+
+Horizontal-scrolling tiles showing every dimension (auto-detects v1's 7 vs v2's
+16) sorted by largest absolute delta first. Each tile shows the before-arrow-after
+values plus a colored ± delta pill with trend icon. Top border in dimension
+tint for instant visual identification.
+
+File: [`src/components/ui/DeltaGrid.tsx`](src/components/ui/DeltaGrid.tsx)
+
+### ✨ AI progress narrative
+
+New `narrateProgress(before, after, profile)` in `skinAnalysis.ts` that calls
+the chat model with structured deltas + concerns/strengths and returns a 2-3
+sentence natural-language summary. Falls back to a template-string narrative
+if the API fails (never blocks the UI). Compare screen renders the result
+inside a glass card with a sparkles icon, with skeleton placeholders during
+loading.
+
+### 🧠 Compare screen rewrite — `app/compare/index.tsx`
+
+Old: tiny 60×60 thumbnails + flat metric bars. ~300 lines.
+
+New: 
+- PhotoCompareSlider hero (max 420px, square, dynamically sized)
+- "Time elapsed" chip + scan-pickers row in a unified card
+- Big animated Overall delta hero with twin score rings and arrow
+- AI narrative card (glass variant)
+- Twin SkinAgeBadge cards (when both scans are v2)
+- DeltaGrid for all dimensions
+- RegionalDeltaMap (when both scans have regional data)
+- Skin-type / concerns / strengths chip card with before→after badges
+- View Before / View After action buttons
+
+Picker view also got a glow-up — uses Badge component to tag v2 scans.
+Empty state now uses Button component with proper iconography.
+
+### 📁 Files
+
+**New**:
+- `src/components/ui/PhotoCompareSlider.tsx` (~180 lines, Reanimated worklet)
+- `src/components/ui/RegionalDeltaMap.tsx` (~230 lines)
+- `src/components/ui/DeltaGrid.tsx` (~150 lines)
+
+**Modified**:
+- `src/components/ui/index.ts` — exports new components
+- `src/services/skinAnalysis.ts` — added `narrateProgress()` function with retry + graceful fallback
+- `app/compare/index.tsx` — full rewrite (~360 lines, was ~300)
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- Backwards compat preserved: v1 scans render via the old code paths; v2-only panels conditional on `schemaVersion === 2`.
+
+---
+
 ## 2026-05-09 — v2 Scanner & Design System (Autonomous Overnight Pass 1)
 
 ### 🔬 Skin Scanner v2 — Clinical-Grade

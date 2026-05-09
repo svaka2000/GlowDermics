@@ -14,3 +14,6 @@ export { RegionalSkinMap, RegionDetailChip } from './RegionalSkinMap';
 export { SkinAgeBadge } from './SkinAgeBadge';
 export { BiomarkerCloud } from './BiomarkerCloud';
 export { ScoreGrid } from './ScoreGrid';
+export { PhotoCompareSlider } from './PhotoCompareSlider';
+export { RegionalDeltaMap } from './RegionalDeltaMap';
+export { DeltaGrid } from './DeltaGrid';

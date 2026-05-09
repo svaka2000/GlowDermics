@@ -401,3 +401,85 @@ Tone: warm, expert, never generic. Reference the user's actual scores when givin
 
   return response.choices[0]?.message?.content || '';
 }
+
+/**
+ * narrateProgress — generates a 2-3 sentence natural language summary of
+ * the change between two skin scans. Used by the Compare screen to give
+ * the user a "what changed and why" narrative grounded in actual deltas.
+ *
+ * Falls back to a template-string summary if the model call fails — never
+ * throws — so the Compare screen never blocks on this call.
+ */
+export async function narrateProgress(
+  before: SkinAnalysis,
+  after: SkinAnalysis,
+  userProfile: UserProfile | null,
+): Promise<string> {
+  const dDays = Math.max(
+    1,
+    Math.round(
+      (new Date(after.date).getTime() - new Date(before.date).getTime()) / (1000 * 60 * 60 * 24),
+    ),
+  );
+
+  const overallDelta = after.scores.overall - before.scores.overall;
+
+  const v1Deltas = (['hydration', 'texture', 'clarity', 'evenness', 'firmness', 'pores'] as const)
+    .map(k => ({ k, d: after.scores[k] - before.scores[k] }))
+    .sort((a, b) => Math.abs(b.d) - Math.abs(a.d))
+    .slice(0, 4)
+    .map(({ k, d }) => `${k}: ${d > 0 ? '+' : ''}${d}`)
+    .join(', ');
+
+  const v2 = after.scoresV2 && before.scoresV2
+    ? (['radiance', 'redness', 'darkSpots', 'darkCircles', 'wrinkles', 'acne', 'oiliness', 'sensitivity', 'barrierHealth'] as const)
+        .map(k => ({ k, d: (after.scoresV2![k] - before.scoresV2![k]) }))
+        .sort((a, b) => Math.abs(b.d) - Math.abs(a.d))
+        .slice(0, 4)
+        .map(({ k, d }) => `${k}: ${d > 0 ? '+' : ''}${d}`)
+        .join(', ')
+    : '';
+
+  const fallback =
+    overallDelta > 0
+      ? `Your skin score is up ${overallDelta} points over ${dDays} days. Biggest gains: ${v1Deltas}.`
+      : overallDelta < 0
+      ? `Your skin score is down ${Math.abs(overallDelta)} points over ${dDays} days. Watch: ${v1Deltas}.`
+      : `Your overall skin score is unchanged across ${dDays} days. Movement: ${v1Deltas}.`;
+
+  try {
+    const profile = userProfile
+      ? `User: ${userProfile.name}, self-reported skin type: ${userProfile.skinType}, concerns: ${userProfile.primaryConcerns.join(', ')}.`
+      : '';
+
+    const system = `You are Derm, GlowDermics' skincare coach. Write a 2-3 sentence progress narrative comparing two scans. Be specific, science-grounded, encouraging without sugarcoating regressions. Reference the most-changed dimensions by name. End with one concrete next-step suggestion. No filler. No exclamation marks. Plain text only — no markdown.`;
+
+    const userMsg = `${profile}
+
+Time elapsed between scans: ${dDays} days.
+Overall: before ${before.scores.overall} → after ${after.scores.overall} (Δ ${overallDelta > 0 ? '+' : ''}${overallDelta}).
+Top v1 dimension changes: ${v1Deltas || 'none'}.
+Top v2 dimension changes: ${v2 || 'n/a'}.
+Detected skin type — before: ${before.skinType}, after: ${after.skinType}.
+Active concerns now: ${after.concerns.join(', ') || 'none reported'}.
+Strengths now: ${after.strengths.join(', ') || 'none reported'}.
+
+Write the 2-3 sentence narrative now.`;
+
+    const response = await withRetry(() =>
+      groq.chat.completions.create({
+        model: CHAT_MODEL,
+        max_tokens: 220,
+        temperature: 0.4,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: userMsg },
+        ],
+      }),
+    );
+
+    return response.choices[0]?.message?.content?.trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
