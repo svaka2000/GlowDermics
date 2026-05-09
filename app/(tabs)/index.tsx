@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   Image, ActivityIndicator, RefreshControl, Alert,
@@ -9,7 +9,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
@@ -68,6 +69,8 @@ function getGreeting() {
 }
 
 export default function Home() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [latest, setLatest] = useState<SkinAnalysis | null>(null);
@@ -200,7 +203,7 @@ export default function Home() {
   if (loading) {
     return (
       <View style={styles.loadWrap}>
-        <ActivityIndicator color={Colors.primary} size="large" />
+        <ActivityIndicator color={colors.primary} size="large" />
       </View>
     );
   }
@@ -210,11 +213,11 @@ export default function Home() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {/* Glass hero: greeting + stats. Negative horizontal margin escapes the
             ScrollView's padding so the gradient extends edge-to-edge. */}
-        <GlassHero height={244} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={244} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <Animated.View style={{
               opacity: headerAnim,
@@ -300,7 +303,7 @@ export default function Home() {
         {/* Daily Check-In CTA */}
         {!journalToday && (
           <Pressable style={styles.checkInCta} onPress={() => router.push('/checkin')}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <Text style={styles.checkInEmoji}>✦</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.checkInTitle}>Daily Check-In</Text>
@@ -323,7 +326,7 @@ export default function Home() {
           const items: { icon: string; label: string; action: () => void; color: string }[] = [];
 
           if (hour >= 5 && hour < 12 && !routineToday.morning) {
-            items.push({ icon: '🌅', label: 'Log morning routine', action: () => router.push('/(tabs)/routine'), color: Colors.gold });
+            items.push({ icon: '🌅', label: 'Log morning routine', action: () => router.push('/(tabs)/routine'), color: colors.gold });
           }
           if (hour >= 18 && !routineToday.evening) {
             items.push({ icon: '🌙', label: 'Log evening routine', action: () => router.push('/(tabs)/routine'), color: '#6B85A8' });
@@ -332,10 +335,10 @@ export default function Home() {
             items.push({ icon: '💧', label: 'Drink more water — only ' + waterGlasses + ' glasses so far', action: () => adjustWater(1), color: '#60A5FA' });
           }
           if (!journalToday) {
-            items.push({ icon: '📝', label: 'Log today\'s mood', action: () => router.push('/journal'), color: Colors.primary });
+            items.push({ icon: '📝', label: 'Log today\'s mood', action: () => router.push('/journal'), color: colors.primary });
           }
           if (daysSinceScan >= 7) {
-            items.push({ icon: '📸', label: `No scan in ${daysSinceScan} days — check your progress`, action: () => router.push('/scan'), color: Colors.scoreGood });
+            items.push({ icon: '📸', label: `No scan in ${daysSinceScan} days — check your progress`, action: () => router.push('/scan'), color: colors.scoreGood });
           }
 
           if (items.length === 0) return (
@@ -357,7 +360,7 @@ export default function Home() {
                 <Text style={styles.focusTitle}>{top.label}</Text>
                 {items.length > 1 && <Text style={styles.focusSub}>+{items.length - 1} more action{items.length > 2 ? 's' : ''} pending</Text>}
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
             </Pressable>
           );
         })()}
@@ -369,7 +372,7 @@ export default function Home() {
         }}>
           <Pressable style={styles.scanCard} onPress={() => router.push('/scan')}>
             <LinearGradient
-              colors={[Colors.primary, Colors.primaryDark]}
+              colors={[colors.primary, colors.primaryDark]}
               style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             />
@@ -402,7 +405,7 @@ export default function Home() {
               <Animated.View style={[styles.scanIconCircle, {
                 transform: [{ scale: glowPulse.interpolate({ inputRange: [0.6, 1], outputRange: [1, 1.06] }) }],
               }]}>
-                <Ionicons name="scan" size={30} color={Colors.white} />
+                <Ionicons name="scan" size={30} color={colors.white} />
               </Animated.View>
             </View>
           </Pressable>
@@ -444,7 +447,7 @@ export default function Home() {
                   <Image source={{ uri: latest.imageUri }} style={styles.analysisThumb} />
                 ) : (
                   <View style={[styles.analysisThumb, styles.analysisThumbEmpty]}>
-                    <Ionicons name="person" size={26} color={Colors.textMuted} />
+                    <Ionicons name="person" size={26} color={colors.textMuted} />
                   </View>
                 )}
                 <View style={styles.analysisInfo}>
@@ -478,7 +481,7 @@ export default function Home() {
 
               {latest.insights ? (
                 <View style={styles.insightBox}>
-                  <Ionicons name="bulb-outline" size={14} color={Colors.gold} />
+                  <Ionicons name="bulb-outline" size={14} color={colors.gold} />
                   <Text style={styles.insightText} numberOfLines={2}>{latest.insights}</Text>
                 </View>
               ) : null}
@@ -496,102 +499,102 @@ export default function Home() {
           <View style={styles.quickGrid}>
             <Pressable style={styles.quickCard} onPress={() => router.push('/scanner')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="flask-outline" size={22} color={Colors.primary} />
+              <Ionicons name="flask-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Ingredient{'\n'}Scanner</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/dupes')}>
-              <Ionicons name="cash-outline" size={22} color={Colors.primary} />
+              <Ionicons name="cash-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Dupe{'\n'}Finder</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/goals')}>
-              <Ionicons name="flag-outline" size={22} color={Colors.primary} />
+              <Ionicons name="flag-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Goals</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/journal')}>
-              <Ionicons name="journal-outline" size={22} color={Colors.primary} />
+              <Ionicons name="journal-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Journal</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/quiz')}>
-              <Ionicons name="help-circle-outline" size={22} color={Colors.primary} />
+              <Ionicons name="help-circle-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Quiz</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/learn')}>
-              <Ionicons name="book-outline" size={22} color={Colors.primary} />
+              <Ionicons name="book-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Lab</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/habits')}>
-              <Ionicons name="checkmark-done-outline" size={22} color={Colors.primary} />
+              <Ionicons name="checkmark-done-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Daily{'\n'}Habits</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/milestones')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="trophy-outline" size={22} color={Colors.primary} />
+              <Ionicons name="trophy-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Mile{'\n'}stones</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/products')}>
-              <Ionicons name="cube-outline" size={22} color={Colors.primary} />
+              <Ionicons name="cube-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>My{'\n'}Shelf</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/sensitivity')}>
-              <Ionicons name="shield-checkmark-outline" size={22} color={Colors.primary} />
+              <Ionicons name="shield-checkmark-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Sensitivity{'\n'}Test</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/forecast')}>
-              <Ionicons name="sparkles-outline" size={22} color={Colors.primary} />
+              <Ionicons name="sparkles-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Forecast</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/seasonal')}>
-              <Ionicons name="sunny-outline" size={22} color={Colors.primary} />
+              <Ionicons name="sunny-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Seasonal{'\n'}Guide</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-weather')}>
-              <Ionicons name="partly-sunny-outline" size={22} color={Colors.primary} />
+              <Ionicons name="partly-sunny-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Weather</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/challenge')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="flash-outline" size={22} color={Colors.primary} />
+              <Ionicons name="flash-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>30-Day{'\n'}Challenge</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/daily-challenges')}>
               <LinearGradient colors={['rgba(212,169,106,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="trophy-outline" size={22} color={Colors.gold} />
-              <Text style={[styles.quickLabel, { color: Colors.gold }]}>Daily{'\n'}Quests</Text>
+              <Ionicons name="trophy-outline" size={22} color={colors.gold} />
+              <Text style={[styles.quickLabel, { color: colors.gold }]}>Daily{'\n'}Quests</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/insights')}>
               <LinearGradient colors={['rgba(22,163,74,0.14)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="analytics-outline" size={22} color={Colors.scoreExcellent} />
-              <Text style={[styles.quickLabel, { color: Colors.scoreExcellent }]}>Insights{'\n'}Hub</Text>
+              <Ionicons name="analytics-outline" size={22} color={colors.scoreExcellent} />
+              <Text style={[styles.quickLabel, { color: colors.scoreExcellent }]}>Insights{'\n'}Hub</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/community')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="people-outline" size={22} color={Colors.primary} />
+              <Ionicons name="people-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Commu{'\n'}nity</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-scorecard')}>
-              <Ionicons name="ribbon-outline" size={22} color={Colors.primary} />
+              <Ionicons name="ribbon-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Score{'\n'}Card</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-age')}>
-              <Ionicons name="hourglass-outline" size={22} color={Colors.primary} />
+              <Ionicons name="hourglass-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}Age</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/weekly-digest')}>
-              <Ionicons name="newspaper-outline" size={22} color={Colors.primary} />
+              <Ionicons name="newspaper-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Weekly{'\n'}Digest</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-report')}>
               <LinearGradient colors={['rgba(212,169,106,0.15)', 'rgba(212,169,106,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="document-text-outline" size={22} color={Colors.gold} />
-              <Text style={[styles.quickLabel, { color: Colors.gold }]}>Skin{'\n'}Report</Text>
+              <Ionicons name="document-text-outline" size={22} color={colors.gold} />
+              <Text style={[styles.quickLabel, { color: colors.gold }]}>Skin{'\n'}Report</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/scan-gallery')}>
-              <Ionicons name="images-outline" size={22} color={Colors.primary} />
+              <Ionicons name="images-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Photo{'\n'}Gallery</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-dna')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="git-network-outline" size={22} color={Colors.primary} />
+              <Ionicons name="git-network-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}DNA</Text>
             </Pressable>
           </View>
@@ -613,7 +616,7 @@ export default function Home() {
           </View>
           <Pressable style={styles.communityCard} onPress={() => router.push('/community')}>
             <LinearGradient
-              colors={[Colors.primary + '14', Colors.primary + '04']}
+              colors={[colors.primary + '14', colors.primary + '04']}
               style={StyleSheet.absoluteFill}
             />
             <View style={styles.communityStats}>
@@ -656,10 +659,10 @@ export default function Home() {
               </View>
               <View style={styles.waterControls}>
                 <Pressable style={styles.waterBtn} onPress={() => adjustWater(-1)}>
-                  <Ionicons name="remove" size={18} color={Colors.textPrimary} />
+                  <Ionicons name="remove" size={18} color={colors.textPrimary} />
                 </Pressable>
                 <Pressable style={[styles.waterBtn, styles.waterBtnAdd]} onPress={() => adjustWater(1)}>
-                  <Ionicons name="add" size={18} color={Colors.white} />
+                  <Ionicons name="add" size={18} color={colors.white} />
                 </Pressable>
               </View>
             </View>
@@ -748,9 +751,10 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
-  loadWrap: { flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
+  loadWrap: { flex: 1, backgroundColor: c.bg, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 20 },
 
   // Glass hero block — extends edge-to-edge under the SafeArea.
@@ -761,7 +765,7 @@ const styles = StyleSheet.create({
   },
   heroGreeting: { fontSize: 13, color: 'rgba(255,255,255,0.78)', fontWeight: '600', letterSpacing: 0.2 },
   heroName: {
-    fontSize: 26, fontWeight: '900', color: Colors.white, marginTop: 2, letterSpacing: -0.4,
+    fontSize: 26, fontWeight: '900', color: c.white, marginTop: 2, letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroPremiumBadge: {
@@ -777,12 +781,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   profileBtn: {},
-  profileAvatarText: { fontSize: 18, fontWeight: '800', color: Colors.white },
+  profileAvatarText: { fontSize: 18, fontWeight: '800', color: c.white },
 
   heroStatPress: { flex: 1 },
   heroStatCard: { alignItems: 'center', gap: 4 },
   heroStatNum: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5,
+    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.5,
     textShadowColor: 'rgba(0,0,0,0.20)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3,
   },
   heroStatLabel: { fontSize: 10, color: 'rgba(255,255,255,0.86)', fontWeight: '700', textAlign: 'center', letterSpacing: 0.3 },
@@ -794,7 +798,7 @@ const styles = StyleSheet.create({
   },
   scanCardContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 22 },
   scanCardEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.7)', marginBottom: 6 },
-  scanCardTitle: { fontSize: 22, fontWeight: '800', color: Colors.white, marginBottom: 4 },
+  scanCardTitle: { fontSize: 22, fontWeight: '800', color: c.white, marginBottom: 4 },
   scanCardSub: { fontSize: 13, color: 'rgba(255,255,255,0.75)' },
   scanIconCircle: {
     width: 64, height: 64, borderRadius: 32,
@@ -805,39 +809,39 @@ const styles = StyleSheet.create({
 
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
-  seeAll: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
+  seeAll: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   analysisCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border, padding: 16,
+    backgroundColor: c.bgCard, borderRadius: 18,
+    borderWidth: 1, borderColor: c.border, padding: 16,
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   analysisTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 },
-  analysisThumb: { width: 66, height: 66, borderRadius: 12, backgroundColor: Colors.bgElevated },
+  analysisThumb: { width: 66, height: 66, borderRadius: 12, backgroundColor: c.bgElevated },
   analysisThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
   analysisInfo: { flex: 1, gap: 6 },
   skinTypeBadge: { backgroundColor: 'rgba(196,98,45,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  skinTypeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.primary },
+  skinTypeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.primary },
   concernChips: { flexDirection: 'row', gap: 5, flexWrap: 'wrap' },
   concernChip: { backgroundColor: 'rgba(212,169,106,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  concernText: { fontSize: 10, color: Colors.gold, fontWeight: '600' },
-  analysisDate: { fontSize: 11, color: Colors.textMuted },
+  concernText: { fontSize: 10, color: c.gold, fontWeight: '600' },
+  analysisDate: { fontSize: 11, color: c.textMuted },
   scoreGrid: { gap: 10, marginBottom: 14 },
   insightBox: {
     flexDirection: 'row', gap: 8, alignItems: 'flex-start',
     backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 10, padding: 10,
   },
-  insightText: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, flex: 1 },
+  insightText: { fontSize: 12, color: c.textSecondary, lineHeight: 18, flex: 1 },
 
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   quickCard: {
-    width: '31%', backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 14,
+    width: '31%', backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 14,
     alignItems: 'center', gap: 8, overflow: 'hidden',
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1,
   },
-  quickLabel: { fontSize: 11, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center', lineHeight: 15 },
+  quickLabel: { fontSize: 11, fontWeight: '700', color: c.textPrimary, textAlign: 'center', lineHeight: 15 },
 
   tipCard: {
     borderRadius: 18, overflow: 'hidden',
@@ -845,59 +849,59 @@ const styles = StyleSheet.create({
   },
   tipHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
   tipTagWrap: { backgroundColor: 'rgba(212,169,106,0.15)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  tipTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.gold },
-  tipCalendar: { fontSize: 11, color: Colors.textMuted },
-  tipText: { fontSize: 15, color: Colors.textPrimary, lineHeight: 24, fontStyle: 'italic', marginBottom: 10 },
-  tipSource: { fontSize: 11, color: Colors.textMuted },
+  tipTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.gold },
+  tipCalendar: { fontSize: 11, color: c.textMuted },
+  tipText: { fontSize: 15, color: c.textPrimary, lineHeight: 24, fontStyle: 'italic', marginBottom: 10 },
+  tipSource: { fontSize: 11, color: c.textMuted },
 
   emptyState: { alignItems: 'center', paddingVertical: 32, paddingHorizontal: 20 },
-  emptyIcon: { fontSize: 32, color: Colors.primary, marginBottom: 12 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center', marginBottom: 8 },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
+  emptyIcon: { fontSize: 32, color: c.primary, marginBottom: 12 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, textAlign: 'center', marginBottom: 8 },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
 
   brandStrip: {
     borderRadius: 14, borderWidth: 1, borderColor: 'rgba(196,98,45,0.12)',
     backgroundColor: 'rgba(196,98,45,0.05)', padding: 18, alignItems: 'center', gap: 6,
   },
-  emptyQuizBtn: { marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 12 },
-  emptyQuizText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
-  brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
-  brandTagline: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', fontStyle: 'italic' },
+  emptyQuizBtn: { marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 12 },
+  emptyQuizText: { fontSize: 13, color: c.primary, fontWeight: '600' },
+  brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
+  brandTagline: { fontSize: 12, color: c.textSecondary, textAlign: 'center', fontStyle: 'italic' },
 
   checkInCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden', padding: 14, marginBottom: 10,
   },
-  checkInEmoji: { fontSize: 20, color: Colors.white },
-  checkInTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  checkInEmoji: { fontSize: 20, color: c.white },
+  checkInTitle: { fontSize: 15, fontWeight: '700', color: c.white },
   checkInSub: { fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
 
   focusCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 14, marginBottom: 14,
   },
   focusEmoji: { fontSize: 22 },
   focusTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, marginBottom: 2 },
-  focusTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  focusSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  focusTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  focusSub: { fontSize: 11, color: c.textMuted, marginTop: 2 },
 
   waterCard: {
     borderRadius: 18,
-    backgroundColor: Colors.bgCard,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard,
+    borderWidth: 1, borderColor: c.border,
     padding: 18,
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   waterTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   waterCount: { fontSize: 30, fontWeight: '800', color: '#2563EB' },
-  waterGoal: { fontSize: 14, fontWeight: '500', color: Colors.textMuted, paddingBottom: 3 },
-  waterLabel: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  waterGoal: { fontSize: 14, fontWeight: '500', color: c.textMuted, paddingBottom: 3 },
+  waterLabel: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   waterControls: { flexDirection: 'row', gap: 10 },
   waterBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
   waterBtnAdd: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
@@ -915,53 +919,54 @@ const styles = StyleSheet.create({
   waterMarkerBtn: { flex: 1, alignItems: 'center', gap: 3 },
   waterMarkerTick: { width: 2, height: 6, borderRadius: 1, backgroundColor: '#D4DCF0' },
   waterMarkerTickFilled: { backgroundColor: '#3B82F6' },
-  waterMarkerLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600' },
+  waterMarkerLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600' },
   waterFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   waterDone: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   waterDoneText: { fontSize: 12, color: '#3B82F6', fontWeight: '600' },
-  waterProgress: { fontSize: 12, color: Colors.textMuted },
+  waterProgress: { fontSize: 12, color: c.textMuted },
   waterPct: { fontSize: 13, fontWeight: '800', color: '#3B82F6' },
 
   challengeWidget: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.25)', padding: 14, marginBottom: 10 },
   challengeEmoji: { fontSize: 24 },
-  challengeLabel: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
-  challengeTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 6 },
-  challengeBarWrap: { height: 4, backgroundColor: Colors.border, borderRadius: 2, marginBottom: 3 },
-  challengeBarFill: { height: 4, backgroundColor: Colors.primary, borderRadius: 2 },
-  challengeProgress: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
-  challengeCheckBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 },
-  challengeCheckBtnText: { fontSize: 11, fontWeight: '700', color: Colors.white },
+  challengeLabel: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
+  challengeTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 6 },
+  challengeBarWrap: { height: 4, backgroundColor: c.border, borderRadius: 2, marginBottom: 3 },
+  challengeBarFill: { height: 4, backgroundColor: c.primary, borderRadius: 2 },
+  challengeProgress: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
+  challengeCheckBtn: { backgroundColor: c.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6 },
+  challengeCheckBtnText: { fontSize: 11, fontWeight: '700', color: c.white },
 
   teaser: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 4,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
   },
   teaserEmoji: { fontSize: 20, marginBottom: 2 },
-  teaserTitle: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  teaserSub: { fontSize: 11, color: Colors.textSecondary, lineHeight: 15 },
-  teaserCta: { fontSize: 11, fontWeight: '700', color: Colors.primary, marginTop: 4 },
+  teaserTitle: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  teaserSub: { fontSize: 11, color: c.textSecondary, lineHeight: 15 },
+  teaserCta: { fontSize: 11, fontWeight: '700', color: c.primary, marginTop: 4 },
 
   communityCard: {
     borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 18,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
   },
   communityStats: { flexDirection: 'row', marginBottom: 16 },
   communityStat: { flex: 1, alignItems: 'center' },
-  communityStatNum: { fontSize: 20, fontWeight: '900', color: Colors.textPrimary },
-  communityStatLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', marginTop: 1 },
+  communityStatNum: { fontSize: 20, fontWeight: '900', color: c.textPrimary },
+  communityStatLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600', marginTop: 1 },
   communityBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   communityAvatars: { flexDirection: 'row', alignItems: 'center' },
   communityAvatar: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: Colors.primary, borderWidth: 2, borderColor: Colors.bgCard,
+    backgroundColor: c.primary, borderWidth: 2, borderColor: c.bgCard,
     alignItems: 'center', justifyContent: 'center',
   },
   communityAvatarText: { fontSize: 11, fontWeight: '800', color: '#fff' },
-  communityAvatarMore: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', marginLeft: 8 },
-  communityJoinBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8 },
+  communityAvatarMore: { fontSize: 11, color: c.textMuted, fontWeight: '600', marginLeft: 8 },
+  communityJoinBtn: { backgroundColor: c.primary, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8 },
   communityJoinText: { fontSize: 11, fontWeight: '700', color: '#fff' },
-});
+  });
+}
