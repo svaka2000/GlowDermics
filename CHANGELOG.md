@@ -4,6 +4,27 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — GlowPulse + CameraGuide + Tab Dark-Mode Finale (Pass 26–32)
+
+Seven more iterations. Highlights below.
+
+### 🎉 Post-scan celebration (Pass 26) — `src/components/ui/ScanCelebration.tsx`
+Full-screen reveal overlay that plays after each completed scan. 24-particle confetti burst with random hue / gravity / rotation; 132pt animated score count-up; delta pill ("+4 vs last scan"); persona reveal mini-card; auto-dismisses after 6s. Triggered by `?celebrate=1` query param on /results/{id}.
+
+### 📰 Daily Skin Stories (Pass 27) — `src/engine/SkinStoryEngine.ts` + `src/components/ui/SkinStoryStrip.tsx`
+Personalized "For you today" carousel on the home tab. 8 story generators emit 0-1 stories each; top 5 by priority render as horizontal swipe cards. Stories cover streak milestones, score trends, sleep/water week-over-week deltas, quest pending, scan absence, badge milestones. Each card has a 6-color accent palette and optional deeplink.
+
+### 🌙 Tabs dark-mode sweep (Pass 28, 31) — `app/(tabs)/routine.tsx`, `app/(tabs)/coach.tsx`, `app/(tabs)/progress.tsx`
+210+ Colors refs migrated. With this batch the entire (tabs) folder is dark-mode aware. TypingDots helper in coach.tsx now calls useColors() directly.
+
+### 📷 Cinematic CameraGuide (Pass 30) — `src/components/ui/CameraGuide.tsx`
+Replaces the static frame in scan camera mode with an animated SVG face oval, soft warm glow, vertical scan-line sweep, and four pulsing corner brackets. All Reanimated 4 worklets, runs on UI thread.
+
+### ✨ GlowPulse widget (Pass 32) — `src/components/ui/GlowPulse.tsx`
+Animated daily-glow orb on the home tab. Composite score = 0.5×scanScore + 0.2×habitPct + 0.15×sleepNorm + 0.15×waterPct. Score-tinted radial gradient (red→gold→green); pulse cadence scales with score (800-2000ms). Tap → /seven-day forecast.
+
+---
+
 ## 2026-05-09 — Skin Identity + 7-Day Forecast + Dark-Mode Sweep (Pass 21–25)
 
 Five iterations chained — high-traffic dark-mode coverage plus two new flagship features.
