@@ -1,33 +1,46 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
-import { Colors } from '../../src/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useColors, useTheme } from '../../src/state/theme';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function TabIcon({ name, focused }: { name: IoniconName; focused: boolean }) {
+  const colors = useColors();
   return (
     <View style={styles.iconOuter}>
       {/* Top indicator bar */}
-      {focused && <View style={styles.topIndicator} />}
-      <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-        <Ionicons name={name} size={21} color={focused ? Colors.primary : Colors.textMuted} />
+      {focused && <View style={[styles.topIndicator, { backgroundColor: colors.primary }]} />}
+      <View
+        style={[
+          styles.iconWrap,
+          focused && { backgroundColor: colors.primary + '1F' },
+        ]}
+      >
+        <Ionicons name={name} size={21} color={focused ? colors.primary : colors.textMuted} />
       </View>
     </View>
   );
 }
 
 export default function TabsLayout() {
+  const colors = useColors();
+  const { scheme } = useTheme();
+  // Top divider color flips per scheme; the rest comes from the palette.
+  const topBorder = scheme === 'dark' ? 'rgba(245,240,234,0.08)' : 'rgba(28,24,20,0.07)';
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { borderTopColor: topBorder }],
         tabBarShowLabel: true,
         tabBarLabelStyle: styles.label,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textMuted,
-        tabBarBackground: () => <View style={styles.tabBarBg} />,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarBackground: () => (
+          <View style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.bgSheet }]} />
+        ),
       }}
     >
       <Tabs.Screen
@@ -73,7 +86,6 @@ const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(28,24,20,0.07)',
     height: Platform.OS === 'ios' ? 88 : 68,
     paddingBottom: Platform.OS === 'ios' ? 28 : 10,
     paddingTop: 10,
@@ -84,10 +96,6 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     backgroundColor: 'transparent',
   },
-  tabBarBg: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.bgSheet,
-  },
   iconOuter: { alignItems: 'center', paddingTop: 4 },
   topIndicator: {
     position: 'absolute',
@@ -95,9 +103,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 3,
     borderRadius: 2,
-    backgroundColor: Colors.primary,
   },
   iconWrap: { width: 38, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 14, marginTop: 4 },
-  iconWrapActive: { backgroundColor: 'rgba(196,98,45,0.12)' },
   label: { fontSize: 10, fontWeight: '600', marginTop: 1 },
 });
