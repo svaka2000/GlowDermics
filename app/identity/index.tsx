@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useColors } from '../../src/state/theme';
 import type { Palette } from '../../src/constants/colors';
 import { runSkinIdentity, SkinIdentity } from '../../src/engine/SkinIdentityEngine';
-import { SkinIdentityCard, Skeleton } from '../../src/components/ui';
+import { SkinIdentityCard, Skeleton, SkinAura } from '../../src/components/ui';
+import { Dimensions } from 'react-native';
 
 /** Identity — full-screen Skin Persona reveal with shareable card. */
 export default function IdentityScreen() {
@@ -70,6 +71,13 @@ export default function IdentityScreen() {
             </View>
           ) : identity ? (
             <>
+              <View style={styles.auraWrap}>
+                <SkinAura
+                  identity={identity}
+                  width={Dimensions.get('window').width - 40}
+                  height={140}
+                />
+              </View>
               <View style={styles.cardWrap}>
                 <SkinIdentityCard identity={identity} />
               </View>
@@ -130,7 +138,8 @@ function makeStyles(c: Palette) {
     },
     headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary, letterSpacing: -0.2 },
     content: { paddingBottom: 40 },
-    cardWrap: { paddingHorizontal: 20, paddingTop: 20 },
+    cardWrap: { paddingHorizontal: 20, paddingTop: 8 },
+    auraWrap: { paddingHorizontal: 20, paddingTop: 18, marginBottom: -8 },
     byline: {
       paddingHorizontal: 36,
       paddingTop: 22,
