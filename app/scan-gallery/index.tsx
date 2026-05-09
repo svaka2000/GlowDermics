@@ -141,6 +141,28 @@ export default function ScanGallery() {
           </LinearGradient>
         )}
 
+        {/* Watch Timeline CTA — shows when there are 2+ scans with photos */}
+        {withPhotos.length >= 2 && (
+          <Pressable style={styles.timelineCta} onPress={() => router.push('/timeline')}>
+            <LinearGradient
+              colors={['rgba(196,98,45,0.10)', 'rgba(212,168,74,0.06)']}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.timelineCtaIcon}>
+              <Ionicons name="film" size={18} color={Colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.timelineCtaTitle}>Watch your transformation</Text>
+              <Text style={styles.timelineCtaSub}>
+                Animated playback through {withPhotos.length} scan{withPhotos.length === 1 ? '' : 's'} · share-ready
+              </Text>
+            </View>
+            <View style={styles.timelinePlayBtn}>
+              <Ionicons name="play" size={14} color={Colors.white} />
+            </View>
+          </Pressable>
+        )}
+
         {/* Latest scan hero */}
         {latest && (
           <Pressable style={styles.heroCard} onPress={() => router.push(`/results/${latest.id}`)}>
@@ -345,6 +367,31 @@ const styles = StyleSheet.create({
   journeyStatNum: { fontSize: 26, fontWeight: '900', color: Colors.white },
   journeyStatLabel: { fontSize: 10, fontWeight: '600', color: 'rgba(255,255,255,0.65)', letterSpacing: 0.5 },
   journeySep: { width: 1, height: 36, backgroundColor: 'rgba(255,255,255,0.2)' },
+
+  timelineCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: Colors.bgCard,
+    borderRadius: 16, borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
+    padding: 14, marginBottom: 14,
+    overflow: 'hidden',
+    shadowColor: '#1C1814', shadowOpacity: 0.06, shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 }, elevation: 3,
+  },
+  timelineCtaIcon: {
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: 'rgba(196,98,45,0.14)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  timelineCtaTitle: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  timelineCtaSub: { fontSize: 11, color: Colors.textSecondary, marginTop: 2, fontWeight: '600' },
+  timelinePlayBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: Colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+    paddingLeft: 2,
+    shadowColor: Colors.primary, shadowOpacity: 0.35, shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 }, elevation: 4,
+  },
 
   heroCard: {
     borderRadius: 22, overflow: 'hidden', marginBottom: 16,

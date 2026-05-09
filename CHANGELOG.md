@@ -4,6 +4,71 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Photo Timeline (Autonomous Overnight Pass 11)
+
+A share-ready visual transformation player that auto-advances through every
+scan photo with a crossfading score-ring and date pill. Turns the user's
+scan history into a TikTok/Reels-style story.
+
+### 🎬 `<PhotoTimeline>` component
+
+`src/components/ui/PhotoTimeline.tsx`. Reanimated 4 worklets for the
+crossfade and the score ring fill — playback stays buttery even while the
+JS thread is doing other work.
+
+- Auto-advances frame-to-frame with a 220ms fade-out / 320ms fade-in
+- Animated score ring (`strokeDashoffset` worklet) ticks up to each frame's
+  score; numeric counter inside the ring updates in real time
+- Date pill + skin-type chip overlay top-corner; frame counter + bottom
+  gradient bottom-corner
+- Tap photo to pause/resume with a play-icon overlay
+- Scrubbable timeline ticks below the photo — tap any tick to jump
+- Speed selector: 0.5× / 1× / 2× / 4×
+- Skip-back / play-pause / skip-forward triplet
+
+Re-exported as a design-system primitive — reusable for any future
+photo-sequence surfaces (challenges, milestones, etc.).
+
+### 📺 `/timeline` — new dedicated screen
+
+`app/timeline/index.tsx`. Premium hero surface with:
+
+- GlassHero header showing "N frames · X days"
+- `<PhotoTimeline>` as the centerpiece (responsively sized to ≤360px wide)
+- "Versus your first scan" delta card that updates as the user scrubs —
+  tracks progression dynamically based on the active frame
+- "The story so far" stats: First → Latest with twin score blocks + a
+  big delta pill ("+12 pts over 84 days") tinted by direction
+- Pro-tip card (gradient gold) explaining tap-to-pause / scrub / speed
+- Quick-link row: Gallery / Compare / New scan
+- Share button in the hero exports a multi-line transformation summary
+- Empty state: "No timeline yet" with film-outline icon + "Take a scan" CTA
+
+### 🔗 Wiring
+
+Scan-gallery now shows a prominent **"Watch your transformation"** card
+when ≥2 scans have photos, with a primary play button → `/timeline`.
+
+### 📁 Files
+
+**New**:
+- `src/components/ui/PhotoTimeline.tsx` (~420 lines)
+- `app/timeline/index.tsx` (~390 lines)
+
+**Modified**:
+- `src/components/ui/index.ts` — exports `PhotoTimeline` + `TimelineFrame` type
+- `app/scan-gallery/index.tsx` — adds Watch Timeline CTA card after journey banner
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+NOTE: GIF export to camera roll deferred — would require `expo-media-library` permissions
+and a GIF encoder native module. The in-app player covers the social-share use case
+via screen recording, and the share button exports a polished text summary.
+
+---
+
 ## 2026-05-09 — UV × Skin Correlation (Autonomous Overnight Pass 10)
 
 Mirrors the iter-8 sleep correlation pattern for sun exposure. Pulls the

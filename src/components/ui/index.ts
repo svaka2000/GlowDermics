@@ -24,3 +24,5 @@ export type { TierFeature } from './TierCard';
 export { SocialProofStrip } from './SocialProofStrip';
 export { ScatterPlot } from './ScatterPlot';
 export { StreakRing } from './StreakRing';
+export { PhotoTimeline } from './PhotoTimeline';
+export type { TimelineFrame } from './PhotoTimeline';
