@@ -14,8 +14,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors } from '../../state/theme';
 
 export interface TierFeature {
   label: string;
@@ -83,8 +83,16 @@ export function TierCard({
   gradient,
   style,
 }: TierCardProps) {
-  const colors = gradient ?? DEFAULT_GRADIENTS[id] ?? DEFAULT_GRADIENTS.premium;
+  const palette = useColors();
+  const gradientStops = gradient ?? DEFAULT_GRADIENTS[id] ?? DEFAULT_GRADIENTS.premium;
   const isLight = id === 'free';
+
+  // Light-tier text needs to source from active palette so it flips in dark mode.
+  // Dark-tier text stays white-on-gradient (gradient itself is opaque).
+  const lightTextPrimary = palette.textPrimary;
+  const lightTextSecondary = palette.textSecondary;
+  const lightTextMuted = palette.textMuted;
+  const lightPrimary = palette.primary;
 
   // Entrance
   const entry = useSharedValue(0);
@@ -140,7 +148,7 @@ export function TierCard({
         pointerEvents="none"
         style={[
           styles.selectRing,
-          { borderColor: id === 'free' ? Colors.primary : '#FFFFFF' },
+          { borderColor: id === 'free' ? lightPrimary : '#FFFFFF' },
           ringStyle,
         ]}
       />
@@ -148,7 +156,7 @@ export function TierCard({
       <Pressable onPress={onSelect} android_ripple={{ color: 'rgba(255,255,255,0.08)' }}>
         <View style={styles.card}>
           <LinearGradient
-            colors={colors as any}
+            colors={gradientStops as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFillObject}
@@ -169,63 +177,77 @@ export function TierCard({
           )}
 
           <View style={styles.content}>
-            <Text style={[styles.name, isLight && styles.nameLight]}>{name}</Text>
-            <Text style={[styles.tagline, isLight && styles.taglineLight]}>{tagline}</Text>
+            <Text style={[styles.name, isLight && { color: lightTextPrimary }]}>{name}</Text>
+            <Text style={[styles.tagline, isLight && { color: lightTextSecondary }]}>{tagline}</Text>
 
             <View style={styles.priceRow}>
               {priceStrike && (
-                <Text style={[styles.priceStrike, isLight && styles.priceStrikeLight]}>{priceStrike}</Text>
+                <Text style={[styles.priceStrike, isLight && { color: lightTextMuted }]}>{priceStrike}</Text>
               )}
-              <Text style={[styles.price, isLight && styles.priceLight]}>{price}</Text>
+              <Text style={[styles.price, isLight && { color: lightTextPrimary }]}>{price}</Text>
             </View>
             {priceSub && (
-              <Text style={[styles.priceSub, isLight && styles.priceSubLight]}>{priceSub}</Text>
+              <Text style={[styles.priceSub, isLight && { color: lightTextMuted }]}>{priceSub}</Text>
             )}
 
             <View style={styles.divider} />
 
-            {features.map((f, i) => (
-              <View key={`${f.label}-${i}`} style={styles.featureRow}>
-                <View
-                  style={[
-                    styles.featureIcon,
-                    {
-                      backgroundColor: f.included
-                        ? isLight
-                          ? 'rgba(196,98,45,0.16)'
-                          : 'rgba(255,255,255,0.16)'
-                        : isLight
-                        ? 'rgba(28,24,20,0.08)'
-                        : 'rgba(255,255,255,0.06)',
-                    },
-                  ]}
-                >
-                  <Ionicons
-                    name={f.included ? 'checkmark' : 'close'}
-                    size={11}
-                    color={
-                      f.included
-                        ? isLight
-                          ? Colors.primary
-                          : '#FFFFFF'
-                        : isLight
-                        ? Colors.textMuted
-                        : 'rgba(255,255,255,0.45)'
-                    }
-                  />
+            {features.map((f, i) => {
+              const featureColor = !f.included
+                ? isLight
+                  ? lightTextMuted
+                  : 'rgba(255,255,255,0.45)'
+                : f.highlight
+                ? isLight
+                  ? lightPrimary
+                  : '#FBBF24'
+                : isLight
+                ? lightTextPrimary
+                : 'rgba(255,255,255,0.92)';
+
+              return (
+                <View key={`${f.label}-${i}`} style={styles.featureRow}>
+                  <View
+                    style={[
+                      styles.featureIcon,
+                      {
+                        backgroundColor: f.included
+                          ? isLight
+                            ? lightPrimary + '29'
+                            : 'rgba(255,255,255,0.16)'
+                          : isLight
+                          ? lightTextPrimary + '14'
+                          : 'rgba(255,255,255,0.06)',
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name={f.included ? 'checkmark' : 'close'}
+                      size={11}
+                      color={
+                        f.included
+                          ? isLight
+                            ? lightPrimary
+                            : '#FFFFFF'
+                          : isLight
+                          ? lightTextMuted
+                          : 'rgba(255,255,255,0.45)'
+                      }
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.featureLabel,
+                      { color: featureColor },
+                      !f.included && { fontWeight: '500' },
+                      f.highlight && { fontWeight: '800' },
+                    ]}
+                  >
+                    {f.label}
+                  </Text>
                 </View>
-                <Text
-                  style={[
-                    styles.featureLabel,
-                    isLight && styles.featureLabelLight,
-                    !f.included && (isLight ? styles.featureMuted : styles.featureMutedDark),
-                    f.highlight && (isLight ? styles.featureHighlight : styles.featureHighlightDark),
-                  ]}
-                >
-                  {f.label}
-                </Text>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
       </Pressable>
@@ -278,12 +300,9 @@ const styles = StyleSheet.create({
   eyebrowText: { fontSize: 9, fontWeight: '900', color: '#fff', letterSpacing: 1 },
 
   name: { fontSize: 22, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.4 },
-  nameLight: { color: Colors.textPrimary },
   tagline: { fontSize: 13, color: 'rgba(255,255,255,0.78)', fontWeight: '500', marginBottom: 8 },
-  taglineLight: { color: Colors.textSecondary },
   priceRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   price: { fontSize: 30, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.7, lineHeight: 32 },
-  priceLight: { color: Colors.textPrimary },
   priceStrike: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.55)',
@@ -291,9 +310,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     paddingBottom: 2,
   },
-  priceStrikeLight: { color: Colors.textMuted },
   priceSub: { fontSize: 11, color: 'rgba(255,255,255,0.66)', fontWeight: '600', marginTop: 2 },
-  priceSubLight: { color: Colors.textMuted },
 
   divider: {
     height: 1,
@@ -309,10 +326,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  featureLabel: { fontSize: 12.5, color: 'rgba(255,255,255,0.92)', fontWeight: '600', flex: 1 },
-  featureLabelLight: { color: Colors.textPrimary },
-  featureMuted: { color: Colors.textMuted, fontWeight: '500' },
-  featureMutedDark: { color: 'rgba(255,255,255,0.45)', fontWeight: '500' },
-  featureHighlight: { color: Colors.primary, fontWeight: '800' },
-  featureHighlightDark: { color: '#FBBF24', fontWeight: '800' },
+  featureLabel: { fontSize: 12.5, fontWeight: '600', flex: 1 },
 });

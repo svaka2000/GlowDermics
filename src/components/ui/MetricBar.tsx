@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, View, Text, StyleSheet, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors, useTheme } from '../../state/theme';
+import type { Palette } from '../../constants/colors';
 
 interface MetricBarProps {
   label: string;
@@ -23,11 +24,11 @@ interface MetricBarProps {
   compact?: boolean;
 }
 
-function scoreColor(value: number): string {
-  if (value >= 80) return Colors.scoreExcellent;
-  if (value >= 65) return Colors.scoreGood;
-  if (value >= 45) return Colors.scoreFair;
-  return Colors.scorePoor;
+function scoreColor(value: number, palette: Palette): string {
+  if (value >= 80) return palette.scoreExcellent;
+  if (value >= 65) return palette.scoreGood;
+  if (value >= 45) return palette.scoreFair;
+  return palette.scorePoor;
 }
 
 /**
@@ -47,9 +48,14 @@ export function MetricBar({
   onPress,
   compact = false,
 }: MetricBarProps) {
+  const colors = useColors();
+  const { scheme } = useTheme();
   const fill = useRef(new Animated.Value(0)).current;
   const fade = useRef(new Animated.Value(0)).current;
-  const color = tint ?? scoreColor(value);
+  const color = tint ?? scoreColor(value, colors);
+  // Track tint differs by scheme — subtle dark wash on light, subtle light wash on dark.
+  const trackBg = scheme === 'dark' ? 'rgba(245,240,234,0.08)' : 'rgba(28,24,20,0.06)';
+  const confTrackBg = scheme === 'dark' ? 'rgba(245,240,234,0.06)' : 'rgba(28,24,20,0.04)';
 
   useEffect(() => {
     Animated.parallel([
@@ -75,7 +81,7 @@ export function MetricBar({
   });
 
   const trendColor =
-    trend === 'up' ? Colors.scoreExcellent : trend === 'down' ? Colors.scorePoor : Colors.textMuted;
+    trend === 'up' ? colors.scoreExcellent : trend === 'down' ? colors.scorePoor : colors.textMuted;
   const trendIcon =
     trend === 'up' ? 'trending-up' : trend === 'down' ? 'trending-down' : 'remove';
 
@@ -87,7 +93,7 @@ export function MetricBar({
         <View style={styles.headerRow}>
           <View style={styles.labelRow}>
             {icon && <Ionicons name={icon} size={13} color={color} />}
-            <Text style={[styles.label, compact && { fontSize: 12 }]}>{label}</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }, compact && { fontSize: 12 }]}>{label}</Text>
           </View>
           <View style={styles.valueRow}>
             {trend && trendDelta !== undefined && (
@@ -103,7 +109,7 @@ export function MetricBar({
           </View>
         </View>
 
-        <View style={styles.track}>
+        <View style={[styles.track, { backgroundColor: trackBg }]}>
           <Animated.View style={[styles.fill, { width: widthInterpolation }]}>
             <LinearGradient
               colors={[color + 'CC', color]}
@@ -123,8 +129,8 @@ export function MetricBar({
 
         {confidence !== undefined && !compact && (
           <View style={styles.confidenceRow}>
-            <Text style={styles.confidenceLabel}>confidence</Text>
-            <View style={styles.confidenceTrack}>
+            <Text style={[styles.confidenceLabel, { color: colors.textMuted }]}>confidence</Text>
+            <View style={[styles.confidenceTrack, { backgroundColor: confTrackBg }]}>
               <View
                 style={{
                   width: `${confidence}%`,
@@ -148,12 +154,11 @@ const styles = StyleSheet.create({
   compactWrap: { gap: 4, paddingVertical: 2 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
-  label: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  label: { fontSize: 13, fontWeight: '600' },
   valueRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   value: { fontSize: 16, fontWeight: '800', letterSpacing: -0.2 },
   track: {
     height: 8,
-    backgroundColor: 'rgba(28,24,20,0.06)',
     borderRadius: Radii.xs,
     overflow: 'hidden',
   },
@@ -173,12 +178,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
-    color: Colors.textMuted,
   },
   confidenceTrack: {
     flex: 1,
     height: 2,
-    backgroundColor: 'rgba(28,24,20,0.04)',
     borderRadius: 1,
     overflow: 'hidden',
   },

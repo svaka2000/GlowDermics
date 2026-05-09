@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
 import { SkinAge } from '../../types';
+import { useColors } from '../../state/theme';
 
 interface SkinAgeBadgeProps {
   skinAge: SkinAge;
@@ -37,6 +37,7 @@ const BRACKET_CONFIG = {
  * on the results screen — counts up on mount.
  */
 export function SkinAgeBadge({ skinAge, userAge, delay = 0 }: SkinAgeBadgeProps) {
+  const colors = useColors();
   const counter = useRef(new Animated.Value(0)).current;
   const fade = useRef(new Animated.Value(0)).current;
   const cfg = BRACKET_CONFIG[skinAge.bracket];
@@ -81,7 +82,7 @@ export function SkinAgeBadge({ skinAge, userAge, delay = 0 }: SkinAgeBadgeProps)
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <View style={styles.bracketChip}>
-            <Ionicons name={cfg.icon as any} size={11} color={Colors.white} />
+            <Ionicons name={cfg.icon as any} size={11} color={colors.white} />
             <Text style={styles.bracketLabel}>{cfg.label}</Text>
           </View>
           {delta !== undefined && (
@@ -138,19 +139,19 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: Radii.pill,
   },
-  bracketLabel: { fontSize: 9, fontWeight: '900', color: Colors.white, letterSpacing: 1.2 },
+  bracketLabel: { fontSize: 9, fontWeight: '900', color: '#FFFFFF', letterSpacing: 1.2 },
   deltaChip: {
     backgroundColor: 'rgba(0,0,0,0.18)',
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: Radii.pill,
   },
-  deltaText: { fontSize: 11, fontWeight: '700', color: Colors.white },
+  deltaText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF' },
   valueRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, marginTop: 6 },
   value: {
     fontSize: 60,
     fontWeight: '900',
-    color: Colors.white,
+    color: '#FFFFFF',
     letterSpacing: -2,
     lineHeight: 60,
     textShadowColor: 'rgba(0,0,0,0.25)',
@@ -158,8 +159,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 8,
   },
   unitWrap: { paddingBottom: 10 },
-  unitTop: { fontSize: 12, fontWeight: '900', color: Colors.white, letterSpacing: 2 },
-  unitBot: { fontSize: 12, fontWeight: '900', color: Colors.white, letterSpacing: 2 },
+  unitTop: { fontSize: 12, fontWeight: '900', color: '#FFFFFF', letterSpacing: 2 },
+  unitBot: { fontSize: 12, fontWeight: '900', color: '#FFFFFF', letterSpacing: 2 },
   caption: {
     fontSize: 12,
     color: 'rgba(255,255,255,0.85)',

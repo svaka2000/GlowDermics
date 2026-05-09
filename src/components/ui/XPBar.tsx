@@ -9,8 +9,8 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors, useTheme } from '../../state/theme';
 
 interface XPBarProps {
   /** XP within the current level (numerator). */
@@ -47,6 +47,8 @@ export function XPBar({
   height = 8,
   showLabels = true,
 }: XPBarProps) {
+  const colors = useColors();
+  const { scheme } = useTheme();
   const fill = useSharedValue(0);
   const fade = useSharedValue(0);
 
@@ -70,30 +72,41 @@ export function XPBar({
 
   const wrapStyle = useAnimatedStyle(() => ({ opacity: fade.value }));
 
+  const trackBg = scheme === 'dark' ? 'rgba(245,240,234,0.08)' : 'rgba(28,24,20,0.06)';
+  const highlightOverlay: [string, string] =
+    scheme === 'dark'
+      ? ['rgba(255,255,255,0.25)', 'transparent']
+      : ['rgba(255,255,255,0.45)', 'transparent'];
+
   return (
     <Animated.View style={[styles.wrap, wrapStyle]}>
       {showLabels && (
         <View style={styles.labelRow}>
-          <View style={styles.levelPill}>
-            <Text style={styles.levelText}>{label ?? `LEVEL ${level}`}</Text>
+          <View
+            style={[
+              styles.levelPill,
+              { backgroundColor: colors.primary + '1A', borderColor: colors.primary + '40' },
+            ]}
+          >
+            <Text style={[styles.levelText, { color: colors.primary }]}>{label ?? `LEVEL ${level}`}</Text>
           </View>
           <Text style={styles.xpText}>
-            <Text style={styles.xpStrong}>{xpInLevel}</Text>
-            <Text style={styles.xpDim}> / {xpForLevel} XP</Text>
+            <Text style={[styles.xpStrong, { color: colors.textPrimary }]}>{xpInLevel}</Text>
+            <Text style={[styles.xpDim, { color: colors.textMuted }]}> / {xpForLevel} XP</Text>
           </Text>
         </View>
       )}
 
-      <View style={[styles.track, { height, borderRadius: height / 2 }]}>
+      <View style={[styles.track, { height, borderRadius: height / 2, backgroundColor: trackBg }]}>
         <Animated.View style={[styles.fill, { borderRadius: height / 2 }, fillStyle]}>
           <LinearGradient
-            colors={['#FBBF24', '#E8834A', Colors.primary]}
+            colors={['#FBBF24', '#E8834A', colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={StyleSheet.absoluteFill}
           />
           <LinearGradient
-            colors={['rgba(255,255,255,0.45)', 'transparent']}
+            colors={highlightOverlay}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={[StyleSheet.absoluteFill, { height: '50%' }]}
@@ -102,7 +115,9 @@ export function XPBar({
       </View>
 
       {totalXP !== undefined && showLabels && (
-        <Text style={styles.totalText}>{totalXP.toLocaleString()} XP lifetime</Text>
+        <Text style={[styles.totalText, { color: colors.textMuted }]}>
+          {totalXP.toLocaleString()} XP lifetime
+        </Text>
       )}
     </Animated.View>
   );
@@ -112,30 +127,16 @@ const styles = StyleSheet.create({
   wrap: { gap: 6 },
   labelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   levelPill: {
-    backgroundColor: 'rgba(196,98,45,0.10)',
     borderRadius: Radii.pill,
     paddingHorizontal: 9,
     paddingVertical: 3,
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.25)',
   },
-  levelText: { fontSize: 10, fontWeight: '900', color: Colors.primary, letterSpacing: 1 },
+  levelText: { fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   xpText: { fontSize: 12, fontWeight: '600' },
-  xpStrong: { color: Colors.textPrimary, fontWeight: '900' },
-  xpDim: { color: Colors.textMuted, fontWeight: '700' },
-  track: {
-    backgroundColor: 'rgba(28,24,20,0.06)',
-    overflow: 'hidden',
-  },
-  fill: {
-    height: '100%',
-    overflow: 'hidden',
-  },
-  totalText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 0.4,
-    marginTop: 2,
-  },
+  xpStrong: { fontWeight: '900' },
+  xpDim: { fontWeight: '700' },
+  track: { overflow: 'hidden' },
+  fill: { height: '100%', overflow: 'hidden' },
+  totalText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.4, marginTop: 2 },
 });

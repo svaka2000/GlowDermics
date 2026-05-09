@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
 import { SkinScore, SkinScoreV2 } from '../../types';
+import { useColors } from '../../state/theme';
+import type { Palette } from '../../constants/colors';
 
 const DIM_LABELS_V1: Record<keyof SkinScore, string> = {
   overall: 'Overall',
@@ -27,24 +28,26 @@ const DIM_LABELS_V2_EXTRAS: Partial<Record<keyof SkinScoreV2, string>> = {
   barrierHealth: 'Barrier',
 };
 
-const DIM_TINTS: Record<string, string> = {
-  overall: Colors.primary,
-  hydration: Colors.hydration,
-  texture: Colors.texture,
-  clarity: Colors.clarity,
-  evenness: Colors.evenness,
-  firmness: Colors.firmness,
-  pores: Colors.pores,
-  radiance: Colors.radiance,
-  redness: Colors.redness,
-  darkSpots: Colors.darkSpots,
-  darkCircles: Colors.darkCircles,
-  wrinkles: Colors.wrinkles,
-  acne: Colors.acne,
-  oiliness: Colors.oiliness,
-  sensitivity: Colors.sensitivity,
-  barrierHealth: Colors.barrierHealth,
-};
+function buildTints(c: Palette): Record<string, string> {
+  return {
+    overall: c.primary,
+    hydration: c.hydration,
+    texture: c.texture,
+    clarity: c.clarity,
+    evenness: c.evenness,
+    firmness: c.firmness,
+    pores: c.pores,
+    radiance: c.radiance,
+    redness: c.redness,
+    darkSpots: c.darkSpots,
+    darkCircles: c.darkCircles,
+    wrinkles: c.wrinkles,
+    acne: c.acne,
+    oiliness: c.oiliness,
+    sensitivity: c.sensitivity,
+    barrierHealth: c.barrierHealth,
+  };
+}
 
 interface DeltaGridProps {
   before: SkinScore | SkinScoreV2;
@@ -59,6 +62,8 @@ interface DeltaGridProps {
  * grid of compact tiles so all dimensions fit even on small screens.
  */
 export function DeltaGrid({ before, after, hideOverall = true }: DeltaGridProps) {
+  const colors = useColors();
+  const tints = useMemo(() => buildTints(colors), [colors]);
   const isV2 = (k: string): k is keyof SkinScoreV2 =>
     k in DIM_LABELS_V2_EXTRAS || k in DIM_LABELS_V1;
 
@@ -81,25 +86,31 @@ export function DeltaGrid({ before, after, hideOverall = true }: DeltaGridProps)
         const b = (before as any)[k] ?? 0;
         const a = (after as any)[k] ?? 0;
         const d = a - b;
-        const tint = DIM_TINTS[k] ?? Colors.primary;
+        const tint = tints[k] ?? colors.primary;
         const label = DIM_LABELS_V1[k as keyof SkinScore] ?? DIM_LABELS_V2_EXTRAS[k as keyof SkinScoreV2] ?? k;
 
         const dirColor =
-          d > 0 ? Colors.scoreExcellent : d < 0 ? Colors.scorePoor : Colors.textMuted;
+          d > 0 ? colors.scoreExcellent : d < 0 ? colors.scorePoor : colors.textMuted;
         const dirIcon = d > 0 ? 'trending-up' : d < 0 ? 'trending-down' : 'remove';
 
         return (
-          <View key={k} style={[styles.tile, { borderTopColor: tint }]}>
-            <Text style={styles.label}>{label}</Text>
+          <View
+            key={k}
+            style={[
+              styles.tile,
+              { backgroundColor: colors.bgCard, borderColor: colors.border, borderTopColor: tint },
+            ]}
+          >
+            <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
             <View style={styles.valuesRow}>
               <View style={styles.valBlock}>
-                <Text style={styles.valSmall}>{b}</Text>
-                <Text style={styles.valTag}>before</Text>
+                <Text style={[styles.valSmall, { color: colors.textMuted }]}>{b}</Text>
+                <Text style={[styles.valTag, { color: colors.textMuted }]}>before</Text>
               </View>
-              <Ionicons name="arrow-forward" size={11} color={Colors.textMuted} />
+              <Ionicons name="arrow-forward" size={11} color={colors.textMuted} />
               <View style={styles.valBlock}>
                 <Text style={[styles.valBig, { color: tint }]}>{a}</Text>
-                <Text style={styles.valTag}>after</Text>
+                <Text style={[styles.valTag, { color: colors.textMuted }]}>after</Text>
               </View>
             </View>
             <View
@@ -125,10 +136,8 @@ const styles = StyleSheet.create({
   scroll: { paddingVertical: 4, paddingHorizontal: 4, gap: 10 },
   tile: {
     width: 124,
-    backgroundColor: Colors.bgCard,
     borderRadius: Radii.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
     borderTopWidth: 3,
     padding: 12,
     gap: 8,
@@ -138,16 +147,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
   },
-  label: { fontSize: 11, fontWeight: '800', color: Colors.textSecondary, letterSpacing: 0.2 },
+  label: { fontSize: 11, fontWeight: '800', letterSpacing: 0.2 },
   valuesRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   valBlock: { flex: 1, alignItems: 'center' },
-  valSmall: { fontSize: 18, fontWeight: '700', color: Colors.textMuted },
+  valSmall: { fontSize: 18, fontWeight: '700' },
   valBig: { fontSize: 24, fontWeight: '900', letterSpacing: -0.4 },
   valTag: {
     fontSize: 8,
     fontWeight: '700',
     letterSpacing: 0.6,
-    color: Colors.textMuted,
     textTransform: 'uppercase',
   },
   deltaPill: {

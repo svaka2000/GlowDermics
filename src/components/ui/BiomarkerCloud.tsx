@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, View, Text, StyleSheet, Pressable } from 'react-native';
+import { Animated, View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors } from '../../state/theme';
 
 interface BiomarkerCloudProps {
   biomarkers: string[];
@@ -42,6 +42,7 @@ function BiomarkerChip({
   onPress?: () => void;
   delay: number;
 }) {
+  const colors = useColors();
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.85)).current;
 
@@ -67,9 +68,15 @@ function BiomarkerChip({
 
   return (
     <Animated.View style={{ opacity, transform: [{ scale }] }}>
-      <Wrap onPress={onPress} style={styles.chip}>
-        <Ionicons name="pulse" size={11} color={Colors.primary} />
-        <Text style={styles.chipText}>{label}</Text>
+      <Wrap
+        onPress={onPress}
+        style={[
+          styles.chip,
+          { backgroundColor: colors.primary + '14', borderColor: colors.primary + '40' },
+        ]}
+      >
+        <Ionicons name="pulse" size={11} color={colors.primary} />
+        <Text style={[styles.chipText, { color: colors.primary }]}>{label}</Text>
       </Wrap>
     </Animated.View>
   );
@@ -81,12 +88,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(196,98,45,0.08)',
-    borderColor: 'rgba(196,98,45,0.25)',
     borderWidth: 1,
     borderRadius: Radii.pill,
     paddingHorizontal: 11,
     paddingVertical: 6,
   },
-  chipText: { fontSize: 12, fontWeight: '700', color: Colors.primary, letterSpacing: -0.1 },
+  chipText: { fontSize: 12, fontWeight: '700', letterSpacing: -0.1 },
 });

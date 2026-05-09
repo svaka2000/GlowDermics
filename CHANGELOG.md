@@ -4,6 +4,68 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Dark Mode: Score & Metric Primitives (Pass 15)
+
+Continuing #17 dark-mode propagation. Migrated 8 more design-system
+primitives so the score/metric/social-proof tiles flip with the theme.
+
+### Migrated this pass
+
+- **MetricBar** — track bg + confidence track flip per scheme; trend
+  colors use active palette.
+- **ScoreGrid** — module-level `DIMENSIONS` array with `Colors.X` tints
+  replaced by `buildDimensions(palette)` memoized inside the component.
+  Tile bg + border + label all use active palette.
+- **DeltaGrid** — same pattern: module-level tints map → `buildTints(palette)`
+  memoized helper. Direction colors (success/poor/muted) sourced from
+  active palette.
+- **BiomarkerCloud** — chip background + border + text use active primary
+  with theme-aware alpha suffixes.
+- **SkinAgeBadge** — clean swap of `Colors.white` to `'#FFFFFF'` literal
+  (white is white in both palettes; this just removes the static import).
+- **XPBar** — track bg + highlight overlay flip per scheme. Level pill +
+  text colors source from active palette.
+- **SocialProofStrip** — pill bg + border + divider + label all use active
+  palette.
+- **TierCard** — biggest cleanup: removed 7 light-tier override styles
+  (`nameLight`, `taglineLight`, `priceLight`, etc.) that used static
+  `Colors.X`. Light-tier text colors now compute inline from active palette
+  so the "free" tier flips cleanly. Dark-tier (premium/ultra) gradients
+  stay scheme-agnostic. Hex alpha suffixes (`+ '29'`, `+ '14'`) replace
+  hardcoded rgba.
+
+### Pattern reaffirmed
+
+For any module-level `Record<string, string>` mapping a key to a `Colors.X`
+value: replace with a `buildXxx(palette)` factory + `useMemo` inside the
+component. This was needed for ScoreGrid (16 dimensions) and DeltaGrid
+(16 dimensions). The factory pattern scales cleanly.
+
+### Files modified
+
+- `src/components/ui/MetricBar.tsx`
+- `src/components/ui/ScoreGrid.tsx`
+- `src/components/ui/DeltaGrid.tsx`
+- `src/components/ui/BiomarkerCloud.tsx`
+- `src/components/ui/SkinAgeBadge.tsx`
+- `src/components/ui/XPBar.tsx`
+- `src/components/ui/SocialProofStrip.tsx`
+- `src/components/ui/TierCard.tsx`
+
+### Cumulative dark-mode coverage
+
+After iter 14 + 15: **14 of 21 design-system primitives migrated**.
+Remaining: ScannerOverlay, RegionalSkinMap, RegionalDeltaMap, ScatterPlot,
+StreakRing, PhotoTimeline, PhotoCompareSlider. (Most of these are SVG-heavy
+or photo-overlay components where palette flips matter less, but they
+should still be migrated for the few text/border colors they expose.)
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Dark Mode: Design System Primitives (Pass 14)
 
 Continuation of #17. Migrated the 6 highest-traffic design-system primitives

@@ -12,8 +12,8 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors, useTheme } from '../../state/theme';
 
 interface SocialProofStripProps {
   /** Average rating (e.g. 4.9). */
@@ -48,6 +48,8 @@ export function SocialProofStrip({
   delay = 0,
   compact = true,
 }: SocialProofStripProps) {
+  const colors = useColors();
+  const { scheme } = useTheme();
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(8);
   const starPulse = useSharedValue(0);
@@ -83,16 +85,25 @@ export function SocialProofStrip({
   const fullCount = formatCount(userCount);
   const displayLabel = label ?? `Trusted by ${fullCount} skin journeys`;
 
+  const dividerColor = scheme === 'dark' ? 'rgba(245,240,234,0.18)' : 'rgba(28,24,20,0.12)';
+
   return (
-    <Animated.View style={[styles.wrap, compact ? styles.compact : null, wrapStyle]}>
+    <Animated.View
+      style={[
+        styles.wrap,
+        compact ? styles.compact : null,
+        { backgroundColor: colors.primary + '0F', borderColor: colors.primary + '30' },
+        wrapStyle,
+      ]}
+    >
       <Animated.View style={[styles.stars, starWrapStyle]}>
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} index={i} filled={i < stars} pulse={starPulse} />
         ))}
-        <Text style={styles.rating}>{rating.toFixed(1)}</Text>
+        <Text style={[styles.rating, { color: colors.primary }]}>{rating.toFixed(1)}</Text>
       </Animated.View>
-      <View style={styles.divider} />
-      <Text style={styles.label}>{displayLabel}</Text>
+      <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+      <Text style={[styles.label, { color: colors.textSecondary }]}>{displayLabel}</Text>
     </Animated.View>
   );
 }
@@ -131,14 +142,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: Radii.pill,
-    backgroundColor: 'rgba(196,98,45,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.18)',
     alignSelf: 'center',
   },
   compact: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
   stars: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  rating: { fontSize: 12, fontWeight: '900', color: Colors.primary, marginLeft: 6, letterSpacing: 0.2 },
-  divider: { width: 1, height: 14, backgroundColor: 'rgba(28,24,20,0.12)' },
-  label: { fontSize: 11.5, fontWeight: '700', color: Colors.textSecondary, letterSpacing: 0.2 },
+  rating: { fontSize: 12, fontWeight: '900', marginLeft: 6, letterSpacing: 0.2 },
+  divider: { width: 1, height: 14 },
+  label: { fontSize: 11.5, fontWeight: '700', letterSpacing: 0.2 },
 });
