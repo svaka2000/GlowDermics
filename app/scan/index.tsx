@@ -18,7 +18,7 @@ import { Auth } from '../../src/services/auth';
 import { analyzeSkin } from '../../src/services/skinAnalysis';
 import { preflightPhotoQuality, mergePhotoQuality } from '../../src/services/photoQuality';
 import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
-import { ScannerOverlay } from '../../src/components/ui';
+import { ScannerOverlay, CameraGuide } from '../../src/components/ui';
 
 type Mode = 'choose' | 'camera' | 'analyzing';
 
@@ -248,9 +248,7 @@ export default function Scan() {
               <Ionicons name="arrow-back" size={24} color={colors.white} />
             </Pressable>
             <View style={styles.cameraGuide}>
-              <View style={styles.guideFrame} />
-              <Text style={styles.guideText}>Position your face in the frame</Text>
-              <Text style={styles.guideHint}>Good lighting · Straight face · No glasses</Text>
+              <CameraGuide />
             </View>
             <Pressable style={styles.captureBtn} onPress={handleCapture}>
               <View style={styles.captureInner} />
