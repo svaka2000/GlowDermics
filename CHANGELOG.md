@@ -4,6 +4,85 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Insights Hub + Tab Bar Dark Mode + Routing Fix (Pass 17–19)
+
+Three back-to-back ships in one session.
+
+### 🌙 Tab bar dark-mode aware (Pass 17)
+
+`app/(tabs)/_layout.tsx`. The bottom tab bar — visible on every primary
+tab — now uses `useColors()` for bg, top divider, active/inactive icon
+tints, and the active-indicator pill. Toggle Appearance → tab bar
+flips in both modes immediately.
+
+### 🛠️ Routing fix (Pass 18)
+
+`app/_layout.tsx`. Three screens shipped this session
+(`/streak`, `/daily-challenges`, `/timeline`) were missing from the
+explicit Stack.Screen list, defaulting to a `'fade'` animation instead
+of the intended slide/modal. Registered all three plus the new
+`/insights` with appropriate animations. Real bug fix —
+`/daily-challenges` now slides up modal-style as designed.
+
+### 📊 Insights Hub (Pass 19) — new dedicated screen
+
+`app/insights/index.tsx`. Single dashboard surfacing every behavioral
+correlation GlowDermics has computed for you. The "what's going on with
+my skin" view that ties everything from this overnight session
+together.
+
+Composes data from 5 engines:
+- **`runSleepSkinAnalysis`** — Pearson r between sleep hours and next-day
+  skin score (iter 8)
+- **`runUVSkinAnalysis`** — SPF-adjusted UV damage correlation (iter 10)
+- **`runStreakAnalysis`** — current/longest streak + at-risk + milestones
+  (iter 9)
+- **`runDailyChallengeAnalysis`** — XP/level/badge state (iter 12)
+- **`Storage.getAnalyses`** — latest scan + skin age + biomarkers (iter 1)
+
+Surface composition (top → bottom):
+1. **Skin age hero** — `<SkinAgeBadge>` of the user's most recent scan
+2. **Biomarker cloud** — clinical tags from the latest scan
+3. **Streak summary card** — current streak with "X more for milestone"
+   subline + Open button
+4. **Daily quests summary** — current level + total XP + today's XP +
+   Open button
+5. **Sleep × skin** — compact `<ScatterPlot>` with verdict box (or
+   "need N more scans" placeholder)
+6. **UV × skin** — same pattern
+7. **Next best action card** — green-tinted gradient with the highest-
+   leverage suggestion picked by `pickNextAction()`:
+   - Streak at risk → "log routine today"
+   - Strong sleep correlation → "aim for X-Y hrs tonight"
+   - Strong negative UV correlation → "reapply SPF"
+   - Daily quest pending → "today's quest: X (+Y XP)"
+   - Score declined vs prev → "take a fresh scan to verify"
+   - Default → "take a fresh scan"
+
+Loading state: 3 stacked Skeletons. Empty / not-enough-data states all
+gracefully degrade with verdict copy from each engine.
+
+### Wiring
+
+Home tab quick-card grid gets a new green-tinted "Insights Hub" tile
+(analytics-outline icon) routing to `/insights`.
+
+### Files
+
+**New**:
+- `app/insights/index.tsx` (~315 lines)
+
+**Modified**:
+- `app/(tabs)/_layout.tsx` — tab bar uses useColors()
+- `app/_layout.tsx` — registered streak/daily-challenges/timeline/insights
+- `app/(tabs)/index.tsx` — added Insights Hub quick-card
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Dark Mode: All Design System Primitives Done (Pass 16)
 
 🎉 **All 21 design-system primitives now dark-mode aware.** This pass
