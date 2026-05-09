@@ -12,6 +12,7 @@ import { runSleepSkinAnalysis, SleepSkinReport } from '../../src/engine/SleepSki
 import { runUVSkinAnalysis, UVSkinReport } from '../../src/engine/UVSkinEngine';
 import { runStreakAnalysis, StreakReport } from '../../src/engine/StreakEngine';
 import { runDailyChallengeAnalysis, DailyChallengeReport } from '../../src/engine/DailyChallengeEngine';
+import { runSkinForecast, ForecastReport } from '../../src/engine/SkinForecastEngine';
 import { SkinAnalysis } from '../../src/types';
 import { useColors } from '../../src/state/theme';
 
@@ -24,6 +25,7 @@ interface HubData {
   uv: UVSkinReport;
   streak: StreakReport;
   challenges: DailyChallengeReport;
+  forecast: ForecastReport;
 }
 
 /**
@@ -44,7 +46,8 @@ export default function InsightsHub() {
       runUVSkinAnalysis(),
       runStreakAnalysis(),
       runDailyChallengeAnalysis(),
-    ]).then(([analyses, sleep, uv, streak, challenges]) => {
+      runSkinForecast(),
+    ]).then(([analyses, sleep, uv, streak, challenges, forecast]) => {
       if (!mounted) return;
       setData({
         latest: analyses[0] ?? null,
@@ -53,6 +56,7 @@ export default function InsightsHub() {
         uv,
         streak,
         challenges,
+        forecast,
       });
     });
     return () => { mounted = false; };
@@ -167,6 +171,56 @@ export default function InsightsHub() {
                     </Pressable>
                   </View>
                 </Card>
+              </View>
+
+              {/* 7-Day Forecast preview */}
+              <View style={{ marginBottom: 14 }}>
+                <Pressable onPress={() => router.push('/seven-day' as any)}>
+                  <Card variant="elevated" padding={18}>
+                    <View style={styles.streakRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.streakLabel, { color: colors.textMuted }]}>
+                          7-DAY FORECAST
+                        </Text>
+                        <Text style={[styles.streakValue, {
+                          color: data.forecast.trend === 'rising' ? colors.scoreGood :
+                            data.forecast.trend === 'falling' ? colors.scorePoor :
+                            colors.primary,
+                        }]}>
+                          {data.forecast.days[6].score} by {data.forecast.days[6].dayLabel}
+                          {data.forecast.trendDelta !== 0 && (
+                            <Text style={{ fontSize: 14 }}>
+                              {' '}({data.forecast.trendDelta > 0 ? '+' : ''}{data.forecast.trendDelta})
+                            </Text>
+                          )}
+                        </Text>
+                        <Text style={[styles.streakSub, { color: colors.textSecondary }]}>
+                          {data.forecast.headline}
+                        </Text>
+                      </View>
+                      <View style={[styles.openBtn, {
+                        backgroundColor: (data.forecast.trend === 'rising' ? colors.scoreGood :
+                          data.forecast.trend === 'falling' ? colors.scorePoor :
+                          colors.primary) + '14',
+                      }]}>
+                        <Ionicons
+                          name={data.forecast.trend === 'rising' ? 'trending-up' :
+                                data.forecast.trend === 'falling' ? 'trending-down' :
+                                'remove-outline'}
+                          size={14}
+                          color={data.forecast.trend === 'rising' ? colors.scoreGood :
+                                 data.forecast.trend === 'falling' ? colors.scorePoor :
+                                 colors.primary}
+                        />
+                        <Text style={[styles.openBtnText, {
+                          color: data.forecast.trend === 'rising' ? colors.scoreGood :
+                                 data.forecast.trend === 'falling' ? colors.scorePoor :
+                                 colors.primary,
+                        }]}>Open</Text>
+                      </View>
+                    </View>
+                  </Card>
+                </Pressable>
               </View>
 
               {/* Sleep × Skin compact correlation */}

@@ -152,6 +152,7 @@ function RootContent() {
           <Stack.Screen name="daily-challenges/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="timeline/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="insights/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="seven-day/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
         </SafeAreaProvider>
       </GestureHandlerRootView>
