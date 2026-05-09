@@ -183,7 +183,7 @@ export default function Scan() {
 
       await Auth.recordScan();
       await Storage.saveAnalysis(analysis);
-      router.replace(`/results/${analysis.id}`);
+      router.replace(`/results/${analysis.id}?celebrate=1` as any);
     } catch (err: any) {
       Alert.alert('Analysis Failed', err?.message || 'Something went wrong. Please try again.');
       setMode('choose');

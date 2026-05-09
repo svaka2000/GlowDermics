@@ -20,7 +20,9 @@ import {
   SkinAgeBadge,
   BiomarkerCloud,
   ScoreGrid,
+  ScanCelebration,
 } from '../../src/components/ui';
+import { runSkinIdentity, SkinIdentity } from '../../src/engine/SkinIdentityEngine';
 import { FaceRegion } from '../../src/types';
 
 const SCORE_LABELS: Record<string, string> = {
@@ -39,13 +41,16 @@ const PRIORITY_COLORS = {
 };
 
 export default function Results() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; celebrate?: string }>();
+  const id = params.id;
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
   const [prevAnalysis, setPrevAnalysis] = useState<SkinAnalysis | null>(null);
   const [engineReport, setEngineReport] = useState<EngineReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'scores' | 'routine' | 'recommendations'>('scores');
   const [selectedRegion, setSelectedRegion] = useState<FaceRegion | null>(null);
+  const [identity, setIdentity] = useState<SkinIdentity | null>(null);
+  const [showCelebration, setShowCelebration] = useState(params.celebrate === '1');
 
   // Entrance animations
   const heroAnim = useRef(new Animated.Value(0)).current;
@@ -63,6 +68,10 @@ export default function Results() {
       setPrevAnalysis(prev);
       setEngineReport(report);
       setLoading(false);
+      // Load identity in parallel for the celebration overlay (only if celebrating)
+      if (params.celebrate === '1') {
+        runSkinIdentity().then(setIdentity).catch(() => {});
+      }
       Animated.stagger(120, [
         Animated.timing(heroAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
         Animated.spring(scoreRingScale, { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
@@ -116,6 +125,15 @@ export default function Results() {
 
   return (
     <View style={styles.root}>
+      {showCelebration && (
+        <ScanCelebration
+          score={analysis.scores.overall}
+          previousScore={prevAnalysis ? prevAnalysis.scores.overall : null}
+          persona={identity?.persona ?? null}
+          personaTint={identity?.colorway.accent}
+          onDismiss={() => setShowCelebration(false)}
+        />
+      )}
       <SafeAreaView edges={['top']} style={styles.safeTop}>
         <View style={styles.header}>
           <Pressable onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
