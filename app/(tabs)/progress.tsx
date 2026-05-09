@@ -1,10 +1,11 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Pressable, Animated, Easing, RefreshControl, Share } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -31,6 +32,8 @@ function getDelta(current: number, previous: number) {
 }
 
 export default function Progress() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
   const [selectedMetric, setSelectedMetric] = useState<Metric>('overall');
   const [routineStreak, setRoutineStreak] = useState(0);
@@ -109,7 +112,7 @@ export default function Progress() {
   if (!history.length) {
     return (
       <View style={styles.root}>
-        <GlassHero height={140} tint={Colors.primary}>
+        <GlassHero height={140} tint={colors.primary}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Text style={styles.heroTitle}>Progress</Text>
@@ -131,7 +134,7 @@ export default function Progress() {
   return (
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <GlassHero height={170} tint={Colors.primary}>
+        <GlassHero height={170} tint={colors.primary}>
           <SafeAreaView edges={['top']}>
             <Animated.View style={{
               opacity: headerAnim,
@@ -162,7 +165,7 @@ export default function Progress() {
           return (
             <Pressable style={styles.xpCard} onPress={() => router.push('/milestones')}>
               <LinearGradient
-                colors={[Colors.primaryDark, Colors.primary]}
+                colors={[colors.primaryDark, colors.primary]}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
               />
@@ -207,7 +210,7 @@ export default function Progress() {
                   <Text style={styles.transformTitle}>{daysTracked} Days of Progress</Text>
                 </View>
                 <Pressable style={styles.transformShareBtn} onPress={handleShareTransformation}>
-                  <Ionicons name="share-outline" size={16} color={Colors.primary} />
+                  <Ionicons name="share-outline" size={16} color={colors.primary} />
                 </Pressable>
               </View>
               <View style={styles.transformRow}>
@@ -216,7 +219,7 @@ export default function Progress() {
                     <Image source={{ uri: oldest.imageUri }} style={styles.transformPhoto} resizeMode="cover" />
                   ) : (
                     <View style={[styles.transformPhoto, styles.transformPhotoEmpty]}>
-                      <Ionicons name="person-outline" size={22} color={Colors.textMuted} />
+                      <Ionicons name="person-outline" size={22} color={colors.textMuted} />
                     </View>
                   )}
                   <View style={styles.transformScoreWrap}>
@@ -226,19 +229,19 @@ export default function Progress() {
                 </View>
                 <View style={styles.transformMiddle}>
                   <View style={[styles.transformDelta, { backgroundColor: delta >= 0 ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)' }]}>
-                    <Text style={[styles.transformDeltaNum, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                    <Text style={[styles.transformDeltaNum, { color: delta >= 0 ? colors.scoreExcellent : colors.scorePoor }]}>
                       {delta >= 0 ? '+' : ''}{delta}
                     </Text>
-                    <Text style={[styles.transformDeltaLabel, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>pts</Text>
+                    <Text style={[styles.transformDeltaLabel, { color: delta >= 0 ? colors.scoreExcellent : colors.scorePoor }]}>pts</Text>
                   </View>
-                  <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+                  <Ionicons name="arrow-forward" size={14} color={colors.textMuted} />
                 </View>
                 <View style={styles.transformSide}>
                   {latest.imageUri ? (
                     <Image source={{ uri: latest.imageUri }} style={styles.transformPhoto} resizeMode="cover" />
                   ) : (
                     <View style={[styles.transformPhoto, styles.transformPhotoEmpty]}>
-                      <Ionicons name="person-outline" size={22} color={Colors.textMuted} />
+                      <Ionicons name="person-outline" size={22} color={colors.textMuted} />
                     </View>
                   )}
                   <View style={styles.transformScoreWrap}>
@@ -257,47 +260,47 @@ export default function Progress() {
         {/* Quick access row */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRowContent}>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/compare')}>
-            <Ionicons name="git-compare-outline" size={16} color={Colors.primary} />
+            <Ionicons name="git-compare-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Compare</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/report')}>
-            <Ionicons name="analytics-outline" size={16} color={Colors.primary} />
+            <Ionicons name="analytics-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>AI Report</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/milestones')}>
-            <Ionicons name="trophy-outline" size={16} color={Colors.primary} />
+            <Ionicons name="trophy-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Milestones</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/skin-age')}>
-            <Ionicons name="hourglass-outline" size={16} color={Colors.primary} />
+            <Ionicons name="hourglass-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Skin Age</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/skin-scorecard')}>
-            <Ionicons name="ribbon-outline" size={16} color={Colors.primary} />
+            <Ionicons name="ribbon-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Scorecard</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/community')}>
-            <Ionicons name="people-outline" size={16} color={Colors.primary} />
+            <Ionicons name="people-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Community</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/forecast')}>
-            <Ionicons name="sparkles-outline" size={16} color={Colors.primary} />
+            <Ionicons name="sparkles-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Forecast</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/calendar')}>
-            <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Calendar</Text>
           </Pressable>
           <Pressable style={styles.quickBtn} onPress={() => router.push('/scan-gallery')}>
-            <Ionicons name="images-outline" size={16} color={Colors.primary} />
+            <Ionicons name="images-outline" size={16} color={colors.primary} />
             <Text style={styles.quickBtnText}>Gallery</Text>
           </Pressable>
         </ScrollView>
 
         {/* AI Trend Report CTA */}
         <Pressable style={styles.reportCta} onPress={() => router.push('/report')}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
-          <Ionicons name="analytics-outline" size={20} color={Colors.white} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+          <Ionicons name="analytics-outline" size={20} color={colors.white} />
           <View style={{ flex: 1 }}>
             <Text style={styles.reportCtaTitle}>AI Trend Report</Text>
             <Text style={styles.reportCtaSub}>AI analysis of your full skin journey</Text>
@@ -311,11 +314,11 @@ export default function Progress() {
           transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
         }]}>
           <View style={[styles.activityCard, { borderColor: 'rgba(196,98,45,0.25)', backgroundColor: 'rgba(196,98,45,0.06)' }]}>
-            <Text style={[styles.activityNum, { color: Colors.primary }]}>{history.length}</Text>
+            <Text style={[styles.activityNum, { color: colors.primary }]}>{history.length}</Text>
             <Text style={styles.activityLabel}>Scans</Text>
           </View>
           <View style={[styles.activityCard, { borderColor: 'rgba(251,191,36,0.3)', backgroundColor: 'rgba(251,191,36,0.07)' }]}>
-            <Text style={[styles.activityNum, { color: Colors.gold }]}>{routineStreak}🔥</Text>
+            <Text style={[styles.activityNum, { color: colors.gold }]}>{routineStreak}🔥</Text>
             <Text style={styles.activityLabel}>Streak</Text>
           </View>
           <View style={[styles.activityCard, { borderColor: 'rgba(96,165,250,0.3)', backgroundColor: 'rgba(96,165,250,0.07)' }]}>
@@ -323,7 +326,7 @@ export default function Progress() {
             <Text style={styles.activityLabel}>Journal</Text>
           </View>
           <View style={[styles.activityCard, { borderColor: 'rgba(74,222,128,0.3)', backgroundColor: 'rgba(74,222,128,0.07)' }]}>
-            <Text style={[styles.activityNum, { color: Colors.scoreExcellent }]}>{articlesRead}</Text>
+            <Text style={[styles.activityNum, { color: colors.scoreExcellent }]}>{articlesRead}</Text>
             <Text style={styles.activityLabel}>Articles</Text>
           </View>
         </Animated.View>
@@ -331,7 +334,7 @@ export default function Progress() {
         {/* Streak milestone celebration */}
         {routineStreak > 0 && [7, 14, 21, 30, 60, 100].includes(routineStreak) && (
           <LinearGradient
-            colors={routineStreak >= 30 ? ['#B8882E', '#D4A96A'] : [Colors.primaryDark, Colors.primary]}
+            colors={routineStreak >= 30 ? ['#B8882E', '#D4A96A'] : [colors.primaryDark, colors.primary]}
             style={styles.streakMilestone}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           >
@@ -369,7 +372,7 @@ export default function Progress() {
           <View style={styles.engineCard}>
             <View style={styles.engineHeader}>
               <View style={styles.engineTitleRow}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.engineIcon}>
+                <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.engineIcon}>
                   <Text style={styles.engineIconText}>✦</Text>
                 </LinearGradient>
                 <View>
@@ -385,10 +388,10 @@ export default function Progress() {
                 <Ionicons
                   name={engineReport.overallTrend === 'improving' ? 'trending-up' : engineReport.overallTrend === 'declining' ? 'trending-down' : 'remove'}
                   size={12}
-                  color={engineReport.overallTrend === 'improving' ? Colors.scoreExcellent : engineReport.overallTrend === 'declining' ? Colors.scorePoor : Colors.primary}
+                  color={engineReport.overallTrend === 'improving' ? colors.scoreExcellent : engineReport.overallTrend === 'declining' ? colors.scorePoor : colors.primary}
                 />
                 <Text style={[styles.trendBadgeText, {
-                  color: engineReport.overallTrend === 'improving' ? Colors.scoreExcellent : engineReport.overallTrend === 'declining' ? Colors.scorePoor : Colors.primary,
+                  color: engineReport.overallTrend === 'improving' ? colors.scoreExcellent : engineReport.overallTrend === 'declining' ? colors.scorePoor : colors.primary,
                 }]}>
                   {engineReport.overallTrend === 'improving' ? 'Improving' : engineReport.overallTrend === 'declining' ? 'Declining' : 'Stable'}
                 </Text>
@@ -402,22 +405,22 @@ export default function Progress() {
                 <Text style={styles.predictVal}>{history[0]?.overallScore ?? '—'}</Text>
               </View>
               <View style={styles.predictArrow}>
-                <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+                <Ionicons name="arrow-forward" size={14} color={colors.textMuted} />
                 <Text style={styles.predictArrowLabel}>7 days</Text>
               </View>
               <View style={styles.predictItem}>
                 <Text style={styles.predictLabel}>Predicted</Text>
                 <Text style={[styles.predictVal, {
                   color: engineReport.predictedOverall > (history[0]?.overallScore ?? 0)
-                    ? Colors.scoreExcellent : engineReport.predictedOverall < (history[0]?.overallScore ?? 0)
-                    ? Colors.scorePoor : Colors.primary,
+                    ? colors.scoreExcellent : engineReport.predictedOverall < (history[0]?.overallScore ?? 0)
+                    ? colors.scorePoor : colors.primary,
                 }]}>{engineReport.predictedOverall}</Text>
               </View>
               {engineReport.scanCount >= 2 && (() => {
                 const delta = engineReport.predictedOverall - (history[0]?.overallScore ?? 0);
                 return (
                   <View style={[styles.predictDelta, { backgroundColor: delta >= 0 ? 'rgba(22,163,74,0.1)' : 'rgba(220,38,38,0.1)' }]}>
-                    <Text style={[styles.predictDeltaText, { color: delta >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                    <Text style={[styles.predictDeltaText, { color: delta >= 0 ? colors.scoreExcellent : colors.scorePoor }]}>
                       {delta >= 0 ? '+' : ''}{delta}
                     </Text>
                   </View>
@@ -434,10 +437,10 @@ export default function Progress() {
                     <Ionicons
                       name={t.trend > 1 ? 'trending-up' : t.trend < -1 ? 'trending-down' : 'remove'}
                       size={11}
-                      color={t.trend > 1 ? Colors.scoreExcellent : t.trend < -1 ? Colors.scorePoor : Colors.textMuted}
+                      color={t.trend > 1 ? colors.scoreExcellent : t.trend < -1 ? colors.scorePoor : colors.textMuted}
                     />
                     <Text style={[styles.metricTrendVal, {
-                      color: t.trend > 1 ? Colors.scoreExcellent : t.trend < -1 ? Colors.scorePoor : Colors.textMuted,
+                      color: t.trend > 1 ? colors.scoreExcellent : t.trend < -1 ? colors.scorePoor : colors.textMuted,
                     }]}>
                       {t.trend > 0 ? '+' : ''}{t.trend}
                     </Text>
@@ -496,18 +499,18 @@ export default function Progress() {
                 <Text style={styles.optimizerSection}>YOUR SHELF — RANKED BY EFFECTIVENESS</Text>
                 {optimizedRoutine.productRankings.slice(0, 4).map((p, i) => (
                   <View key={i} style={styles.productRankRow}>
-                    <View style={[styles.rankNum, { backgroundColor: i === 0 ? 'rgba(196,98,45,0.15)' : Colors.bgElevated }]}>
-                      <Text style={[styles.rankNumText, { color: i === 0 ? Colors.primary : Colors.textMuted }]}>#{i + 1}</Text>
+                    <View style={[styles.rankNum, { backgroundColor: i === 0 ? 'rgba(196,98,45,0.15)' : colors.bgElevated }]}>
+                      <Text style={[styles.rankNumText, { color: i === 0 ? colors.primary : colors.textMuted }]}>#{i + 1}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.rankProductName}>{p.name}</Text>
                       <Text style={styles.rankProductReason}>{p.reason}</Text>
                     </View>
                     <View style={[styles.scoreCircle, {
-                      borderColor: p.effectivenessScore >= 70 ? Colors.scoreExcellent : p.effectivenessScore >= 50 ? Colors.scoreFair : Colors.textMuted,
+                      borderColor: p.effectivenessScore >= 70 ? colors.scoreExcellent : p.effectivenessScore >= 50 ? colors.scoreFair : colors.textMuted,
                     }]}>
                       <Text style={[styles.scoreCircleText, {
-                        color: p.effectivenessScore >= 70 ? Colors.scoreExcellent : p.effectivenessScore >= 50 ? Colors.scoreFair : Colors.textMuted,
+                        color: p.effectivenessScore >= 70 ? colors.scoreExcellent : p.effectivenessScore >= 50 ? colors.scoreFair : colors.textMuted,
                       }]}>{p.effectivenessScore}</Text>
                     </View>
                   </View>
@@ -522,7 +525,7 @@ export default function Progress() {
                 {optimizedRoutine.gapAnalysis.map((gap, i) => (
                   <View key={i} style={styles.gapRow}>
                     <View style={[styles.gapPriority, { backgroundColor: gap.priority === 'high' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)' }]}>
-                      <Text style={[styles.gapPriorityText, { color: gap.priority === 'high' ? Colors.scorePoor : Colors.scoreFair }]}>
+                      <Text style={[styles.gapPriorityText, { color: gap.priority === 'high' ? colors.scorePoor : colors.scoreFair }]}>
                         {gap.priority.toUpperCase()}
                       </Text>
                     </View>
@@ -566,15 +569,15 @@ export default function Progress() {
               const d = getDelta(val, prevVal);
               return (
                 <View style={[styles.deltaPill, { backgroundColor: d.positive ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)' }]}>
-                  <Ionicons name={d.positive ? 'trending-up' : 'trending-down'} size={12} color={d.positive ? Colors.scoreExcellent : Colors.scorePoor} />
-                  <Text style={[styles.deltaPillText, { color: d.positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                  <Ionicons name={d.positive ? 'trending-up' : 'trending-down'} size={12} color={d.positive ? colors.scoreExcellent : colors.scorePoor} />
+                  <Text style={[styles.deltaPillText, { color: d.positive ? colors.scoreExcellent : colors.scorePoor }]}>
                     {d.positive ? '+' : ''}{d.val} from last scan
                   </Text>
                 </View>
               );
             })()}
           </View>
-          <ScoreChart data={chartData} color={Colors.primary} height={170} />
+          <ScoreChart data={chartData} color={colors.primary} height={170} />
         </View>
         </Animated.View>
 
@@ -593,7 +596,7 @@ export default function Progress() {
                     <Text style={styles.deltaCellLabel}>{m.label}</Text>
                     <Text style={styles.deltaCellVal}>{curr}</Text>
                     <View style={[styles.deltaChange, { backgroundColor: d.positive ? 'rgba(74,222,128,0.12)' : d.val === 0 ? 'rgba(250,243,224,0.06)' : 'rgba(248,113,113,0.12)' }]}>
-                      <Text style={[styles.deltaChangeText, { color: d.positive ? Colors.scoreExcellent : d.val === 0 ? Colors.textMuted : Colors.scorePoor }]}>
+                      <Text style={[styles.deltaChangeText, { color: d.positive ? colors.scoreExcellent : d.val === 0 ? colors.textMuted : colors.scorePoor }]}>
                         {d.val === 0 ? '—' : `${d.positive ? '+' : ''}${d.val}`}
                       </Text>
                     </View>
@@ -616,15 +619,15 @@ export default function Progress() {
                   <Text style={styles.beforeAfterDate}>
                     {new Date(oldest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </Text>
-                  <Text style={[styles.beforeAfterScore, { color: Colors.scoreFair }]}>{oldest.overallScore}</Text>
+                  <Text style={[styles.beforeAfterScore, { color: colors.scoreFair }]}>{oldest.overallScore}</Text>
                 </View>
               </View>
               <View style={styles.beforeAfterArrow}>
-                <Ionicons name="arrow-forward" size={18} color={Colors.primary} />
+                <Ionicons name="arrow-forward" size={18} color={colors.primary} />
                 {history.length >= 2 && (() => {
                   const d = getDelta(latest.overallScore, oldest.overallScore);
                   return (
-                    <Text style={[styles.totalDelta, { color: d.positive ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                    <Text style={[styles.totalDelta, { color: d.positive ? colors.scoreExcellent : colors.scorePoor }]}>
                       {d.positive ? '+' : ''}{d.val}
                     </Text>
                   );
@@ -637,7 +640,7 @@ export default function Progress() {
                   <Text style={styles.beforeAfterDate}>
                     {new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </Text>
-                  <Text style={[styles.beforeAfterScore, { color: Colors.scoreExcellent }]}>{latest.overallScore}</Text>
+                  <Text style={[styles.beforeAfterScore, { color: colors.scoreExcellent }]}>{latest.overallScore}</Text>
                 </View>
               </View>
             </View>
@@ -657,17 +660,17 @@ export default function Progress() {
                 // Only show PR if current is best AND there's at least one lower score (not all tied)
                 const isCurrentBest = current === best && allVals.some(v => v < best);
                 return (
-                  <View key={metric} style={[styles.deltaCell, isCurrentBest && { borderColor: Colors.scoreExcellent + '40', borderWidth: 1 }]}>
+                  <View key={metric} style={[styles.deltaCell, isCurrentBest && { borderColor: colors.scoreExcellent + '40', borderWidth: 1 }]}>
                     <Text style={styles.deltaCellLabel}>{metric === 'overall' ? 'Overall' : metric.charAt(0).toUpperCase() + metric.slice(1)}</Text>
-                    <Text style={[styles.deltaCellVal, { color: Colors.scoreExcellent }]}>{best}</Text>
+                    <Text style={[styles.deltaCellVal, { color: colors.scoreExcellent }]}>{best}</Text>
                     {isCurrentBest && (
                       <View style={[styles.deltaChange, { backgroundColor: 'rgba(74,222,128,0.12)' }]}>
-                        <Text style={[styles.deltaChangeText, { color: Colors.scoreExcellent }]}>PR ✓</Text>
+                        <Text style={[styles.deltaChangeText, { color: colors.scoreExcellent }]}>PR ✓</Text>
                       </View>
                     )}
                     {!isCurrentBest && (
                       <View style={styles.deltaChange}>
-                        <Text style={[styles.deltaChangeText, { color: Colors.textMuted }]}>Now: {current}</Text>
+                        <Text style={[styles.deltaChangeText, { color: colors.textMuted }]}>Now: {current}</Text>
                       </View>
                     )}
                   </View>
@@ -690,7 +693,7 @@ export default function Progress() {
                 <Image source={{ uri: entry.imageUri }} style={styles.historyThumb} />
               ) : (
                 <View style={[styles.historyThumb, styles.historyThumbEmpty]}>
-                  <Ionicons name="person" size={16} color={Colors.textMuted} />
+                  <Ionicons name="person" size={16} color={colors.textMuted} />
                 </View>
               )}
               <View style={styles.historyInfo}>
@@ -700,7 +703,7 @@ export default function Progress() {
                 {i === 0 && <Text style={styles.historyLatestBadge}>Latest</Text>}
               </View>
               <ScoreRing score={entry.overallScore} size={42} strokeWidth={4} />
-              <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
             </Pressable>
           ))}
         </View>
@@ -711,14 +714,15 @@ export default function Progress() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   heroHeader: {
     paddingHorizontal: 24, paddingTop: 12, paddingBottom: 12,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
   heroTitle: {
-    fontSize: 30, fontWeight: '900', color: Colors.white, letterSpacing: -0.5,
+    fontSize: 30, fontWeight: '900', color: c.white, letterSpacing: -0.5,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.78)', marginTop: 4, fontWeight: '600' },
@@ -728,21 +732,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.18)',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
   },
-  heroScoreNum: { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  heroScoreNum: { fontSize: 26, fontWeight: '900', color: c.white, letterSpacing: -0.5 },
   heroScoreLabel: { fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: '900', letterSpacing: 1.4 },
   scroll: { paddingBottom: 40 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 28 },
-  scanBtn: { backgroundColor: Colors.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
-  scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 28 },
+  scanBtn: { backgroundColor: c.primary, borderRadius: 16, paddingHorizontal: 28, paddingVertical: 16 },
+  scanBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   xpCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     marginHorizontal: 16, borderRadius: 20, overflow: 'hidden',
     padding: 18, marginBottom: 12,
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
+    shadowColor: c.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
   },
   xpLevel: { fontSize: 20, fontWeight: '900', color: '#fff' },
   xpLevelBadge: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
@@ -755,24 +759,24 @@ const styles = StyleSheet.create({
   xpEmoji: { fontSize: 26 },
 
   quickRowContent: { paddingHorizontal: 16, paddingVertical: 6, gap: 8, marginBottom: 4 },
-  quickBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingVertical: 10, paddingHorizontal: 14 },
-  quickBtnText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
+  quickBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingVertical: 10, paddingHorizontal: 14 },
+  quickBtnText: { fontSize: 12, fontWeight: '700', color: c.primary },
   reportCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     marginHorizontal: 16, borderRadius: 16, overflow: 'hidden',
     padding: 16, marginBottom: 12,
   },
-  reportCtaTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  reportCtaTitle: { fontSize: 15, fontWeight: '700', color: c.white },
   reportCtaSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   activityRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 4, gap: 8 },
-  activityCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
-  activityNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  activityLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 13 },
+  activityCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 12, alignItems: 'center', gap: 3 },
+  activityNum: { fontSize: 20, fontWeight: '800', color: c.textPrimary },
+  activityLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 13 },
 
   streakMilestone: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     marginHorizontal: 16, borderRadius: 18, padding: 18, marginBottom: 12, marginTop: 8,
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+    shadowColor: c.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
   },
   streakMilestoneEmoji: { fontSize: 32 },
   streakMilestoneLabel: { fontSize: 8, fontWeight: '900', color: 'rgba(255,255,255,0.7)', letterSpacing: 2, marginBottom: 3 },
@@ -782,13 +786,13 @@ const styles = StyleSheet.create({
   streakNudge: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     marginHorizontal: 16, borderRadius: 16, padding: 14, marginBottom: 10, marginTop: 6,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: 'rgba(212,169,106,0.25)',
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: 'rgba(212,169,106,0.25)',
   },
   streakNudgeEmoji: { fontSize: 22 },
-  streakNudgeTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  streakNudgeSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-  streakNudgeBar: { width: 48, height: 4, backgroundColor: Colors.border, borderRadius: 2, overflow: 'hidden', marginTop: 6, alignSelf: 'flex-end' },
-  streakNudgeBarFill: { height: 4, backgroundColor: Colors.gold, borderRadius: 2 },
+  streakNudgeTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  streakNudgeSub: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  streakNudgeBar: { width: 48, height: 4, backgroundColor: c.border, borderRadius: 2, overflow: 'hidden', marginTop: 6, alignSelf: 'flex-end' },
+  streakNudgeBarFill: { height: 4, backgroundColor: c.gold, borderRadius: 2 },
 
   transformCard: {
     marginHorizontal: 16, borderRadius: 20, overflow: 'hidden',
@@ -796,103 +800,104 @@ const styles = StyleSheet.create({
     padding: 16, marginBottom: 12, marginTop: 4,
   },
   transformHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
-  transformEyebrow: { fontSize: 8, fontWeight: '900', letterSpacing: 2, color: Colors.primary, marginBottom: 3 },
-  transformTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
+  transformEyebrow: { fontSize: 8, fontWeight: '900', letterSpacing: 2, color: c.primary, marginBottom: 3 },
+  transformTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
   transformShareBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(196,98,45,0.1)', alignItems: 'center', justifyContent: 'center' },
   transformRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   transformSide: { flex: 1, alignItems: 'center', gap: 6 },
   transformPhoto: { width: '100%', height: 100, borderRadius: 14 },
-  transformPhotoEmpty: { backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center' },
+  transformPhotoEmpty: { backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center' },
   transformScoreWrap: { position: 'absolute', top: 6, right: 6, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
-  transformScore: { fontSize: 14, fontWeight: '900', color: Colors.white },
-  transformDateLabel: { fontSize: 10, fontWeight: '700', color: Colors.textMuted },
+  transformScore: { fontSize: 14, fontWeight: '900', color: c.white },
+  transformDateLabel: { fontSize: 10, fontWeight: '700', color: c.textMuted },
   transformMiddle: { alignItems: 'center', gap: 6 },
   transformDelta: { borderRadius: 12, paddingHorizontal: 10, paddingVertical: 6, alignItems: 'center' },
   transformDeltaNum: { fontSize: 18, fontWeight: '900' },
   transformDeltaLabel: { fontSize: 9, fontWeight: '700' },
   transformCta: { alignItems: 'center' },
-  transformCtaText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
+  transformCtaText: { fontSize: 12, fontWeight: '700', color: c.primary },
 
   metricScroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
-  metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard },
-  metricChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  metricChipText: { fontSize: 13, color: Colors.textMuted, fontWeight: '500' },
-  metricChipTextActive: { color: Colors.primary, fontWeight: '700' },
+  metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard },
+  metricChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  metricChipText: { fontSize: 13, color: c.textMuted, fontWeight: '500' },
+  metricChipTextActive: { color: c.primary, fontWeight: '700' },
 
-  chartCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 16 },
+  chartCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 16 },
   chartHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  chartTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  chartTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   deltaPill: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4 },
   deltaPillText: { fontSize: 11, fontWeight: '600' },
 
-  card: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginBottom: 16 },
+  card: { marginHorizontal: 16, marginBottom: 14, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 2 },
+  cardSub: { fontSize: 11, color: c.textMuted, marginBottom: 16 },
 
   deltaGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  deltaCell: { backgroundColor: Colors.bgElevated, borderRadius: 12, padding: 12, alignItems: 'center', minWidth: 80, gap: 4 },
-  deltaCellLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
-  deltaCellVal: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
+  deltaCell: { backgroundColor: c.bgElevated, borderRadius: 12, padding: 12, alignItems: 'center', minWidth: 80, gap: 4 },
+  deltaCellLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
+  deltaCellVal: { fontSize: 20, fontWeight: '800', color: c.textPrimary },
   deltaChange: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 },
   deltaChangeText: { fontSize: 11, fontWeight: '700' },
 
   beforeAfterRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   beforeAfterItem: { flex: 1, gap: 8 },
-  beforeAfterImg: { width: '100%', aspectRatio: 0.85, borderRadius: 12, backgroundColor: Colors.bgElevated },
+  beforeAfterImg: { width: '100%', aspectRatio: 0.85, borderRadius: 12, backgroundColor: c.bgElevated },
   beforeAfterLabel: { gap: 2 },
-  beforeAfterTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
-  beforeAfterDate: { fontSize: 11, color: Colors.textSecondary },
+  beforeAfterTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted },
+  beforeAfterDate: { fontSize: 11, color: c.textSecondary },
   beforeAfterScore: { fontSize: 22, fontWeight: '800' },
   beforeAfterArrow: { alignItems: 'center', gap: 6 },
   totalDelta: { fontSize: 14, fontWeight: '800' },
 
   // Engine cards
-  engineCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.borderStrong, padding: 18 },
+  engineCard: { marginHorizontal: 16, marginBottom: 14, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, padding: 18 },
   engineHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   engineTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   engineIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
-  engineIconText: { fontSize: 14, color: Colors.white, fontWeight: '800' },
-  engineTitle: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  engineSub: { fontSize: 10, color: Colors.textMuted, marginTop: 1 },
+  engineIconText: { fontSize: 14, color: c.white, fontWeight: '800' },
+  engineTitle: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  engineSub: { fontSize: 10, color: c.textMuted, marginTop: 1 },
   trendBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
   trendBadgeText: { fontSize: 11, fontWeight: '700' },
-  predictRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.bgElevated, borderRadius: 14, padding: 14, gap: 10, marginBottom: 14 },
+  predictRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.bgElevated, borderRadius: 14, padding: 14, gap: 10, marginBottom: 14 },
   predictItem: { flex: 1, alignItems: 'center', gap: 3 },
-  predictLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '700', letterSpacing: 0.5 },
-  predictVal: { fontSize: 26, fontWeight: '900', color: Colors.textPrimary },
+  predictLabel: { fontSize: 9, color: c.textMuted, fontWeight: '700', letterSpacing: 0.5 },
+  predictVal: { fontSize: 26, fontWeight: '900', color: c.textPrimary },
   predictArrow: { alignItems: 'center', gap: 2 },
-  predictArrowLabel: { fontSize: 8, color: Colors.textMuted },
+  predictArrowLabel: { fontSize: 8, color: c.textMuted },
   predictDelta: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
   predictDeltaText: { fontSize: 13, fontWeight: '800' },
   metricTrendRow: { flexDirection: 'row', gap: 6 },
-  metricTrendCell: { flex: 1, alignItems: 'center', backgroundColor: Colors.bgElevated, borderRadius: 10, paddingVertical: 8, gap: 2 },
-  metricTrendLabel: { fontSize: 8, color: Colors.textMuted, fontWeight: '700', letterSpacing: 0.3 },
+  metricTrendCell: { flex: 1, alignItems: 'center', backgroundColor: c.bgElevated, borderRadius: 10, paddingVertical: 8, gap: 2 },
+  metricTrendLabel: { fontSize: 8, color: c.textMuted, fontWeight: '700', letterSpacing: 0.3 },
   metricTrendVal: { fontSize: 10, fontWeight: '700' },
   factorRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
   factorIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
-  factorEmoji: { fontSize: 12, fontWeight: '800', color: Colors.textPrimary },
-  factorLabel: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 1 },
-  factorEvidence: { fontSize: 11, color: Colors.textMuted },
-  factorDivider: { height: 1, backgroundColor: Colors.border, marginVertical: 12 },
-  optimizerSection: { fontSize: 9, fontWeight: '800', letterSpacing: 1.2, color: Colors.textMuted, marginBottom: 10 },
-  productRankRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  factorEmoji: { fontSize: 12, fontWeight: '800', color: c.textPrimary },
+  factorLabel: { fontSize: 13, fontWeight: '600', color: c.textPrimary, marginBottom: 1 },
+  factorEvidence: { fontSize: 11, color: c.textMuted },
+  factorDivider: { height: 1, backgroundColor: c.border, marginVertical: 12 },
+  optimizerSection: { fontSize: 9, fontWeight: '800', letterSpacing: 1.2, color: c.textMuted, marginBottom: 10 },
+  productRankRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: c.border },
   rankNum: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   rankNumText: { fontSize: 11, fontWeight: '800' },
-  rankProductName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 1 },
-  rankProductReason: { fontSize: 11, color: Colors.textMuted },
+  rankProductName: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 1 },
+  rankProductReason: { fontSize: 11, color: c.textMuted },
   scoreCircle: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   scoreCircleText: { fontSize: 11, fontWeight: '800' },
   gapRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
   gapPriority: { borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, marginTop: 2 },
   gapPriorityText: { fontSize: 8, fontWeight: '800', letterSpacing: 0.5 },
-  gapCategory: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
-  gapRec: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
+  gapCategory: { fontSize: 12, fontWeight: '700', color: c.textPrimary, marginBottom: 2 },
+  gapRec: { fontSize: 11, color: c.textSecondary, lineHeight: 16 },
 
   historyItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
-  historyBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  historyThumb: { width: 42, height: 42, borderRadius: 10, backgroundColor: Colors.bgElevated },
+  historyBorder: { borderBottomWidth: 1, borderBottomColor: c.border },
+  historyThumb: { width: 42, height: 42, borderRadius: 10, backgroundColor: c.bgElevated },
   historyThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
   historyInfo: { flex: 1 },
-  historyDate: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  historyLatestBadge: { fontSize: 10, color: Colors.primary, fontWeight: '700', letterSpacing: 0.5, marginTop: 2 },
-});
+  historyDate: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  historyLatestBadge: { fontSize: 10, color: c.primary, fontWeight: '700', letterSpacing: 0.5, marginTop: 2 },
+  });
+}
