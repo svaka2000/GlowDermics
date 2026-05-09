@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput, Pressable,
   KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Animated, Easing,
@@ -8,7 +8,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { chatWithCoach } from '../../src/services/skinAnalysis';
@@ -53,6 +54,7 @@ function generateId(): string {
 }
 
 function TypingDots() {
+  const colors = useColors();
   const dots = [useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current];
 
   useEffect(() => {
@@ -77,7 +79,7 @@ function TypingDots() {
           key={i}
           style={{
             width: 7, height: 7, borderRadius: 3.5,
-            backgroundColor: Colors.primary,
+            backgroundColor: colors.primary,
             transform: [{ translateY: dot }],
           }}
         />
@@ -101,6 +103,8 @@ async function saveChatHistory(messages: ChatMessage[]): Promise<void> {
 const SHELF_KEY = 'gd_product_shelf';
 
 export default function Coach() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -254,7 +258,7 @@ export default function Coach() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <View style={styles.avatarWrap}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.avatar}>
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.avatar}>
               <Text style={styles.avatarText}>D</Text>
             </LinearGradient>
             <View style={styles.onlineDot} />
@@ -265,7 +269,7 @@ export default function Coach() {
           </View>
           {messages.length > 0 && (
             <Pressable onPress={confirmClear} style={styles.clearBtn}>
-              <Ionicons name="trash-outline" size={18} color={Colors.textMuted} />
+              <Ionicons name="trash-outline" size={18} color={colors.textMuted} />
             </Pressable>
           )}
         </View>
@@ -273,7 +277,7 @@ export default function Coach() {
         {/* Context banner when scan data is available */}
         {analysis && (
           <View style={styles.contextBanner}>
-            <Ionicons name="scan" size={11} color={Colors.primary} />
+            <Ionicons name="scan" size={11} color={colors.primary} />
             <Text style={styles.contextBannerText}>
               Personalized to your scan · Score {analysis.scores.overall}/100 · {analysis.skinType} skin
             </Text>
@@ -294,7 +298,7 @@ export default function Coach() {
           {/* Intro */}
           {messages.length === 0 && (
             <View style={styles.intro}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.introIcon}>
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.introIcon}>
                 <Text style={styles.introIconText}>✦</Text>
               </LinearGradient>
               <Text style={styles.introTitle}>
@@ -307,7 +311,7 @@ export default function Coach() {
                 {STARTER_PROMPTS.map(p => (
                   <Pressable key={p} style={styles.starterChip} onPress={() => send(p)}>
                     <Text style={styles.starterText}>{p}</Text>
-                    <Ionicons name="arrow-forward" size={12} color={Colors.primary} />
+                    <Ionicons name="arrow-forward" size={12} color={colors.primary} />
                   </Pressable>
                 ))}
               </View>
@@ -325,7 +329,7 @@ export default function Coach() {
               {group.messages.map(msg => (
                 <View key={msg.id} style={[styles.msgRow, msg.role === 'user' && styles.msgRowUser]}>
                   {msg.role === 'assistant' && (
-                    <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.msgAvatar}>
+                    <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.msgAvatar}>
                       <Text style={styles.msgAvatarText}>D</Text>
                     </LinearGradient>
                   )}
@@ -347,7 +351,7 @@ export default function Coach() {
           {/* Animated typing indicator */}
           {loading && (
             <View style={styles.msgRow}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.msgAvatar}>
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.msgAvatar}>
                 <Text style={styles.msgAvatarText}>D</Text>
               </LinearGradient>
               <View style={[styles.bubbleAssistant, styles.typingBubble]}>
@@ -399,7 +403,7 @@ export default function Coach() {
           <TextInput
             style={styles.input}
             placeholder="Ask Derm anything…"
-            placeholderTextColor={Colors.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}
             multiline
@@ -411,9 +415,9 @@ export default function Coach() {
             disabled={!input.trim() || loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color={Colors.white} />
+              <ActivityIndicator size="small" color={colors.white} />
             ) : (
-              <Ionicons name="arrow-up" size={18} color={Colors.white} />
+              <Ionicons name="arrow-up" size={18} color={colors.white} />
             )}
           </Pressable>
         </View>
@@ -422,83 +426,84 @@ export default function Coach() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   kav: { flex: 1 },
   header: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 20, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
+    borderBottomWidth: 1, borderBottomColor: c.border,
   },
   avatarWrap: { position: 'relative' },
   avatar: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 18, fontWeight: '800', color: Colors.white },
+  avatarText: { fontSize: 18, fontWeight: '800', color: c.white },
   onlineDot: {
     position: 'absolute', bottom: 1, right: 1,
     width: 10, height: 10, borderRadius: 5,
-    backgroundColor: Colors.scoreExcellent,
-    borderWidth: 2, borderColor: Colors.bg,
+    backgroundColor: c.scoreExcellent,
+    borderWidth: 2, borderColor: c.bg,
   },
   headerText: { flex: 1 },
-  headerName: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  headerRole: { fontSize: 11, color: Colors.textMuted },
+  headerName: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  headerRole: { fontSize: 11, color: c.textMuted },
   clearBtn: { padding: 8 },
   contextBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 16, paddingVertical: 7,
     backgroundColor: 'rgba(196,98,45,0.08)',
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
+    borderBottomWidth: 1, borderBottomColor: c.border,
   },
-  contextBannerText: { fontSize: 11, color: Colors.primary, fontWeight: '500' },
+  contextBannerText: { fontSize: 11, color: c.primary, fontWeight: '500' },
   messagesContent: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8, flexGrow: 1 },
   intro: { alignItems: 'center', paddingVertical: 24, paddingHorizontal: 8 },
   introIcon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  introIconText: { fontSize: 22, color: Colors.white },
-  introTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginBottom: 8, textAlign: 'center' },
-  introSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 20, maxWidth: 300 },
+  introIconText: { fontSize: 22, color: c.white },
+  introTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, marginBottom: 8, textAlign: 'center' },
+  introSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 20, maxWidth: 300 },
   starters: { width: '100%', gap: 8 },
   starterChip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 14,
   },
-  starterText: { fontSize: 14, color: Colors.textSecondary, flex: 1 },
+  starterText: { fontSize: 14, color: c.textSecondary, flex: 1 },
   dateSeparator: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 16 },
-  dateLine: { flex: 1, height: 1, backgroundColor: Colors.border },
-  dateLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
+  dateLine: { flex: 1, height: 1, backgroundColor: c.border },
+  dateLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
   msgRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, marginBottom: 10 },
   msgRowUser: { flexDirection: 'row-reverse' },
   msgAvatar: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  msgAvatarText: { fontSize: 12, fontWeight: '800', color: Colors.white },
+  msgAvatarText: { fontSize: 12, fontWeight: '800', color: c.white },
   bubbleWrap: { maxWidth: '82%', gap: 3 },
   bubble: { borderRadius: 20, padding: 14 },
   bubbleUser: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderBottomRightRadius: 5,
-    shadowColor: Colors.primary,
+    shadowColor: c.primary,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4,
   },
   bubbleAssistant: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     borderBottomLeftRadius: 5,
   },
-  bubbleText: { fontSize: 15, color: Colors.textPrimary, lineHeight: 23 },
-  bubbleTextUser: { color: Colors.white },
-  timestamp: { fontSize: 10, color: Colors.textMuted, paddingLeft: 4 },
+  bubbleText: { fontSize: 15, color: c.textPrimary, lineHeight: 23 },
+  bubbleTextUser: { color: c.white },
+  timestamp: { fontSize: 10, color: c.textMuted, paddingLeft: 4 },
   timestampUser: { textAlign: 'right', paddingRight: 4 },
   typingBubble: { paddingVertical: 16, paddingHorizontal: 16 },
   typingDots: { flexDirection: 'row', gap: 4 },
-  typingDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: Colors.primary },
+  typingDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: c.primary },
   quickPromptsContent: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
   quickPromptChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: Colors.bgCard, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 20,
+    borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 13, paddingVertical: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -507,24 +512,25 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   quickPromptIcon: { fontSize: 14 },
-  quickPromptText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '600' },
+  quickPromptText: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
   msgCount: { alignItems: 'center', paddingVertical: 4 },
-  msgCountText: { fontSize: 10, color: Colors.textMuted },
+  msgCountText: { fontSize: 10, color: c.textMuted },
   inputBar: {
     flexDirection: 'row', alignItems: 'flex-end', gap: 10,
     paddingHorizontal: 16, paddingTop: 12,
-    borderTopWidth: 1, borderTopColor: Colors.border,
-    backgroundColor: Colors.bgSheet,
+    borderTopWidth: 1, borderTopColor: c.border,
+    backgroundColor: c.bgSheet,
   },
   input: {
-    flex: 1, backgroundColor: Colors.bgCard, borderWidth: 1,
-    borderColor: Colors.border, borderRadius: 22,
+    flex: 1, backgroundColor: c.bgCard, borderWidth: 1,
+    borderColor: c.border, borderRadius: 22,
     paddingHorizontal: 16, paddingVertical: 12,
-    fontSize: 15, color: Colors.textPrimary, maxHeight: 120,
+    fontSize: 15, color: c.textPrimary, maxHeight: 120,
   },
   sendBtn: {
     width: 42, height: 42, borderRadius: 21,
-    backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center',
   },
   sendBtnDisabled: { opacity: 0.4 },
-});
+  });
+}
