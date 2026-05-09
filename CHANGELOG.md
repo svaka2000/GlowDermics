@@ -4,6 +4,69 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Reanimated 4 Migration + Scanner Polish (Autonomous Overnight Pass 3)
+
+### 🔥 Locked-on UI thread
+
+The scanner-analyzing overlay and the splash screen both ran every frame
+through the JS bridge — fine until the JS thread blocks on a network response,
+parse, or render, at which point looping animations stutter visibly. Migrated
+both surfaces to **Reanimated 4 worklets** so the entire animation pipeline
+runs on the UI thread, holding 60fps even mid-API-call.
+
+### 🆕 ScannerOverlay component — `src/components/ui/ScannerOverlay.tsx`
+
+Extracted the analyzing-mode visual layer from `app/scan/index.tsx` into a
+self-contained, reusable component. New polish layered on during migration:
+- Vertical scan line (pre-existing — terracotta sweep)
+- **Diagonal cross-scan line** (new — slower gold sweep, 24° angle, perpendicular feel)
+- 4 corner brackets (static)
+- Pulsing dashed glow ring (rotating + scaling)
+- **9 FaceID-style data-point markers** (new — pseudo-random face positions, each fades in/out at staggered phases — evokes a clinical biometric scan)
+- AI SCANNING badge with pulsing dot
+
+All 8 concurrent shared values (`scanLineY`, `scanLineX`, `glowOpacity`,
+`ringRotate`, `ringScale`, `overlayFade`, `badgeDotPulse`, `dataPointSeed`)
+properly cleaned up via `cancelAnimation()` on unmount. Drop-in usable in
+other screens (e.g., ingredient scanner) once enabled there.
+
+### 🆕 Splash screen migration — `app/index.tsx`
+
+13 legacy `Animated.Value` refs → `useSharedValue`s. Every loop, sequence,
+and parallel composition replaced with `withRepeat`/`withSequence`/`withDelay`
+worklets. Visual identity preserved 1:1 — same spring entrance, same staggered
+text, same loading bar. New: **7 floating sparkle particles** (gold dots that
+drift upward with fade) for ambient warmth.
+
+Now uses `Animated` from `react-native-reanimated` (not the legacy RN one),
+and `useAnimatedStyle` for every derived style.
+
+### 🧹 Cleanup
+
+- Removed dead styles from `app/scan/index.tsx` (`analyzingPhotoWrap`,
+  `analyzingPhoto`, `scanLine`, `bracket*`, `glowRing*`, `scanBadge*`) —
+  all live in `ScannerOverlay` now.
+- Removed unused imports from `app/scan/index.tsx`: `Image`, `Animated`,
+  `Easing` from `react-native`. Kept `LinearGradient` (still used).
+
+### 📁 Files
+
+**New**:
+- `src/components/ui/ScannerOverlay.tsx` (~280 lines, fully Reanimated 4)
+
+**Modified**:
+- `src/components/ui/index.ts` — export `ScannerOverlay`
+- `app/scan/index.tsx` — drop in `<ScannerOverlay imageUri={capturedUri} />`, remove 5 legacy `Animated.Value` refs + ~50 lines of useEffect, prune ~50 lines of dead styles
+- `app/index.tsx` — full Reanimated 4 rewrite, +7 floating particles
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- All animation timings preserved within ±200ms of original.
+- Visual identity unchanged on splash; scanner gets +data-points and +cross-scan as additive enhancements.
+
+---
+
 ## 2026-05-09 — Compare Screen v2 (Autonomous Overnight Pass 2)
 
 ### 🎚️ PhotoCompareSlider (the marquee feature)

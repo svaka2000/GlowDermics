@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ActivityIndicator,
-  Alert, Image, ScrollView, Animated, Easing,
+  Alert, ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -17,6 +17,7 @@ import { Auth } from '../../src/services/auth';
 import { analyzeSkin } from '../../src/services/skinAnalysis';
 import { preflightPhotoQuality, mergePhotoQuality } from '../../src/services/photoQuality';
 import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
+import { ScannerOverlay } from '../../src/components/ui';
 
 type Mode = 'choose' | 'camera' | 'analyzing';
 
@@ -30,65 +31,17 @@ export default function Scan() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const isCapturing = useRef(false);
 
-  // Animation values
-  const scanLineY = useRef(new Animated.Value(0)).current;
-  const glowOpacity = useRef(new Animated.Value(0.3)).current;
-  const ringRotate = useRef(new Animated.Value(0)).current;
-  const ringScale = useRef(new Animated.Value(0.85)).current;
-  const overlayFade = useRef(new Animated.Value(0)).current;
-
+  // Step-reveal sequencer — overlay animations now live in <ScannerOverlay /> on Reanimated 4 worklets.
   useEffect(() => {
     if (mode !== 'analyzing') {
       setCompletedSteps([]);
       return;
     }
-
-    // Fade in overlay
-    Animated.timing(overlayFade, { toValue: 1, duration: 400, useNativeDriver: true }).start();
-
-    // Scanning line loop
-    const lineAnim = Animated.loop(
-      Animated.sequence([
-        Animated.timing(scanLineY, { toValue: 1, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(scanLineY, { toValue: 0, duration: 1800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    );
-    lineAnim.start();
-
-    // Glow pulse
-    const glowAnim = Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowOpacity, { toValue: 0.9, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(glowOpacity, { toValue: 0.3, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ])
-    );
-    glowAnim.start();
-
-    // Outer ring rotate
-    const rotateAnim = Animated.loop(
-      Animated.timing(ringRotate, { toValue: 1, duration: 3000, easing: Easing.linear, useNativeDriver: true })
-    );
-    rotateAnim.start();
-
-    // Ring breathe
-    const scaleAnim = Animated.loop(
-      Animated.sequence([
-        Animated.timing(ringScale, { toValue: 1, duration: 1400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(ringScale, { toValue: 0.85, duration: 1400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ])
-    );
-    scaleAnim.start();
-
-    // Sequential step reveals
     const STEP_DELAYS = [800, 2600, 4400, 6200];
     const timers = STEP_DELAYS.map((delay, i) =>
       setTimeout(() => setCompletedSteps(prev => [...prev, i]), delay)
     );
-
-    return () => {
-      lineAnim.stop(); glowAnim.stop(); rotateAnim.stop(); scaleAnim.stop();
-      timers.forEach(clearTimeout);
-    };
+    return () => { timers.forEach(clearTimeout); };
   }, [mode]);
 
   useEffect(() => {
@@ -241,52 +194,10 @@ export default function Scan() {
       { label: 'Estimating skin age', icon: 'hourglass-outline' },
       { label: 'Building your routine', icon: 'list-outline' },
     ];
-    const IMAGE_H = 300;
-    const scanLineTranslate = scanLineY.interpolate({ inputRange: [0, 1], outputRange: [0, IMAGE_H - 4] });
-    const ringRotateDeg = ringRotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
     return (
-      <Animated.View style={[styles.root, { opacity: overlayFade }]}>
-        {/* Face photo — full bleed */}
-        <View style={styles.analyzingPhotoWrap}>
-          {capturedUri ? (
-            <Image source={{ uri: capturedUri }} style={styles.analyzingPhoto} />
-          ) : (
-            <View style={[styles.analyzingPhoto, { backgroundColor: '#1C1814' }]} />
-          )}
-
-          {/* Dark gradient bottom fade */}
-          <LinearGradient
-            colors={['transparent', 'rgba(10,8,6,0.92)']}
-            style={[StyleSheet.absoluteFillObject, { top: IMAGE_H * 0.4 }]}
-          />
-
-          {/* Scanning line */}
-          <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanLineTranslate }] }]}>
-            <LinearGradient
-              colors={['transparent', Colors.primary, 'transparent']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFillObject}
-            />
-          </Animated.View>
-
-          {/* Corner brackets */}
-          <View style={[styles.bracket, styles.bracketTL]} />
-          <View style={[styles.bracket, styles.bracketTR]} />
-          <View style={[styles.bracket, styles.bracketBL]} />
-          <View style={[styles.bracket, styles.bracketBR]} />
-
-          {/* Pulsing glow ring around face */}
-          <Animated.View style={[styles.glowRingWrap, { transform: [{ scale: ringScale }, { rotate: ringRotateDeg }] }]}>
-            <Animated.View style={[styles.glowRing, { opacity: glowOpacity }]} />
-          </Animated.View>
-
-          {/* Scanning badge */}
-          <View style={styles.scanBadge}>
-            <View style={styles.scanBadgeDot} />
-            <Text style={styles.scanBadgeText}>AI SCANNING</Text>
-          </View>
-        </View>
+      <View style={styles.root}>
+        <ScannerOverlay imageUri={capturedUri} height={300} />
 
         {/* Analysis steps */}
         <View style={styles.analyzingBottom}>
@@ -321,7 +232,7 @@ export default function Scan() {
             })}
           </View>
         </View>
-      </Animated.View>
+      </View>
     );
   }
 
@@ -469,47 +380,6 @@ const styles = StyleSheet.create({
   },
   secondaryBtnText: { fontSize: 16, fontWeight: '600', color: Colors.primary },
   disclaimer: { fontSize: 11, color: Colors.textMuted, textAlign: 'center', lineHeight: 17 },
-  // analyzing — new animated version
-  analyzingPhotoWrap: { height: 300, position: 'relative', overflow: 'hidden' },
-  analyzingPhoto: { width: '100%', height: 300 },
-  scanLine: {
-    position: 'absolute', left: 0, right: 0, height: 3,
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9, shadowRadius: 8,
-  },
-  bracket: {
-    position: 'absolute', width: 20, height: 20,
-    borderColor: Colors.primary, borderWidth: 2.5,
-  },
-  bracketTL: { top: 16, left: 16, borderBottomWidth: 0, borderRightWidth: 0 },
-  bracketTR: { top: 16, right: 16, borderBottomWidth: 0, borderLeftWidth: 0 },
-  bracketBL: { bottom: 16, left: 16, borderTopWidth: 0, borderRightWidth: 0 },
-  bracketBR: { bottom: 16, right: 16, borderTopWidth: 0, borderLeftWidth: 0 },
-  glowRingWrap: {
-    position: 'absolute', top: '50%', left: '50%',
-    marginTop: -70, marginLeft: -70,
-  },
-  glowRing: {
-    width: 140, height: 140, borderRadius: 70,
-    borderWidth: 2, borderColor: Colors.primary,
-    borderStyle: 'dashed',
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1, shadowRadius: 12,
-  },
-  scanBadge: {
-    position: 'absolute', top: 16, right: 16,
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(10,8,6,0.75)',
-    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20,
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.4)',
-  },
-  scanBadgeDot: {
-    width: 6, height: 6, borderRadius: 3,
-    backgroundColor: Colors.primary,
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1, shadowRadius: 4,
-  },
-  scanBadgeText: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1.5 },
   analyzingBottom: {
     flex: 1, backgroundColor: '#0D0B09',
     paddingHorizontal: 24, paddingTop: 20, paddingBottom: 16,

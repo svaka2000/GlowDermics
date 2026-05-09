@@ -17,3 +17,4 @@ export { ScoreGrid } from './ScoreGrid';
 export { PhotoCompareSlider } from './PhotoCompareSlider';
 export { RegionalDeltaMap } from './RegionalDeltaMap';
 export { DeltaGrid } from './DeltaGrid';
+export { ScannerOverlay } from './ScannerOverlay';

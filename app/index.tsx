@@ -1,7 +1,19 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
+import { useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { Storage } from '../src/services/storage';
 import { Auth } from '../src/services/auth';
 
@@ -9,115 +21,143 @@ const { width, height } = Dimensions.get('window');
 const PRIMARY = '#C4622D';
 const GOLD = '#D4A96A';
 const DARK = '#0D0805';
+const LOGO_SIZE = 108;
+const RING_SIZE = LOGO_SIZE + 24;
+const PARTICLE_COUNT = 7;
 
+/**
+ * Splash — first impression of the app.
+ *
+ * Migrated to Reanimated 4 worklets so every concurrent loop (rings, blobs,
+ * shimmer, logo entrance, text slides, loading bar) runs on the UI thread —
+ * no JS-bridge ferries per frame. Adds floating sparkle particles for ambient
+ * polish without disrupting the existing visual identity.
+ */
 export default function Index() {
-  // Entrance animations
-  const logoScale  = useRef(new Animated.Value(0.5)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoGlow   = useRef(new Animated.Value(0)).current;
-
-  const nameY      = useRef(new Animated.Value(30)).current;
-  const nameOpacity = useRef(new Animated.Value(0)).current;
-  const taglineY   = useRef(new Animated.Value(20)).current;
-  const taglineOpacity = useRef(new Animated.Value(0)).current;
-  const brandOpacity = useRef(new Animated.Value(0)).current;
+  // Entrance values
+  const logoScale = useSharedValue(0.5);
+  const logoOpacity = useSharedValue(0);
+  const logoGlow = useSharedValue(0);
+  const nameY = useSharedValue(30);
+  const nameOpacity = useSharedValue(0);
+  const taglineY = useSharedValue(20);
+  const taglineOpacity = useSharedValue(0);
+  const brandOpacity = useSharedValue(0);
 
   // Loading bar
-  const barProgress = useRef(new Animated.Value(0)).current;
-  const barOpacity  = useRef(new Animated.Value(0)).current;
+  const barProgress = useSharedValue(0); // 0..1
+  const barOpacity = useSharedValue(0);
 
-  // Three pulsing rings
-  const ring1 = useRef(new Animated.Value(0)).current;
-  const ring2 = useRef(new Animated.Value(0)).current;
-  const ring3 = useRef(new Animated.Value(0)).current;
+  // Three pulsing rings (independent loops at staggered offsets)
+  const ring1 = useSharedValue(0);
+  const ring2 = useSharedValue(0);
+  const ring3 = useSharedValue(0);
 
   // Floating glow blobs
-  const blob1Y = useRef(new Animated.Value(0)).current;
-  const blob2Y = useRef(new Animated.Value(0)).current;
+  const blob1Y = useSharedValue(0);
+  const blob2Y = useSharedValue(0);
 
-  // Logo shimmer position
-  const shimmerX = useRef(new Animated.Value(-100)).current;
+  // Logo shimmer
+  const shimmerX = useSharedValue(-100);
+
+  // Particle phase (each particle reads it with its own offset)
+  const particlePhase = useSharedValue(0);
+
+  // Compute stable particle positions via LCG seeded from constant.
+  const particles = useMemo(() => {
+    const out: { x: number; offset: number; baseY: number; size: number }[] = [];
+    let seed = 8675309;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const x = (seed / 233280) * (width - 24) + 12;
+      seed = (seed * 9301 + 49297) % 233280;
+      const baseY = (seed / 233280) * (height * 0.6) + height * 0.2;
+      seed = (seed * 9301 + 49297) % 233280;
+      const size = 2 + (seed / 233280) * 2.5;
+      out.push({ x, offset: i / PARTICLE_COUNT, baseY, size });
+    }
+    return out;
+  }, []);
 
   useEffect(() => {
-    // Floating blobs
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(blob1Y, { toValue: -18, duration: 3000, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(blob1Y, { toValue: 0, duration: 3000, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    ).start();
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(blob2Y, { toValue: 14, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(blob2Y, { toValue: 0, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    ).start();
+    // Floating glow blobs — independent slow sine waves
+    blob1Y.value = withRepeat(
+      withSequence(
+        withTiming(-18, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+    blob2Y.value = withRepeat(
+      withSequence(
+        withTiming(14, { duration: 2400, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0, { duration: 2400, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
 
-    // Logo entrance
-    Animated.sequence([
-      Animated.delay(200),
-      Animated.parallel([
-        Animated.spring(logoScale, { toValue: 1, tension: 70, friction: 7, useNativeDriver: true }),
-        Animated.timing(logoOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-        Animated.timing(logoGlow, { toValue: 1, duration: 800, useNativeDriver: false }),
-      ]),
-    ]).start();
+    // Logo entrance after 200ms hold
+    logoScale.value = withDelay(200, withSpring(1, { damping: 9, stiffness: 100 }));
+    logoOpacity.value = withDelay(200, withTiming(1, { duration: 500 }));
+    logoGlow.value = withDelay(200, withTiming(1, { duration: 800 }));
 
-    // Logo shimmer loop (starts after logo appears)
-    setTimeout(() => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(shimmerX, { toValue: 160, duration: 900, easing: Easing.linear, useNativeDriver: true }),
-          Animated.delay(2000),
-          Animated.timing(shimmerX, { toValue: -100, duration: 0, useNativeDriver: true }),
-        ])
-      ).start();
-    }, 700);
+    // Logo shimmer (after logo lands)
+    shimmerX.value = withDelay(
+      900,
+      withRepeat(
+        withSequence(
+          withTiming(160, { duration: 900, easing: Easing.linear }),
+          withDelay(2000, withTiming(-100, { duration: 0 })),
+        ),
+        -1,
+        false,
+      ),
+    );
 
-    // Text slides up
-    Animated.sequence([
-      Animated.delay(600),
-      Animated.parallel([
-        Animated.spring(nameY, { toValue: 0, tension: 80, friction: 8, useNativeDriver: true }),
-        Animated.timing(nameOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-      ]),
-      Animated.parallel([
-        Animated.spring(taglineY, { toValue: 0, tension: 80, friction: 8, useNativeDriver: true }),
-        Animated.timing(taglineOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-      ]),
-      Animated.timing(brandOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-    ]).start();
+    // Text — name, tagline, brand staggered
+    nameY.value = withDelay(600, withSpring(0, { damping: 11, stiffness: 110 }));
+    nameOpacity.value = withDelay(600, withTiming(1, { duration: 400 }));
+    taglineY.value = withDelay(900, withSpring(0, { damping: 11, stiffness: 110 }));
+    taglineOpacity.value = withDelay(900, withTiming(1, { duration: 400 }));
+    brandOpacity.value = withDelay(1200, withTiming(1, { duration: 400 }));
 
-    // Pulsing rings — staggered loops
-    const pulseRing = (anim: Animated.Value, delay: number) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(delay),
-          Animated.timing(anim, { toValue: 1, duration: 1600, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(anim, { toValue: 0, duration: 0, useNativeDriver: true }),
-        ])
-      ).start();
+    // Pulsing rings — staggered loops (each ring goes 0→1 then resets, infinitely)
+    const ringLoop = (sv: typeof ring1, delay: number) => {
+      sv.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(1, { duration: 1600, easing: Easing.out(Easing.quad) }),
+            withTiming(0, { duration: 0 }),
+          ),
+          -1,
+          false,
+        ),
+      );
     };
-    setTimeout(() => {
-      pulseRing(ring1, 0);
-      pulseRing(ring2, 500);
-      pulseRing(ring3, 1000);
-    }, 400);
+    ringLoop(ring1, 400);
+    ringLoop(ring2, 900);
+    ringLoop(ring3, 1400);
 
-    // Loading bar appears and fills
-    Animated.sequence([
-      Animated.delay(700),
-      Animated.timing(barOpacity, { toValue: 1, duration: 300, useNativeDriver: false }),
-      Animated.timing(barProgress, { toValue: 1, duration: 1300, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
-    ]).start();
+    // Loading bar
+    barOpacity.value = withDelay(700, withTiming(1, { duration: 300 }));
+    barProgress.value = withDelay(1000, withTiming(1, { duration: 1300, easing: Easing.out(Easing.cubic) }));
 
-    // Navigate — check auth first, then onboarding state
+    // Particle drift
+    particlePhase.value = withRepeat(
+      withTiming(1, { duration: 4500, easing: Easing.linear }),
+      -1,
+      false,
+    );
+
+    // Navigate
     const timer = setTimeout(async () => {
       const [isLoggedIn, onboarded] = await Promise.all([
         Auth.isLoggedIn(),
         Storage.isOnboarded(),
       ]);
-
       if (!isLoggedIn) {
         router.replace('/(auth)/login' as any);
       } else if (!onboarded) {
@@ -127,15 +167,39 @@ export default function Index() {
       }
     }, 2600);
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      [
+        logoScale, logoOpacity, logoGlow, nameY, nameOpacity, taglineY,
+        taglineOpacity, brandOpacity, barProgress, barOpacity,
+        ring1, ring2, ring3, blob1Y, blob2Y, shimmerX, particlePhase,
+      ].forEach(sv => cancelAnimation(sv));
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const ringStyle = (anim: Animated.Value) => ({
-    opacity: anim.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 0.5, 0] }),
-    transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [1, 2.8] }) }],
-  });
-
-  const barWidth = barProgress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  // ------- Animated styles (all UI-thread) -------
+  const blob1Style = useAnimatedStyle(() => ({ transform: [{ translateY: blob1Y.value }] }));
+  const blob2Style = useAnimatedStyle(() => ({ transform: [{ translateY: blob2Y.value }] }));
+  const centerGlowStyle = useAnimatedStyle(() => ({ opacity: logoGlow.value }));
+  const logoWrapStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+    transform: [{ scale: logoScale.value }],
+  }));
+  const logoRingStyle = useAnimatedStyle(() => ({ opacity: logoGlow.value }));
+  const shimmerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shimmerX.value }, { rotate: '20deg' }],
+  }));
+  const nameStyle = useAnimatedStyle(() => ({
+    opacity: nameOpacity.value,
+    transform: [{ translateY: nameY.value }],
+  }));
+  const taglineStyle = useAnimatedStyle(() => ({
+    opacity: taglineOpacity.value,
+    transform: [{ translateY: taglineY.value }],
+  }));
+  const brandStyle = useAnimatedStyle(() => ({ opacity: brandOpacity.value }));
+  const barWrapStyle = useAnimatedStyle(() => ({ opacity: barOpacity.value }));
+  const barFillStyle = useAnimatedStyle(() => ({ width: `${barProgress.value * 100}%` }));
 
   return (
     <View style={styles.root}>
@@ -143,11 +207,12 @@ export default function Index() {
       <LinearGradient
         colors={[DARK, '#150C07', '#0D0805', '#12090A']}
         style={StyleSheet.absoluteFill}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       />
 
       {/* Floating glow blob — top */}
-      <Animated.View style={[styles.glowBlobTop, { transform: [{ translateY: blob1Y }] }]}>
+      <Animated.View style={[styles.glowBlobTop, blob1Style]}>
         <LinearGradient
           colors={['rgba(196,98,45,0.45)', 'rgba(196,98,45,0)']}
           style={{ flex: 1 }}
@@ -155,7 +220,7 @@ export default function Index() {
       </Animated.View>
 
       {/* Floating glow blob — bottom */}
-      <Animated.View style={[styles.glowBlobBottom, { transform: [{ translateY: blob2Y }] }]}>
+      <Animated.View style={[styles.glowBlobBottom, blob2Style]}>
         <LinearGradient
           colors={['rgba(212,169,106,0.30)', 'rgba(212,169,106,0)']}
           style={{ flex: 1 }}
@@ -163,112 +228,169 @@ export default function Index() {
       </Animated.View>
 
       {/* Radial center glow */}
-      <Animated.View style={[styles.centerGlow, {
-        opacity: logoGlow.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
-      }]}>
+      <Animated.View style={[styles.centerGlow, centerGlowStyle]}>
         <LinearGradient
           colors={['rgba(196,98,45,0.28)', 'rgba(196,98,45,0.08)', 'transparent']}
           style={{ flex: 1, borderRadius: 300 }}
         />
       </Animated.View>
 
+      {/* Floating sparkle particles */}
+      {particles.map((p, i) => (
+        <Particle
+          key={i}
+          x={p.x}
+          baseY={p.baseY}
+          offset={p.offset}
+          size={p.size}
+          phase={particlePhase}
+        />
+      ))}
+
       <View style={styles.content}>
         {/* Logo + rings */}
         <View style={styles.logoContainer}>
-          {/* Pulsing rings */}
-          {[ring1, ring2, ring3].map((r, i) => (
-            <Animated.View key={i} style={[styles.ring, ringStyle(r), { borderColor: i === 1 ? GOLD : PRIMARY }]} />
-          ))}
+          <Ring sv={ring1} color={PRIMARY} />
+          <Ring sv={ring2} color={GOLD} />
+          <Ring sv={ring3} color={PRIMARY} />
 
-          {/* Logo box */}
-          <Animated.View style={[styles.logoWrap, {
-            opacity: logoOpacity,
-            transform: [{ scale: logoScale }],
-          }]}>
+          <Animated.View style={[styles.logoWrap, logoWrapStyle]}>
             <LinearGradient
               colors={['#E8834A', '#C4622D', '#9E4D22']}
               style={styles.logoGrad}
-              start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }}
+              start={{ x: 0.1, y: 0 }}
+              end={{ x: 0.9, y: 1 }}
             >
               <Text style={styles.logoMark}>✦</Text>
-
-              {/* Shimmer sweep */}
-              <Animated.View
-                style={[styles.shimmer, { transform: [{ translateX: shimmerX }, { rotate: '20deg' }] }]}
-              >
+              <Animated.View style={[styles.shimmer, shimmerStyle]}>
                 <LinearGradient
                   colors={['transparent', 'rgba(255,255,255,0.35)', 'transparent']}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
                   style={{ flex: 1 }}
                 />
               </Animated.View>
             </LinearGradient>
-
-            {/* Outer ring glow */}
-            <Animated.View style={[styles.logoRing, { opacity: logoGlow }]} />
+            <Animated.View style={[styles.logoRing, logoRingStyle]} />
           </Animated.View>
         </View>
 
-        {/* App name */}
-        <Animated.View style={{ opacity: nameOpacity, transform: [{ translateY: nameY }] }}>
+        <Animated.View style={nameStyle}>
           <Text style={styles.appName}>GlowDermics</Text>
         </Animated.View>
 
-        {/* Tagline */}
-        <Animated.View style={{ opacity: taglineOpacity, transform: [{ translateY: taglineY }] }}>
+        <Animated.View style={taglineStyle}>
           <Text style={styles.tagline}>Your skin, decoded.</Text>
         </Animated.View>
 
-        {/* Brand */}
-        <Animated.Text style={[styles.brand, { opacity: brandOpacity }]}>
-          By TallowDermics™
-        </Animated.Text>
+        <Animated.Text style={[styles.brand, brandStyle]}>By TallowDermics™</Animated.Text>
       </View>
 
-      {/* Loading bar */}
-      <Animated.View style={[styles.barWrap, { opacity: barOpacity }]}>
+      <Animated.View style={[styles.barWrap, barWrapStyle]}>
         <View style={styles.barTrack}>
-          <Animated.View style={[styles.barFill, { width: barWidth }]}>
+          <Animated.View style={[styles.barFill, barFillStyle]}>
             <LinearGradient
               colors={['#E8834A', '#C4622D', '#D4A96A']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
               style={StyleSheet.absoluteFill}
             />
-            {/* Bar shimmer */}
             <View style={styles.barShine} />
           </Animated.View>
         </View>
-        <Animated.Text style={[styles.barLabel, { opacity: brandOpacity }]}>Loading your skin profile…</Animated.Text>
+        <Animated.Text style={[styles.barLabel, brandStyle]}>
+          Loading your skin profile…
+        </Animated.Text>
       </Animated.View>
     </View>
   );
 }
 
-const LOGO_SIZE = 108;
-const RING_SIZE = LOGO_SIZE + 24;
+/** Single pulsing ring — opacity + scale driven by a 0..1 shared value. */
+function Ring({
+  sv,
+  color,
+}: {
+  sv: ReturnType<typeof useSharedValue<number>>;
+  color: string;
+}) {
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(sv.value, [0, 0.3, 1], [0, 0.5, 0]),
+    transform: [{ scale: interpolate(sv.value, [0, 1], [1, 2.8]) }],
+  }));
+  return <Animated.View style={[styles.ring, { borderColor: color }, style]} />;
+}
+
+/** Floating sparkle particle — drifts upward and fades, looped. */
+function Particle({
+  x,
+  baseY,
+  offset,
+  size,
+  phase,
+}: {
+  x: number;
+  baseY: number;
+  offset: number;
+  size: number;
+  phase: ReturnType<typeof useSharedValue<number>>;
+}) {
+  const style = useAnimatedStyle(() => {
+    const phased = (phase.value + offset) % 1;
+    const dy = interpolate(phased, [0, 1], [0, -80]);
+    const opacity = interpolate(phased, [0, 0.15, 0.5, 0.85, 1], [0, 0.7, 0.9, 0.5, 0]);
+    return { opacity, transform: [{ translateY: dy }] };
+  });
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        styles.particle,
+        { left: x, top: baseY, width: size, height: size, borderRadius: size / 2 },
+        style,
+      ]}
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
 
   glowBlobTop: {
     position: 'absolute',
-    top: -80, left: -60,
-    width: width * 0.9, height: height * 0.55,
+    top: -80,
+    left: -60,
+    width: width * 0.9,
+    height: height * 0.55,
     borderRadius: 300,
     overflow: 'hidden',
   },
   glowBlobBottom: {
     position: 'absolute',
-    bottom: -80, right: -60,
-    width: width * 0.8, height: height * 0.45,
+    bottom: -80,
+    right: -60,
+    width: width * 0.8,
+    height: height * 0.45,
     borderRadius: 300,
     overflow: 'hidden',
   },
   centerGlow: {
     position: 'absolute',
-    top: '50%', left: '50%',
-    width: 500, height: 500,
-    marginTop: -250, marginLeft: -250,
+    top: '50%',
+    left: '50%',
+    width: 500,
+    height: 500,
+    marginTop: -250,
+    marginLeft: -250,
+  },
+
+  particle: {
+    position: 'absolute',
+    backgroundColor: '#FFE9C5',
+    shadowColor: GOLD,
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
   },
 
   content: {
@@ -288,19 +410,22 @@ const styles = StyleSheet.create({
 
   ring: {
     position: 'absolute',
-    width: RING_SIZE, height: RING_SIZE,
+    width: RING_SIZE,
+    height: RING_SIZE,
     borderRadius: RING_SIZE / 2,
     borderWidth: 1.5,
   },
 
   logoWrap: {
-    width: LOGO_SIZE, height: LOGO_SIZE,
+    width: LOGO_SIZE,
+    height: LOGO_SIZE,
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoGrad: {
-    width: LOGO_SIZE, height: LOGO_SIZE,
+    width: LOGO_SIZE,
+    height: LOGO_SIZE,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
@@ -320,16 +445,19 @@ const styles = StyleSheet.create({
   },
   shimmer: {
     position: 'absolute',
-    top: 0, bottom: 0,
+    top: 0,
+    bottom: 0,
     width: 60,
   },
   logoRing: {
     position: 'absolute',
-    width: LOGO_SIZE + 20, height: LOGO_SIZE + 20,
+    width: LOGO_SIZE + 20,
+    height: LOGO_SIZE + 20,
     borderRadius: 40,
     borderWidth: 1,
     borderColor: 'rgba(196,98,45,0.35)',
-    top: -10, left: -10,
+    top: -10,
+    left: -10,
   },
 
   appName: {
@@ -373,8 +501,10 @@ const styles = StyleSheet.create({
   },
   barShine: {
     position: 'absolute',
-    top: 0, right: 0,
-    width: 30, height: 3,
+    top: 0,
+    right: 0,
+    width: 30,
+    height: 3,
     backgroundColor: 'rgba(255,255,255,0.5)',
     borderRadius: 2,
   },
