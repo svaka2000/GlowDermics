@@ -13,6 +13,7 @@ import { runUVSkinAnalysis, UVSkinReport } from '../../src/engine/UVSkinEngine';
 import { runStreakAnalysis, StreakReport } from '../../src/engine/StreakEngine';
 import { runDailyChallengeAnalysis, DailyChallengeReport } from '../../src/engine/DailyChallengeEngine';
 import { runSkinForecast, ForecastReport } from '../../src/engine/SkinForecastEngine';
+import { runSkinIdentity, SkinIdentity } from '../../src/engine/SkinIdentityEngine';
 import { SkinAnalysis } from '../../src/types';
 import { useColors } from '../../src/state/theme';
 
@@ -26,6 +27,7 @@ interface HubData {
   streak: StreakReport;
   challenges: DailyChallengeReport;
   forecast: ForecastReport;
+  identity: SkinIdentity;
 }
 
 /**
@@ -47,7 +49,8 @@ export default function InsightsHub() {
       runStreakAnalysis(),
       runDailyChallengeAnalysis(),
       runSkinForecast(),
-    ]).then(([analyses, sleep, uv, streak, challenges, forecast]) => {
+      runSkinIdentity(),
+    ]).then(([analyses, sleep, uv, streak, challenges, forecast, identity]) => {
       if (!mounted) return;
       setData({
         latest: analyses[0] ?? null,
@@ -57,6 +60,7 @@ export default function InsightsHub() {
         streak,
         challenges,
         forecast,
+        identity,
       });
     });
     return () => { mounted = false; };
@@ -114,6 +118,31 @@ export default function InsightsHub() {
                   </Section>
                 </View>
               )}
+
+              {/* Identity teaser */}
+              <View style={{ marginBottom: 14 }}>
+                <Pressable onPress={() => router.push('/identity' as any)}>
+                  <Card variant="gradient" tint={data.identity.colorway.accent} padding={18}>
+                    <View style={styles.streakRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.streakLabel, { color: '#fff', opacity: 0.78 }]}>
+                          YOUR SKIN PERSONA
+                        </Text>
+                        <Text style={[styles.streakValue, { color: '#fff' }]}>
+                          {data.identity.persona}
+                        </Text>
+                        <Text style={[styles.streakSub, { color: '#fff', opacity: 0.85 }]}>
+                          Glow Score {data.identity.glowScore} · {data.identity.element}
+                        </Text>
+                      </View>
+                      <View style={[styles.openBtn, { backgroundColor: 'rgba(255,255,255,0.22)' }]}>
+                        <Ionicons name="finger-print" size={14} color="#fff" />
+                        <Text style={[styles.openBtnText, { color: '#fff' }]}>Open</Text>
+                      </View>
+                    </View>
+                  </Card>
+                </Pressable>
+              </View>
 
               {/* Streak summary card */}
               <View style={{ marginBottom: 14 }}>

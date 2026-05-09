@@ -27,3 +27,4 @@ export { StreakRing } from './StreakRing';
 export { PhotoTimeline } from './PhotoTimeline';
 export type { TimelineFrame } from './PhotoTimeline';
 export { XPBar } from './XPBar';
+export { SkinIdentityCard } from './SkinIdentityCard';
