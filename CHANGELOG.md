@@ -4,6 +4,93 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Daily Quests (Autonomous Overnight Pass 12)
+
+A complete one-day-at-a-time gamification surface with XP, levels, and a
+6-tier badge system. Distinct from the existing multi-day Challenge screen
+(30-Day Tallow Switch, etc.) — these are quick wins that refresh daily.
+
+### 🎯 `DailyChallengeEngine`
+
+`src/engine/DailyChallengeEngine.ts`. Pure-logic service for the entire
+quest system.
+
+**Catalog** — 30 curated challenges across 5 categories × 3 difficulties:
+- 💧 **Hydration** (6): 8 glasses, 2 morning glasses, herbal tea, water-rich foods, no alcohol, humidifier overnight
+- ☀️ **Protection** (6): SPF morning, SPF reapply, no-touch, clean phone, change pillowcase, sunglasses
+- 😴 **Lifestyle** (6): 8h sleep, no screens 1h, 5min breathwork, 20min walk, silk pillow, cold-water rinse
+- 🌙 **Routine** (6): double-cleanse, layer thin→thick, full PM, neck+chest, clean tools, face massage
+- 🥗 **Diet** (6): leafy greens, omega-3, no sugar, no dairy, vit-C food, zinc food
+
+**XP system**: easy 10 / medium 25 / hard 50.
+**Daily picker**: deterministic hash of today's date selects a primary,
+then a different-category bonus.
+**Persistence**: `gd_daily_challenge_state_v1` AsyncStorage key tracks
+`totalXP`, `completionsByDate`, `acknowledgedBadges`.
+**Levels**: square-root curve so leveling slows over time
+(L XP threshold = 100 × L^1.5).
+**Badges**: 6 tiers — First Glow (10 XP) → Initiate (50) → Devoted (200)
+→ Glow-Getter (500) → Iron Glow (1k) → Skin Sage (5k).
+
+API surface:
+- `runDailyChallengeAnalysis()` → full report (today's primary + bonus,
+  done flags, todayXP, level, xpInLevel, unlockedBadges, last14, pending
+  badge celebrations)
+- `completeChallenge(id)` → atomic mark-complete + persist
+- `undoCompletion(id)` → reverse with XP rollback
+- `acknowledgeBadges(ids)` → so unlock celebrations don't repeat
+
+### 🔋 `<XPBar>` component
+
+`src/components/ui/XPBar.tsx`. Reusable animated XP/level bar.
+- Reanimated worklet drives `width: ${fraction * 100}%` fill
+- "LEVEL N" pill + "X / Y XP" label above the bar
+- Gradient fill: gold → terracotta → primary
+- Subtle white-highlight gradient overlay on the top half (glossy feel)
+- Optional total-XP-lifetime caption
+
+### 🎯 `/daily-challenges` — new dedicated screen
+
+`app/daily-challenges/index.tsx`. Rich gamification surface:
+- GlassHero with today's earned XP + level / badge count
+- **XP/Level card** with `<XPBar>` showing progress to next level
+- **Today's challenge** hero card — pulsing colored halo when not done,
+  category-tinted emoji bubble, difficulty/XP/category badge row, big
+  "Mark complete · +X XP" Button. Pro-tip box with bulb icon when present.
+  Done state: green gradient card with checkmark badge + Undo link.
+- **Bonus challenge** — same component, different category for variety
+- **Last 14 days activity grid** — staggered Reanimated entrance per cell;
+  intensity tier (none / 1 / 2+) drives color
+- **Badge collection** — 3-column grid with locked/unlocked states. Locked
+  badges have a small lock icon overlay.
+- **Badge celebration overlay** — full-screen modal with animated emoji +
+  badge name + dismiss button. Triggers on first viewing of a newly
+  unlocked badge; haptic success feedback.
+
+Haptics on complete (success notification) and undo (medium impact).
+
+### 🔗 Home tab wiring
+
+Added a "Daily Quests" quick-card to the home-tab grid (gold-tinted,
+trophy icon) routing to `/daily-challenges`.
+
+### 📁 Files
+
+**New**:
+- `src/engine/DailyChallengeEngine.ts` (~270 lines)
+- `src/components/ui/XPBar.tsx` (~115 lines)
+- `app/daily-challenges/index.tsx` (~530 lines)
+
+**Modified**:
+- `src/components/ui/index.ts` — exports `XPBar`
+- `app/(tabs)/index.tsx` — adds Daily Quests quick-card
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Photo Timeline (Autonomous Overnight Pass 11)
 
 A share-ready visual transformation player that auto-advances through every

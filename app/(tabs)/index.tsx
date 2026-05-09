@@ -553,6 +553,11 @@ export default function Home() {
               <Ionicons name="flash-outline" size={22} color={Colors.primary} />
               <Text style={styles.quickLabel}>30-Day{'\n'}Challenge</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/daily-challenges')}>
+              <LinearGradient colors={['rgba(212,169,106,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="trophy-outline" size={22} color={Colors.gold} />
+              <Text style={[styles.quickLabel, { color: Colors.gold }]}>Daily{'\n'}Quests</Text>
+            </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/community')}>
               <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="people-outline" size={22} color={Colors.primary} />
