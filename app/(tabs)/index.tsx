@@ -16,7 +16,7 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
-import { GlassHero, Card, SkinStoryStrip } from '../../src/components/ui';
+import { GlassHero, Card, SkinStoryStrip, GlowPulse } from '../../src/components/ui';
 import { runSkinStories, SkinStory } from '../../src/engine/SkinStoryEngine';
 
 const WATER_KEY = 'gd_water';
@@ -289,6 +289,9 @@ export default function Home() {
         <View style={{ marginHorizontal: -20 }}>
           <SkinStoryStrip stories={stories} paddingHorizontal={20} />
         </View>
+
+        {/* Today's glow orb — composite real-time skin signal */}
+        <GlowPulse />
 
         {/* Active Challenge widget */}
         {activeChallenge && (

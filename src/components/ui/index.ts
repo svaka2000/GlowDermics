@@ -31,3 +31,4 @@ export { SkinIdentityCard } from './SkinIdentityCard';
 export { ScanCelebration } from './ScanCelebration';
 export { SkinStoryStrip } from './SkinStoryStrip';
 export { CameraGuide } from './CameraGuide';
+export { GlowPulse } from './GlowPulse';
