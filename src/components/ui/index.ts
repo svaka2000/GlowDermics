@@ -19,3 +19,6 @@ export { RegionalDeltaMap } from './RegionalDeltaMap';
 export { DeltaGrid } from './DeltaGrid';
 export { ScannerOverlay } from './ScannerOverlay';
 export { GlassHero } from './GlassHero';
+export { TierCard } from './TierCard';
+export type { TierFeature } from './TierCard';
+export { SocialProofStrip } from './SocialProofStrip';

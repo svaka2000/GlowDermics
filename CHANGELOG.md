@@ -4,6 +4,80 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Premium Paywall v2 (Autonomous Overnight Pass 6)
+
+### 💎 Multi-tier paywall
+
+The previous paywall offered a single $4.99/mo plan with a flat feature
+list. Replaced with a **3-tier comparison** matching the conversion
+patterns of leading subscription apps.
+
+**Tiers:**
+- **Free** — 3 scans/mo, 10 coach msgs/day, basic scorecard
+- **Premium** ($4.99/mo or $39.99/yr → $3.33/mo) — Unlimited scans + coach,
+  16-dim biomarker tracking, regional analysis, skin age, PDF reports,
+  photo timeline, priority AI. Tagged **MOST POPULAR** with shimmer.
+- **Ultra** ($9.99/mo or $79.99/yr → $6.66/mo) — Premium + 1:1 dermatologist
+  consult/mo, custom routine builder, family sharing (up to 4), early
+  access, dedicated coach DM, priority human support.
+
+### 🆕 Reusable design-system components
+
+- `TierCard` (`src/components/ui/TierCard.tsx`) — tier card with gradient
+  background, animated entrance (delay-staggered spring), selection halo
+  ring + scale, "Most Popular" eyebrow shimmer, feature checklist with
+  highlight support. Reanimated 4 worklets throughout.
+- `SocialProofStrip` (`src/components/ui/SocialProofStrip.tsx`) — pill
+  showing animated 5-star rating (each star pulses in sequence) +
+  user-count label ("Trusted by 24K+ skin journeys"). Auto-formats counts.
+
+### 🔄 Billing toggle
+
+Animated Monthly ↔ Annual switch (Reanimated `withSpring` slides the
+selector). Annual tier shows a green **SAVE 33%** tag and a strikethrough
+on the original monthly price for each tier.
+
+### 💬 Rotating testimonial
+
+Auto-cycling testimonial chip (3 quotes, 4.5s interval) with cross-fade
+between entries via Reanimated worklet.
+
+### 🎬 Hero polish
+
+- Diamond icon with terracotta gradient + colored shadow
+- Pulsing radial halo behind the icon (Reanimated infinite loop)
+- Scale + opacity entrance spring
+
+### 🎟️ Free trial CTA
+
+Primary button changes copy based on selected tier:
+- Free → "Stick with Free"
+- Paid → "Start 7-day free trial · then $X.XX/mo"
+Activating switches to a check-icon success state with springy confirmation.
+
+### 📁 Files
+
+**New**:
+- `src/components/ui/TierCard.tsx`
+- `src/components/ui/SocialProofStrip.tsx`
+
+**Modified**:
+- `src/components/ui/index.ts` — exports `TierCard` + `TierFeature` type + `SocialProofStrip`
+- `src/components/PremiumGate.tsx` — full rewrite with 3-tier picker, billing toggle, social proof, testimonial, free-trial CTA. Preserved `PremiumGate` and `PremiumBanner` API signatures so all 4 callsites (scan, coach, settings, coach-chat) work unchanged.
+
+### 📌 Note for backlog
+
+Real Stripe wiring per-tier and per-period is a Tier 2 task. For now, any
+paid tier flips `isPremium = true` via the existing `Auth.activatePremium()`
+plumbing. Documented inline.
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- All 4 PremiumGate callsites continue to work — no signature changes.
+
+---
+
 ## 2026-05-09 — Onboarding v2 Tour (Autonomous Overnight Pass 5)
 
 ### 🎬 Five-page swipe-paginated onboarding tour
