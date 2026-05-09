@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PhoneFrame } from '../src/components/PhoneFrame';
 import { useEffect } from 'react';
+import { ThemeProvider, useTheme } from '../src/state/theme';
 
 export default function RootLayout() {
   useEffect(() => {
@@ -23,11 +24,20 @@ export default function RootLayout() {
   }, []);
 
   return (
+    <ThemeProvider>
+      <RootContent />
+    </ThemeProvider>
+  );
+}
+
+function RootContent() {
+  const { scheme, colors } = useTheme();
+  return (
     <PhoneFrame>
-      <GestureHandlerRootView style={styles.root}>
+      <GestureHandlerRootView style={[styles.root, { backgroundColor: colors.bg }]}>
         <SafeAreaProvider>
-          <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+          <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+        <Stack screenOptions={{ headerShown: false, animation: 'fade', contentStyle: { backgroundColor: colors.bg } }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
           <Stack.Screen name="(tabs)" />
@@ -146,5 +156,5 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F5F0EA' },
+  root: { flex: 1 },
 });

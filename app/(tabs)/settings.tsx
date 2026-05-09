@@ -12,6 +12,7 @@ import { Storage } from '../../src/services/storage';
 import { Auth, AuthUser } from '../../src/services/auth';
 import { UserProfile } from '../../src/types';
 import { PremiumGate } from '../../src/components/PremiumGate';
+import { useTheme, ThemePreference } from '../../src/state/theme';
 import {
   requestNotificationPermission,
   scheduleRoutineReminder,
@@ -38,6 +39,8 @@ export default function Settings() {
   const [notifHour, setNotifHour] = useState(8);
   const [showPremiumGate, setShowPremiumGate] = useState(false);
   const [scanInfo, setScanInfo] = useState<{ used: number; limit: number } | null>(null);
+
+  const { preference, scheme, setPreference } = useTheme();
 
   useFocusEffect(useCallback(() => {
     (async () => {
@@ -253,6 +256,65 @@ export default function Settings() {
               <Row label="Concerns" value={profile?.primaryConcerns?.join(', ') || '—'} last />
             </View>
           )}
+        </View>
+
+        {/* Appearance */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Appearance</Text>
+          <View style={styles.card}>
+            <View style={[rowStyles.wrap, rowStyles.border]}>
+              <Ionicons
+                name={scheme === 'dark' ? 'moon' : 'sunny'}
+                size={16}
+                color={Colors.primary}
+                style={{ marginRight: 10 }}
+              />
+              <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>
+                Theme
+              </Text>
+              <Text style={appearanceStyles.activeLabel}>
+                {preference === 'system'
+                  ? `Auto · ${scheme === 'dark' ? 'Dark' : 'Light'}`
+                  : preference === 'dark'
+                  ? 'Dark'
+                  : 'Light'}
+              </Text>
+            </View>
+            <View style={appearanceStyles.toggleRow}>
+              {(['system', 'light', 'dark'] as ThemePreference[]).map(p => {
+                const active = preference === p;
+                return (
+                  <Pressable
+                    key={p}
+                    style={[appearanceStyles.toggleBtn, active && appearanceStyles.toggleBtnActive]}
+                    onPress={() => setPreference(p)}
+                  >
+                    <Ionicons
+                      name={
+                        p === 'system'
+                          ? 'phone-portrait-outline'
+                          : p === 'light'
+                          ? 'sunny-outline'
+                          : 'moon-outline'
+                      }
+                      size={14}
+                      color={active ? Colors.white : Colors.textSecondary}
+                    />
+                    <Text style={[appearanceStyles.toggleText, active && appearanceStyles.toggleTextActive]}>
+                      {p === 'system' ? 'Auto' : p === 'light' ? 'Light' : 'Dark'}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Text style={appearanceStyles.helperText}>
+              {preference === 'system'
+                ? 'Follows your device setting. Toggle anytime.'
+                : preference === 'dark'
+                ? 'Warm marble inverted — night-friendly skincare reading.'
+                : 'Warm marble — the original GlowDermics palette.'}
+            </Text>
+          </View>
         </View>
 
         {/* Notifications */}
@@ -563,6 +625,46 @@ const rowStyles = StyleSheet.create({
   border: { borderBottomWidth: 1, borderBottomColor: Colors.border },
   label: { fontSize: 14, color: Colors.textMuted, width: 100 },
   value: { fontSize: 14, color: Colors.textPrimary, fontWeight: '500', flex: 1, textAlign: 'right' },
+});
+
+const appearanceStyles = StyleSheet.create({
+  activeLabel: { fontSize: 13, fontWeight: '700', color: Colors.primary, letterSpacing: 0.2 },
+  toggleRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  toggleBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: 'rgba(196,98,45,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(196,98,45,0.18)',
+  },
+  toggleBtnActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.30,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  toggleText: { fontSize: 12, fontWeight: '800', color: Colors.textSecondary, letterSpacing: 0.2 },
+  toggleTextActive: { color: Colors.white },
+  helperText: {
+    fontSize: 11,
+    color: Colors.textMuted,
+    marginTop: 10,
+    fontWeight: '500',
+    lineHeight: 16,
+  },
 });
 
 const styles = StyleSheet.create({

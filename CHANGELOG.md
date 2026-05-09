@@ -4,6 +4,88 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Dark Mode Infrastructure (Autonomous Overnight Pass 13)
+
+First Tier 3 milestone. Pivoted from voice journaling (#10) which would have
+required adding `expo-av` to deps + microphone permission flow not verifiable
+in this session. Dark mode is purely UI/state work.
+
+### 🌙 ColorsDark palette
+
+`src/constants/colors.ts`. Added `ColorsDark` — a warm-marble inverse with
+the same key set as `Colors` (so `useColors()` can return either palette
+without callers branching). Strategy:
+
+- Backgrounds: `#0D0B09` (deep ink) / `#1A1612` (card) / `#241F19` (elevated)
+  / `#15110D` (sheet) — warm undertone preserved
+- Text: `#F5F0EA` primary (warm marble inverted), 65%/40% alpha levels
+- Brand: terracotta brightened (`#E08250` primary in dark)
+- Skin score colors: brightened for AA contrast on dark surfaces
+- Glass variants: dark-tinted instead of white-tinted
+- 15 semantic dimension tints: held identical (already vivid enough)
+- 5 tier badges: brightened
+- New exported type `Palette` enforces shape parity
+
+### 🌗 `ThemeProvider` + hooks
+
+`src/state/theme.tsx`. Context-based theme system with three preferences:
+`'system' | 'light' | 'dark'`. Stored in AsyncStorage as
+`gd_theme_preference_v1`.
+
+- Subscribes to `Appearance` changes so `'system'` mode tracks OS theme live
+- `useColors()` → returns the active `Palette`
+- `useTheme()` → returns `{ preference, scheme, colors, setPreference }`
+- Resolution: `'system'` → checks current `Appearance.getColorScheme()` and
+  any subsequent OS-level changes, defaulting to light
+
+### 🔌 Root layout wired
+
+`app/_layout.tsx`. Wrapped the entire app in `<ThemeProvider>`, with a
+`RootContent` inner component that consumes the theme. Status bar style
+flips between `'dark'` and `'light'` based on scheme. The `<Stack>`'s
+`screenOptions.contentStyle.backgroundColor` is bound to `colors.bg` so
+the root surface responds immediately to any preference change. Phone-frame
+test surface also responds.
+
+### 🎚️ Settings tab — Appearance section
+
+New "Appearance" section above Notifications:
+
+- "Theme" row showing current resolution ("Auto · Dark", "Dark", "Light")
+- 3-button pill toggle (Auto / Light / Dark) with sun/phone/moon icons,
+  active state has primary fill + glow shadow
+- Helper caption that adapts to selection ("Follows your device setting" /
+  "Warm marble inverted — night-friendly skincare reading" / "Warm marble —
+  the original palette")
+- Persisted via `setPreference` from `useTheme`
+
+### 📁 Files
+
+**New**:
+- `src/state/theme.tsx` (~85 lines)
+
+**Modified**:
+- `src/constants/colors.ts` — `ColorsDark` palette + `Palette` type
+- `app/_layout.tsx` — wraps app in `ThemeProvider`, root surface responds to scheme
+- `app/(tabs)/settings.tsx` — adds Appearance section + 3-state toggle
+
+### ⚠️ Scope note
+
+The infrastructure ships in this iteration. **Per-screen color migrations
+follow in subsequent iterations** — the 100+ existing screens still import
+the static `Colors` constant. They will need to be migrated to `useColors()`
+to actually flip surfaces, text, and cards in dark mode. The root surface,
+the splash status bar, and the Appearance section itself respond
+immediately, providing visible feedback when toggling.
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- AsyncStorage round-trip works by construction (read on mount, written on
+  each `setPreference`).
+
+---
+
 ## 2026-05-09 — Daily Quests (Autonomous Overnight Pass 12)
 
 A complete one-day-at-a-time gamification surface with XP, levels, and a
