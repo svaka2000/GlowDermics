@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ActivityIndicator,
   Alert, ScrollView,
@@ -11,7 +11,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { analyzeSkin } from '../../src/services/skinAnalysis';
@@ -22,6 +23,8 @@ import { ScannerOverlay } from '../../src/components/ui';
 type Mode = 'choose' | 'camera' | 'analyzing';
 
 export default function Scan() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [mode, setMode] = useState<Mode>('choose');
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
@@ -216,8 +219,8 @@ export default function Scan() {
                     {done
                       ? <Ionicons name="checkmark" size={12} color="#fff" />
                       : active
-                        ? <ActivityIndicator size="small" color={Colors.primary} />
-                        : <Ionicons name={s.icon as any} size={12} color={Colors.textMuted} />
+                        ? <ActivityIndicator size="small" color={colors.primary} />
+                        : <Ionicons name={s.icon as any} size={12} color={colors.textMuted} />
                     }
                   </View>
                   <Text style={[
@@ -242,7 +245,7 @@ export default function Scan() {
         <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="front">
           <SafeAreaView style={styles.cameraUi}>
             <Pressable style={styles.backBtn} onPress={() => setMode('choose')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.white} />
+              <Ionicons name="arrow-back" size={24} color={colors.white} />
             </Pressable>
             <View style={styles.cameraGuide}>
               <View style={styles.guideFrame} />
@@ -269,7 +272,7 @@ export default function Scan() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Scan</Text>
           <View style={{ width: 40 }} />
@@ -282,8 +285,8 @@ export default function Scan() {
               style={styles.heroGlow}
             />
             <View style={styles.heroIconWrap}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.heroIconGrad}>
-                <Ionicons name="scan" size={40} color={Colors.white} />
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.heroIconGrad}>
+                <Ionicons name="scan" size={40} color={colors.white} />
               </LinearGradient>
             </View>
             <Text style={styles.heroTitle}>AI Skin Analysis</Text>
@@ -301,7 +304,7 @@ export default function Scan() {
               { icon: 'person-circle-outline', tip: 'Face centered, looking straight' },
             ].map(({ icon, tip }) => (
               <View key={tip} style={styles.tipRow}>
-                <Ionicons name={icon as any} size={16} color={Colors.primary} />
+                <Ionicons name={icon as any} size={16} color={colors.primary} />
                 <Text style={styles.tipText}>{tip}</Text>
               </View>
             ))}
@@ -317,17 +320,17 @@ export default function Scan() {
           <View style={styles.btnGroup}>
             <Pressable style={styles.mainBtn} onPress={handleOpenCamera}>
               <LinearGradient
-                colors={[Colors.primaryLight, Colors.primary]}
+                colors={[colors.primaryLight, colors.primary]}
                 style={styles.mainBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="camera" size={22} color={Colors.white} />
+                <Ionicons name="camera" size={22} color={colors.white} />
                 <Text style={styles.mainBtnText}>Take a Selfie</Text>
               </LinearGradient>
             </Pressable>
 
             <Pressable style={styles.secondaryBtn} onPress={handlePickPhoto}>
-              <Ionicons name="images-outline" size={20} color={Colors.primary} />
+              <Ionicons name="images-outline" size={20} color={colors.primary} />
               <Text style={styles.secondaryBtnText}>Upload from Gallery</Text>
             </Pressable>
           </View>
@@ -341,78 +344,81 @@ export default function Scan() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
-  safe: { flex: 1 },
-  header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingVertical: 14,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
-  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  content: { paddingHorizontal: 24, paddingBottom: 40 },
-  heroSection: { alignItems: 'center', paddingVertical: 32, position: 'relative' },
-  heroGlow: {
-    position: 'absolute', top: 0, left: '10%', right: '10%',
-    height: 120, borderRadius: 60,
-  },
-  heroIconWrap: { borderRadius: 28, overflow: 'hidden', marginBottom: 20 },
-  heroIconGrad: { width: 88, height: 88, alignItems: 'center', justifyContent: 'center', borderRadius: 28 },
-  heroTitle: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary, marginBottom: 10 },
-  heroSub: { fontSize: 15, color: Colors.textSecondary, textAlign: 'center', lineHeight: 23, maxWidth: 300 },
-  tipsCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border, padding: 20,
-    marginBottom: 28, gap: 12,
-  },
-  tipsTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
-  tipRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  tipText: { fontSize: 14, color: Colors.textSecondary },
-  btnGroup: { gap: 12, marginBottom: 20 },
-  mainBtn: { borderRadius: 18, overflow: 'hidden' },
-  mainBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20 },
-  mainBtnText: { fontSize: 17, fontWeight: '700', color: Colors.white },
-  secondaryBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 10, paddingVertical: 18,
-    borderRadius: 18, borderWidth: 1.5, borderColor: Colors.borderStrong,
-    backgroundColor: 'rgba(196,98,45,0.05)',
-  },
-  secondaryBtnText: { fontSize: 16, fontWeight: '600', color: Colors.primary },
-  disclaimer: { fontSize: 11, color: Colors.textMuted, textAlign: 'center', lineHeight: 17 },
-  analyzingBottom: {
-    flex: 1, backgroundColor: '#0D0B09',
-    paddingHorizontal: 24, paddingTop: 20, paddingBottom: 16,
-  },
-  analyzingTitle: { fontSize: 19, fontWeight: '800', color: '#FFFFFF', marginBottom: 16 },
-  analyzingSteps: { gap: 14 },
-  analyzingStep: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  stepIconWrap: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  stepIconActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  stepIconDone: { backgroundColor: Colors.scoreExcellent, borderColor: Colors.scoreExcellent },
-  analyzingStepText: { fontSize: 13, color: 'rgba(255,255,255,0.35)', fontWeight: '500' },
-  stepTextActive: { color: Colors.primary, fontWeight: '600' },
-  stepTextDone: { color: 'rgba(255,255,255,0.6)' },
-  // camera
-  cameraUi: { flex: 1, justifyContent: 'space-between', padding: 24 },
-  cameraGuide: { alignItems: 'center' },
-  guideFrame: {
-    width: 240, height: 300, borderRadius: 120,
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.5)',
-    borderStyle: 'dashed', marginBottom: 16,
-  },
-  guideText: { fontSize: 16, fontWeight: '600', color: Colors.white, textAlign: 'center' },
-  guideHint: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 4 },
-  captureBtn: {
-    alignSelf: 'center', width: 76, height: 76, borderRadius: 38,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 3, borderColor: Colors.white,
-  },
-  captureInner: { width: 56, height: 56, borderRadius: 28, backgroundColor: Colors.white },
-});
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: c.bg },
+    safe: { flex: 1 },
+    header: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+      paddingHorizontal: 20, paddingVertical: 14,
+    },
+    headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+    backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+    content: { paddingHorizontal: 24, paddingBottom: 40 },
+    heroSection: { alignItems: 'center', paddingVertical: 32, position: 'relative' },
+    heroGlow: {
+      position: 'absolute', top: 0, left: '10%', right: '10%',
+      height: 120, borderRadius: 60,
+    },
+    heroIconWrap: { borderRadius: 28, overflow: 'hidden', marginBottom: 20 },
+    heroIconGrad: { width: 88, height: 88, alignItems: 'center', justifyContent: 'center', borderRadius: 28 },
+    heroTitle: { fontSize: 26, fontWeight: '800', color: c.textPrimary, marginBottom: 10 },
+    heroSub: { fontSize: 15, color: c.textSecondary, textAlign: 'center', lineHeight: 23, maxWidth: 300 },
+    tipsCard: {
+      backgroundColor: c.bgCard, borderRadius: 18,
+      borderWidth: 1, borderColor: c.border, padding: 20,
+      marginBottom: 28, gap: 12,
+    },
+    tipsTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
+    tipRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    tipText: { fontSize: 14, color: c.textSecondary },
+    btnGroup: { gap: 12, marginBottom: 20 },
+    mainBtn: { borderRadius: 18, overflow: 'hidden' },
+    mainBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20 },
+    mainBtnText: { fontSize: 17, fontWeight: '700', color: '#FFFFFF' },
+    secondaryBtn: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+      gap: 10, paddingVertical: 18,
+      borderRadius: 18, borderWidth: 1.5, borderColor: c.borderStrong,
+      backgroundColor: c.primary + '0D',
+    },
+    secondaryBtnText: { fontSize: 16, fontWeight: '600', color: c.primary },
+    disclaimer: { fontSize: 11, color: c.textMuted, textAlign: 'center', lineHeight: 17 },
+    // analyzing — always uses dark surfaces (overlay over photo) regardless of theme
+    analyzingBottom: {
+      flex: 1, backgroundColor: '#0D0B09',
+      paddingHorizontal: 24, paddingTop: 20, paddingBottom: 16,
+    },
+    analyzingTitle: { fontSize: 19, fontWeight: '800', color: '#FFFFFF', marginBottom: 16 },
+    analyzingSteps: { gap: 14 },
+    analyzingStep: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    stepIconWrap: {
+      width: 28, height: 28, borderRadius: 14,
+      backgroundColor: 'rgba(255,255,255,0.07)',
+      borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+      alignItems: 'center', justifyContent: 'center',
+    },
+    stepIconActive: { borderColor: c.primary, backgroundColor: c.primary + '26' },
+    stepIconDone: { backgroundColor: c.scoreExcellent, borderColor: c.scoreExcellent },
+    analyzingStepText: { fontSize: 13, color: 'rgba(255,255,255,0.35)', fontWeight: '500' },
+    stepTextActive: { color: c.primary, fontWeight: '600' },
+    stepTextDone: { color: 'rgba(255,255,255,0.6)' },
+    // camera — always over a live camera feed, theme-agnostic
+    cameraUi: { flex: 1, justifyContent: 'space-between', padding: 24 },
+    cameraGuide: { alignItems: 'center' },
+    guideFrame: {
+      width: 240, height: 300, borderRadius: 120,
+      borderWidth: 2, borderColor: 'rgba(255,255,255,0.5)',
+      borderStyle: 'dashed', marginBottom: 16,
+    },
+    guideText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF', textAlign: 'center' },
+    guideHint: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 4 },
+    captureBtn: {
+      alignSelf: 'center', width: 76, height: 76, borderRadius: 38,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      alignItems: 'center', justifyContent: 'center',
+      borderWidth: 3, borderColor: '#FFFFFF',
+    },
+    captureInner: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#FFFFFF' },
+  });
+}
