@@ -18,3 +18,4 @@ export { PhotoCompareSlider } from './PhotoCompareSlider';
 export { RegionalDeltaMap } from './RegionalDeltaMap';
 export { DeltaGrid } from './DeltaGrid';
 export { ScannerOverlay } from './ScannerOverlay';
+export { GlassHero } from './GlassHero';

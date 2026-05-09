@@ -15,6 +15,7 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
+import { GlassHero, Card } from '../../src/components/ui';
 
 const WATER_KEY = 'gd_water';
 const WATER_GOAL = 8;
@@ -211,57 +212,70 @@ export default function Home() {
         contentContainerStyle={styles.scroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
       >
-        {/* Header */}
-        <Animated.View style={{
-          opacity: headerAnim,
-          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
-        }}>
+        {/* Glass hero: greeting + stats. Negative horizontal margin escapes the
+            ScrollView's padding so the gradient extends edge-to-edge. */}
+        <GlassHero height={244} tint={Colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
-            <View style={styles.header}>
-              <View>
-                <Text style={styles.greeting}>{getGreeting()},</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Text style={styles.name}>{authUser?.name || profile?.name || 'Friend'}</Text>
-                  {authUser?.isPremium && (
-                    <View style={styles.premiumBadge}>
-                      <Text style={styles.premiumBadgeText}>PRO</Text>
-                    </View>
-                  )}
+            <Animated.View style={{
+              opacity: headerAnim,
+              transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
+            }}>
+              <View style={styles.heroHeader}>
+                <View>
+                  <Text style={styles.heroGreeting}>{getGreeting()},</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text style={styles.heroName}>{authUser?.name || profile?.name || 'Friend'}</Text>
+                    {authUser?.isPremium && (
+                      <View style={styles.heroPremiumBadge}>
+                        <Text style={styles.heroPremiumBadgeText}>PRO</Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
+                <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
+                  <View style={styles.heroProfileAvatar}>
+                    <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
+                  </View>
+                </Pressable>
               </View>
-              <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.profileAvatar}>
-                  <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
-                </LinearGradient>
+            </Animated.View>
+          </SafeAreaView>
+
+          <Animated.View style={{
+            opacity: statsAnim,
+            transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+            marginTop: 'auto',
+            paddingHorizontal: 20,
+            paddingBottom: 20,
+          }}>
+            <View style={styles.statsRow}>
+              <Pressable style={styles.heroStatPress} onPress={() => router.push('/habits')}>
+                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
+                  <Text style={styles.heroStatNum}>{streak}</Text>
+                  <Text style={styles.heroStatLabel}>🔥 Streak</Text>
+                </Card>
+              </Pressable>
+              <Pressable style={styles.heroStatPress} onPress={() => latest ? router.push(`/results/${latest.id}`) : router.push('/scan')}>
+                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
+                  <Text style={styles.heroStatNum}>{latest ? latest.scores.overall : '—'}</Text>
+                  <Text style={styles.heroStatLabel}>Score</Text>
+                </Card>
+              </Pressable>
+              <Pressable style={styles.heroStatPress} onPress={() => router.push('/habits')}>
+                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
+                  <Text style={styles.heroStatNum}>{habitScore > 0 ? `${habitScore}%` : '—'}</Text>
+                  <Text style={styles.heroStatLabel}>Habits</Text>
+                </Card>
+              </Pressable>
+              <Pressable style={styles.heroStatPress} onPress={() => router.push('/journal')}>
+                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
+                  <Text style={styles.heroStatNum}>{profile?.primaryConcerns?.length || 0}</Text>
+                  <Text style={styles.heroStatLabel}>Concerns</Text>
+                </Card>
               </Pressable>
             </View>
-          </SafeAreaView>
-        </Animated.View>
-
-        {/* Streak + stats row */}
-        <Animated.View style={{
-          opacity: statsAnim,
-          transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
-        }}>
-        <View style={styles.statsRow}>
-          <Pressable style={styles.statCard} onPress={() => router.push('/habits')}>
-            <Text style={styles.statNum}>{streak}</Text>
-            <Text style={styles.statLabel}>🔥 Streak</Text>
-          </Pressable>
-          <Pressable style={styles.statCard} onPress={() => latest ? router.push(`/results/${latest.id}`) : router.push('/scan')}>
-            <Text style={styles.statNum}>{latest ? latest.scores.overall : '—'}</Text>
-            <Text style={styles.statLabel}>Score</Text>
-          </Pressable>
-          <Pressable style={styles.statCard} onPress={() => router.push('/habits')}>
-            <Text style={styles.statNum}>{habitScore > 0 ? `${habitScore}%` : '—'}</Text>
-            <Text style={styles.statLabel}>Habits</Text>
-          </Pressable>
-          <Pressable style={styles.statCard} onPress={() => router.push('/journal')}>
-            <Text style={styles.statNum}>{profile?.primaryConcerns?.length || 0}</Text>
-            <Text style={styles.statLabel}>Concerns</Text>
-          </Pressable>
-        </View>
-        </Animated.View>
+          </Animated.View>
+        </GlassHero>
 
         {/* Active Challenge widget */}
         {activeChallenge && (
@@ -729,26 +743,41 @@ const styles = StyleSheet.create({
   loadWrap: { flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 20 },
 
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, paddingBottom: 20 },
-  greeting: { fontSize: 13, color: Colors.textMuted },
-  name: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, marginTop: 2 },
-  premiumBadge: {
-    backgroundColor: Colors.primary, borderRadius: 6,
-    paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'center',
+  // Glass hero block — extends edge-to-edge under the SafeArea.
+  heroWrap: { marginHorizontal: -20, marginBottom: 18 },
+  heroHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingTop: 12, paddingBottom: 4, paddingHorizontal: 20,
   },
-  premiumBadgeText: { fontSize: 8, fontWeight: '900', color: '#fff', letterSpacing: 0.8 },
+  heroGreeting: { fontSize: 13, color: 'rgba(255,255,255,0.78)', fontWeight: '600', letterSpacing: 0.2 },
+  heroName: {
+    fontSize: 26, fontWeight: '900', color: Colors.white, marginTop: 2, letterSpacing: -0.4,
+    textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  heroPremiumBadge: {
+    backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+  },
+  heroPremiumBadgeText: { fontSize: 8, fontWeight: '900', color: '#fff', letterSpacing: 0.8 },
+  heroProfileAvatar: {
+    width: 44, height: 44, borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.55)',
+    alignItems: 'center', justifyContent: 'center',
+  },
   profileBtn: {},
-  profileAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
   profileAvatarText: { fontSize: 18, fontWeight: '800', color: Colors.white },
 
-  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 18 },
-  statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 14, alignItems: 'center', gap: 4,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 1,
+  heroStatPress: { flex: 1 },
+  heroStatCard: { alignItems: 'center', gap: 4 },
+  heroStatNum: {
+    fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5,
+    textShadowColor: 'rgba(0,0,0,0.20)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3,
   },
-  statNum: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  heroStatLabel: { fontSize: 10, color: 'rgba(255,255,255,0.86)', fontWeight: '700', textAlign: 'center', letterSpacing: 0.3 },
+
+  statsRow: { flexDirection: 'row', gap: 10 },
 
   scanCard: {
     borderRadius: 22, overflow: 'hidden', marginBottom: 24,

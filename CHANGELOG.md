@@ -4,6 +4,83 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Glassmorphism + GlassHero (Autonomous Overnight Pass 4)
+
+### 🪟 GlassHero — `src/components/ui/GlassHero.tsx`
+
+A reusable hero block that anchors the top of a screen with a rich terracotta
+gradient backdrop, three drifting glow blobs (Reanimated worklets, all
+UI-thread), a diagonal accent gradient, and rounded bottom corners that
+visually "drip" into the page below. Children render on top of the backdrop.
+
+Props: `tint`, `height`, `withBlobs`, `withNoise`, `bottomRadius`. Composes
+with `Card variant="glass" blur` for the full frosted-glass-on-gradient
+effect.
+
+### 🃏 Card now supports BlurView
+
+Added `blur?: boolean | number` and `blurTint?: 'light' | 'dark' | 'default'`
+to the `Card` primitive. When set, `<BlurView>` from `expo-blur` is layered
+behind the content (iOS native, Android via `experimentalBlurMethod`, web via
+CSS backdrop-filter). `variant="glass"` automatically becomes transparent so
+the blur shows through.
+
+### 🏠 Home tab — `app/(tabs)/index.tsx`
+
+Hero scope: greeting line + name + (PRO badge) + profile avatar + 4 stat
+cards (Streak / Score / Habits / Concerns).
+
+- Wrapped in `<GlassHero height={244}>` extending edge-to-edge under
+  `SafeAreaView` (negative `marginHorizontal: -20` to escape ScrollView padding).
+- 4 stat cards converted to `<Card variant="glass" blur={28}>` so they float
+  as frosted tiles on the gradient.
+- Text colors switched to white-on-terracotta with subtle text-shadows.
+- Profile avatar moved to translucent glass disc instead of solid gradient.
+- Old styles (`header`, `greeting`, `name`, `premiumBadge`, `statCard`,
+  `statNum`, `statLabel`) renamed to `hero*` variants and updated for white
+  legibility.
+
+### 📈 Progress tab — `app/(tabs)/progress.tsx`
+
+Hero scope: "Progress" title + scan count subline + Overall Score badge.
+
+- Wrapped in `<GlassHero height={170}>`.
+- Title typography upgraded to `30/900`.
+- Score badge converted from rgba pill to translucent glass-on-gradient pill
+  with white text + 1.4 letter-spacing label.
+- Empty state (no scans) gets its own `<GlassHero height={140}>` for visual
+  consistency.
+
+### 🌱 Habits — `app/habits/index.tsx`
+
+Hero scope: back button + "Daily Habits" title + subtitle.
+
+- Wrapped in `<GlassHero height={130}>`.
+- Back button on glass disc instead of bgCard pill.
+- White title + softened subtitle with text-shadow.
+- Score card and week-bars card preserved as-is — they already have their own
+  visual identity and would have required a deeper rewrite.
+
+### 📁 Files
+
+**New**:
+- `src/components/ui/GlassHero.tsx` (~190 lines, Reanimated 4 worklets)
+
+**Modified**:
+- `src/components/ui/Card.tsx` — added `blur` + `blurTint` props, BlurView layer
+- `src/components/ui/index.ts` — export `GlassHero`
+- `app/(tabs)/index.tsx` — wrapped hero in GlassHero, glass stat cards, new white-on-terracotta hero typography
+- `app/(tabs)/progress.tsx` — wrapped header in GlassHero (both empty + populated states)
+- `app/habits/index.tsx` — wrapped header in GlassHero with translucent glass back button
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- All glass effects degrade gracefully on Android (experimentalBlurMethod) and
+  web (CSS backdrop-filter / fallback solid translucent fill).
+
+---
+
 ## 2026-05-09 — Reanimated 4 Migration + Scanner Polish (Autonomous Overnight Pass 3)
 
 ### 🔥 Locked-on UI thread

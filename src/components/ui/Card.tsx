@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, ViewStyle, StyleProp, StyleSheet, Pressable, GestureResponderEvent } from 'react-native';
+import { View, ViewStyle, StyleProp, StyleSheet, Pressable, GestureResponderEvent, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Colors } from '../../constants/colors';
 import { Radii, Shadows, Spacing } from '../../constants/theme';
 
 type CardVariant = 'flat' | 'elevated' | 'glass' | 'outline' | 'gradient' | 'glow';
+type BlurTint = 'light' | 'dark' | 'default';
 
 interface CardProps {
   variant?: CardVariant;
@@ -17,6 +19,15 @@ interface CardProps {
   tint?: string;
   /** When true, the card scales slightly on press. */
   pressable?: boolean;
+  /**
+   * Apply native frosted-glass blur behind the card. iOS gets full BlurView,
+   * Android falls back to a translucent surface, web uses CSS backdrop-filter.
+   * Pass a number 0–100 for intensity, or `true` for the default (40).
+   * Best paired with `variant="glass"`.
+   */
+  blur?: boolean | number;
+  /** Blur tint when `blur` is set. Default: 'light'. */
+  blurTint?: BlurTint;
 }
 
 /**
@@ -39,6 +50,8 @@ export function Card({
   onPress,
   tint = Colors.primary,
   pressable = !!onPress,
+  blur = false,
+  blurTint = 'light',
 }: CardProps) {
   const baseStyle: ViewStyle = {
     borderRadius: radius,
@@ -57,10 +70,12 @@ export function Card({
       variantStyle = { backgroundColor: Colors.bgCard, ...Shadows.card };
       break;
     case 'glass':
+      // When `blur` is enabled, BlurView handles the translucent surface.
+      // Otherwise fall back to a solid translucent fill.
       variantStyle = {
-        backgroundColor: Colors.glassDeep,
+        backgroundColor: blur ? 'transparent' : Colors.glassDeep,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.6)',
+        borderColor: 'rgba(255,255,255,0.55)',
         ...Shadows.subtle,
       };
       break;
@@ -98,6 +113,20 @@ export function Card({
       break;
   }
 
+  // Compute blur layer. On iOS BlurView is native and crisp; on Android it works
+  // with a fallback experimentalBlurMethod, and on web it relies on backdrop-filter.
+  const blurIntensity = typeof blur === 'number' ? blur : blur ? 40 : 0;
+  const blurLayer =
+    blurIntensity > 0 ? (
+      <BlurView
+        intensity={blurIntensity}
+        tint={blurTint}
+        // experimentalBlurMethod is the most reliable on Android; iOS ignores.
+        experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
+        style={[StyleSheet.absoluteFillObject, { borderRadius: radius }]}
+      />
+    ) : null;
+
   const Wrapper: any = pressable ? Pressable : View;
   const wrapperProps = pressable
     ? {
@@ -113,6 +142,7 @@ export function Card({
 
   return (
     <Wrapper {...wrapperProps}>
+      {blurLayer}
       {extraLayer}
       <View style={{ position: 'relative' }}>{children}</View>
     </Wrapper>

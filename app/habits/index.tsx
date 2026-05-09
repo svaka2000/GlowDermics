@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../src/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GlassHero } from '../../src/components/ui';
 
 const HABITS_KEY = 'gd_daily_habits';
 
@@ -175,23 +176,24 @@ export default function DailyHabits() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <Animated.View style={[styles.header, {
-          opacity: headerAnim,
-          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
-        }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-          </Pressable>
-          <View>
-            <Text style={styles.headerTitle}>Daily Habits</Text>
-            <Text style={styles.headerSub}>Skin health beyond products</Text>
-          </View>
-          <View style={{ width: 36 }} />
-        </Animated.View>
-      </SafeAreaView>
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+          <SafeAreaView edges={['top']}>
+            <Animated.View style={[styles.heroHeader, {
+              opacity: headerAnim,
+              transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }],
+            }]}>
+              <Pressable style={styles.heroBackBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+              </Pressable>
+              <View>
+                <Text style={styles.heroTitle}>Daily Habits</Text>
+                <Text style={styles.heroSub}>Skin health beyond products</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </Animated.View>
+          </SafeAreaView>
+        </GlassHero>
 
         {/* Today's score */}
         <Animated.View style={[styles.scoreCard, {
@@ -302,10 +304,23 @@ export default function DailyHabits() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+
+  heroWrap: { marginHorizontal: -16, marginBottom: 16 },
+  heroHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14,
+  },
+  heroBackBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  heroTitle: {
+    fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.4,
+    textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', textAlign: 'center', marginTop: 2, fontWeight: '600' },
   scroll: { paddingHorizontal: 16 },
 
   scoreCard: {

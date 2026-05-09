@@ -11,6 +11,7 @@ import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreChart } from '../../src/components/ScoreChart';
 import { runSkinProgressEngine, EngineReport } from '../../src/engine/SkinProgressEngine';
 import { runRoutineOptimizer, OptimizedRoutine } from '../../src/engine/RoutineOptimizer';
+import { GlassHero } from '../../src/components/ui';
 
 type Metric = 'overall' | 'hydration' | 'texture' | 'clarity' | 'evenness' | 'firmness' | 'pores';
 
@@ -108,11 +109,13 @@ export default function Progress() {
   if (!history.length) {
     return (
       <View style={styles.root}>
-        <SafeAreaView>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Progress</Text>
-          </View>
-        </SafeAreaView>
+        <GlassHero height={140} tint={Colors.primary}>
+          <SafeAreaView edges={['top']}>
+            <View style={styles.heroHeader}>
+              <Text style={styles.heroTitle}>Progress</Text>
+            </View>
+          </SafeAreaView>
+        </GlassHero>
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyIcon}>📈</Text>
           <Text style={styles.emptyTitle}>Nothing to track yet</Text>
@@ -127,27 +130,28 @@ export default function Progress() {
 
   return (
     <View style={styles.root}>
-      <Animated.View style={{
-        opacity: headerAnim,
-        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
-      }}>
-        <SafeAreaView edges={['top']}>
-          <View style={styles.header}>
-            <View>
-              <Text style={styles.headerTitle}>Progress</Text>
-              <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {(() => { const d = history.length >= 2 ? Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000) : -1; return d > 0 ? `${d} days` : d === 0 ? 'same day' : 'just started'; })()}</Text>
-            </View>
-            {latest && (
-              <View style={styles.headerScore}>
-                <Text style={styles.headerScoreNum}>{latest.overallScore}</Text>
-                <Text style={styles.headerScoreLabel}>Overall</Text>
-              </View>
-            )}
-          </View>
-        </SafeAreaView>
-      </Animated.View>
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <GlassHero height={170} tint={Colors.primary}>
+          <SafeAreaView edges={['top']}>
+            <Animated.View style={{
+              opacity: headerAnim,
+              transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+            }}>
+              <View style={styles.heroHeader}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.heroTitle}>Progress</Text>
+                  <Text style={styles.heroSub}>{history.length} scan{history.length !== 1 ? 's' : ''} · {(() => { const d = history.length >= 2 ? Math.round((new Date(latest.date).getTime() - new Date(oldest.date).getTime()) / 86400000) : -1; return d > 0 ? `${d} days` : d === 0 ? 'same day' : 'just started'; })()}</Text>
+                </View>
+                {latest && (
+                  <View style={styles.heroScoreBadge}>
+                    <Text style={styles.heroScoreNum}>{latest.overallScore}</Text>
+                    <Text style={styles.heroScoreLabel}>OVERALL</Text>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+          </SafeAreaView>
+        </GlassHero>
 
         {/* XP / Level card */}
         {(() => {
@@ -709,12 +713,23 @@ export default function Progress() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
-  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
-  headerSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
-  headerScore: { alignItems: 'center', backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
-  headerScoreNum: { fontSize: 24, fontWeight: '900', color: Colors.primary },
-  headerScoreLabel: { fontSize: 9, color: Colors.primary, fontWeight: '700', letterSpacing: 1 },
+  heroHeader: {
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 12,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  heroTitle: {
+    fontSize: 30, fontWeight: '900', color: Colors.white, letterSpacing: -0.5,
+    textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.78)', marginTop: 4, fontWeight: '600' },
+  heroScoreBadge: {
+    alignItems: 'center', borderRadius: 18,
+    paddingHorizontal: 18, paddingVertical: 10,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+  },
+  heroScoreNum: { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  heroScoreLabel: { fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: '900', letterSpacing: 1.4 },
   scroll: { paddingBottom: 40 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
