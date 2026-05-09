@@ -29,3 +29,4 @@ export type { TimelineFrame } from './PhotoTimeline';
 export { XPBar } from './XPBar';
 export { SkinIdentityCard } from './SkinIdentityCard';
 export { ScanCelebration } from './ScanCelebration';
+export { SkinStoryStrip } from './SkinStoryStrip';

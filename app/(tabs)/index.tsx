@@ -16,7 +16,8 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
-import { GlassHero, Card } from '../../src/components/ui';
+import { GlassHero, Card, SkinStoryStrip } from '../../src/components/ui';
+import { runSkinStories, SkinStory } from '../../src/engine/SkinStoryEngine';
 
 const WATER_KEY = 'gd_water';
 const WATER_GOAL = 8;
@@ -82,6 +83,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeChallenge, setActiveChallenge] = useState<{ title: string; emoji: string; daysComplete: number; duration: number; todayDone: boolean } | null>(null);
+  const [stories, setStories] = useState<SkinStory[]>([]);
 
   // Entrance animations
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -182,6 +184,9 @@ export default function Home() {
     } catch {}
     setLoading(false);
     runEntranceAnims();
+
+    // Lazy-load stories — non-blocking; updates list when ready.
+    runSkinStories().then(setStories).catch(() => setStories([]));
   };
 
   const adjustWater = async (delta: number) => {
@@ -279,6 +284,11 @@ export default function Home() {
             </View>
           </Animated.View>
         </GlassHero>
+
+        {/* Daily skin stories — personalized 1-card insights */}
+        <View style={{ marginHorizontal: -20 }}>
+          <SkinStoryStrip stories={stories} paddingHorizontal={20} />
+        </View>
 
         {/* Active Challenge widget */}
         {activeChallenge && (
