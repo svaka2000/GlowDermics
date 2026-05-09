@@ -4,6 +4,69 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — UV × Skin Correlation (Autonomous Overnight Pass 10)
+
+Mirrors the iter-8 sleep correlation pattern for sun exposure. Pulls the
+existing UV log + scan history, computes an SPF-adjusted UV damage score
+per day, runs Pearson correlation against the next-48h skin score, and
+visualizes everything in the same animated `<ScatterPlot>` shipped in iter 8.
+
+### ☀️ `UVSkinEngine`
+
+`src/engine/UVSkinEngine.ts`. Returns a `UVSkinReport`:
+
+- `points[]` — paired (UV log, next-48h scan) entries
+- `correlationDamage` — Pearson r between **effective** UV damage (exposure
+  × SPF protection factor: 100% if no SPF, 40% if SPF without reapply, 15%
+  if SPF reapplied) and skin score
+- `correlationExposure` — Pearson r between raw exposure minutes and skin score
+- `verdict` — plain-English summary that flips its sign expectation:
+  negative correlation = **good** (more UV → lower score, expected),
+  positive correlation = "either tolerated or other factors mask it"
+- `toleranceCeiling` — highest 30-min exposure bucket where avg skin score
+  still exceeds (avg - 3 pts)
+- `unprotectedDays` — count of unprotected matched days, surfaced in the
+  verdict when ≥ half the sample is unprotected
+- `withSpfAvgDamage` / `withoutSpfAvgDamage` — comparison metrics
+- `avgDamage`, `avgSkinScore`, `sampleSize`, `hasEnoughData` (≥8 pairs)
+
+The `uvDamageScore()` helper is exported separately for reuse in the UI
+(e.g., showing the user their estimated effective damage as they pick SPF
+levels).
+
+### 🌞 UV-log screen upgrade
+
+`app/uv-log/index.tsx`. The previous "high-protection vs no-protection
+score average" card replaced with the proper correlation card:
+
+- Pearson r badge — `success` if r ≤ -0.5 (good — protection works),
+  `warning` if r ≤ -0.25, `danger` if r ≥ 0.15 (something's off),
+  `neutral` if no clear signal
+- Full `<ScatterPlot>` with effective-UV-damage on x-axis, skin score on y
+- Auto-scaled x-range based on user's max recorded damage
+- Stats row: SAMPLE / UNPROTECTED days (red if > 0) / AVG SCORE / TOLERATES
+  ceiling (green when present)
+- Fallback "need N more matched scans" message if < 8 pairs
+- Verdict box with bulb icon
+- Header reskinned to `<GlassHero>` matching the design-system pass
+
+Removed dead high/low correlation computation + ~7 unused styles.
+
+### 📁 Files
+
+**New**:
+- `src/engine/UVSkinEngine.ts` (~165 lines)
+
+**Modified**:
+- `app/uv-log/index.tsx` — wired UVSkinEngine + ScatterPlot, GlassHero
+  header, removed dead correlation code + styles
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Streak Gamification (Autonomous Overnight Pass 9)
 
 A dedicated streak gamification surface with an animated SVG ring,

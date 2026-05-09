@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
+  Dimensions,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +10,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
+import { GlassHero, Card, Badge, ScatterPlot } from '../../src/components/ui';
+import { runUVSkinAnalysis, UVSkinReport } from '../../src/engine/UVSkinEngine';
 
 const LOG_KEY = 'gd_uv_log';
 
@@ -74,6 +77,7 @@ export default function UVLog() {
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
   const [scanHistory, setScanHistory] = useState<{ date: string; overallScore: number }[]>([]);
+  const [report, setReport] = useState<UVSkinReport | null>(null);
 
   const headerAnim = useRef(new Animated.Value(0)).current;
   const contentAnim = useRef(new Animated.Value(0)).current;
@@ -105,6 +109,10 @@ export default function UVLog() {
       setSelectedActivities(todayEntry.activities);
       setSaved(true);
     }
+
+    // Run the correlation engine in the background.
+    const r = await runUVSkinAnalysis();
+    setReport(r);
   };
 
   const saveEntry = async () => {
@@ -153,52 +161,33 @@ export default function UVLog() {
     ? Math.round(recentWithData.reduce((s, e) => s + e.exposureMin, 0) / recentWithData.length)
     : 0;
 
-  // High SPF scan correlation
-  const highProtectionScanAvg = (() => {
-    const goodDates = new Set(log.filter(e => e.spf && e.spf >= 30 && e.reapplied).map(e => e.date));
-    const relevant = scanHistory.filter(s => {
-      const d = new Date(s.date);
-      const prev = new Date(d);
-      prev.setDate(d.getDate() - 1);
-      return goodDates.has(prev.toDateString());
-    });
-    return relevant.length >= 3 ? Math.round(relevant.reduce((s, e) => s + e.overallScore, 0) / relevant.length) : null;
-  })();
-
-  const noProtectionScanAvg = (() => {
-    const badDates = new Set(log.filter(e => e.spf === null && e.exposureMin >= 30).map(e => e.date));
-    const relevant = scanHistory.filter(s => {
-      const d = new Date(s.date);
-      const prev = new Date(d);
-      prev.setDate(d.getDate() - 1);
-      return badDates.has(prev.toDateString());
-    });
-    return relevant.length >= 3 ? Math.round(relevant.reduce((s, e) => s + e.overallScore, 0) / relevant.length) : null;
-  })();
-
   const riskInfo = selectedExposure !== null && selectedSPF !== undefined
     ? getUVRisk(selectedExposure, selectedSPF, reapplied)
     : null;
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']}>
-        <Animated.View style={[styles.header, {
-          opacity: headerAnim,
-          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
-        }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-          </Pressable>
-          <View>
-            <Text style={styles.headerTitle}>UV & Sun Log</Text>
-            <Text style={styles.headerSub}>Track sun exposure and SPF habits</Text>
-          </View>
-          <View style={{ width: 36 }} />
-        </Animated.View>
-      </SafeAreaView>
-
       <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
+        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+          <SafeAreaView edges={['top']}>
+            <Animated.View style={[styles.heroHeader, {
+              opacity: headerAnim,
+              transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
+            }]}>
+              <Pressable
+                style={styles.heroBackBtn}
+                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
+              >
+                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+              </Pressable>
+              <View>
+                <Text style={styles.heroTitle}>UV & Sun Log</Text>
+                <Text style={styles.heroSub}>Track sun exposure and SPF habits</Text>
+              </View>
+              <View style={{ width: 36 }} />
+            </Animated.View>
+          </SafeAreaView>
+        </GlassHero>
 
         {/* Today's log */}
         <View style={styles.card}>
@@ -357,21 +346,93 @@ export default function UVLog() {
           </View>
         )}
 
-        {/* SPF-Skin correlation */}
-        {highProtectionScanAvg !== null && noProtectionScanAvg !== null && (
-          <View style={styles.correlationCard}>
-            <LinearGradient colors={['rgba(74,222,128,0.08)', 'rgba(239,68,68,0.06)']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.correlationTitle}>SPF → Skin Score Impact</Text>
-            <View style={styles.correlationRow}>
-              <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: '#4ADE80' }]}>{highProtectionScanAvg}</Text>
-                <Text style={styles.correlationLabel}>After SPF 30+ days</Text>
+        {/* UV × skin correlation — Pearson with scatter plot */}
+        {report && (
+          <View style={styles.correlationCardV2}>
+            <View style={styles.correlationHeaderRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.correlationLabelTop}>UV × SKIN CORRELATION</Text>
+                <Text style={styles.correlationTitle}>Is your sun exposure showing up?</Text>
               </View>
-              <Ionicons name="arrow-forward" size={20} color={Colors.textMuted} />
-              <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: Colors.scorePoor }]}>{noProtectionScanAvg}</Text>
-                <Text style={styles.correlationLabel}>After unprotected days</Text>
+              {report.hasEnoughData && (
+                <Badge
+                  label={`r = ${report.correlationDamage.toFixed(2)}`}
+                  tone={
+                    report.correlationDamage <= -0.5
+                      ? 'success'
+                      : report.correlationDamage <= -0.25
+                      ? 'warning'
+                      : Math.abs(report.correlationDamage) < 0.15
+                      ? 'neutral'
+                      : 'danger'
+                  }
+                  size="sm"
+                />
+              )}
+            </View>
+
+            {report.hasEnoughData && report.points.length > 0 ? (
+              <View style={{ alignItems: 'center', marginTop: 14 }}>
+                <ScatterPlot
+                  data={report.points.map(p => ({ x: p.uvDamage, y: p.skinScore }))}
+                  width={Math.min(Dimensions.get('window').width - 64, 360)}
+                  height={220}
+                  xLabel="Effective UV damage (min, SPF-adjusted)"
+                  yLabel="Skin score"
+                  xRange={[0, Math.max(60, Math.ceil(Math.max(...report.points.map(p => p.uvDamage)) / 30) * 30)]}
+                  yRange={[40, 100]}
+                  showTrendLine
+                  pointColor={Colors.primary}
+                  trendColor={Colors.gold}
+                />
               </View>
+            ) : (
+              <View style={styles.notEnoughBox}>
+                <Ionicons name="hourglass-outline" size={18} color={Colors.textMuted} />
+                <Text style={styles.notEnoughText}>
+                  Need {Math.max(0, 8 - report.sampleSize)} more matched scans to compute a reliable trend.
+                  Each UV log pairs with the next scan within 48h.
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.correlationStatsRow}>
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>SAMPLE</Text>
+                <Text style={styles.correlationStatNum}>{report.sampleSize}</Text>
+              </View>
+              <View style={styles.correlationStatDiv} />
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>UNPROTECTED</Text>
+                <Text style={[styles.correlationStatNum, { color: report.unprotectedDays > 0 ? Colors.scorePoor : Colors.scoreExcellent }]}>
+                  {report.unprotectedDays}
+                </Text>
+              </View>
+              <View style={styles.correlationStatDiv} />
+              <View style={styles.correlationStat}>
+                <Text style={styles.correlationStatLabel}>AVG SCORE</Text>
+                <Text style={styles.correlationStatNum}>{Math.round(report.avgSkinScore)}</Text>
+              </View>
+              {report.toleranceCeiling && (
+                <>
+                  <View style={styles.correlationStatDiv} />
+                  <View style={styles.correlationStat}>
+                    <Text style={styles.correlationStatLabel}>TOLERATES</Text>
+                    <Text style={[styles.correlationStatNum, { color: Colors.scoreExcellent }]}>
+                      {report.toleranceCeiling}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View style={styles.verdictBox}>
+              <Ionicons name="bulb" size={14} color={
+                report.correlationDamage <= -0.5
+                  ? Colors.scoreExcellent
+                  : report.hasEnoughData ? Colors.gold : Colors.textMuted
+              } />
+              <Text style={styles.verdictText}>{report.verdict}</Text>
             </View>
           </View>
         )}
@@ -401,18 +462,63 @@ export default function UVLog() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg },
-  header: {
+
+  heroWrap: { marginHorizontal: -16, marginBottom: 14 },
+  heroHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
+    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14,
   },
-  backBtn: {
+  heroBackBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+    alignItems: 'center', justifyContent: 'center',
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  heroTitle: {
+    fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.4,
+    textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', textAlign: 'center', marginTop: 2, fontWeight: '600' },
+
   scroll: { paddingHorizontal: 16 },
+
+  /* v2 correlation card */
+  correlationCardV2: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 16,
+    marginBottom: 14,
+    shadowColor: '#1C1814',
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  correlationHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
+  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4 },
+  notEnoughBox: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: Colors.bgElevated,
+    padding: 12, borderRadius: 12, marginTop: 10,
+  },
+  notEnoughText: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 17, fontWeight: '500' },
+  correlationStatsRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: Colors.bgElevated, borderRadius: 14, padding: 10, marginTop: 14,
+  },
+  correlationStat: { flex: 1, alignItems: 'center', gap: 2 },
+  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1 },
+  correlationStatNum: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationStatDiv: { width: 1, height: 18, backgroundColor: 'rgba(28,24,20,0.10)' },
+  verdictBox: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+    backgroundColor: 'rgba(196,98,45,0.06)',
+    borderWidth: 1, borderColor: 'rgba(196,98,45,0.18)',
+    borderRadius: 12, padding: 12, marginTop: 14,
+  },
+  verdictText: { flex: 1, fontSize: 12.5, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
 
   card: {
     backgroundColor: Colors.bgCard, borderRadius: 16,
@@ -499,15 +605,7 @@ const styles = StyleSheet.create({
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendText: { fontSize: 10, color: Colors.textMuted },
 
-  correlationCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
-    padding: 16, gap: 12, marginBottom: 14,
-  },
-  correlationTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  correlationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
-  correlationItem: { alignItems: 'center', gap: 4 },
-  correlationScore: { fontSize: 28, fontWeight: '900' },
-  correlationLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  correlationTitle: { fontSize: 15, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },
