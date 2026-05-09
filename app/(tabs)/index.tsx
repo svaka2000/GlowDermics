@@ -597,6 +597,16 @@ export default function Home() {
               <Ionicons name="git-network-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}DNA</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/identity' as any)}>
+              <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="finger-print-outline" size={22} color={'#9B5BA8'} />
+              <Text style={[styles.quickLabel, { color: '#9B5BA8' }]}>Skin{'\n'}Persona</Text>
+            </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/seven-day' as any)}>
+              <LinearGradient colors={['rgba(31,138,111,0.16)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="trending-up-outline" size={22} color={colors.scoreGood} />
+              <Text style={[styles.quickLabel, { color: colors.scoreGood }]}>7-Day{'\n'}Forecast</Text>
+            </Pressable>
           </View>
         </View>
         </Animated.View>

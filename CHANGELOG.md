@@ -4,6 +4,71 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Skin Identity + 7-Day Forecast + Dark-Mode Sweep (Pass 21–25)
+
+Five iterations chained — high-traffic dark-mode coverage plus two new flagship features.
+
+### 🌙 Dark-mode migration: scan + home (Pass 21–22)
+
+`app/scan/index.tsx`, `app/(tabs)/index.tsx`. The two highest-traffic surfaces in the app — the flagship Skin Scan flow and the home dashboard (~100 Colors refs in 967 lines) — now flip palettes via `useColors()` + `makeStyles(palette)`. Theme toggle in Settings now propagates correctly through the home hero, scan CTA, score grid, 18 quick-action cards, focus card, water tracker, challenge widget, community card, brand strip, and all routes through the camera UI.
+
+### 📊 7-Day Skin Forecast (Pass 23) — deterministic short-term prediction
+
+New `src/engine/SkinForecastEngine.ts` + `app/seven-day/index.tsx`. Complements the existing AI 30/60/90-day forecast at `/forecast` with a short-term, transparent, rules-based projection.
+
+How it works:
+- Pulls 30-day window of: scan scores, sleep entries, water log, routine logs, journal mood, habit checks
+- Aligns features to scan scores; computes Pearson correlation per feature
+- Standardizes user's last-7-day mean for each feature; weights contributions by `|correlation|`
+- Caps each feature's contribution at ±6 score points
+- Emits 7 days of `{date, dayLabel, score 0-100, top 3 drivers}`
+- Detects trend (rising/falling/flat ≥ ±2 pts) with plain-English headline
+- Identifies the biggest negative driver as the "top lever to pull this week"
+
+Screen renders:
+- Trend-tinted GlassHero badge with end-of-week score + delta + headline
+- Smooth Catmull-Rom-cubic spline curve with animated stroke-dashoffset reveal
+- Day-by-day cards: bar fill + driver chips (sleep/water/routine/habits/mood with icons)
+- Top-lever card with feature-specific suggestion ("Aim for 7.5+ hours tonight…")
+- Cross-link to AI 30/60/90-day forecast
+
+### 🪪 Skin Identity (Pass 24) — 8 personas, 5 elements, shareable
+
+New `src/engine/SkinIdentityEngine.ts` + `src/components/ui/SkinIdentityCard.tsx` + `app/identity/index.tsx`.
+
+A flagship feature that turns user data into a social, shareable skin persona.
+
+8 archetypes, picked from (streak, trend, glow score, member-since, score variance, mood variance, skin type):
+- **Steady Glow** — consistent + decent score
+- **The Comeback** — recovering trend, +8pt or more across 5 scans
+- **Resilient Skin** — long member + flat trend
+- **Glow Seeker** — improving but not steady, exploration phase
+- **Radiant Veteran** — long history (90d+) + high score (78+)
+- **Reactive Climber** — high mood/score variance, sensitive
+- **Discovery Phase** — fresh user, ≤2 scans
+- **Skin Architect** — long streak (14d+) + low variance
+
+5 elements mapped to skin type: dry→Earth, oily→Water, combination/sensitive→Air, normal→Crystal.
+
+Each persona has its own colorway (gradient + accent + tint) and signature 1-liner.
+
+Card composition:
+- Gradient hero band tinted by persona colorway with sparkle pulses (Reanimated 4 `withRepeat` sequences)
+- Animated glow score ring (`strokeDashoffset` reveal + count-up via `useAnimatedReaction`)
+- Top 3 strengths + top 3 challenges with bar fill-in animations (700ms staggered)
+- Footer: streak · scans · member-since with element-tinted icons
+- 400px max-width, designed to look great when screenshotted
+
+Screen ships with React Native Share API integration and an empty-state CTA.
+
+### 🔗 Discovery (Pass 25) — wiring new features into navigation
+
+`app/(tabs)/index.tsx`, `app/insights/index.tsx`. Both new features surfaced from primary entry points:
+- Home tab quick-action grid: added "Skin Persona" card (purple finger-print) and "7-Day Forecast" card (green trend-up)
+- Insights hub: gradient persona teaser card above the streak summary; trend-tinted forecast preview card
+
+---
+
 ## 2026-05-09 — Insights Hub + Tab Bar Dark Mode + Routing Fix (Pass 17–19)
 
 Three back-to-back ships in one session.
