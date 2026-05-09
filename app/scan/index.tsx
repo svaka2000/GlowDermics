@@ -15,6 +15,7 @@ import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { analyzeSkin } from '../../src/services/skinAnalysis';
+import { preflightPhotoQuality, mergePhotoQuality } from '../../src/services/photoQuality';
 import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
 
 type Mode = 'choose' | 'camera' | 'analyzing';
@@ -206,8 +207,23 @@ export default function Scan() {
         throw new Error('Could not read image data. Please try uploading again.');
       }
 
+      // v2 pre-flight: cheap client-side quality check before burning an API call.
+      const preflight = preflightPhotoQuality({ base64, mimeType });
+      if (!preflight.ok) {
+        const tips = preflight.recommendations?.length
+          ? '\n\n' + preflight.recommendations.map(t => '• ' + t).join('\n')
+          : '';
+        Alert.alert(
+          'Photo quality too low',
+          (preflight.warning ?? 'The photo looks unclear. Please retake.') + tips,
+          [{ text: 'Try Again', onPress: () => setMode('choose') }],
+        );
+        return;
+      }
+
       const analysis = await analyzeSkin(base64, mimeType, profile);
       analysis.imageUri = uri;
+      analysis.photoQuality = mergePhotoQuality(preflight, analysis.photoQuality);
 
       await Auth.recordScan();
       await Storage.saveAnalysis(analysis);
@@ -220,9 +236,9 @@ export default function Scan() {
 
   if (mode === 'analyzing') {
     const STEPS = [
-      { label: 'Detecting skin regions', icon: 'scan-outline' },
-      { label: 'Measuring hydration markers', icon: 'water-outline' },
-      { label: 'Scoring texture & clarity', icon: 'stats-chart-outline' },
+      { label: 'Mapping facial regions', icon: 'scan-outline' },
+      { label: 'Extracting 16 biomarkers', icon: 'pulse-outline' },
+      { label: 'Estimating skin age', icon: 'hourglass-outline' },
       { label: 'Building your routine', icon: 'list-outline' },
     ];
     const IMAGE_H = 300;
@@ -361,7 +377,7 @@ export default function Scan() {
             </View>
             <Text style={styles.heroTitle}>AI Skin Analysis</Text>
             <Text style={styles.heroSub}>
-              Get scores for hydration, texture, clarity, evenness, firmness, and pores — plus a personalized routine built for your skin.
+              16 clinical dimensions, regional heat-map, biomarker signals, and an estimated skin age — plus a personalized routine built for your skin.
             </Text>
           </View>
 

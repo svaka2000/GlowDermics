@@ -14,6 +14,14 @@ import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
 import { getSkincareImage } from '../../src/services/imageSearch';
 import { runSkinProgressEngine, EngineReport } from '../../src/engine/SkinProgressEngine';
+import {
+  RegionalSkinMap,
+  RegionDetailChip,
+  SkinAgeBadge,
+  BiomarkerCloud,
+  ScoreGrid,
+} from '../../src/components/ui';
+import { FaceRegion } from '../../src/types';
 
 const SCORE_LABELS: Record<string, string> = {
   hydration: 'Hydration',
@@ -37,6 +45,7 @@ export default function Results() {
   const [engineReport, setEngineReport] = useState<EngineReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'scores' | 'routine' | 'recommendations'>('scores');
+  const [selectedRegion, setSelectedRegion] = useState<FaceRegion | null>(null);
 
   // Entrance animations
   const heroAnim = useRef(new Animated.Value(0)).current;
@@ -175,6 +184,48 @@ export default function Results() {
           </View>
         </Animated.View>
 
+        {/* v2 panels — only rendered when v2 data is present (additive, v1-safe). */}
+        {analysis.schemaVersion === 2 && (
+          <Animated.View
+            style={{
+              opacity: bodyAnim,
+              transform: [{ translateY: bodyAnim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+            }}
+          >
+            {analysis.skinAge && (
+              <View style={styles.v2Block}>
+                <SkinAgeBadge skinAge={analysis.skinAge} delay={120} />
+              </View>
+            )}
+
+            {analysis.biomarkers && analysis.biomarkers.length > 0 && (
+              <View style={styles.v2Block}>
+                <Text style={styles.v2SectionTitle}>Biomarker Signals</Text>
+                <BiomarkerCloud biomarkers={analysis.biomarkers} delay={300} />
+              </View>
+            )}
+
+            {analysis.regions && analysis.regions.length > 0 && (
+              <View style={styles.v2BlockCard}>
+                <Text style={styles.v2SectionTitle}>Regional Analysis</Text>
+                <Text style={styles.v2SectionSub}>Tap a zone to see what we found</Text>
+                <View style={{ alignItems: 'center', marginTop: 14 }}>
+                  <RegionalSkinMap
+                    findings={analysis.regions}
+                    selected={selectedRegion}
+                    onRegionPress={r => setSelectedRegion(r)}
+                  />
+                </View>
+                {selectedRegion && (
+                  <RegionDetailChip
+                    finding={analysis.regions.find(r => r.region === selectedRegion)}
+                  />
+                )}
+              </View>
+            )}
+          </Animated.View>
+        )}
+
         {/* Strengths & Concerns + Tabs + Content */}
         <Animated.View style={{ opacity: bodyAnim, transform: [{ translateY: bodyAnim.interpolate({ inputRange: [0,1], outputRange: [24, 0] }) }] }}>
         <View style={styles.row}>
@@ -216,6 +267,20 @@ export default function Results() {
         {/* Scores tab */}
         {tab === 'scores' && (
           <>
+            {/* v2: full 16-dimension score grid */}
+            {analysis.scoresV2 && (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>All 16 Dimensions</Text>
+                <Text style={styles.cardSub}>Swipe to see every metric · tap for detail</Text>
+                <ScoreGrid
+                  scores={analysis.scoresV2}
+                  confidence={analysis.confidence}
+                  previous={prevAnalysis?.scoresV2}
+                  hideOverall
+                />
+              </View>
+            )}
+
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Skin Scores</Text>
               {prevAnalysis && <Text style={styles.cardSub}>Arrows show change vs. previous scan</Text>}
@@ -469,4 +534,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start',
   },
   shopBtnText: { fontSize: 11, fontWeight: '700', color: '#fff' },
+  v2Block: { marginHorizontal: 16, marginBottom: 16 },
+  v2BlockCard: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: Colors.bgCard,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 20,
+  },
+  v2SectionTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary, marginBottom: 4 },
+  v2SectionSub: { fontSize: 12, color: Colors.textMuted, marginBottom: 6 },
 });

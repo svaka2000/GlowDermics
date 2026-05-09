@@ -4,6 +4,129 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — v2 Scanner & Design System (Autonomous Overnight Pass 1)
+
+### 🔬 Skin Scanner v2 — Clinical-Grade
+
+The headline feature. Going from 7 dimensions → **16 clinical biomarkers** so we
+match the depth of Haut.AI / Lóvi (the apps currently dominating the App Store
+charts). Every new dimension is independently scored with its own AI confidence
+rating — users now see not just *what* their skin score is but *how certain*
+the model is.
+
+**New score dimensions** (additive to v1 — back-compat preserved):
+- `radiance` — luminosity / glow vs dullness
+- `redness` — diffuse erythema (rosacea / inflammation)
+- `darkSpots` — post-inflammatory hyperpigmentation, sun damage
+- `darkCircles` — periorbital pigmentation / vascular shadowing
+- `wrinkles` — fine lines + expression lines
+- `acne` — active blemishes (comedones / papules / pustules)
+- `oiliness` — sebum production indicators
+- `sensitivity` — visible reactivity / capillary fragility
+- `barrierHealth` — lipid barrier integrity (flaking, tightness, dehydration)
+
+**Regional analysis**: every scan now returns 7 zones (forehead, L/R cheek,
+nose, chin, eye area, jawline) with severity (`none`/`mild`/`moderate`/`severe`)
+and a one-line observation per zone.
+
+**Skin age estimation**: AI-derived biological skin-age estimate with a bracket
+classification (`younger`, `on-track`, `older`) — not a guess at chronological
+age, only a clinical estimate from visible markers.
+
+**Biomarker tags**: 3–6 concise diagnostic phrases per scan
+("compromised barrier", "early UV damage", "vascular under-eye", etc.).
+
+**Confidence scoring**: every metric carries a 0–100 confidence number that
+visualizes how clearly the signal was visible in the photo.
+
+**Photo quality preflight**: cheap client-side check (`src/services/photoQuality.ts`)
+runs *before* the API call so unreadable photos don't burn a free scan. Server-side
+AI returns a deeper quality assessment (`lighting`, `focus`, `faceDetected`,
+`filterDetected`) which is merged with the client result.
+
+**Retry logic**: vision and chat calls now retry on transient errors (network,
+rate-limit, 5xx) with exponential backoff — no more single-blip scan failures.
+
+**Schema versioning**: `SkinAnalysis.schemaVersion` tags each scan as v1 or v2 so
+the UI can render legacy scans untouched while showcasing v2 panels for new ones.
+
+### 🎨 Design System v2
+
+**Tokens** (new — `src/constants/theme.ts`)
+- Typography scale: display/h1/h2/h3/h4/body/bodyStrong/small/smallStrong/caption/micro
+- Spacing scale: xxs (2) → giant (56)
+- Radii scale: xs (6) → pill (999)
+- Shadows: subtle / card / elevated / floating / glow
+- Motion: durations + spring presets + press feedback constants
+- Layout: screenPadding, cardPadding, sectionGap, itemGap, maxContentWidth
+
+**Color palette** extended (`src/constants/colors.ts`)
+- 9 new dimension-tints (one per v2 metric), tier badge colors, glass variants
+
+**New UI primitives** in `src/components/ui/`
+- `Card` — 6 variants: flat / elevated / glass / outline / gradient / glow
+- `Button` — 5 variants × 3 sizes, with haptic feedback + spring press scale
+- `Badge` — 8 tones, 3 sizes, optional pulsing dot for live states
+- `Skeleton` — shimmer-loading placeholder for any size
+- `Section` — title + caption + optional right-action header
+- `MetricBar` — animated bar with confidence overlay + trend arrow
+
+### 📊 Results Screen v2 Panels (additive)
+
+When a v2 scan loads, three new panels render between the hero card and the
+existing tabs:
+1. **SkinAgeBadge** — gradient hero card showing biological skin-age with delta vs
+   chronological age, animated counter on mount.
+2. **BiomarkerCloud** — staggered chip cluster of biomarker tags.
+3. **RegionalSkinMap** — anatomically-grounded face SVG with severity heatmap.
+   Tap a region to see its specific finding. Pulses softly to draw attention to
+   active concerns.
+
+In the Scores tab, v2 scans now show the **16-dimension ScoreGrid** above the
+legacy 6-bar list — horizontal-scrolling tiles with icon, value, confidence
+indicator, and trend arrow vs prior scan.
+
+Old scans render exactly as before (zero regression).
+
+### ⚙️ Coach Improvements
+
+The chat coach's system prompt now consumes v2 data: the model sees all 16
+metrics, biomarker tags, and the estimated skin age. Advice is now grounded in
+the user's actual scores ("your redness score of 62 suggests…") instead of
+generic skin-type guidance.
+
+### 📁 Files
+
+**New**:
+- `src/constants/theme.ts`
+- `src/services/photoQuality.ts`
+- `src/components/ui/Card.tsx`
+- `src/components/ui/Button.tsx`
+- `src/components/ui/Badge.tsx`
+- `src/components/ui/Skeleton.tsx`
+- `src/components/ui/Section.tsx`
+- `src/components/ui/MetricBar.tsx`
+- `src/components/ui/RegionalSkinMap.tsx`
+- `src/components/ui/SkinAgeBadge.tsx`
+- `src/components/ui/BiomarkerCloud.tsx`
+- `src/components/ui/ScoreGrid.tsx`
+- `src/components/ui/index.ts`
+
+**Modified**:
+- `src/types/index.ts` — added `SkinScoreV2`, `SkinConfidence`, `FaceRegion`, `RegionalFinding`, `PhotoQuality`, `SkinAge` + extended `SkinAnalysis` (all v2 fields optional → back-compat).
+- `src/services/skinAnalysis.ts` — full rewrite with v2 prompt, retry, robust parsing, all v2 fields populated; v1 `scores` still returned for legacy code.
+- `src/constants/colors.ts` — new tints + tier colors + glass variants.
+- `app/scan/index.tsx` — wired preflight quality check, updated hero copy to mention 16 dimensions, updated analyzing-step labels.
+- `app/results/[id].tsx` — additive v2 panels (SkinAgeBadge, BiomarkerCloud, RegionalSkinMap) + ScoreGrid in scores tab.
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes cleanly.
+- v1 results render unchanged (no schemaVersion → no v2 panels).
+- v2 panels conditional on `schemaVersion === 2`.
+
+---
+
 ## 2026-04-06 (Session 2)
 
 ### Animations & Visual Polish (Pass 3)
