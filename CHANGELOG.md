@@ -4,6 +4,85 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — AI Routine Conflict Analyzer (Autonomous Overnight Pass 7)
+
+First Tier 2 feature shipped. The ingredient-conflicts screen had 15 hand-
+curated rules but its own rogue dark palette and no way to analyze a full
+routine at once. Now: full reskin to the design system + new AI tab.
+
+### 🤖 `analyzeRoutineConflicts()` service
+
+New function in `src/services/skinAnalysis.ts`. Takes free-text routine
+("AM: cleanse, vit C, niacinamide, SPF · PM: BHA, retinol") + user
+profile and returns a structured `RoutineConflictReport`:
+
+- `detected` — every active normalized from user input
+- `conflicts[]` — up to 8, severity-graded (avoid / caution / separate / safe)
+- `warnings[]` — soft caveats
+- `recommendations[]` — actionable next steps
+- `routineScore` — 0–100 compatibility number
+- `verdict` — 1-line summary
+
+Uses the chat model with strict JSON schema, exponential retry on transient
+errors, graceful fallback to a neutral report if the model fails (UI never
+crashes).
+
+### 🆕 AI Analyze tab (the headline feature)
+
+New default tab on the ingredient-conflicts screen. Components:
+
+- **Routine input card** — gradient-tinted Card variant=gradient with
+  multiline text input (placeholder shows AM/PM example), "Quick fill"
+  preset chips (☀️ AM example, 🌙 PM example, 🌱 Recovery), and an
+  Analyze button with loading state.
+- **Loading skeleton** — Card with stacked Skeletons during AI call.
+- **`<RoutineScoreCard>`** — animated 0-100 routine compatibility score,
+  gradient fill bar (Reanimated worklet) with score-tinted color, conflict-
+  count badge, and verdict line.
+- **Detected actives** — Section with Badge chips for every parsed active.
+- **`<AIConflictCard>`** — per-conflict card with severity badge, left-edge
+  tint stripe, reason, and workaround panel. Staggered fade-up entrance.
+- **Warnings card** — soft caveats from AI ("Introduce retinol slowly").
+- **Recommendations card** — green-tinted gradient with bulleted next steps.
+- **All-clear card** — green shield + verdict shown when score ≥ 90 and no
+  conflicts.
+
+### 🎨 Full design-system reskin
+
+The screen previously had a local hardcoded dark palette (`bg: '#0A0A0F'`,
+`card: '#13131A'`) that conflicted with the rest of the app's warm marble
+tones. Now uses the proper `Colors` import + design-system primitives:
+
+- Header replaced with `<GlassHero height={130}>` with a translucent
+  glass back button (matches home/progress/habits)
+- Tab pill row with Ionicons (sparkles / warning / checkmark / git-compare)
+- All cards converted to `<Card variant="elevated">` / `gradient`
+- Severity badges via `<Badge tone="danger|warning|gold|success">`
+- Workaround panel: green-tinted with checkmark icon
+- Search bar uses design-system bgCard + border
+- "Check Two" tab buttons use `<Button>` primitive
+- Reanimated 4 entrance for header + content (replaced legacy Animated.Value)
+
+### 🆕 Types
+
+Added to `src/types/index.ts`:
+- `ConflictSeverity = 'avoid' | 'caution' | 'separate' | 'safe'`
+- `IngredientConflict` (a, b, severity, reason, workaround)
+- `RoutineConflictReport` (conflicts, warnings, recommendations, detected, routineScore, verdict)
+
+### 📁 Files
+
+**Modified**:
+- `src/types/index.ts` — added 3 new types
+- `src/services/skinAnalysis.ts` — added `analyzeRoutineConflicts()` (~140 lines)
+- `app/ingredient-conflicts/index.tsx` — full rewrite (~720 lines)
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Premium Paywall v2 (Autonomous Overnight Pass 6)
 
 ### 💎 Multi-tier paywall

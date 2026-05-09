@@ -8,6 +8,9 @@ import {
   SkinAge,
   PhotoQuality,
   UserProfile,
+  RoutineConflictReport,
+  IngredientConflict,
+  ConflictSeverity,
 } from '../types';
 
 // Groq — free tier, used for both vision (skin scan) and chat
@@ -481,5 +484,146 @@ Write the 2-3 sentence narrative now.`;
     return response.choices[0]?.message?.content?.trim() || fallback;
   } catch {
     return fallback;
+  }
+}
+
+/**
+ * analyzeRoutineConflicts — given a free-text description of the user's
+ * skincare routine (e.g. "AM: cleanse, vit C, niacinamide, SPF · PM: BHA,
+ * retinol, moisturizer"), returns a structured conflict report.
+ *
+ * The AI normalizes user-typed product names into canonical actives, then
+ * cross-references known interactions. Falls back to an empty report on
+ * model failure so the UI can render a neutral state without crashing.
+ */
+export async function analyzeRoutineConflicts(
+  routineText: string,
+  userProfile: UserProfile | null,
+): Promise<RoutineConflictReport> {
+  const trimmed = routineText.trim();
+  if (!trimmed) {
+    return {
+      conflicts: [],
+      warnings: [],
+      recommendations: ['Add at least one product or ingredient to analyze.'],
+      detected: [],
+      routineScore: 100,
+      verdict: 'No products provided yet.',
+    };
+  }
+
+  const profileBlock = userProfile
+    ? `User profile — skin type: ${userProfile.skinType}. Concerns: ${userProfile.primaryConcerns.join(', ') || 'none reported'}. Goals: ${userProfile.goals.join(', ') || 'none reported'}.`
+    : '';
+
+  const system = `You are a clinical-grade ingredient interaction analyzer for GlowDermics. Given a user's described skincare routine, you:
+1. Normalize product names into canonical actives (e.g. "The Ordinary niacinamide" → "Niacinamide 10%").
+2. Detect conflicts using established dermatology consensus.
+3. Score the overall routine 0-100 (100 = no conflicts, 0 = severely incompatible).
+4. Generate plain-English verdict + recommendations.
+
+Severity tiers:
+- "avoid": deactivation conflict (e.g., benzoyl peroxide oxidizes retinol). Must NOT be used together at all.
+- "caution": doubled irritation risk (e.g., retinol + AHA on same night). Possible but risky.
+- "separate": no chemical conflict, but space them in time (e.g., Vit C + niacinamide).
+- "safe": validated synergy or no interaction.
+
+Return STRICTLY a JSON object with no markdown, no commentary:
+
+{
+  "detected": ["Niacinamide 10%", "Retinol 0.5%", "SPF 50", "Salicylic Acid 2%", "Benzoyl Peroxide 2.5%"],
+  "conflicts": [
+    {
+      "a": "Benzoyl Peroxide 2.5%",
+      "b": "Retinol 0.5%",
+      "severity": "avoid",
+      "reason": "Benzoyl peroxide oxidizes retinol on contact, fully deactivating both molecules.",
+      "workaround": "BP as an AM spot treatment; retinol PM. Never overlap."
+    }
+  ],
+  "warnings": ["Introduce retinol slowly — start 2x/week."],
+  "recommendations": [
+    "Add a daily SPF if not already in AM.",
+    "Niacinamide can buffer retinol irritation — apply niacinamide first."
+  ],
+  "routineScore": 72,
+  "verdict": "Solid routine with one critical conflict — separate BP and retinol."
+}
+
+RULES:
+- Return at MOST 8 conflicts (highest severity first).
+- "detected" must include every active you identified, even if no conflict.
+- Calibrate routineScore: 0 conflicts = 95-100, 1 caution = 75-85, 1 avoid = 40-60, multiple avoid = <30.
+- "verdict" is 1 sentence, max 18 words.
+- "recommendations" 1-4 items max, each <= 16 words.
+- Never invent ingredients the user didn't list.
+- If text is unparseable / non-skincare, return empty conflicts/warnings, routineScore=100, verdict="Couldn't parse a skincare routine."`;
+
+  const userMsg = `${profileBlock}\n\nMy routine:\n${trimmed}\n\nAnalyze.`;
+
+  try {
+    const response = await withRetry(() =>
+      groq.chat.completions.create({
+        model: CHAT_MODEL,
+        max_tokens: 900,
+        temperature: 0.2,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: userMsg },
+        ],
+      }),
+    );
+
+    const text = response.choices[0]?.message?.content || '';
+    const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '');
+    const firstBrace = stripped.indexOf('{');
+    const lastBrace = stripped.lastIndexOf('}');
+    if (firstBrace === -1 || lastBrace === -1) {
+      throw new Error('No JSON in response.');
+    }
+    const parsed = JSON.parse(stripped.slice(firstBrace, lastBrace + 1));
+
+    const validSeverity = (s: any): ConflictSeverity =>
+      ['avoid', 'caution', 'separate', 'safe'].includes(s) ? s : 'caution';
+
+    const conflicts: IngredientConflict[] = Array.isArray(parsed.conflicts)
+      ? parsed.conflicts
+          .slice(0, 8)
+          .map((c: any) => ({
+            a: String(c.a ?? '').slice(0, 80),
+            b: String(c.b ?? '').slice(0, 80),
+            severity: validSeverity(c.severity),
+            reason: String(c.reason ?? '').slice(0, 600),
+            workaround: c.workaround ? String(c.workaround).slice(0, 400) : undefined,
+          }))
+          .filter((c: IngredientConflict) => c.a && c.b && c.reason)
+      : [];
+
+    return {
+      conflicts,
+      warnings: Array.isArray(parsed.warnings)
+        ? parsed.warnings.filter((w: any) => typeof w === 'string').slice(0, 5)
+        : [],
+      recommendations: Array.isArray(parsed.recommendations)
+        ? parsed.recommendations.filter((r: any) => typeof r === 'string').slice(0, 4)
+        : [],
+      detected: Array.isArray(parsed.detected)
+        ? parsed.detected.filter((d: any) => typeof d === 'string').slice(0, 20)
+        : [],
+      routineScore: clamp(typeof parsed.routineScore === 'number' ? parsed.routineScore : 80),
+      verdict:
+        typeof parsed.verdict === 'string'
+          ? parsed.verdict.slice(0, 200)
+          : 'Routine analyzed.',
+    };
+  } catch (err: any) {
+    return {
+      conflicts: [],
+      warnings: [],
+      recommendations: ['Could not analyze right now — try again in a moment.'],
+      detected: [],
+      routineScore: 80,
+      verdict: 'Analysis temporarily unavailable.',
+    };
   }
 }

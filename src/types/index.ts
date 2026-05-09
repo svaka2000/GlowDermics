@@ -181,3 +181,33 @@ export interface JournalEntry {
   tags: string[];
   scanId?: string; // linked scan if same day
 }
+
+/** AI ingredient-conflict analyzer output. */
+export type ConflictSeverity = 'avoid' | 'caution' | 'separate' | 'safe';
+
+export interface IngredientConflict {
+  /** First product / ingredient name (as the user typed or AI normalized). */
+  a: string;
+  /** Second product / ingredient name. */
+  b: string;
+  severity: ConflictSeverity;
+  /** Plain-English explanation of why these conflict. */
+  reason: string;
+  /** Optional how-to-use-them-together guidance. */
+  workaround?: string;
+}
+
+export interface RoutineConflictReport {
+  /** All detected conflicts (excluding safe). */
+  conflicts: IngredientConflict[];
+  /** Soft warnings — products that don't conflict but have caveats (e.g., "introduce slowly"). */
+  warnings: string[];
+  /** General recommendations to improve the user's routine. */
+  recommendations: string[];
+  /** AI-detected products from the user's input (after normalization). */
+  detected: string[];
+  /** 0–100 overall routine compatibility score; 100 = no conflicts at all. */
+  routineScore: number;
+  /** AI-summarized 1-line verdict, e.g. "Strong routine. One spacing fix recommended." */
+  verdict: string;
+}
