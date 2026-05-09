@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, Alert, Switch, Platform, Linking, Animated, Easing,
@@ -7,12 +7,12 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { Auth, AuthUser } from '../../src/services/auth';
 import { UserProfile } from '../../src/types';
 import { PremiumGate } from '../../src/components/PremiumGate';
-import { useTheme, ThemePreference } from '../../src/state/theme';
+import { useColors, useTheme, ThemePreference } from '../../src/state/theme';
 import {
   requestNotificationPermission,
   scheduleRoutineReminder,
@@ -40,7 +40,10 @@ export default function Settings() {
   const [showPremiumGate, setShowPremiumGate] = useState(false);
   const [scanInfo, setScanInfo] = useState<{ used: number; limit: number } | null>(null);
 
-  const { preference, scheme, setPreference } = useTheme();
+  const { preference, scheme, setPreference, colors } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const rowStyles = useMemo(() => makeRowStyles(colors), [colors]);
+  const appearanceStyles = useMemo(() => makeAppearanceStyles(colors), [colors]);
 
   useFocusEffect(useCallback(() => {
     (async () => {
@@ -155,7 +158,7 @@ export default function Settings() {
           opacity: profileAnim,
           transform: [{ translateY: profileAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
         }]}>
-          <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.avatar}>
+          <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.avatar}>
             <Text style={styles.avatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
           </LinearGradient>
           <View style={styles.profileInfo}>
@@ -221,7 +224,7 @@ export default function Settings() {
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 placeholder="Your name"
               />
               <Text style={[styles.fieldLabel, { marginTop: 16 }]}>Skin Type</Text>
@@ -266,10 +269,10 @@ export default function Settings() {
               <Ionicons
                 name={scheme === 'dark' ? 'moon' : 'sunny'}
                 size={16}
-                color={Colors.primary}
+                color={colors.primary}
                 style={{ marginRight: 10 }}
               />
-              <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>
+              <Text style={[rowStyles.label, { color: colors.textSecondary, flex: 1 }]}>
                 Theme
               </Text>
               <Text style={appearanceStyles.activeLabel}>
@@ -298,7 +301,7 @@ export default function Settings() {
                           : 'moon-outline'
                       }
                       size={14}
-                      color={active ? Colors.white : Colors.textSecondary}
+                      color={active ? '#FFFFFF' : colors.textSecondary}
                     />
                     <Text style={[appearanceStyles.toggleText, active && appearanceStyles.toggleTextActive]}>
                       {p === 'system' ? 'Auto' : p === 'light' ? 'Light' : 'Dark'}
@@ -323,8 +326,8 @@ export default function Settings() {
             <Text style={styles.sectionTitle}>Notifications</Text>
             <View style={styles.card}>
               <View style={[rowStyles.wrap, rowStyles.border]}>
-                <Ionicons name="notifications-outline" size={16} color={Colors.primary} style={{ marginRight: 10 }} />
-                <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>Daily Scan Reminder</Text>
+                <Ionicons name="notifications-outline" size={16} color={colors.primary} style={{ marginRight: 10 }} />
+                <Text style={[rowStyles.label, { color: colors.textSecondary, flex: 1 }]}>Daily Scan Reminder</Text>
                 <Switch
                   value={notifsEnabled}
                   onValueChange={async (val) => {
@@ -341,14 +344,14 @@ export default function Settings() {
                       setNotifsEnabled(false);
                     }
                   }}
-                  trackColor={{ false: Colors.border, true: Colors.primary }}
-                  thumbColor={Colors.white}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={'#FFFFFF'}
                 />
               </View>
               {notifsEnabled && (
                 <View style={rowStyles.wrap}>
-                  <Ionicons name="time-outline" size={16} color={Colors.textMuted} style={{ marginRight: 10 }} />
-                  <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>Reminder time</Text>
+                  <Ionicons name="time-outline" size={16} color={colors.textMuted} style={{ marginRight: 10 }} />
+                  <Text style={[rowStyles.label, { color: colors.textSecondary, flex: 1 }]}>Reminder time</Text>
                   <View style={styles.hourPicker}>
                     {[7, 8, 9, 12, 18, 20].map(h => (
                       <Pressable
@@ -398,7 +401,7 @@ export default function Settings() {
 
         {/* Skin DNA featured card */}
         <Pressable style={styles.dnaCard} onPress={() => router.push('/skin-dna')}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.dnaEmoji}>🧬</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.dnaTitle}>My Skin DNA</Text>
@@ -534,7 +537,7 @@ export default function Settings() {
                 <Row label="Member since" value={new Date(authUser.createdAt).toLocaleDateString()} last />
               </View>
               <Pressable style={[styles.dangerBtn, { marginTop: 12 }]} onPress={handleLogout}>
-                <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
+                <Ionicons name="log-out-outline" size={18} color={colors.scorePoor} />
                 <Text style={styles.dangerText}>Sign Out</Text>
               </Pressable>
             </>
@@ -545,16 +548,16 @@ export default function Settings() {
               </View>
               <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
                 <Pressable style={styles.signInBtn} onPress={() => router.push('/(auth)/login' as any)}>
-                  <Ionicons name="person-outline" size={16} color={Colors.primary} />
+                  <Ionicons name="person-outline" size={16} color={colors.primary} />
                   <Text style={styles.signInBtnText}>Sign In</Text>
                 </Pressable>
-                <Pressable style={[styles.signInBtn, { backgroundColor: Colors.primary }]} onPress={() => router.push('/(auth)/register' as any)}>
+                <Pressable style={[styles.signInBtn, { backgroundColor: colors.primary }]} onPress={() => router.push('/(auth)/register' as any)}>
                   <Ionicons name="sparkles-outline" size={16} color="#fff" />
                   <Text style={[styles.signInBtnText, { color: '#fff' }]}>Create Account</Text>
                 </Pressable>
               </View>
               <Pressable style={[styles.dangerBtn, { marginTop: 10 }]} onPress={handleLogout}>
-                <Ionicons name="log-out-outline" size={18} color={Colors.scorePoor} />
+                <Ionicons name="log-out-outline" size={18} color={colors.scorePoor} />
                 <Text style={styles.dangerText}>Leave Guest Session</Text>
               </Pressable>
             </>
@@ -587,9 +590,9 @@ export default function Settings() {
 
         {/* Danger zone */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: Colors.scorePoor }]}>Data</Text>
+          <Text style={[styles.sectionTitle, { color: colors.scorePoor }]}>Data</Text>
           <Pressable style={styles.dangerBtn} onPress={confirmReset}>
-            <Ionicons name="trash-outline" size={18} color={Colors.scorePoor} />
+            <Ionicons name="trash-outline" size={18} color={colors.scorePoor} />
             <Text style={styles.dangerText}>Reset All Data</Text>
           </Pressable>
         </View>
@@ -602,6 +605,8 @@ export default function Settings() {
 }
 
 function Row({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
+  const colors = useColors();
+  const rowStyles = useMemo(() => makeRowStyles(colors), [colors]);
   return (
     <View style={[rowStyles.wrap, !last && rowStyles.border]}>
       <Text style={rowStyles.label}>{label}</Text>
@@ -611,159 +616,167 @@ function Row({ label, value, last = false }: { label: string; value: string; las
 }
 
 function LinkRow({ icon, label, last = false, onPress }: { icon: any; label: string; last?: boolean; onPress?: () => void }) {
+  const colors = useColors();
+  const rowStyles = useMemo(() => makeRowStyles(colors), [colors]);
   return (
     <Pressable style={[rowStyles.wrap, !last && rowStyles.border]} onPress={onPress}>
-      <Ionicons name={icon} size={16} color={Colors.primary} style={{ marginRight: 10 }} />
-      <Text style={[rowStyles.label, { color: Colors.textSecondary, flex: 1 }]}>{label}</Text>
-      <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+      <Ionicons name={icon} size={16} color={colors.primary} style={{ marginRight: 10 }} />
+      <Text style={[rowStyles.label, { color: colors.textSecondary, flex: 1 }]}>{label}</Text>
+      <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
     </Pressable>
   );
 }
 
-const rowStyles = StyleSheet.create({
-  wrap: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13 },
-  border: { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  label: { fontSize: 14, color: Colors.textMuted, width: 100 },
-  value: { fontSize: 14, color: Colors.textPrimary, fontWeight: '500', flex: 1, textAlign: 'right' },
-});
+function makeRowStyles(c: Palette) {
+  return StyleSheet.create({
+    wrap: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13 },
+    border: { borderBottomWidth: 1, borderBottomColor: c.border },
+    label: { fontSize: 14, color: c.textMuted, width: 100 },
+    value: { fontSize: 14, color: c.textPrimary, fontWeight: '500', flex: 1, textAlign: 'right' },
+  });
+}
 
-const appearanceStyles = StyleSheet.create({
-  activeLabel: { fontSize: 13, fontWeight: '700', color: Colors.primary, letterSpacing: 0.2 },
-  toggleRow: {
-    flexDirection: 'row',
-    gap: 8,
-    paddingTop: 12,
-    paddingBottom: 4,
-  },
-  toggleBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: 'rgba(196,98,45,0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.18)',
-  },
-  toggleBtnActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOpacity: 0.30,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  toggleText: { fontSize: 12, fontWeight: '800', color: Colors.textSecondary, letterSpacing: 0.2 },
-  toggleTextActive: { color: Colors.white },
-  helperText: {
-    fontSize: 11,
-    color: Colors.textMuted,
-    marginTop: 10,
-    fontWeight: '500',
-    lineHeight: 16,
-  },
-});
+function makeAppearanceStyles(c: Palette) {
+  return StyleSheet.create({
+    activeLabel: { fontSize: 13, fontWeight: '700', color: c.primary, letterSpacing: 0.2 },
+    toggleRow: {
+      flexDirection: 'row',
+      gap: 8,
+      paddingTop: 12,
+      paddingBottom: 4,
+    },
+    toggleBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+      paddingVertical: 10,
+      borderRadius: 12,
+      backgroundColor: c.primary + '0F',
+      borderWidth: 1,
+      borderColor: c.primary + '30',
+    },
+    toggleBtnActive: {
+      backgroundColor: c.primary,
+      borderColor: c.primary,
+      shadowColor: c.primary,
+      shadowOpacity: 0.30,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    },
+    toggleText: { fontSize: 12, fontWeight: '800', color: c.textSecondary, letterSpacing: 0.2 },
+    toggleTextActive: { color: '#FFFFFF' },
+    helperText: {
+      fontSize: 11,
+      color: c.textMuted,
+      marginTop: 10,
+      fontWeight: '500',
+      lineHeight: 16,
+    },
+  });
+}
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
-  header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: Colors.textPrimary },
-  scroll: { paddingHorizontal: 16 },
-  profileCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 24,
-  },
-  avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 22, fontWeight: '800', color: Colors.white },
-  profileInfo: { flex: 1 },
-  profileName: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  profileSub: { fontSize: 13, color: Colors.textMuted, marginTop: 2 },
-  statBadge: { alignItems: 'center' },
-  statNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },
-  statLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5 },
-  section: { marginBottom: 24 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
-  editBtn: { fontSize: 14, fontWeight: '600', color: Colors.primary },
-  card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 16,
-  },
-  fieldLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 8 },
-  input: {
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
-    borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
-    fontSize: 15, color: Colors.textPrimary,
-  },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
-  },
-  chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  chipText: { fontSize: 13, color: Colors.textSecondary },
-  chipTextActive: { color: Colors.primary, fontWeight: '600' },
-  hourPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
-  hourBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  hourBtnActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  hourText: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
-  hourTextActive: { color: Colors.primary, fontWeight: '700' },
-  signInBtn: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: 'rgba(196,98,45,0.08)', borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.borderStrong, padding: 14,
-  },
-  signInBtnText: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  dangerBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14,
-    borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', padding: 16,
-  },
-  dangerText: { fontSize: 15, fontWeight: '600', color: Colors.scorePoor },
-  dnaCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
-  },
-  dnaEmoji: { fontSize: 28 },
-  dnaTitle: { fontSize: 17, fontWeight: '800', color: Colors.white },
-  dnaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
-  premiumBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 3,
-    backgroundColor: Colors.primary, borderRadius: 6,
-    paddingHorizontal: 6, paddingVertical: 2,
-  },
-  premiumBadgeText: { fontSize: 9, fontWeight: '800', color: '#fff', letterSpacing: 0.5 },
-  premiumCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
-  },
-  premiumActiveCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
-    borderWidth: 1, borderColor: 'rgba(22,163,74,0.25)',
-  },
-  tdPromoCard: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: '#FDF6EC', borderRadius: 18,
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
-    padding: 20, marginBottom: 24,
-  },
-  tdPromoLeft: { flex: 1, paddingRight: 12 },
-  tdPromoEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 1.2, color: '#C4622D', textTransform: 'uppercase', marginBottom: 4 },
-  tdPromoHeading: { fontSize: 18, fontWeight: '800', color: '#3B1F0E', marginBottom: 6 },
-  tdPromoSub: { fontSize: 12, lineHeight: 17, color: 'rgba(59,31,14,0.6)', marginBottom: 12 },
-  tdPromoBtn: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  tdPromoBtnText: { fontSize: 12, fontWeight: '700', color: '#C4622D', textDecorationLine: 'underline' },
-  tdPromoEmoji: { fontSize: 36 },
-  premiumCardIcon: {
-    width: 40, height: 40, borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  premiumCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff' },
-  premiumCardSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
-});
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: c.bg },
+    header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
+    headerTitle: { fontSize: 28, fontWeight: '800', color: c.textPrimary },
+    scroll: { paddingHorizontal: 16 },
+    profileCard: {
+      flexDirection: 'row', alignItems: 'center', gap: 14,
+      backgroundColor: c.bgCard, borderRadius: 18,
+      borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 24,
+    },
+    avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
+    avatarText: { fontSize: 22, fontWeight: '800', color: '#FFFFFF' },
+    profileInfo: { flex: 1 },
+    profileName: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+    profileSub: { fontSize: 13, color: c.textMuted, marginTop: 2 },
+    statBadge: { alignItems: 'center' },
+    statNum: { fontSize: 22, fontWeight: '800', color: c.primary },
+    statLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5 },
+    section: { marginBottom: 24 },
+    sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+    sectionTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+    editBtn: { fontSize: 14, fontWeight: '600', color: c.primary },
+    card: {
+      backgroundColor: c.bgCard, borderRadius: 16,
+      borderWidth: 1, borderColor: c.border, paddingHorizontal: 16,
+    },
+    fieldLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5, marginBottom: 8 },
+    input: {
+      backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
+      borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
+      fontSize: 15, color: c.textPrimary,
+    },
+    chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    chip: {
+      paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+      borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
+    },
+    chipActive: { borderColor: c.primary, backgroundColor: c.primary + '26' },
+    chipText: { fontSize: 13, color: c.textSecondary },
+    chipTextActive: { color: c.primary, fontWeight: '600' },
+    hourPicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+    hourBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+    hourBtnActive: { borderColor: c.primary, backgroundColor: c.primary + '26' },
+    hourText: { fontSize: 12, color: c.textMuted, fontWeight: '500' },
+    hourTextActive: { color: c.primary, fontWeight: '700' },
+    signInBtn: {
+      flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+      backgroundColor: c.primary + '14', borderRadius: 14,
+      borderWidth: 1, borderColor: c.borderStrong, padding: 14,
+    },
+    signInBtnText: { fontSize: 14, fontWeight: '700', color: c.primary },
+    dangerBtn: {
+      flexDirection: 'row', alignItems: 'center', gap: 10,
+      backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14,
+      borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', padding: 16,
+    },
+    dangerText: { fontSize: 15, fontWeight: '600', color: c.scorePoor },
+    dnaCard: {
+      flexDirection: 'row', alignItems: 'center', gap: 14,
+      borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+    },
+    dnaEmoji: { fontSize: 28 },
+    dnaTitle: { fontSize: 17, fontWeight: '800', color: '#FFFFFF' },
+    dnaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
+    premiumBadge: {
+      flexDirection: 'row', alignItems: 'center', gap: 3,
+      backgroundColor: c.primary, borderRadius: 6,
+      paddingHorizontal: 6, paddingVertical: 2,
+    },
+    premiumBadgeText: { fontSize: 9, fontWeight: '800', color: '#fff', letterSpacing: 0.5 },
+    premiumCard: {
+      flexDirection: 'row', alignItems: 'center', gap: 14,
+      borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+    },
+    premiumActiveCard: {
+      flexDirection: 'row', alignItems: 'center', gap: 14,
+      borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
+      borderWidth: 1, borderColor: 'rgba(22,163,74,0.25)',
+    },
+    tdPromoCard: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+      backgroundColor: '#FDF6EC', borderRadius: 18,
+      borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+      padding: 20, marginBottom: 24,
+    },
+    tdPromoLeft: { flex: 1, paddingRight: 12 },
+    tdPromoEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 1.2, color: '#C4622D', textTransform: 'uppercase', marginBottom: 4 },
+    tdPromoHeading: { fontSize: 18, fontWeight: '800', color: '#3B1F0E', marginBottom: 6 },
+    tdPromoSub: { fontSize: 12, lineHeight: 17, color: 'rgba(59,31,14,0.6)', marginBottom: 12 },
+    tdPromoBtn: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+    tdPromoBtnText: { fontSize: 12, fontWeight: '700', color: '#C4622D', textDecorationLine: 'underline' },
+    tdPromoEmoji: { fontSize: 36 },
+    premiumCardIcon: {
+      width: 40, height: 40, borderRadius: 12,
+      backgroundColor: 'rgba(255,255,255,0.25)',
+      alignItems: 'center', justifyContent: 'center',
+    },
+    premiumCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff' },
+    premiumCardSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  });
+}
