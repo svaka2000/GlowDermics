@@ -1,380 +1,913 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ScrollView,
-  Dimensions, TextInput, KeyboardAvoidingView, Platform, Animated, Easing,
+  Dimensions, TextInput, KeyboardAvoidingView, Platform,
+  StatusBar as RNStatusBar, NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
-import { UserProfile } from '../../src/types';
+import { UserProfile, RegionalFinding } from '../../src/types';
+import { RegionalSkinMap, BiomarkerCloud, SkinAgeBadge } from '../../src/components/ui';
 
-const { width } = Dimensions.get('window');
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+const TOTAL_PAGES = 5;
 
-const SKIN_TYPES = ['Oily', 'Dry', 'Combination', 'Normal', 'Sensitive'];
-const CONCERNS = ['Acne & Breakouts', 'Dryness', 'Dark Spots', 'Fine Lines', 'Redness', 'Large Pores', 'Dullness', 'Sensitivity'];
-const GOALS = ['Clear Skin', 'Deep Hydration', 'Anti-Aging', 'Even Tone', 'Barrier Repair', 'Natural Glow', 'Reduce Redness'];
-
-const SLEEP_OPTIONS = [
-  { value: 5, label: '< 6 hrs', emoji: '😴', sub: 'Sleep-deprived' },
-  { value: 6, label: '6–7 hrs', emoji: '😐', sub: 'Under-slept' },
-  { value: 7, label: '7–8 hrs', emoji: '😊', sub: 'Getting there' },
-  { value: 8, label: '8+ hrs', emoji: '🌟', sub: 'Optimal' },
+// Sample regional findings used on the Regional preview page.
+const SAMPLE_FINDINGS: RegionalFinding[] = [
+  { region: 'forehead', severity: 'mild', observation: 'minor congestion' },
+  { region: 'leftCheek', severity: 'moderate', observation: 'visible texture' },
+  { region: 'rightCheek', severity: 'moderate', observation: 'diffuse erythema' },
+  { region: 'nose', severity: 'moderate', observation: 'enlarged pores' },
+  { region: 'chin', severity: 'none', observation: 'clear' },
+  { region: 'eyeArea', severity: 'mild', observation: 'shadowing' },
+  { region: 'jawline', severity: 'none', observation: 'smooth' },
 ];
 
-const WATER_OPTIONS = [
-  { value: 'low', label: 'Rarely', emoji: '🏜️', sub: '1–3 glasses/day' },
-  { value: 'moderate', label: 'Some', emoji: '💧', sub: '4–6 glasses/day' },
-  { value: 'good', label: 'Good', emoji: '🌊', sub: '7–8 glasses/day' },
-  { value: 'high', label: 'Excellent', emoji: '💦', sub: '8+ glasses/day' },
-];
+const SAMPLE_BIOMARKERS = ['mild dehydration', 'uneven sebum', 'early UV signal'];
 
-const DIET_OPTIONS = [
-  { value: 'processed', label: 'Mostly processed', emoji: '🍔' },
-  { value: 'mixed', label: 'Mixed', emoji: '🥗' },
-  { value: 'balanced', label: 'Balanced whole foods', emoji: '🌿' },
-  { value: 'clean', label: 'Clean / ancestral', emoji: '🥩' },
+// 16 dimensions with their tints — used on the dimensions showcase page.
+const DIMENSIONS = [
+  { key: 'hydration',    label: 'Hydration',    tint: Colors.hydration,    icon: 'water-outline' as const },
+  { key: 'texture',      label: 'Texture',      tint: Colors.texture,      icon: 'grid-outline' as const },
+  { key: 'clarity',      label: 'Clarity',      tint: Colors.clarity,      icon: 'sparkles-outline' as const },
+  { key: 'evenness',     label: 'Evenness',     tint: Colors.evenness,     icon: 'color-palette-outline' as const },
+  { key: 'firmness',     label: 'Firmness',     tint: Colors.firmness,     icon: 'shield-checkmark-outline' as const },
+  { key: 'pores',        label: 'Pores',        tint: Colors.pores,        icon: 'apps-outline' as const },
+  { key: 'radiance',     label: 'Radiance',     tint: Colors.radiance,     icon: 'sunny-outline' as const },
+  { key: 'redness',      label: 'Redness',      tint: Colors.redness,      icon: 'flame-outline' as const },
+  { key: 'darkSpots',    label: 'Dark Spots',   tint: Colors.darkSpots,    icon: 'eyedrop-outline' as const },
+  { key: 'darkCircles',  label: 'Dark Circles', tint: Colors.darkCircles,  icon: 'moon-outline' as const },
+  { key: 'wrinkles',     label: 'Wrinkles',     tint: Colors.wrinkles,     icon: 'pulse-outline' as const },
+  { key: 'acne',         label: 'Acne',         tint: Colors.acne,         icon: 'bandage-outline' as const },
+  { key: 'oiliness',     label: 'Oil Balance',  tint: Colors.oiliness,     icon: 'leaf-outline' as const },
+  { key: 'sensitivity',  label: 'Sensitivity',  tint: Colors.sensitivity,  icon: 'thermometer-outline' as const },
+  { key: 'barrierHealth',label: 'Barrier',      tint: Colors.barrierHealth,icon: 'lock-closed-outline' as const },
+  { key: 'overall',      label: 'Overall',      tint: Colors.primary,      icon: 'medal-outline' as const },
 ];
 
 export default function Onboarding() {
   const isInvalidName = (s: string) => /[^a-zA-Z0-9 '\-.]/.test(s.trim());
 
-  const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
-  const [skinType, setSkinType] = useState('');
-  const [concerns, setConcerns] = useState<string[]>([]);
-  const [goals, setGoals] = useState<string[]>([]);
-  const [sleepHours, setSleepHours] = useState(7);
-  const [waterIntake, setWaterIntake] = useState('moderate');
-  const [diet, setDiet] = useState('balanced');
+  const [page, setPage] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
 
-  const totalSteps = 5;
-
-  // Step transition animation
-  const stepOpacity = useRef(new Animated.Value(1)).current;
-  const stepSlide = useRef(new Animated.Value(0)).current;
-  const progressWidth = useRef(new Animated.Value(0)).current;
-  const glowAnim = useRef(new Animated.Value(0.4)).current;
+  // Reanimated shared values (UI-thread).
+  const ambientGlow = useSharedValue(0.4);
+  const progress = useSharedValue(0);
+  const scrollX = useSharedValue(0);
 
   useEffect(() => {
-    // Animate progress bar
-    Animated.timing(progressWidth, {
-      toValue: (step + 1) / totalSteps,
-      duration: 400,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  }, [step]);
+    ambientGlow.value = withRepeat(
+      withSequence(
+        withTiming(0.85, { duration: 2400, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0.4, { duration: 2400, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+    return () => { cancelAnimation(ambientGlow); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // Pulsing ambient glow
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowAnim, { toValue: 0.9, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(glowAnim, { toValue: 0.4, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
+    progress.value = withTiming((page + 1) / TOTAL_PAGES, { duration: 380, easing: Easing.out(Easing.cubic) });
+  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const animateStepChange = (newStep: number) => {
-    const direction = newStep > step ? 1 : -1;
-    Animated.sequence([
-      Animated.parallel([
-        Animated.timing(stepOpacity, { toValue: 0, duration: 160, useNativeDriver: true }),
-        Animated.timing(stepSlide, { toValue: -30 * direction, duration: 160, useNativeDriver: true }),
-      ]),
-    ]).start(() => {
-      stepSlide.setValue(30 * direction);
-      setStep(newStep);
-      Animated.parallel([
-        Animated.timing(stepOpacity, { toValue: 1, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-        Animated.timing(stepSlide, { toValue: 0, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      ]).start();
-    });
+  const goTo = (next: number) => {
+    const target = Math.max(0, Math.min(TOTAL_PAGES - 1, next));
+    scrollRef.current?.scrollTo({ x: target * SCREEN_W, animated: true });
+    setPage(target);
   };
 
-  const toggleItem = (item: string, list: string[], setList: (l: string[]) => void) => {
-    if (list.includes(item)) setList(list.filter(i => i !== item));
-    else if (list.length < 3) setList([...list, item]);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollX.value = e.nativeEvent.contentOffset.x;
+    const next = Math.round(e.nativeEvent.contentOffset.x / SCREEN_W);
+    if (next !== page) setPage(next);
   };
 
-  const canProceed = () => {
-    if (step === 0) return name.trim().length > 1 && !isInvalidName(name);
-    if (step === 1) return skinType !== '';
-    if (step === 2) return concerns.length > 0;
-    if (step === 3) return goals.length > 0;
-    if (step === 4) return true; // lifestyle has defaults
-    return false;
+  const canProceedFromCurrent = () => {
+    if (page === 0) return name.trim().length > 1 && !isInvalidName(name);
+    return true;
   };
 
-  const handleFinish = async () => {
+  const finish = async (route: 'scan' | 'tabs') => {
     const profile: UserProfile = {
-      name: name.trim(),
-      skinType: skinType.toLowerCase(),
-      primaryConcerns: concerns,
-      goals,
-      lifestyle: { sleepHours, waterIntake, sunExposure: 'moderate', diet },
+      name: name.trim() || 'Friend',
+      skinType: 'normal',
+      primaryConcerns: [],
+      goals: [],
+      lifestyle: { sleepHours: 7, waterIntake: 'moderate', sunExposure: 'moderate', diet: 'mixed' },
       onboardingComplete: true,
     };
     await Storage.saveUserProfile(profile);
     await Storage.setOnboarded();
 
-    // Sync name to auth account if logged in, otherwise ensure guest session exists
     const user = await Auth.getCurrentUser();
     if (user) {
-      await Auth.updateUser({ name: name.trim() });
+      await Auth.updateUser({ name: profile.name });
     } else {
-      // Ensure guests can get past the login screen next time they open the app
       await Auth.loginAsGuest();
     }
 
-    router.replace('/(tabs)');
+    if (route === 'scan') {
+      router.replace('/scan');
+    } else {
+      router.replace('/(tabs)');
+    }
   };
 
+  // Ambient glow style.
+  const glowStyle = useAnimatedStyle(() => ({ opacity: ambientGlow.value }));
+
+  // Progress bar.
+  const progressFillStyle = useAnimatedStyle(() => ({
+    width: `${progress.value * 100}%`,
+  }));
+
   return (
-    <LinearGradient colors={['#0A0A0F', '#12080A']} style={styles.gradient}>
-      {/* Ambient glow */}
-      <Animated.View style={[styles.ambientGlow, { opacity: glowAnim }]} pointerEvents="none" />
+    <View style={styles.root}>
+      <RNStatusBar barStyle="light-content" />
+      <LinearGradient
+        colors={['#0A0608', '#150C07', '#0D0805', '#12090A']}
+        style={StyleSheet.absoluteFill}
+      />
 
-      <SafeAreaView style={styles.safe}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.kav}>
+      {/* Ambient terracotta glow at top */}
+      <Animated.View style={[styles.ambientGlow, glowStyle]} pointerEvents="none">
+        <LinearGradient
+          colors={['rgba(196,98,45,0.55)', 'rgba(196,98,45,0)']}
+          style={{ flex: 1, borderRadius: 200 }}
+        />
+      </Animated.View>
 
-          {/* Progress bar — animated gradient fill */}
-          <View style={styles.progressWrap}>
+      <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.kav}
+        >
+          {/* Top bar — progress + skip */}
+          <View style={styles.topBar}>
             <View style={styles.progressTrack}>
-              <Animated.View style={[styles.progressFill, {
-                width: progressWidth.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) as any,
-              }]} />
-            </View>
-            <Text style={styles.progressLabel}>{step + 1} / {totalSteps}</Text>
-          </View>
-
-          <Animated.ScrollView
-            contentContainerStyle={styles.scroll}
-            keyboardShouldPersistTaps="handled"
-            style={{ opacity: stepOpacity, transform: [{ translateX: stepSlide }] }}
-            showsVerticalScrollIndicator={false}
-          >
-
-            {step === 0 && (
-              <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>WELCOME TO GLOWDERMICS</Text>
-                <Text style={styles.heading}>What should we call you?</Text>
-                <Text style={styles.sub}>Your personal AI skin coach starts here.</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Your first name"
-                  placeholderTextColor={Colors.textMuted}
-                  value={name}
-                  onChangeText={v => { setName(v); setNameError(isInvalidName(v) ? 'Name can only contain letters, numbers, and spaces.' : ''); }}
-                  autoFocus
-                  returnKeyType="done"
+              <Animated.View style={[styles.progressFill, progressFillStyle]}>
+                <LinearGradient
+                  colors={[Colors.primaryLight, Colors.primary]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={StyleSheet.absoluteFill}
                 />
-                {nameError ? <Text style={{ color: '#F87171', fontSize: 13, marginTop: 8 }}>{nameError}</Text> : null}
-              </View>
-            )}
-
-            {step === 1 && (
-              <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 2 OF 5</Text>
-                <Text style={styles.heading}>What's your skin type?</Text>
-                <Text style={styles.sub}>We'll personalize everything around this.</Text>
-                <View style={styles.chipGrid}>
-                  {SKIN_TYPES.map(t => (
-                    <Pressable
-                      key={t}
-                      style={[styles.chip, skinType === t && styles.chipActive]}
-                      onPress={() => setSkinType(t)}
-                    >
-                      <Text style={[styles.chipText, skinType === t && styles.chipTextActive]}>{t}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {step === 2 && (
-              <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 3 OF 5</Text>
-                <Text style={styles.heading}>Your biggest concerns?</Text>
-                <Text style={styles.sub}>Pick up to 3. We'll target these first.</Text>
-                <View style={styles.chipGrid}>
-                  {CONCERNS.map(c => (
-                    <Pressable
-                      key={c}
-                      style={[styles.chip, concerns.includes(c) && styles.chipActive]}
-                      onPress={() => toggleItem(c, concerns, setConcerns)}
-                    >
-                      <Text style={[styles.chipText, concerns.includes(c) && styles.chipTextActive]}>{c}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {step === 3 && (
-              <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 4 OF 5</Text>
-                <Text style={styles.heading}>What are your skin goals?</Text>
-                <Text style={styles.sub}>Pick up to 3. Your routine will be built around these.</Text>
-                <View style={styles.chipGrid}>
-                  {GOALS.map(g => (
-                    <Pressable
-                      key={g}
-                      style={[styles.chip, goals.includes(g) && styles.chipActive]}
-                      onPress={() => toggleItem(g, goals, setGoals)}
-                    >
-                      <Text style={[styles.chipText, goals.includes(g) && styles.chipTextActive]}>{g}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {step === 4 && (
-              <View style={styles.stepWrap}>
-                <Text style={styles.eyebrow}>STEP 5 OF 5</Text>
-                <Text style={styles.heading}>Your lifestyle</Text>
-                <Text style={styles.sub}>Your skin reflects your life. This helps the AI give better advice.</Text>
-
-                <Text style={styles.lifestyleLabel}>How much do you sleep?</Text>
-                <View style={styles.lifestyleRow}>
-                  {SLEEP_OPTIONS.map(opt => (
-                    <Pressable
-                      key={opt.value}
-                      style={[styles.lifestyleCard, sleepHours === opt.value && styles.lifestyleCardActive]}
-                      onPress={() => setSleepHours(opt.value)}
-                    >
-                      <Text style={styles.lifestyleEmoji}>{opt.emoji}</Text>
-                      <Text style={[styles.lifestyleCardLabel, sleepHours === opt.value && styles.lifestyleCardLabelActive]}>{opt.label}</Text>
-                      <Text style={styles.lifestyleCardSub}>{opt.sub}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-
-                <Text style={[styles.lifestyleLabel, { marginTop: 24 }]}>Daily water intake?</Text>
-                <View style={styles.lifestyleRow}>
-                  {WATER_OPTIONS.map(opt => (
-                    <Pressable
-                      key={opt.value}
-                      style={[styles.lifestyleCard, waterIntake === opt.value && styles.lifestyleCardActive]}
-                      onPress={() => setWaterIntake(opt.value)}
-                    >
-                      <Text style={styles.lifestyleEmoji}>{opt.emoji}</Text>
-                      <Text style={[styles.lifestyleCardLabel, waterIntake === opt.value && styles.lifestyleCardLabelActive]}>{opt.label}</Text>
-                      <Text style={styles.lifestyleCardSub}>{opt.sub}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-
-                <Text style={[styles.lifestyleLabel, { marginTop: 24 }]}>How would you describe your diet?</Text>
-                <View style={styles.chipGrid}>
-                  {DIET_OPTIONS.map(opt => (
-                    <Pressable
-                      key={opt.value}
-                      style={[styles.chip, diet === opt.value && styles.chipActive]}
-                      onPress={() => setDiet(opt.value)}
-                    >
-                      <Text style={styles.chipText}>{opt.emoji} {opt.label}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-
-          </Animated.ScrollView>
-
-          <View style={styles.footer}>
-            {step > 0 && (
-              <Pressable style={styles.backBtn} onPress={() => animateStepChange(step - 1)}>
-                <Text style={styles.backText}>← Back</Text>
+              </Animated.View>
+            </View>
+            {page < TOTAL_PAGES - 1 && (
+              <Pressable hitSlop={8} onPress={() => finish('tabs')}>
+                <Text style={styles.skipText}>Skip</Text>
               </Pressable>
             )}
-            <Pressable
-              style={[styles.nextBtn, !canProceed() && styles.nextBtnDisabled]}
-              onPress={() => step < totalSteps - 1 ? animateStepChange(step + 1) : handleFinish()}
-              disabled={!canProceed()}
-            >
-              <LinearGradient
-                colors={canProceed() ? [Colors.primaryLight, Colors.primary] : ['#333', '#222']}
-                style={styles.nextGradient}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-              >
-                <Text style={styles.nextText}>{step === totalSteps - 1 ? 'Start My Journey →' : 'Continue →'}</Text>
-              </LinearGradient>
-            </Pressable>
-
           </View>
 
+          {/* Pages — paginated horizontal scroll */}
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            keyboardShouldPersistTaps="handled"
+            // Disable user swipe past unfilled name prompt — they must input first.
+            scrollEnabled={page > 0 || canProceedFromCurrent()}
+            style={styles.scroll}
+          >
+            <PageWelcome
+              isActive={page === 0}
+              name={name}
+              setName={v => {
+                setName(v);
+                setNameError(isInvalidName(v) ? 'Letters, numbers, and spaces only.' : '');
+              }}
+              nameError={nameError}
+            />
+            <PageSixteenDimensions isActive={page === 1} />
+            <PageRegionalMap isActive={page === 2} />
+            <PageCoachAndAge isActive={page === 3} />
+            <PageFirstScan isActive={page === 4} name={name} onScan={() => finish('scan')} onLater={() => finish('tabs')} />
+          </ScrollView>
+
+          {/* Footer — back / continue */}
+          <View style={styles.footer}>
+            {page > 0 && page < TOTAL_PAGES - 1 ? (
+              <Pressable style={styles.backBtn} hitSlop={8} onPress={() => goTo(page - 1)}>
+                <Ionicons name="chevron-back" size={18} color="rgba(255,255,255,0.7)" />
+                <Text style={styles.backText}>Back</Text>
+              </Pressable>
+            ) : (
+              <View style={{ width: 80 }} />
+            )}
+
+            <View style={styles.dotRow}>
+              {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
+                <Dot key={i} index={i} scrollX={scrollX} />
+              ))}
+            </View>
+
+            {page < TOTAL_PAGES - 1 ? (
+              <Pressable
+                style={[styles.nextBtn, !canProceedFromCurrent() && styles.nextBtnDisabled]}
+                disabled={!canProceedFromCurrent()}
+                onPress={() => goTo(page + 1)}
+              >
+                <LinearGradient
+                  colors={canProceedFromCurrent() ? [Colors.primaryLight, Colors.primary] : ['#3A2E26', '#2A211B']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.nextGrad}
+                >
+                  <Text style={styles.nextText}>Next</Text>
+                  <Ionicons name="chevron-forward" size={16} color={Colors.white} />
+                </LinearGradient>
+              </Pressable>
+            ) : (
+              <View style={{ width: 80 }} />
+            )}
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
+/* ---------- Pagination dots ---------- */
+
+function Dot({ index, scrollX }: { index: number; scrollX: ReturnType<typeof useSharedValue<number>> }) {
+  const style = useAnimatedStyle(() => {
+    const distance = Math.abs(scrollX.value - index * SCREEN_W);
+    const t = Math.max(0, 1 - distance / SCREEN_W);
+    return {
+      width: interpolate(t, [0, 1], [6, 22]),
+      opacity: interpolate(t, [0, 1], [0.35, 1]),
+    };
+  });
+  return <Animated.View style={[styles.dot, style]} />;
+}
+
+/* ---------- Page 1: Welcome + name ---------- */
+
+function PageWelcome({
+  isActive,
+  name,
+  setName,
+  nameError,
+}: {
+  isActive: boolean;
+  name: string;
+  setName: (s: string) => void;
+  nameError: string;
+}) {
+  const logoScale = useSharedValue(0.5);
+  const logoOpacity = useSharedValue(0);
+  const headlineY = useSharedValue(20);
+  const headlineOpacity = useSharedValue(0);
+  const inputY = useSharedValue(30);
+  const inputOpacity = useSharedValue(0);
+  const taglineOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (!isActive) return;
+    logoScale.value = withSpring(1, { damping: 9, stiffness: 110 });
+    logoOpacity.value = withTiming(1, { duration: 480 });
+    headlineY.value = withDelay(280, withSpring(0, { damping: 12, stiffness: 130 }));
+    headlineOpacity.value = withDelay(280, withTiming(1, { duration: 380 }));
+    taglineOpacity.value = withDelay(520, withTiming(1, { duration: 380 }));
+    inputY.value = withDelay(720, withSpring(0, { damping: 12, stiffness: 130 }));
+    inputOpacity.value = withDelay(720, withTiming(1, { duration: 380 }));
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const logoStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+    transform: [{ scale: logoScale.value }],
+  }));
+  const headStyle = useAnimatedStyle(() => ({
+    opacity: headlineOpacity.value,
+    transform: [{ translateY: headlineY.value }],
+  }));
+  const tagStyle = useAnimatedStyle(() => ({ opacity: taglineOpacity.value }));
+  const inputStyle = useAnimatedStyle(() => ({
+    opacity: inputOpacity.value,
+    transform: [{ translateY: inputY.value }],
+  }));
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <Animated.View style={[styles.welcomeLogo, logoStyle]}>
+          <LinearGradient
+            colors={['#E8834A', '#C4622D', '#9E4D22']}
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
+            style={styles.welcomeLogoGrad}
+          >
+            <Text style={styles.welcomeLogoMark}>✦</Text>
+          </LinearGradient>
+        </Animated.View>
+
+        <Animated.View style={headStyle}>
+          <Text style={styles.eyebrow}>WELCOME TO GLOWDERMICS</Text>
+          <Text style={styles.heading}>Your skin,{'\n'}decoded.</Text>
+        </Animated.View>
+
+        <Animated.Text style={[styles.welcomeTagline, tagStyle]}>
+          Clinical-grade AI skin analysis in 30 seconds. What should we call you?
+        </Animated.Text>
+
+        <Animated.View style={[styles.welcomeInputWrap, inputStyle]}>
+          <TextInput
+            style={styles.welcomeInput}
+            placeholder="Your first name"
+            placeholderTextColor="rgba(255,255,255,0.35)"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+            autoCorrect={false}
+            returnKeyType="done"
+          />
+          {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+/* ---------- Page 2: 16 Dimensions ---------- */
+
+function PageSixteenDimensions({ isActive }: { isActive: boolean }) {
+  const headOpacity = useSharedValue(0);
+  const headY = useSharedValue(20);
+  const tileOpacities = DIMENSIONS.map(() => useSharedValue(0));
+  const tileScales = DIMENSIONS.map(() => useSharedValue(0.6));
+
+  useEffect(() => {
+    if (!isActive) return;
+    headOpacity.value = withTiming(1, { duration: 380 });
+    headY.value = withSpring(0, { damping: 13, stiffness: 130 });
+    tileOpacities.forEach((sv, i) => {
+      sv.value = withDelay(120 + i * 50, withTiming(1, { duration: 320 }));
+    });
+    tileScales.forEach((sv, i) => {
+      sv.value = withDelay(120 + i * 50, withSpring(1, { damping: 11, stiffness: 180 }));
+    });
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const headStyle = useAnimatedStyle(() => ({
+    opacity: headOpacity.value,
+    transform: [{ translateY: headY.value }],
+  }));
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <Animated.View style={headStyle}>
+          <Text style={styles.eyebrow}>HOW IT WORKS</Text>
+          <Text style={styles.heading}>16 clinical dimensions.{'\n'}One photo.</Text>
+          <Text style={styles.sub}>
+            Most apps score 5–7 metrics. We score 16 — matching the depth of dermatology-grade
+            biomarker tools.
+          </Text>
+        </Animated.View>
+
+        <View style={styles.dimGrid}>
+          {DIMENSIONS.map((d, i) => (
+            <DimensionTile
+              key={d.key}
+              label={d.label}
+              tint={d.tint}
+              icon={d.icon}
+              opacity={tileOpacities[i]}
+              scale={tileScales[i]}
+            />
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function DimensionTile({
+  label,
+  tint,
+  icon,
+  opacity,
+  scale,
+}: {
+  label: string;
+  tint: string;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  opacity: ReturnType<typeof useSharedValue<number>>;
+  scale: ReturnType<typeof useSharedValue<number>>;
+}) {
+  const style = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+  return (
+    <Animated.View style={[styles.dimTile, { borderColor: tint + '55', backgroundColor: tint + '14' }, style]}>
+      <Ionicons name={icon} size={18} color={tint} />
+      <Text style={[styles.dimTileText, { color: tint }]}>{label}</Text>
+    </Animated.View>
+  );
+}
+
+/* ---------- Page 3: Regional Map preview ---------- */
+
+function PageRegionalMap({ isActive }: { isActive: boolean }) {
+  const headOpacity = useSharedValue(0);
+  const headY = useSharedValue(20);
+  const mapOpacity = useSharedValue(0);
+  const mapScale = useSharedValue(0.85);
+
+  useEffect(() => {
+    if (!isActive) return;
+    headOpacity.value = withTiming(1, { duration: 380 });
+    headY.value = withSpring(0, { damping: 13, stiffness: 130 });
+    mapOpacity.value = withDelay(220, withTiming(1, { duration: 480 }));
+    mapScale.value = withDelay(220, withSpring(1, { damping: 11, stiffness: 130 }));
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const headStyle = useAnimatedStyle(() => ({
+    opacity: headOpacity.value,
+    transform: [{ translateY: headY.value }],
+  }));
+  const mapStyle = useAnimatedStyle(() => ({
+    opacity: mapOpacity.value,
+    transform: [{ scale: mapScale.value }],
+  }));
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <Animated.View style={headStyle}>
+          <Text style={styles.eyebrow}>SEE WHERE TO FOCUS</Text>
+          <Text style={styles.heading}>Regional analysis.</Text>
+          <Text style={styles.sub}>
+            Every scan maps 7 zones — forehead, cheeks, nose, chin, eye area, jawline. Tap a
+            zone for detail.
+          </Text>
+        </Animated.View>
+
+        <Animated.View style={[styles.mapWrap, mapStyle]}>
+          <RegionalSkinMap findings={SAMPLE_FINDINGS} width={Math.min(SCREEN_W - 80, 280)} />
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+/* ---------- Page 4: AI Coach + Skin Age ---------- */
+
+function PageCoachAndAge({ isActive }: { isActive: boolean }) {
+  const headOpacity = useSharedValue(0);
+  const headY = useSharedValue(20);
+  const ageOpacity = useSharedValue(0);
+  const bubbleOpacity = useSharedValue(0);
+  const bubbleY = useSharedValue(30);
+  const cloudOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (!isActive) return;
+    headOpacity.value = withTiming(1, { duration: 380 });
+    headY.value = withSpring(0, { damping: 13, stiffness: 130 });
+    ageOpacity.value = withDelay(220, withTiming(1, { duration: 480 }));
+    bubbleOpacity.value = withDelay(380, withTiming(1, { duration: 380 }));
+    bubbleY.value = withDelay(380, withSpring(0, { damping: 12, stiffness: 130 }));
+    cloudOpacity.value = withDelay(560, withTiming(1, { duration: 380 }));
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const headStyle = useAnimatedStyle(() => ({
+    opacity: headOpacity.value,
+    transform: [{ translateY: headY.value }],
+  }));
+  const ageStyle = useAnimatedStyle(() => ({ opacity: ageOpacity.value }));
+  const bubbleStyle = useAnimatedStyle(() => ({
+    opacity: bubbleOpacity.value,
+    transform: [{ translateY: bubbleY.value }],
+  }));
+  const cloudStyle = useAnimatedStyle(() => ({ opacity: cloudOpacity.value }));
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <Animated.View style={headStyle}>
+          <Text style={styles.eyebrow}>BEYOND SCORES</Text>
+          <Text style={styles.heading}>Skin age + AI coach.</Text>
+          <Text style={styles.sub}>
+            Get a biological skin-age estimate, biomarker tags, and a chat coach grounded in
+            your actual scores.
+          </Text>
+        </Animated.View>
+
+        <Animated.View style={[styles.coachStack, ageStyle]}>
+          <SkinAgeBadge skinAge={{ estimated: 27, bracket: 'younger' }} delay={0} />
+        </Animated.View>
+
+        <Animated.View style={[styles.bubble, bubbleStyle]}>
+          <View style={styles.bubbleAvatar}>
+            <Ionicons name="sparkles" size={14} color={Colors.white} />
+          </View>
+          <View style={styles.bubbleBody}>
+            <Text style={styles.bubbleSpeaker}>Derm</Text>
+            <Text style={styles.bubbleText}>
+              Your hydration is at 68 — bumping it 10pts with HA + ceramides should lift
+              radiance and pore visibility too. Want a routine?
+            </Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View style={cloudStyle}>
+          <Text style={styles.bubbleCaption}>Plus biomarker tags from your scan</Text>
+          <BiomarkerCloud biomarkers={SAMPLE_BIOMARKERS} delay={0} />
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+/* ---------- Page 5: Take first scan CTA ---------- */
+
+function PageFirstScan({
+  isActive,
+  name,
+  onScan,
+  onLater,
+}: {
+  isActive: boolean;
+  name: string;
+  onScan: () => void;
+  onLater: () => void;
+}) {
+  const heroScale = useSharedValue(0.7);
+  const heroOpacity = useSharedValue(0);
+  const pulse = useSharedValue(0);
+  const headOpacity = useSharedValue(0);
+  const headY = useSharedValue(20);
+  const ctaOpacity = useSharedValue(0);
+  const ctaY = useSharedValue(30);
+
+  useEffect(() => {
+    if (!isActive) return;
+    heroScale.value = withSpring(1, { damping: 9, stiffness: 110 });
+    heroOpacity.value = withTiming(1, { duration: 480 });
+    headOpacity.value = withDelay(220, withTiming(1, { duration: 380 }));
+    headY.value = withDelay(220, withSpring(0, { damping: 13, stiffness: 130 }));
+    ctaOpacity.value = withDelay(420, withTiming(1, { duration: 380 }));
+    ctaY.value = withDelay(420, withSpring(0, { damping: 13, stiffness: 130 }));
+    pulse.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isActive) cancelAnimation(pulse);
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const heroStyle = useAnimatedStyle(() => ({
+    opacity: heroOpacity.value,
+    transform: [{ scale: heroScale.value }],
+  }));
+  const haloStyle = useAnimatedStyle(() => ({
+    opacity: 0.25 + pulse.value * 0.45,
+    transform: [{ scale: 0.9 + pulse.value * 0.25 }],
+  }));
+  const headStyle = useAnimatedStyle(() => ({
+    opacity: headOpacity.value,
+    transform: [{ translateY: headY.value }],
+  }));
+  const ctaStyle = useAnimatedStyle(() => ({
+    opacity: ctaOpacity.value,
+    transform: [{ translateY: ctaY.value }],
+  }));
+
+  const greeting = name.trim() ? `Ready, ${name.trim()}?` : 'Ready?';
+
+  return (
+    <View style={styles.page}>
+      <View style={[styles.pageContent, { alignItems: 'center', justifyContent: 'center' }]}>
+        <View style={styles.scanIconWrap}>
+          <Animated.View style={[styles.scanHalo, haloStyle]} pointerEvents="none" />
+          <Animated.View style={[styles.scanIconCircle, heroStyle]}>
+            <LinearGradient
+              colors={['#E8834A', '#C4622D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <Ionicons name="scan" size={48} color={Colors.white} />
+          </Animated.View>
+        </View>
+
+        <Animated.View style={[{ alignItems: 'center', marginTop: 28 }, headStyle]}>
+          <Text style={[styles.eyebrow, { textAlign: 'center' }]}>YOUR FIRST SCAN</Text>
+          <Text style={[styles.heading, { textAlign: 'center' }]}>{greeting}</Text>
+          <Text style={[styles.sub, { textAlign: 'center', maxWidth: 320 }]}>
+            Tap below to capture a photo. We'll deliver your full skin profile in about 30
+            seconds — no account needed.
+          </Text>
+        </Animated.View>
+
+        <Animated.View style={[{ width: '100%', gap: 12, marginTop: 36 }, ctaStyle]}>
+          <Pressable style={styles.scanCta} onPress={onScan}>
+            <LinearGradient
+              colors={['#E8834A', '#C4622D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <Ionicons name="camera" size={20} color={Colors.white} />
+            <Text style={styles.scanCtaText}>Take My First Scan</Text>
+          </Pressable>
+
+          <Pressable style={styles.laterBtn} onPress={onLater} hitSlop={6}>
+            <Text style={styles.laterText}>Maybe later — explore the app</Text>
+          </Pressable>
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+/* ---------- Styles ---------- */
+
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  root: { flex: 1, backgroundColor: '#0A0608' },
   safe: { flex: 1 },
   kav: { flex: 1 },
+
   ambientGlow: {
     position: 'absolute',
-    top: -80,
-    left: '50%',
-    marginLeft: -160,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: '#C4622D',
+    top: -180,
+    left: SCREEN_W / 2 - 220,
+    width: 440,
+    height: 440,
+    borderRadius: 220,
   },
-  progressWrap: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 28, paddingTop: 20, paddingBottom: 12 },
-  progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.1)', overflow: 'hidden' },
+
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
+  progressTrack: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    overflow: 'hidden',
+  },
   progressFill: {
     height: '100%',
     borderRadius: 2,
-    backgroundColor: Colors.primary,
+    overflow: 'hidden',
   },
-  progressLabel: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.35)', letterSpacing: 0.5 },
-  progressDot: { flex: 1, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)' },
-  progressDotActive: { backgroundColor: Colors.primary },
-  scroll: { flexGrow: 1, paddingHorizontal: 28, paddingTop: 32 },
-  stepWrap: { flex: 1 },
-  eyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 12 },
-  heading: { fontSize: 30, fontWeight: '800', color: '#FFFFFF', lineHeight: 38, marginBottom: 10 },
-  sub: { fontSize: 15, color: 'rgba(255,255,255,0.55)', lineHeight: 22, marginBottom: 32 },
-  input: {
+  skipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.55)',
+    letterSpacing: 0.5,
+  },
+
+  scroll: { flex: 1 },
+  page: { width: SCREEN_W, flex: 1 },
+  pageContent: { flex: 1, paddingHorizontal: 28, paddingTop: 24, paddingBottom: 12 },
+
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 2,
+    color: Colors.primary,
+    marginBottom: 12,
+  },
+  heading: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: Colors.white,
+    lineHeight: 38,
+    letterSpacing: -0.6,
+    marginBottom: 12,
+  },
+  sub: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.62)',
+    lineHeight: 22,
+    fontWeight: '500',
+    marginBottom: 22,
+  },
+
+  /* Page 1 — welcome */
+  welcomeLogo: {
+    alignSelf: 'center',
+    marginBottom: 28,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.6,
+    shadowRadius: 26,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 12,
+  },
+  welcomeLogoGrad: {
+    width: 96,
+    height: 96,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  welcomeLogoMark: {
+    fontSize: 44,
+    color: Colors.white,
+    textShadowColor: 'rgba(255,255,255,0.4)',
+    textShadowRadius: 10,
+  },
+  welcomeTagline: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.62)',
+    lineHeight: 22,
+    fontWeight: '500',
+    marginBottom: 28,
+  },
+  welcomeInputWrap: { gap: 6 },
+  welcomeInput: {
     backgroundColor: 'rgba(255,255,255,0.08)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 14, paddingHorizontal: 20, paddingVertical: 18,
-    fontSize: 18, color: '#FFFFFF', fontWeight: '500',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    fontSize: 18,
+    color: Colors.white,
+    fontWeight: '600',
   },
-  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  chip: {
-    paddingHorizontal: 18, paddingVertical: 12,
-    borderRadius: 40, borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)', backgroundColor: 'rgba(255,255,255,0.06)',
+  errorText: { color: '#F87171', fontSize: 13, marginTop: 6, fontWeight: '500' },
+
+  /* Page 2 — 16 dimensions */
+  dimGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
   },
-  chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.25)' },
-  chipText: { fontSize: 14, color: 'rgba(255,255,255,0.7)', fontWeight: '500' },
-  chipTextActive: { color: Colors.primary, fontWeight: '600' },
-  lifestyleLabel: { fontSize: 13, fontWeight: '700', color: '#FFFFFF', marginBottom: 12 },
-  lifestyleRow: { flexDirection: 'row', gap: 8 },
-  lifestyleCard: {
-    flex: 1, alignItems: 'center', padding: 12, borderRadius: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', backgroundColor: 'rgba(255,255,255,0.06)', gap: 4,
+  dimTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
+    borderWidth: 1,
   },
-  lifestyleCardActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.2)' },
-  lifestyleEmoji: { fontSize: 20 },
-  lifestyleCardLabel: { fontSize: 12, fontWeight: '700', color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
-  lifestyleCardLabelActive: { color: Colors.primary },
-  lifestyleCardSub: { fontSize: 9, color: 'rgba(255,255,255,0.35)', textAlign: 'center', fontWeight: '500' },
-  footer: { padding: 24, flexDirection: 'row', gap: 12, alignItems: 'center' },
-  backBtn: { paddingHorizontal: 16, paddingVertical: 14 },
-  backText: { color: 'rgba(255,255,255,0.4)', fontSize: 15 },
-  nextBtn: { flex: 1, borderRadius: 16, overflow: 'hidden' },
+  dimTileText: { fontSize: 12, fontWeight: '800', letterSpacing: 0.2 },
+
+  /* Page 3 — regional */
+  mapWrap: {
+    alignItems: 'center',
+    marginTop: 12,
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+  /* Page 4 — coach + age */
+  coachStack: { marginTop: 4, marginBottom: 16 },
+  bubble: {
+    flexDirection: 'row',
+    gap: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 18,
+    borderTopLeftRadius: 4,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.10)',
+    marginBottom: 18,
+  },
+  bubbleAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bubbleBody: { flex: 1 },
+  bubbleSpeaker: { fontSize: 11, fontWeight: '900', color: Colors.primary, letterSpacing: 0.5, marginBottom: 4 },
+  bubbleText: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 19, fontWeight: '500' },
+  bubbleCaption: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.45)',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+
+  /* Page 5 — first scan CTA */
+  scanIconWrap: {
+    width: 220,
+    height: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  scanHalo: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(196,98,45,0.30)',
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.8,
+    shadowRadius: 40,
+    shadowOffset: { width: 0, height: 0 },
+  },
+  scanIconCircle: {
+    width: 132,
+    height: 132,
+    borderRadius: 66,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scanCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 18,
+    borderRadius: 18,
+    overflow: 'hidden',
+  },
+  scanCtaText: { fontSize: 17, fontWeight: '800', color: Colors.white, letterSpacing: -0.2 },
+  laterBtn: { paddingVertical: 12, alignItems: 'center' },
+  laterText: { fontSize: 13, color: 'rgba(255,255,255,0.55)', fontWeight: '600' },
+
+  /* Footer */
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    width: 80,
+  },
+  backText: { fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: '600' },
+  dotRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  dot: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.white,
+  },
+  nextBtn: {
+    width: 96,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
   nextBtnDisabled: { opacity: 0.4 },
-  nextGradient: { paddingVertical: 18, alignItems: 'center' },
-  nextText: { color: Colors.white, fontSize: 16, fontWeight: '700' },
+  nextGrad: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: 12,
+  },
+  nextText: { fontSize: 14, fontWeight: '800', color: Colors.white, letterSpacing: -0.1 },
 });

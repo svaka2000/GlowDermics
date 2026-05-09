@@ -4,6 +4,75 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Onboarding v2 Tour (Autonomous Overnight Pass 5)
+
+### 🎬 Five-page swipe-paginated onboarding tour
+
+The previous onboarding was a 5-step data-collection wizard (name → skin
+type → concerns → goals → lifestyle) that buried the value prop. Replaced
+with a swipe-paginated **product tour** that sells the experience first.
+Profile gets sensible defaults; users can refine in settings later.
+
+**Page 1 — Welcome + name**
+Logo spring-entrance, "Your skin, decoded." headline, single name input.
+Auto-advance gated until a valid name is entered.
+
+**Page 2 — 16 dimensions**
+"Most apps score 5–7 metrics. We score 16." Animated grid of 16 dimension
+tiles, each with its own tint + icon, staggered fade+spring entrance
+(50ms apart).
+
+**Page 3 — Regional analysis**
+Live `<RegionalSkinMap>` with sample findings (forehead mild · cheeks
+moderate · nose moderate · etc.) so users see the real face-map UI before
+committing to a scan.
+
+**Page 4 — Skin age + AI coach**
+Live `<SkinAgeBadge>` (estimated 27, "younger" bracket) + a sample chat
+bubble from "Derm" referencing the user's hydration score, plus a
+`<BiomarkerCloud>` of sample biomarker tags.
+
+**Page 5 — Take first scan**
+Animated terracotta scan icon with a pulsing halo. Big "Take My First
+Scan →" CTA + "Maybe later — explore the app" secondary. Greeting
+includes the user's name from page 1.
+
+### 🎚️ Pagination + nav
+
+- Horizontal `ScrollView pagingEnabled` synced with a Reanimated
+  `scrollX` shared value so dot indicators morph in real time (active
+  dot pill widens from 6 → 22px, brightness 0.35 → 1.0).
+- Top bar: thin gradient progress bar (Reanimated worklet) + "Skip"
+  button (visible on pages 1–4).
+- Footer: Back / dot row / Next, with Next disabled on page 1 until a
+  valid name is entered. Footer hidden on the final page where the
+  scan CTA takes over.
+- Deep ambient terracotta glow at top, pulsing 0.4 ↔ 0.85 opacity.
+
+### ⚡ Per-page entrance animations
+
+Each page's content has its own staggered Reanimated entrance (logo
+spring + headline slide + tagline fade + input slide on welcome; tile
+cascade on dimensions; map scale-in on regional; bubble slide-up on
+coach; halo pulse + CTA bounce on first-scan).
+
+### 📁 Files
+
+**Modified**:
+- `app/(auth)/onboarding.tsx` — full rewrite (~750 lines) using Reanimated 4
+  worklets, paginated ScrollView, sub-components for each page
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+- Profile is saved with safe defaults (`skinType: 'normal'`, empty concerns
+  and goals, lifestyle defaults). Existing scan / coach flows handle this
+  gracefully via the prompt's profile-context fallback.
+- Skip button + "Maybe later" both finish onboarding to `/(tabs)`. Primary
+  CTA finishes onboarding to `/scan` directly.
+
+---
+
 ## 2026-05-09 — Glassmorphism + GlassHero (Autonomous Overnight Pass 4)
 
 ### 🪟 GlassHero — `src/components/ui/GlassHero.tsx`
