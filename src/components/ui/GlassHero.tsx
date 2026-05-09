@@ -10,8 +10,8 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors } from '../../state/theme';
 
 interface GlassHeroProps {
   children: React.ReactNode;
@@ -42,13 +42,15 @@ interface GlassHeroProps {
  */
 export function GlassHero({
   children,
-  tint = Colors.primary,
+  tint,
   height = 320,
   withBlobs = true,
   withNoise = false,
   bottomRadius = 32,
   style,
 }: GlassHeroProps) {
+  const colors = useColors();
+  const resolvedTint = tint ?? colors.primary;
   const blob1 = useSharedValue(0);
   const blob2 = useSharedValue(0);
   const blob3 = useSharedValue(0);
@@ -119,7 +121,7 @@ export function GlassHero({
     >
       {/* Base gradient — vertical: tint at top fading into bg color */}
       <LinearGradient
-        colors={[tint, `${tint}AA`, `${tint}55`, Colors.bg]}
+        colors={[resolvedTint, `${resolvedTint}AA`, `${resolvedTint}55`, colors.bg]}
         locations={[0, 0.4, 0.75, 1]}
         start={{ x: 0.2, y: 0 }}
         end={{ x: 0.8, y: 1 }}
@@ -152,7 +154,7 @@ export function GlassHero({
           </Animated.View>
           <Animated.View style={[styles.blob, styles.blob3, blob3Style]}>
             <LinearGradient
-              colors={[`${tint}55`, `${tint}00`]}
+              colors={[`${resolvedTint}55`, `${resolvedTint}00`]}
               style={{ flex: 1, borderRadius: 200 }}
             />
           </Animated.View>

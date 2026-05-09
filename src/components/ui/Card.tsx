@@ -2,8 +2,8 @@ import React from 'react';
 import { View, ViewStyle, StyleProp, StyleSheet, Pressable, GestureResponderEvent, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import { Colors } from '../../constants/colors';
 import { Radii, Shadows, Spacing } from '../../constants/theme';
+import { useColors, useTheme } from '../../state/theme';
 
 type CardVariant = 'flat' | 'elevated' | 'glass' | 'outline' | 'gradient' | 'glow';
 type BlurTint = 'light' | 'dark' | 'default';
@@ -15,7 +15,7 @@ interface CardProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   onPress?: (e: GestureResponderEvent) => void;
-  /** Tint color for gradient/glow variants. Defaults to primary. */
+  /** Tint color for gradient/glow variants. Defaults to active theme primary. */
   tint?: string;
   /** When true, the card scales slightly on press. */
   pressable?: boolean;
@@ -48,11 +48,18 @@ export function Card({
   children,
   style,
   onPress,
-  tint = Colors.primary,
+  tint,
   pressable = !!onPress,
   blur = false,
-  blurTint = 'light',
+  blurTint,
 }: CardProps) {
+  const colors = useColors();
+  const { scheme } = useTheme();
+  const resolvedTint = tint ?? colors.primary;
+  // Default blur tint follows the active scheme so the frosted effect reads
+  // correctly in either mode.
+  const resolvedBlurTint = blurTint ?? (scheme === 'dark' ? 'dark' : 'light');
+
   const baseStyle: ViewStyle = {
     borderRadius: radius,
     padding,
@@ -62,20 +69,21 @@ export function Card({
   let variantStyle: ViewStyle = {};
   let extraLayer: React.ReactNode = null;
 
+  // Border color used by `glass`. Lighter in light mode, dark-edged in dark mode.
+  const glassBorder = scheme === 'dark' ? 'rgba(245,240,234,0.18)' : 'rgba(255,255,255,0.55)';
+
   switch (variant) {
     case 'flat':
-      variantStyle = { backgroundColor: Colors.bgCard };
+      variantStyle = { backgroundColor: colors.bgCard };
       break;
     case 'elevated':
-      variantStyle = { backgroundColor: Colors.bgCard, ...Shadows.card };
+      variantStyle = { backgroundColor: colors.bgCard, ...Shadows.card };
       break;
     case 'glass':
-      // When `blur` is enabled, BlurView handles the translucent surface.
-      // Otherwise fall back to a solid translucent fill.
       variantStyle = {
-        backgroundColor: blur ? 'transparent' : Colors.glassDeep,
+        backgroundColor: blur ? 'transparent' : colors.glassDeep,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.55)',
+        borderColor: glassBorder,
         ...Shadows.subtle,
       };
       break;
@@ -83,18 +91,18 @@ export function Card({
       variantStyle = {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: Colors.border,
+        borderColor: colors.border,
       };
       break;
     case 'gradient':
       variantStyle = {
-        backgroundColor: Colors.bgCard,
+        backgroundColor: colors.bgCard,
         ...Shadows.card,
       };
       extraLayer = (
         <LinearGradient
           pointerEvents="none"
-          colors={[`${tint}1A`, `${tint}05`, 'transparent']}
+          colors={[`${resolvedTint}1A`, `${resolvedTint}05`, 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFillObject}
@@ -103,8 +111,8 @@ export function Card({
       break;
     case 'glow':
       variantStyle = {
-        backgroundColor: Colors.bgCard,
-        shadowColor: tint,
+        backgroundColor: colors.bgCard,
+        shadowColor: resolvedTint,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.28,
         shadowRadius: 22,
@@ -120,7 +128,7 @@ export function Card({
     blurIntensity > 0 ? (
       <BlurView
         intensity={blurIntensity}
-        tint={blurTint}
+        tint={resolvedBlurTint}
         // experimentalBlurMethod is the most reliable on Android; iOS ignores.
         experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
         style={[StyleSheet.absoluteFillObject, { borderRadius: radius }]}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable, ViewStyle, StyleProp } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Spacing, Typography } from '../../constants/theme';
+import { useColors } from '../../state/theme';
 
 interface SectionProps {
   title: string;
@@ -28,13 +28,14 @@ export function Section({
   style,
   gap = Spacing.md,
 }: SectionProps) {
+  const colors = useColors();
   return (
     <View style={[{ gap }, style]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 2 }}>
         <View style={{ flex: 1 }}>
-          <Text style={[Typography.h3, { color: Colors.textPrimary }]}>{title}</Text>
+          <Text style={[Typography.h3, { color: colors.textPrimary }]}>{title}</Text>
           {caption && (
-            <Text style={[Typography.small, { color: Colors.textSecondary, marginTop: 2 }]}>
+            <Text style={[Typography.small, { color: colors.textSecondary, marginTop: 2 }]}>
               {caption}
             </Text>
           )}
@@ -45,8 +46,8 @@ export function Section({
             hitSlop={8}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
           >
-            <Text style={[Typography.smallStrong, { color: Colors.primary }]}>{actionLabel}</Text>
-            <Ionicons name="chevron-forward" size={14} color={Colors.primary} />
+            <Text style={[Typography.smallStrong, { color: colors.primary }]}>{actionLabel}</Text>
+            <Ionicons name="chevron-forward" size={14} color={colors.primary} />
           </Pressable>
         )}
       </View>

@@ -11,8 +11,8 @@ import {
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
-import { Radii, Spacing, Typography } from '../../constants/theme';
+import { Radii, Spacing } from '../../constants/theme';
+import { useColors } from '../../state/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'gold';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -54,6 +54,7 @@ export function Button({
   haptic = true,
   style,
 }: ButtonProps) {
+  const colors = useColors();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -93,10 +94,10 @@ export function Button({
 
   const textColor =
     variant === 'secondary'
-      ? Colors.primary
+      ? colors.primary
       : variant === 'ghost'
-      ? Colors.primary
-      : Colors.white;
+      ? colors.primary
+      : colors.white;
 
   const baseStyle: ViewStyle = {
     borderRadius: Radii.lg,
@@ -114,9 +115,9 @@ export function Button({
   const variantStyle: ViewStyle =
     variant === 'secondary'
       ? {
-          backgroundColor: 'rgba(196,98,45,0.06)',
+          backgroundColor: colors.primary + '10',
           borderWidth: 1.5,
-          borderColor: Colors.borderStrong,
+          borderColor: colors.borderStrong,
         }
       : variant === 'ghost'
       ? { backgroundColor: 'transparent' }
@@ -126,8 +127,8 @@ export function Button({
     variant === 'destructive'
       ? ['#EF4444', '#B91C1C']
       : variant === 'gold'
-      ? [Colors.goldLight, Colors.gold]
-      : [Colors.primaryLight, Colors.primary];
+      ? [colors.goldLight, colors.gold]
+      : [colors.primaryLight, colors.primary];
 
   const Inner = (
     <>

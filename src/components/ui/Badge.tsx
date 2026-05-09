@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, View, ViewStyle, StyleProp, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
+import { useColors } from '../../state/theme';
+import type { Palette } from '../../constants/colors';
 
 type BadgeTone =
   | 'primary'
@@ -25,16 +26,29 @@ interface BadgeProps {
   dot?: boolean;
 }
 
-const TONE: Record<BadgeTone, { bg: string; text: string; border: string; dot: string }> = {
-  primary:  { bg: 'rgba(196,98,45,0.10)',  text: Colors.primary,        border: 'rgba(196,98,45,0.30)',  dot: Colors.primary },
-  success:  { bg: 'rgba(22,163,74,0.10)',  text: Colors.scoreExcellent, border: 'rgba(22,163,74,0.30)',  dot: Colors.scoreExcellent },
-  warning:  { bg: 'rgba(217,119,6,0.10)',  text: Colors.scoreFair,      border: 'rgba(217,119,6,0.30)',  dot: Colors.scoreFair },
-  danger:   { bg: 'rgba(220,38,38,0.10)',  text: Colors.scorePoor,      border: 'rgba(220,38,38,0.30)',  dot: Colors.scorePoor },
-  info:     { bg: 'rgba(14,165,233,0.10)', text: '#0EA5E9',             border: 'rgba(14,165,233,0.30)', dot: '#0EA5E9' },
-  gold:     { bg: 'rgba(184,136,46,0.10)', text: Colors.gold,           border: 'rgba(184,136,46,0.30)', dot: Colors.gold },
-  neutral:  { bg: 'rgba(28,24,20,0.06)',   text: Colors.textSecondary,  border: 'rgba(28,24,20,0.12)',   dot: Colors.textMuted },
-  premium:  { bg: 'rgba(168,85,247,0.10)', text: '#A855F7',             border: 'rgba(168,85,247,0.30)', dot: '#A855F7' },
-};
+interface ToneSpec {
+  bg: string;
+  text: string;
+  border: string;
+  dot: string;
+}
+
+/**
+ * Build the tone palette dynamically from the active theme. Memoized so
+ * components don't recompute on every render unless the palette changes.
+ */
+function buildTones(colors: Palette): Record<BadgeTone, ToneSpec> {
+  return {
+    primary: { bg: colors.primary + '1A', text: colors.primary, border: colors.primary + '4D', dot: colors.primary },
+    success: { bg: colors.scoreExcellent + '1A', text: colors.scoreExcellent, border: colors.scoreExcellent + '4D', dot: colors.scoreExcellent },
+    warning: { bg: colors.scoreFair + '1A', text: colors.scoreFair, border: colors.scoreFair + '4D', dot: colors.scoreFair },
+    danger:  { bg: colors.scorePoor + '1A', text: colors.scorePoor, border: colors.scorePoor + '4D', dot: colors.scorePoor },
+    info:    { bg: colors.barrierHealth + '1A', text: colors.barrierHealth, border: colors.barrierHealth + '4D', dot: colors.barrierHealth },
+    gold:    { bg: colors.gold + '1A', text: colors.gold, border: colors.gold + '4D', dot: colors.gold },
+    neutral: { bg: colors.textPrimary + '0F', text: colors.textSecondary, border: colors.textPrimary + '1F', dot: colors.textMuted },
+    premium: { bg: '#A855F71A', text: '#A855F7', border: '#A855F74D', dot: '#A855F7' },
+  };
+}
 
 const SIZE_CONFIG = {
   xs: { paddingX: 6,  paddingY: 2, fontSize: 10, iconSize: 9,  gap: 3 },
@@ -54,7 +68,9 @@ export function Badge({
   style,
   dot,
 }: BadgeProps) {
-  const t = TONE[tone];
+  const colors = useColors();
+  const tones = useMemo(() => buildTones(colors), [colors]);
+  const t = tones[tone];
   const s = SIZE_CONFIG[size];
 
   return (
@@ -77,7 +93,7 @@ export function Badge({
             width: 5,
             height: 5,
             borderRadius: 2.5,
-            backgroundColor: filled ? Colors.white : t.dot,
+            backgroundColor: filled ? colors.white : t.dot,
             shadowColor: t.dot,
             shadowOpacity: 0.8,
             shadowRadius: 3,
@@ -86,13 +102,13 @@ export function Badge({
         />
       )}
       {icon && (
-        <Ionicons name={icon} size={s.iconSize} color={filled ? Colors.white : t.text} />
+        <Ionicons name={icon} size={s.iconSize} color={filled ? colors.white : t.text} />
       )}
       <Text
         style={{
           fontSize: s.fontSize,
           fontWeight: '700',
-          color: filled ? Colors.white : t.text,
+          color: filled ? colors.white : t.text,
           letterSpacing: 0.2,
         }}
       >

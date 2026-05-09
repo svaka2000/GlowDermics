@@ -4,6 +4,88 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Dark Mode: Design System Primitives (Pass 14)
+
+Continuation of #17. Migrated the 6 highest-traffic design-system primitives
+from the static `Colors` import to the `useColors()` hook so all 100+
+consumer screens that use these components automatically respond to theme
+changes.
+
+### Migrated primitives
+
+- **Card** — all 6 variants (flat / elevated / glass / outline / gradient /
+  glow) now read from active palette. `tint` prop default resolves to
+  `colors.primary` at render time. `glass` border color flips white-edge in
+  light mode → dark-edge in dark mode. `BlurView` `tint` prop now defaults
+  to follow the active scheme (light/dark).
+- **Button** — all 5 variants (primary / secondary / ghost / destructive /
+  gold). Gradient stops use active `colors.primaryLight/primary` and
+  `colors.goldLight/gold`. Secondary background uses `colors.primary + '10'`
+  (opacity-suffixed hex) for proper contrast in both modes.
+- **Badge** — was the trickiest: had a module-level `TONE` constant with
+  `Colors.X` references that froze at module load. Replaced with a
+  `buildTones(colors)` helper memoized inside the component via
+  `useMemo`. All 8 tones (primary / success / warning / danger / info /
+  gold / neutral / premium) now flip cleanly. Hex `+ '1A'` (10% alpha) and
+  `+ '4D'` (30% alpha) suffixes generate per-theme background and border
+  colors without hardcoded rgba.
+- **GlassHero** — base gradient bottom stop now uses `colors.bg` so the
+  hero blends into whatever the active surface is. Tint default + blob
+  tint resolve dynamically.
+- **Section** — title, caption, action label, and chevron icon all source
+  text/primary from active palette.
+- **Skeleton** — track color flips between dark wash on light vs light
+  wash on dark. Shimmer gradient highlight uses theme-appropriate alpha
+  white/cream so the glow is visible on both surfaces without retinal
+  burn-in.
+
+### How this propagates
+
+Roughly 40+ existing callsites of `<Card>`, 25+ of `<Button>`, 50+ of
+`<Badge>`, plus every screen using `<GlassHero>`, `<Section>`, or
+`<Skeleton>` now automatically respond to the theme toggle in Settings →
+Appearance. No callsite changes needed; behavior is opt-in to dark mode
+the moment user toggles.
+
+### Pattern for future migrations
+
+For primitives with module-level color maps (like Badge had), the canonical
+fix is:
+1. Create a `buildXxx(colors: Palette)` helper.
+2. Inside the component, compute `useMemo(() => buildXxx(colors), [colors])`.
+3. Reference the memoized object instead of the module-level constant.
+
+For module-level static `StyleSheet.create({...})` objects with theme-aware
+properties, the canonical fix is to keep layout properties static
+(padding, fontSize, etc.) and compute color-bearing styles inline at
+render time using the hook.
+
+### 📁 Files
+
+**Modified**:
+- `src/components/ui/Card.tsx`
+- `src/components/ui/Button.tsx`
+- `src/components/ui/Badge.tsx`
+- `src/components/ui/GlassHero.tsx`
+- `src/components/ui/Section.tsx`
+- `src/components/ui/Skeleton.tsx`
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+### Next batch
+
+Remaining design-system primitives that still import static `Colors` and
+should be migrated in subsequent iterations: `MetricBar`, `ScoreGrid`,
+`BiomarkerCloud`, `SkinAgeBadge`, `TierCard`, `SocialProofStrip`,
+`XPBar`, `RegionalSkinMap`, `RegionalDeltaMap`, `ScannerOverlay`,
+`ScatterPlot`, `StreakRing`, `PhotoTimeline`, `PhotoCompareSlider`,
+`DeltaGrid`. The screen-level migrations (home, scan, results, settings,
+etc.) are also pending.
+
+---
+
 ## 2026-05-09 — Dark Mode Infrastructure (Autonomous Overnight Pass 13)
 
 First Tier 3 milestone. Pivoted from voice journaling (#10) which would have
