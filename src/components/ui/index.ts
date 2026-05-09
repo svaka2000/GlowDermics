@@ -23,3 +23,4 @@ export { TierCard } from './TierCard';
 export type { TierFeature } from './TierCard';
 export { SocialProofStrip } from './SocialProofStrip';
 export { ScatterPlot } from './ScatterPlot';
+export { StreakRing } from './StreakRing';

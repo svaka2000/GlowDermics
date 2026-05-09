@@ -4,6 +4,94 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Streak Gamification (Autonomous Overnight Pass 9)
+
+A dedicated streak gamification surface with an animated SVG ring,
+milestone timeline, 28-day activity calendar, and at-risk nudge. Builds
+on the existing scan/routine streak data so users get instant visual
+feedback on their consistency.
+
+### 🔥 `StreakEngine`
+
+`src/engine/StreakEngine.ts`. Pulls the user's routine log + scan history,
+collapses both into a unified "active days" set, then computes:
+
+- `currentStreak` — consecutive days with activity, ending today or
+  yesterday (giving a grace period until midnight)
+- `longestStreak` — best ever, with `longestStartDate` for display
+- `nextMilestone` — first of [3, 7, 14, 30, 60, 90, 180, 365] above current
+- `daysToNext` — countdown to next tier
+- `atRisk` — boolean: streak > 0, today not yet logged, after 12pm
+- `milestones[]` — every tier with unlock state and emoji + label
+- `last28[]` — 28-day boolean array for the calendar
+- `totalActiveDays`, `unlocksCount`
+
+8 milestone tiers: Spark (3), Week Warrior (7), Fortnight Glow (14),
+Lunar Cycle (30), Two-Month Pro (60), Quarter Glow (90), Half-Year
+Hero (180), Annual Aura (365).
+
+### ⭕ `<StreakRing>` component
+
+`src/components/ui/StreakRing.tsx`. Circular SVG progress ring entirely
+on Reanimated 4 worklets:
+
+- Animated progress arc fills from 0 → currentStreak/nextMilestone
+  using `useAnimatedProps` on `strokeDashoffset` (UI-thread)
+- Animated count-up — `useAnimatedReaction` bridges a `useSharedValue`
+  back to React state per integer change
+- Color tier shifts with streak length:
+  - 0–2: cool sky-blue (just starting)
+  - 3–6: gold→terracotta (Spark unlocked)
+  - 7–13: terracotta gradient
+  - 14–29: deeper terracotta
+  - 30–59: gold→terracotta (Lunar)
+  - 60+: gold→fire-red (legendary)
+- Inner radial glow pulses softly behind the count
+- At-risk halo pulses red when the streak is in danger
+- Flame emoji floats above the count when streak ≥ 3
+
+### 📺 `/streak` — new dedicated screen
+
+`app/streak/index.tsx`. Premium gamification surface with:
+
+- GlassHero header showing "X of 8 milestones unlocked"
+- **Hero ring card** with the StreakRing centerpiece + at-risk banner
+  OR celebration banner ("Today's locked in"). Quick-action row with
+  Scan / Log Routine / Check-in shortcuts.
+- **Stats row** — Best ever / Total active days / Unlocked count
+- **Last 28 days calendar** — staggered fade-in cells (Reanimated
+  spring per cell, 18ms apart). Today's cell gets a gold ring outline.
+  Legend: Active / Empty / Today.
+- **Milestones timeline** — every tier as a Card variant=gradient (when
+  unlocked, green tint), variant=glow (when next milestone), or outline
+  (locked). Each card has its emoji, label, "X-day streak" subline,
+  and an UNLOCKED / NEXT / lock-icon trailing badge. Each row slides in
+  with a delay.
+- **Empty-state nudge** when no streak yet — gradient card with primary
+  CTA to take a scan.
+
+### 🔗 Home wiring
+
+The home tab's "🔥 Streak" stat tile now routes to `/streak` instead of
+`/habits`, surfacing the new gamification screen on tap.
+
+### 📁 Files
+
+**New**:
+- `src/engine/StreakEngine.ts` (~165 lines)
+- `src/components/ui/StreakRing.tsx` (~245 lines)
+- `app/streak/index.tsx` (~410 lines)
+
+**Modified**:
+- `src/components/ui/index.ts` — export `StreakRing`
+- `app/(tabs)/index.tsx` — streak stat now routes to `/streak`
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Sleep × Skin Correlation Engine (Autonomous Overnight Pass 8)
 
 A proper behavioral-data feature that competitor skincare apps don't have:

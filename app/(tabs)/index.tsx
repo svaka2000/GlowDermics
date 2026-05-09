@@ -249,7 +249,7 @@ export default function Home() {
             paddingBottom: 20,
           }}>
             <View style={styles.statsRow}>
-              <Pressable style={styles.heroStatPress} onPress={() => router.push('/habits')}>
+              <Pressable style={styles.heroStatPress} onPress={() => router.push('/streak')}>
                 <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
                   <Text style={styles.heroStatNum}>{streak}</Text>
                   <Text style={styles.heroStatLabel}>🔥 Streak</Text>
