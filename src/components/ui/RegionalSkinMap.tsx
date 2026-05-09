@@ -8,9 +8,9 @@ import Svg, {
   RadialGradient,
   Stop,
 } from 'react-native-svg';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
 import { FaceRegion, RegionalFinding } from '../../types';
+import { useColors } from '../../state/theme';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
@@ -58,6 +58,7 @@ export function RegionalSkinMap({
   onRegionPress,
   selected,
 }: RegionalSkinMapProps) {
+  const colors = useColors();
   const height = width * 1.2;
   const pulse = useRef(new Animated.Value(0)).current;
 
@@ -147,7 +148,7 @@ export function RegionalSkinMap({
           rx={r.rx}
           ry={r.ry}
           fill={color}
-          stroke={isSelected ? Colors.primary : 'rgba(255,255,255,0.6)'}
+          stroke={isSelected ? colors.primary : 'rgba(255,255,255,0.6)'}
           strokeWidth={isSelected ? 2.5 : 1}
         />
       </React.Fragment>
@@ -219,7 +220,7 @@ export function RegionalSkinMap({
         {(['none', 'mild', 'moderate', 'severe'] as const).map(sev => (
           <View key={sev} style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: SEVERITY_COLOR[sev] }]} />
-            <Text style={styles.legendText}>{sev}</Text>
+            <Text style={[styles.legendText, { color: colors.textSecondary }]}>{sev}</Text>
           </View>
         ))}
       </View>
@@ -233,14 +234,17 @@ export function RegionDetailChip({
 }: {
   finding: RegionalFinding | undefined;
 }) {
+  const colors = useColors();
   if (!finding) return null;
   const color = SEVERITY_COLOR[finding.severity];
   return (
-    <View style={styles.chip}>
+    <View style={[styles.chip, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
       <View style={[styles.chipDot, { backgroundColor: color }]} />
       <View style={{ flex: 1 }}>
-        <Text style={styles.chipRegion}>{REGION_LABEL[finding.region] ?? finding.region}</Text>
-        <Text style={styles.chipObs}>{finding.observation}</Text>
+        <Text style={[styles.chipRegion, { color: colors.textPrimary }]}>
+          {REGION_LABEL[finding.region] ?? finding.region}
+        </Text>
+        <Text style={[styles.chipObs, { color: colors.textSecondary }]}>{finding.observation}</Text>
       </View>
       <Text style={[styles.chipSev, { color: color.replace(/[\d.]+\)/, '1)') }]}>
         {finding.severity.toUpperCase()}
@@ -265,20 +269,18 @@ const styles = StyleSheet.create({
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 9, height: 9, borderRadius: 4.5 },
-  legendText: { fontSize: 9, color: Colors.textSecondary, fontWeight: '700', textTransform: 'capitalize' },
+  legendText: { fontSize: 9, fontWeight: '700', textTransform: 'capitalize' },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: Colors.bgCard,
     borderRadius: Radii.lg,
     padding: 12,
     borderWidth: 1,
-    borderColor: Colors.border,
     marginTop: 14,
   },
   chipDot: { width: 10, height: 10, borderRadius: 5 },
-  chipRegion: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary },
-  chipObs: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
+  chipRegion: { fontSize: 13, fontWeight: '800' },
+  chipObs: { fontSize: 12, marginTop: 1 },
   chipSev: { fontSize: 9, fontWeight: '900', letterSpacing: 1 },
 });

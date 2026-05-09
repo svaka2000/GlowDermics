@@ -4,6 +4,68 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Dark Mode: All Design System Primitives Done (Pass 16)
+
+🎉 **All 21 design-system primitives now dark-mode aware.** This pass
+migrated the final 7 — the SVG-heavy and photo-overlay components.
+
+### Migrated this pass
+
+- **ScannerOverlay** — `Colors.primary` was used in 10 places (scan-line
+  shadow, 4 corner brackets, glow ring border + shadow, data-point bg,
+  badge dot, badge text). Migrated by passing `tint={primary}` to the
+  internal `<DataPoint>` and inlining the relevant style overrides on
+  the JSX so the static StyleSheet becomes layout-only.
+- **ScatterPlot** — `pointColor` and `trendColor` props now resolve
+  from active palette when omitted. Y-axis labels, x-axis labels, and
+  axis title text colors all source from active palette.
+- **StreakRing** — track stroke + day label + sub label colors flip per
+  scheme. The 6 streak-tier color stops stay scheme-agnostic since
+  they're already AA-contrast on either bg.
+- **PhotoTimeline** — `scoreColor()` helper now takes a `palette` arg.
+  Frame container background, ring score text, control button text,
+  speed-chip text all use active palette. Date pill / skin-type pill /
+  frame counter stay white-on-dark since they always sit on a photo.
+- **PhotoCompareSlider** — handle bg + shadow source from `colors.primary`
+  inline; line/handle border/captions stay white-on-photo. Empty
+  fallback icon uses `colors.textMuted`.
+- **RegionalSkinMap** — selection stroke uses `colors.primary`; legend
+  text + chip card (bg/border/region/observation) all use active
+  palette. Severity color map stays semantic-fixed.
+- **RegionalDeltaMap** — row card bg/border/label/severity text + arrow
+  icon + empty caption all use active palette.
+
+### Coverage milestone
+
+| | Before iter 14 | After iter 14 | After iter 15 | After iter 16 |
+|---|---|---|---|---|
+| Primitives migrated | 0 | 6 | 14 | **21 / 21** |
+
+### What's still pending
+
+Per-screen migration: 100+ existing screens still import the static
+`Colors` constant directly for their root backgrounds, headers, etc.
+With all primitives now responsive, screens that consume them get a
+partial dark-mode treatment automatically (cards, badges, buttons,
+graphs all flip). Their static screen-level styles remain light until
+migrated. Screen-level batches will follow.
+
+### Files modified
+
+- `src/components/ui/ScannerOverlay.tsx`
+- `src/components/ui/ScatterPlot.tsx`
+- `src/components/ui/StreakRing.tsx`
+- `src/components/ui/PhotoTimeline.tsx`
+- `src/components/ui/PhotoCompareSlider.tsx`
+- `src/components/ui/RegionalSkinMap.tsx`
+- `src/components/ui/RegionalDeltaMap.tsx`
+
+### ✅ Verified
+
+- `tsc --noEmit --strict` passes clean.
+
+---
+
 ## 2026-05-09 — Dark Mode: Score & Metric Primitives (Pass 15)
 
 Continuing #17 dark-mode propagation. Migrated 8 more design-system

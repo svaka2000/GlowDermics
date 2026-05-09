@@ -21,7 +21,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
+import { useColors, useTheme } from '../../state/theme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -62,6 +62,9 @@ export function StreakRing({
   const cx = size / 2;
   const cy = size / 2;
   const circumference = 2 * Math.PI * radius;
+  const palette = useColors();
+  const { scheme } = useTheme();
+  const trackStroke = scheme === 'dark' ? 'rgba(245,240,234,0.10)' : 'rgba(28,24,20,0.06)';
 
   // Color tiers by streak length.
   const tier =
@@ -190,7 +193,7 @@ export function StreakRing({
           cx={cx}
           cy={cy}
           r={radius}
-          stroke="rgba(28,24,20,0.06)"
+          stroke={trackStroke}
           strokeWidth={stroke}
           fill="none"
         />
@@ -236,8 +239,8 @@ export function StreakRing({
           <Text style={styles.flame}>🔥</Text>
         )}
         <Text style={[styles.count, { color: tier.to }]}>{displayCount}</Text>
-        <Text style={styles.dayLabel}>{displayCount === 1 ? 'DAY' : 'DAYS'}</Text>
-        {subLabel && <Text style={styles.subLabel}>{subLabel}</Text>}
+        <Text style={[styles.dayLabel, { color: palette.textMuted }]}>{displayCount === 1 ? 'DAY' : 'DAYS'}</Text>
+        {subLabel && <Text style={[styles.subLabel, { color: palette.textSecondary }]}>{subLabel}</Text>}
       </View>
     </Animated.View>
   );
@@ -272,14 +275,12 @@ const styles = StyleSheet.create({
   dayLabel: {
     fontSize: 11,
     fontWeight: '900',
-    color: Colors.textMuted,
     letterSpacing: 2,
     marginTop: -2,
   },
   subLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.textSecondary,
     marginTop: 4,
   },
 });

@@ -9,9 +9,9 @@ import Svg, {
   Stop,
 } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
 import { FaceRegion, RegionalFinding } from '../../types';
+import { useColors } from '../../state/theme';
 
 const SEVERITY_RANK: Record<RegionalFinding['severity'], number> = {
   none: 0,
@@ -66,6 +66,7 @@ interface RegionalDeltaMapProps {
  * inside each active zone.
  */
 export function RegionalDeltaMap({ before, after, width = 280 }: RegionalDeltaMapProps) {
+  const colors = useColors();
   const height = width * 1.2;
   const VB_W = 280;
   const VB_H = 336;
@@ -164,8 +165,8 @@ export function RegionalDeltaMap({ before, after, width = 280 }: RegionalDeltaMa
           </Text>
         </View>
         <View style={[styles.pill, { backgroundColor: 'rgba(28,24,20,0.06)' }]}>
-          <Ionicons name="remove" size={11} color={Colors.textMuted} />
-          <Text style={[styles.pillText, { color: Colors.textMuted }]}>
+          <Ionicons name="remove" size={11} color={colors.textMuted} />
+          <Text style={[styles.pillText, { color: colors.textMuted }]}>
             {summary.same} same
           </Text>
         </View>
@@ -187,12 +188,15 @@ export function RegionalDeltaMap({ before, after, width = 280 }: RegionalDeltaMa
             const b = beforeMap[r.region];
             const color = DELTA_COLOR[r.dir];
             return (
-              <View key={r.region} style={styles.row}>
+              <View
+                key={r.region}
+                style={[styles.row, { backgroundColor: colors.bgCard, borderColor: colors.border }]}
+              >
                 <View style={[styles.rowDot, { backgroundColor: color }]} />
-                <Text style={styles.rowLabel}>{REGION_LABEL[r.region]}</Text>
+                <Text style={[styles.rowLabel, { color: colors.textPrimary }]}>{REGION_LABEL[r.region]}</Text>
                 <View style={styles.rowMid}>
-                  <Text style={styles.rowSev}>{b?.severity ?? 'none'}</Text>
-                  <Ionicons name="arrow-forward" size={10} color={Colors.textMuted} />
+                  <Text style={[styles.rowSev, { color: colors.textSecondary }]}>{b?.severity ?? 'none'}</Text>
+                  <Ionicons name="arrow-forward" size={10} color={colors.textMuted} />
                   <Text style={[styles.rowSev, { color }]}>{a?.severity ?? 'none'}</Text>
                 </View>
                 <Text style={[styles.rowDir, { color }]}>
@@ -202,7 +206,9 @@ export function RegionalDeltaMap({ before, after, width = 280 }: RegionalDeltaMa
             );
           })}
         {regionDeltas.every(r => r.dir === 'same') && (
-          <Text style={styles.empty}>No regional changes between scans.</Text>
+          <Text style={[styles.empty, { color: colors.textMuted }]}>
+            No regional changes between scans.
+          </Text>
         )}
       </View>
     </View>
@@ -228,15 +234,13 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 6,
     paddingHorizontal: 8,
-    backgroundColor: Colors.bgCard,
     borderRadius: Radii.md,
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   rowDot: { width: 8, height: 8, borderRadius: 4 },
-  rowLabel: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  rowLabel: { fontSize: 12, fontWeight: '700', flex: 1 },
   rowMid: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  rowSev: { fontSize: 10, color: Colors.textSecondary, fontWeight: '700', textTransform: 'capitalize' },
+  rowSev: { fontSize: 10, fontWeight: '700', textTransform: 'capitalize' },
   rowDir: { fontSize: 12, fontWeight: '900' },
-  empty: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', paddingVertical: 6 },
+  empty: { fontSize: 12, textAlign: 'center', paddingVertical: 6 },
 });

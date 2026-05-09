@@ -15,7 +15,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
-import { Colors } from '../../constants/colors';
+import { useColors } from '../../state/theme';
+import type { Palette } from '../../constants/colors';
 import { Radii } from '../../constants/theme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -46,11 +47,11 @@ interface PhotoTimelineProps {
 type Speed = 0.5 | 1 | 2 | 4;
 const SPEED_OPTIONS: Speed[] = [0.5, 1, 2, 4];
 
-function scoreColor(score: number): string {
-  if (score >= 80) return Colors.scoreExcellent;
-  if (score >= 65) return Colors.scoreGood;
-  if (score >= 50) return Colors.scoreFair;
-  return Colors.scorePoor;
+function scoreColor(score: number, palette: Palette): string {
+  if (score >= 80) return palette.scoreExcellent;
+  if (score >= 65) return palette.scoreGood;
+  if (score >= 50) return palette.scoreFair;
+  return palette.scorePoor;
 }
 
 function fmtDate(iso: string): string {
@@ -77,6 +78,7 @@ export function PhotoTimeline({
   framesMs = 1500,
   onFrameChange,
 }: PhotoTimelineProps) {
+  const colors = useColors();
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(autoPlay);
   const [speed, setSpeed] = useState<Speed>(1);
@@ -148,7 +150,7 @@ export function PhotoTimeline({
 
   if (frames.length === 0) return null;
   const current = frames[index];
-  const tint = scoreColor(current.score);
+  const tint = scoreColor(current.score, colors);
 
   const photoStyle = useAnimatedStyle(() => ({ opacity: fade.value }));
 
@@ -163,7 +165,7 @@ export function PhotoTimeline({
     <View style={[styles.wrap, { width }]}>
       {/* Photo card — square, full bleed */}
       <Pressable
-        style={[styles.photoFrame, { width, height: width }]}
+        style={[styles.photoFrame, { width, height: width, backgroundColor: colors.bgElevated }]}
         onPress={() => setPlaying(p => !p)}
       >
         <Animated.View style={[StyleSheet.absoluteFillObject, photoStyle]}>
@@ -176,7 +178,7 @@ export function PhotoTimeline({
             />
             <View style={styles.topRow}>
               <View style={styles.datePill}>
-                <Ionicons name="calendar" size={11} color={Colors.white} />
+                <Ionicons name="calendar" size={11} color={colors.white} />
                 <Text style={styles.dateText}>{fmtDate(current.date)}</Text>
               </View>
               {current.skinType && (
@@ -211,7 +213,7 @@ export function PhotoTimeline({
                 />
               </Svg>
               <View style={styles.ringCenter}>
-                <Text style={[styles.ringScore, { color: Colors.white }]}>{displayScore}</Text>
+                <Text style={[styles.ringScore, { color: colors.white }]}>{displayScore}</Text>
               </View>
             </View>
 
@@ -233,7 +235,7 @@ export function PhotoTimeline({
         {!playing && (
           <View pointerEvents="none" style={styles.playOverlay}>
             <View style={styles.playCircle}>
-              <Ionicons name="play" size={24} color={Colors.white} />
+              <Ionicons name="play" size={24} color={colors.white} />
             </View>
           </View>
         )}
@@ -282,7 +284,7 @@ export function PhotoTimeline({
           <Ionicons
             name="play-skip-back"
             size={18}
-            color={index === 0 ? Colors.textMuted : Colors.primary}
+            color={index === 0 ? colors.textMuted : colors.primary}
           />
         </Pressable>
 
@@ -290,7 +292,7 @@ export function PhotoTimeline({
           style={[styles.playBtn, { backgroundColor: tint }]}
           onPress={() => setPlaying(p => !p)}
         >
-          <Ionicons name={playing ? 'pause' : 'play'} size={18} color={Colors.white} />
+          <Ionicons name={playing ? 'pause' : 'play'} size={18} color={colors.white} />
         </Pressable>
 
         <Pressable
@@ -304,7 +306,7 @@ export function PhotoTimeline({
           <Ionicons
             name="play-skip-forward"
             size={18}
-            color={index === frames.length - 1 ? Colors.textMuted : Colors.primary}
+            color={index === frames.length - 1 ? colors.textMuted : colors.primary}
           />
         </Pressable>
 
@@ -316,7 +318,7 @@ export function PhotoTimeline({
             style={[styles.speedChip, speed === s && styles.speedChipActive]}
             onPress={() => setSpeed(s)}
           >
-            <Text style={[styles.speedChipText, speed === s && styles.speedChipTextActive]}>
+            <Text style={[styles.speedChipText, { color: speed === s ? colors.primary : colors.textMuted }]}>
               {s}×
             </Text>
           </Pressable>
@@ -331,7 +333,6 @@ const styles = StyleSheet.create({
   photoFrame: {
     borderRadius: Radii.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.bgElevated,
     shadowColor: '#1C1814',
     shadowOpacity: 0.18,
     shadowRadius: 20,
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
   },
-  dateText: { fontSize: 11, fontWeight: '800', color: Colors.white, letterSpacing: 0.3 },
+  dateText: { fontSize: 11, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.3 },
   skinTypePill: {
     backgroundColor: 'rgba(196,98,45,0.55)',
     paddingHorizontal: 9,
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.3)',
   },
-  skinTypeText: { fontSize: 9, fontWeight: '900', color: Colors.white, letterSpacing: 1 },
+  skinTypeText: { fontSize: 9, fontWeight: '900', color: '#FFFFFF', letterSpacing: 1 },
 
   ringWrap: {
     position: 'absolute',
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
   frameCounter: {
     fontSize: 13,
     fontWeight: '900',
-    color: Colors.white,
+    color: '#FFFFFF',
     letterSpacing: 0.4,
     textShadowColor: 'rgba(0,0,0,0.4)',
     textShadowRadius: 4,
@@ -483,6 +484,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   speedChipActive: { backgroundColor: 'rgba(196,98,45,0.12)' },
-  speedChipText: { fontSize: 11, fontWeight: '800', color: Colors.textMuted, letterSpacing: 0.3 },
-  speedChipTextActive: { color: Colors.primary },
+  speedChipText: { fontSize: 11, fontWeight: '800', letterSpacing: 0.3 },
+  speedChipTextActive: {},
 });

@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Colors } from '../../constants/colors';
+import { useColors } from '../../state/theme';
 import { Radii } from '../../constants/theme';
 
 interface PhotoCompareSliderProps {
@@ -51,6 +51,7 @@ export function PhotoCompareSlider({
   rightCaption,
   onChange,
 }: PhotoCompareSliderProps) {
+  const colors = useColors();
   const height = width / aspectRatio;
 
   // sliderX is the absolute pixel position of the handle; sliderFraction is 0..1.
@@ -103,7 +104,7 @@ export function PhotoCompareSlider({
     if (!src) {
       return (
         <View style={[styles.empty, { width, height }]}>
-          <Ionicons name="person" size={64} color={Colors.textMuted} />
+          <Ionicons name="person" size={64} color={colors.textMuted} />
         </View>
       );
     }
@@ -113,7 +114,7 @@ export function PhotoCompareSlider({
 
   return (
     <GestureDetector gesture={composed}>
-      <View style={[styles.container, { width, height }]}>
+      <View style={[styles.container, { width, height, backgroundColor: colors.bgElevated }]}>
         {/* Left photo — full layer */}
         <View style={[styles.layer, { width, height }]}>{renderImage(leftSource)}</View>
 
@@ -147,19 +148,23 @@ export function PhotoCompareSlider({
           pointerEvents="none"
           style={[
             styles.handle,
-            { top: height / 2 - HANDLE_SIZE / 2 },
+            {
+              top: height / 2 - HANDLE_SIZE / 2,
+              backgroundColor: colors.primary,
+              shadowColor: colors.primary,
+            },
             handleStyle,
           ]}
         >
-          <Ionicons name="chevron-back" size={14} color={Colors.white} />
-          <Ionicons name="chevron-forward" size={14} color={Colors.white} />
+          <Ionicons name="chevron-back" size={14} color={'#FFFFFF'} />
+          <Ionicons name="chevron-forward" size={14} color={'#FFFFFF'} />
         </Animated.View>
 
         {/* First-time hint */}
         {hint && (
           <View pointerEvents="none" style={styles.hintWrap}>
             <View style={styles.hint}>
-              <Ionicons name="swap-horizontal" size={11} color={Colors.white} />
+              <Ionicons name="swap-horizontal" size={11} color={'#FFFFFF'} />
               <Text style={styles.hintText}>Drag to compare</Text>
             </View>
           </View>
@@ -173,7 +178,6 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: Radii.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.bgElevated,
     shadowColor: '#1C1814',
     shadowOpacity: 0.12,
     shadowRadius: 18,
@@ -187,12 +191,12 @@ const styles = StyleSheet.create({
     top: 0,
     overflow: 'hidden',
   },
-  empty: { alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgElevated },
+  empty: { alignItems: 'center', justifyContent: 'center' },
   line: {
     position: 'absolute',
     top: 0,
     left: 0,
-    backgroundColor: Colors.white,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOpacity: 0.45,
     shadowRadius: 6,
@@ -203,13 +207,11 @@ const styles = StyleSheet.create({
     width: HANDLE_SIZE,
     height: HANDLE_SIZE,
     borderRadius: HANDLE_SIZE / 2,
-    backgroundColor: Colors.primary,
     borderWidth: 3,
-    borderColor: Colors.white,
+    borderColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
     shadowOpacity: 0.55,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 4 },
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     paddingVertical: 4,
   },
-  captionText: { fontSize: 10, fontWeight: '900', color: Colors.white, letterSpacing: 1 },
+  captionText: { fontSize: 10, fontWeight: '900', color: '#FFFFFF', letterSpacing: 1 },
   hintWrap: { position: 'absolute', bottom: 12, alignSelf: 'center', width: '100%', alignItems: 'center' },
   hint: {
     flexDirection: 'row',
@@ -233,5 +235,5 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: Radii.pill,
   },
-  hintText: { fontSize: 11, color: Colors.white, fontWeight: '700' },
+  hintText: { fontSize: 11, color: '#FFFFFF', fontWeight: '700' },
 });

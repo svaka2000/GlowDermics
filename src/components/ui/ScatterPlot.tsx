@@ -17,7 +17,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../constants/colors';
+import { useColors } from '../../state/theme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedLine = Animated.createAnimatedComponent(Line);
@@ -67,9 +67,12 @@ export function ScatterPlot({
   xRange,
   yRange = [0, 100],
   showTrendLine = true,
-  pointColor = Colors.primary,
-  trendColor = Colors.gold,
+  pointColor,
+  trendColor,
 }: ScatterPlotProps) {
+  const colors = useColors();
+  const resolvedPointColor = pointColor ?? colors.primary;
+  const resolvedTrendColor = trendColor ?? colors.gold;
   const padLeft = 36;
   const padRight = 12;
   const padTop = 12;
@@ -141,8 +144,8 @@ export function ScatterPlot({
       <Svg width={width} height={height}>
         <Defs>
           <SvgLinearGradient id="scatterPointFill" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor={pointColor} stopOpacity={1} />
-            <Stop offset="100%" stopColor={pointColor} stopOpacity={0.55} />
+            <Stop offset="0%" stopColor={resolvedPointColor} stopOpacity={1} />
+            <Stop offset="100%" stopColor={resolvedPointColor} stopOpacity={0.55} />
           </SvgLinearGradient>
         </Defs>
 
@@ -166,7 +169,7 @@ export function ScatterPlot({
             x={padLeft - 6}
             y={sy(t) + 3}
             fontSize="9"
-            fill={Colors.textMuted}
+            fill={colors.textMuted}
             textAnchor="end"
             fontWeight="700"
           >
@@ -191,7 +194,7 @@ export function ScatterPlot({
             x={sx(t)}
             y={padTop + plotH + 14}
             fontSize="9"
-            fill={Colors.textMuted}
+            fill={colors.textMuted}
             textAnchor="middle"
             fontWeight="700"
           >
@@ -200,7 +203,7 @@ export function ScatterPlot({
         ))}
 
         {/* Trend line (drawn behind points) */}
-        {hasTrend && <TrendLine x1={trendX1} y1={trendY1} x2={trendX2} y2={trendY2} stroke={trendColor} progress={trendEntry} />}
+        {hasTrend && <TrendLine x1={trendX1} y1={trendY1} x2={trendX2} y2={trendY2} stroke={resolvedTrendColor} progress={trendEntry} />}
 
         {/* Data points */}
         {data.map((p, i) => (
@@ -208,16 +211,16 @@ export function ScatterPlot({
             key={i}
             cx={sx(p.x)}
             cy={sy(p.y)}
-            color={pointColor}
+            color={resolvedPointColor}
             delay={i * 40}
             entry={entry}
           />
         ))}
       </Svg>
 
-      {xLabel && <Text style={[styles.xLabel, { width }]}>{xLabel}</Text>}
+      {xLabel && <Text style={[styles.xLabel, { color: colors.textSecondary, width }]}>{xLabel}</Text>}
       {yLabel && (
-        <Text style={[styles.yLabel, { top: height / 2 - 8 }]} numberOfLines={1}>
+        <Text style={[styles.yLabel, { color: colors.textSecondary, top: height / 2 - 8 }]} numberOfLines={1}>
           {yLabel}
         </Text>
       )}
@@ -297,7 +300,6 @@ const styles = StyleSheet.create({
   xLabel: {
     fontSize: 10,
     fontWeight: '900',
-    color: Colors.textSecondary,
     letterSpacing: 0.6,
     textAlign: 'center',
     marginTop: 2,
@@ -308,7 +310,6 @@ const styles = StyleSheet.create({
     left: -28,
     fontSize: 10,
     fontWeight: '900',
-    color: Colors.textSecondary,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     transform: [{ rotate: '-90deg' }],

@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
+import { useColors } from '../../state/theme';
 
 interface ScannerOverlayProps {
   /** URI of the captured photo. */
@@ -54,6 +54,8 @@ export function ScannerOverlay({
   showBadge = true,
   showDataPoints = true,
 }: ScannerOverlayProps) {
+  const colors = useColors();
+  const primary = colors.primary;
   // Looping shared values — one source of truth per animation.
   const scanLineY = useSharedValue(0);    // 0..1 (vertical)
   const scanLineX = useSharedValue(0);    // 0..1 (diagonal cross)
@@ -192,9 +194,9 @@ export function ScannerOverlay({
       />
 
       {/* Vertical scan line */}
-      <Animated.View style={[styles.scanLine, scanLineStyle]}>
+      <Animated.View style={[styles.scanLine, { shadowColor: primary }, scanLineStyle]}>
         <LinearGradient
-          colors={['transparent', Colors.primary, 'transparent']}
+          colors={['transparent', primary, 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFillObject}
@@ -218,14 +220,14 @@ export function ScannerOverlay({
       </Animated.View>
 
       {/* Corner brackets */}
-      <View style={[styles.bracket, styles.bracketTL]} />
-      <View style={[styles.bracket, styles.bracketTR]} />
-      <View style={[styles.bracket, styles.bracketBL]} />
-      <View style={[styles.bracket, styles.bracketBR]} />
+      <View style={[styles.bracket, styles.bracketTL, { borderColor: primary }]} />
+      <View style={[styles.bracket, styles.bracketTR, { borderColor: primary }]} />
+      <View style={[styles.bracket, styles.bracketBL, { borderColor: primary }]} />
+      <View style={[styles.bracket, styles.bracketBR, { borderColor: primary }]} />
 
       {/* Pulsing rotating glow ring */}
       <Animated.View style={[styles.glowRingWrap, glowRingWrapStyle]}>
-        <Animated.View style={[styles.glowRing, glowRingStyle]} />
+        <Animated.View style={[styles.glowRing, { borderColor: primary, shadowColor: primary }, glowRingStyle]} />
       </Animated.View>
 
       {/* FaceID-style data-point markers */}
@@ -238,14 +240,15 @@ export function ScannerOverlay({
             phaseOffset={i * 0.11}
             seed={dataPointSeed}
             height={height}
+            tint={primary}
           />
         ))}
 
       {/* AI SCANNING badge */}
       {showBadge && (
-        <View style={styles.badge}>
-          <Animated.View style={[styles.badgeDot, badgeDotStyle]} />
-          <Text style={styles.badgeText}>AI SCANNING</Text>
+        <View style={[styles.badge, { borderColor: primary + '73' }]}>
+          <Animated.View style={[styles.badgeDot, { backgroundColor: primary, shadowColor: primary }, badgeDotStyle]} />
+          <Text style={[styles.badgeText, { color: primary }]}>AI SCANNING</Text>
         </View>
       )}
     </Animated.View>
@@ -259,12 +262,14 @@ function DataPoint({
   phaseOffset,
   seed,
   height,
+  tint,
 }: {
   xFraction: number;
   yFraction: number;
   phaseOffset: number;
   seed: ReturnType<typeof useSharedValue<number>>;
   height: number;
+  tint: string;
 }) {
   const pointStyle = useAnimatedStyle(() => {
     // Stagger the seed so each point fades in/out at a slightly different time.
@@ -281,6 +286,8 @@ function DataPoint({
         {
           left: `${xFraction * 100}%`,
           top: yFraction * height,
+          backgroundColor: tint,
+          shadowColor: tint,
         },
         pointStyle,
       ]}
@@ -298,7 +305,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 3,
-    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.9,
     shadowRadius: 8,
@@ -313,7 +319,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 22,
     height: 22,
-    borderColor: Colors.primary,
     borderWidth: 2.5,
   },
   bracketTL: { top: 16, left: 16, borderBottomWidth: 0, borderRightWidth: 0 },
@@ -332,9 +337,7 @@ const styles = StyleSheet.create({
     height: GLOW_SIZE,
     borderRadius: GLOW_SIZE / 2,
     borderWidth: 2,
-    borderColor: Colors.primary,
     borderStyle: 'dashed',
-    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -346,10 +349,8 @@ const styles = StyleSheet.create({
     marginLeft: -3.5,
     marginTop: -3.5,
     borderRadius: 4,
-    backgroundColor: Colors.primary,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.85)',
-    shadowColor: Colors.primary,
     shadowOpacity: 1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 0 },
@@ -372,11 +373,9 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: Colors.primary,
-    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 4,
   },
-  badgeText: { fontSize: 9, fontWeight: '900', color: Colors.primary, letterSpacing: 1.5 },
+  badgeText: { fontSize: 9, fontWeight: '900', letterSpacing: 1.5 },
 });
