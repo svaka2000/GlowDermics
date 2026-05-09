@@ -148,6 +148,9 @@ function RootContent() {
           <Stack.Screen name="pregnancy-skin/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="aging-timeline/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="mens-skin/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="streak/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="daily-challenges/index" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="timeline/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
         </SafeAreaProvider>
       </GestureHandlerRootView>
