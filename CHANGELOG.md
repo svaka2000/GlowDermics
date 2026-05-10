@@ -4,6 +4,27 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Achievements + Spectrum + Dark-Mode Sweep (Pass 41–47)
+
+Seven more iterations.
+
+### 🏆 Achievement Wall (Pass 41) — `src/engine/AchievementEngine.ts` + `app/achievements/index.tsx`
+Unified gallery aggregating 4 sources (8 streak milestones, 6 XP badges, 6 scan-count tiers, 8 persona archetypes) into one registry with 4 rarity tiers (common/rare/epic/legendary). Hero progress card, "Closest to unlock" section, filter pills, 3-column grid of rarity-tinted tiles. Epic + legendary unlocked tiles get a 1.4s shimmer overlay. Linked from home grid.
+
+### 🌙 Dark-mode sweep (Pass 42, 44, 45, 46) — 8 high-traffic screens, ~670 Colors refs
+- community + checkin + routine-analyzer (Pass 42, 190 refs)
+- compare (Pass 45, 64 refs)
+- morning-checklist + product-shelf + uv-log (Pass 44, 220 refs) — required shimColors() pattern to map the old inline-Colors objects from pre-design-system speed-routine days
+- anti-aging + pore-guide + ingredient-conflicts (Pass 46, 199 refs) — module-level PILLARS/KEY_ACTIVES/SECTIONS converted to factories
+
+### 📡 SkinSpectrum (Pass 43) — `src/components/ui/SkinSpectrum.tsx`
+15-axis polar radar visualization with animated polygon reveal, optional dashed previous-scan overlay, vertex dots, cosine-based axis label anchor. Mounted at top of results scores tab.
+
+### 🔥 StreakSaver (Pass 47) — `src/components/ui/StreakSaver.tsx`
+Contextual banner that appears ONLY when atRisk is true (active streak + today not logged + after noon). Pulsing flame + "Save your N-day streak" headline + CTA → /checkin. Auto-dismisses on next focus once user logs.
+
+---
+
 ## 2026-05-09 — Aura + ScanReel + Full-App Dark Mode (Pass 33–38)
 
 Six more iterations rounding out the overnight session.
