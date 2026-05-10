@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, ActivityIndicator, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const groq = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
@@ -23,17 +24,21 @@ type CheckResult = {
   recommendation: string;
 };
 
-const SEVERITY_CONFIG = {
-  high: { color: Colors.scorePoor, bg: 'rgba(248,113,113,0.12)', label: 'HIGH RISK' },
-  medium: { color: Colors.scoreFair, bg: 'rgba(245,158,11,0.12)', label: 'CAUTION' },
-  low: { color: Colors.scoreGood, bg: 'rgba(74,222,128,0.12)', label: 'MINOR' },
-};
+function buildSeverityConfig(c: Palette) {
+  return {
+    high: { color: c.scorePoor, bg: 'rgba(248,113,113,0.12)', label: 'HIGH RISK' },
+    medium: { color: c.scoreFair, bg: 'rgba(245,158,11,0.12)', label: 'CAUTION' },
+    low: { color: c.scoreGood, bg: 'rgba(74,222,128,0.12)', label: 'MINOR' },
+  };
+}
 
-const SAFETY_CONFIG = {
-  safe: { color: Colors.scoreExcellent, bg: 'rgba(74,222,128,0.10)', icon: 'checkmark-circle', label: 'Safe to Layer' },
-  caution: { color: Colors.scoreFair, bg: 'rgba(245,158,11,0.10)', icon: 'alert-circle', label: 'Use with Caution' },
-  conflict: { color: Colors.scorePoor, bg: 'rgba(248,113,113,0.10)', icon: 'close-circle', label: 'Conflicts Detected' },
-};
+function buildSafetyConfig(c: Palette) {
+  return {
+    safe: { color: c.scoreExcellent, bg: 'rgba(74,222,128,0.10)', icon: 'checkmark-circle', label: 'Safe to Layer' },
+    caution: { color: c.scoreFair, bg: 'rgba(245,158,11,0.10)', icon: 'alert-circle', label: 'Use with Caution' },
+    conflict: { color: c.scorePoor, bg: 'rgba(248,113,113,0.10)', icon: 'close-circle', label: 'Conflicts Detected' },
+  };
+}
 
 const EXAMPLE_PRODUCTS = [
   {
@@ -51,6 +56,10 @@ const EXAMPLE_PRODUCTS = [
 ];
 
 export default function IngredientCheck() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SEVERITY_CONFIG = useMemo(() => buildSeverityConfig(colors), [colors]);
+  const SAFETY_CONFIG = useMemo(() => buildSafetyConfig(colors), [colors]);
   const [productA, setProductA] = useState('');
   const [productB, setProductB] = useState('');
   const [loading, setLoading] = useState(false);
@@ -134,7 +143,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Conflict Checker</Text>
@@ -151,7 +160,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
           <View style={styles.inputCard}>
             <View style={styles.inputCardHeader}>
               <View style={[styles.productBadge, { backgroundColor: 'rgba(196,98,45,0.15)' }]}>
-                <Text style={[styles.productBadgeText, { color: Colors.primary }]}>PRODUCT A</Text>
+                <Text style={[styles.productBadgeText, { color: colors.primary }]}>PRODUCT A</Text>
               </View>
               <Pressable onPress={() => loadExample(0)}>
                 <Text style={styles.exampleBtn}>Use example</Text>
@@ -160,7 +169,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
             <TextInput
               style={styles.ingredientInput}
               placeholder="Paste ingredient list or describe product…"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={productA}
               onChangeText={setProductA}
               multiline
@@ -188,7 +197,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
             <TextInput
               style={styles.ingredientInput}
               placeholder="Paste ingredient list or describe product…"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={productB}
               onChangeText={setProductB}
               multiline
@@ -226,14 +235,14 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
           disabled={!productA.trim() || !productB.trim() || loading}
         >
           <LinearGradient
-            colors={productA.trim() && productB.trim() ? [Colors.primaryLight, Colors.primary] : ['#333', '#222']}
+            colors={productA.trim() && productB.trim() ? [colors.primaryLight, colors.primary] : ['#333', '#222']}
             style={styles.checkBtnGrad}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           >
             {loading ? (
-              <ActivityIndicator color={Colors.white} size="small" />
+              <ActivityIndicator color={colors.white} size="small" />
             ) : (
-              <Ionicons name="flask-outline" size={18} color={Colors.white} />
+              <Ionicons name="flask-outline" size={18} color={colors.white} />
             )}
             <Text style={styles.checkBtnText}>{loading ? 'Analyzing…' : 'Check Compatibility'}</Text>
           </LinearGradient>
@@ -263,7 +272,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
 
             {/* Recommendation */}
             <View style={styles.recCard}>
-              <Ionicons name="bulb-outline" size={16} color={Colors.gold} />
+              <Ionicons name="bulb-outline" size={16} color={colors.gold} />
               <Text style={styles.recText}>{result.recommendation}</Text>
             </View>
 
@@ -283,7 +292,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
                       </View>
                       <Text style={styles.conflictReason}>{c.reason}</Text>
                       <View style={styles.conflictAdviceRow}>
-                        <Ionicons name="information-circle-outline" size={14} color={Colors.primary} />
+                        <Ionicons name="information-circle-outline" size={14} color={colors.primary} />
                         <Text style={styles.conflictAdvice}>{c.advice}</Text>
                       </View>
                     </View>
@@ -298,7 +307,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
                 <Text style={styles.cardTitle}>✨ Synergies ({result.synergies.length})</Text>
                 {result.synergies.map((s, i) => (
                   <View key={i} style={styles.synergyCard}>
-                    <Ionicons name="link-outline" size={16} color={Colors.scoreExcellent} />
+                    <Ionicons name="link-outline" size={16} color={colors.scoreExcellent} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.synergyIngredients}>{s.ingredients.join(' + ')}</Text>
                       <Text style={styles.synergyBenefit}>{s.benefit}</Text>
@@ -314,7 +323,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
                 <Text style={styles.cardTitle}>Redundancies</Text>
                 {result.redundancies.map((r, i) => (
                   <View key={i} style={styles.redundancyRow}>
-                    <Ionicons name="copy-outline" size={14} color={Colors.textMuted} />
+                    <Ionicons name="copy-outline" size={14} color={colors.textMuted} />
                     <Text style={styles.redundancyText}>{r}</Text>
                   </View>
                 ))}
@@ -325,7 +334,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
 
         {/* Info footer */}
         <View style={styles.infoCard}>
-          <Ionicons name="shield-checkmark-outline" size={14} color={Colors.primary} />
+          <Ionicons name="shield-checkmark-outline" size={14} color={colors.primary} />
           <Text style={styles.infoText}>Analysis is AI-generated. Always consult a dermatologist for medical skin concerns.</Text>
         </View>
 
@@ -335,66 +344,67 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   inputSection: { gap: 0, marginBottom: 14 },
   inputCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 10,
   },
   inputCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   productBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   productBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
-  exampleBtn: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  exampleBtn: { fontSize: 12, color: c.primary, fontWeight: '600' },
   ingredientInput: {
-    fontSize: 13, color: Colors.textPrimary, lineHeight: 20,
+    fontSize: 13, color: c.textPrimary, lineHeight: 20,
     minHeight: 80, textAlignVertical: 'top',
   },
   vsRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 10 },
-  vsDivider: { flex: 1, height: 1, backgroundColor: Colors.border },
+  vsDivider: { flex: 1, height: 1, backgroundColor: c.border },
   vsCircle: {
     width: 34, height: 34, borderRadius: 17,
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  vsText: { fontSize: 11, fontWeight: '800', color: Colors.textMuted },
+  vsText: { fontSize: 11, fontWeight: '800', color: c.textMuted },
 
   quickSection: { marginBottom: 16 },
-  quickTitle: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, marginBottom: 8 },
+  quickTitle: { fontSize: 12, fontWeight: '600', color: c.textMuted, marginBottom: 8 },
   quickScroll: { gap: 8, paddingRight: 4 },
   quickChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
   },
-  quickChipText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
+  quickChipText: { fontSize: 12, color: c.textSecondary, fontWeight: '500' },
 
   checkBtn: { borderRadius: 16, overflow: 'hidden', marginBottom: 16 },
   checkBtnDisabled: { opacity: 0.5 },
   checkBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
-  checkBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  checkBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
 
   errorCard: { backgroundColor: 'rgba(248,113,113,0.10)', borderRadius: 12, padding: 14, marginBottom: 14 },
-  errorText: { fontSize: 13, color: Colors.scorePoor },
+  errorText: { fontSize: 13, color: c.scorePoor },
 
   safetyCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 12,
     borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 10,
   },
   safetyLabel: { fontSize: 14, fontWeight: '800', letterSpacing: 0.5, marginBottom: 6 },
-  summaryText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  summaryText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   recCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 10,
@@ -402,37 +412,38 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)',
     padding: 14, marginBottom: 14,
   },
-  recText: { flex: 1, fontSize: 14, color: Colors.textPrimary, lineHeight: 20, fontWeight: '500' },
+  recText: { flex: 1, fontSize: 14, color: c.textPrimary, lineHeight: 20, fontWeight: '500' },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 12,
   },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
 
   conflictCard: {
     borderRadius: 12, borderWidth: 1, padding: 12, gap: 8,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
   },
   conflictHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   severityBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   severityText: { fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  conflictIngredients: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, flex: 1 },
-  conflictReason: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  conflictIngredients: { fontSize: 13, fontWeight: '600', color: c.textPrimary, flex: 1 },
+  conflictReason: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
   conflictAdviceRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
-  conflictAdvice: { flex: 1, fontSize: 12, color: Colors.primary, lineHeight: 18 },
+  conflictAdvice: { flex: 1, fontSize: 12, color: c.primary, lineHeight: 18 },
 
-  synergyCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: Colors.bgElevated, borderRadius: 10, padding: 10 },
-  synergyIngredients: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 3 },
-  synergyBenefit: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  synergyCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: c.bgElevated, borderRadius: 10, padding: 10 },
+  synergyIngredients: { fontSize: 13, fontWeight: '600', color: c.textPrimary, marginBottom: 3 },
+  synergyBenefit: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   redundancyRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  redundancyText: { fontSize: 13, color: Colors.textSecondary },
+  redundancyText: { fontSize: 13, color: c.textSecondary },
 
   infoCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 8,
     backgroundColor: 'rgba(196,98,45,0.05)', borderRadius: 12,
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.1)', padding: 14, marginTop: 8,
   },
-  infoText: { flex: 1, fontSize: 11, color: Colors.textMuted, lineHeight: 17 },
-});
+  infoText: { flex: 1, fontSize: 11, color: c.textMuted, lineHeight: 17 },
+  });
+}

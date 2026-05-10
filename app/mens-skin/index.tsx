@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, Pressable, SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  primary: '#C4622D', bg: '#0A0A0F', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', gold: '#D4A96A', card: '#13131A',
-  cardAlt: '#1A1A24', border: '#2A2A3A', green: '#4ADE80',
-  red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    primary: c.primary, bg: c.bg, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, gold: c.gold, card: c.bgCard,
+    cardAlt: c.bgElevated, border: c.border, green: c.scoreGood,
+    red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Biology', 'Shaving Science', 'Common Issues', 'Routine', 'Tallow for Men'];
 
@@ -81,7 +85,8 @@ const SHAVING = [
   },
 ];
 
-const ISSUES = [
+function buildIssues(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     issue: 'Oily Skin / Shine',
     prevalence: 'Very Common',
@@ -137,9 +142,11 @@ const ISSUES = [
       'Shower in lukewarm water — hot showers strip the acid mantle and strip natural oils',
     ],
   },
-];
+  ];
+}
 
-const ROUTINE = [
+function buildRoutine(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     time: 'Morning',
     icon: 'sunny-outline',
@@ -171,9 +178,15 @@ const ROUTINE = [
       { step: '3. Moisturise / Occlusive', detail: 'Richer moisturiser or occlusive at night. Growth hormone peaks during sleep — well-moisturised skin uses this window more effectively.' },
     ],
   },
-];
+  ];
+}
 
 export default function MensSkin() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const ISSUES = useMemo(() => buildIssues(Colors), [Colors]);
+  const ROUTINE = useMemo(() => buildRoutine(Colors), [Colors]);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
   const [expandedBio, setExpandedBio] = useState<number | null>(null);
@@ -366,7 +379,9 @@ export default function MensSkin() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 },
   back: { width: 40, height: 40, justifyContent: 'center' },
@@ -399,4 +414,5 @@ const styles = StyleSheet.create({
   noticeCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1 },
   noticeTitle: { fontSize: 14, fontWeight: '800', marginBottom: 6 },
   noticePara: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Groq from 'groq-sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const groq = new Groq({
@@ -106,6 +107,8 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
 };
 
 export default function MinimalRoutine() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [routine, setRoutine] = useState<MinimalRoutine | null>(null);
   const [loading, setLoading] = useState(false);
   const [skinType, setSkinType] = useState<string | null>(null);
@@ -193,14 +196,14 @@ Return ONLY JSON:
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Minimal Routine</Text>
             <Text style={styles.headerSub}>Maximum results, minimum steps</Text>
           </View>
           <Pressable onPress={generateAI} style={styles.refreshBtn}>
-            {loading ? <ActivityIndicator size="small" color={Colors.textMuted} /> : <Ionicons name="sparkles-outline" size={18} color={Colors.textMuted} />}
+            {loading ? <ActivityIndicator size="small" color={colors.textMuted} /> : <Ionicons name="sparkles-outline" size={18} color={colors.textMuted} />}
           </Pressable>
         </View>
       </SafeAreaView>
@@ -208,7 +211,7 @@ Return ONLY JSON:
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {!routine && !loading && (
           <View style={styles.emptyCard}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <Text style={styles.emptyEmoji}>⚡</Text>
             <Text style={styles.emptyTitle}>Build My Minimal Routine</Text>
             <Text style={styles.emptyDesc}>Get a 3-step maximum routine tailored to your skin type. Maximum efficacy, minimum time.</Text>
@@ -220,7 +223,7 @@ Return ONLY JSON:
 
         {loading && (
           <View style={styles.loadingCard}>
-            <ActivityIndicator size="large" color={Colors.primary} />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Building your minimal routine...</Text>
           </View>
         )}
@@ -229,7 +232,7 @@ Return ONLY JSON:
           <>
             {/* Philosophy card */}
             <View style={styles.philosophyCard}>
-              <LinearGradient colors={[`${Colors.primary}10`, `${Colors.primary}03`]} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[`${colors.primary}10`, `${colors.primary}03`]} style={StyleSheet.absoluteFill} />
               <Text style={styles.philosophyText}>"{routine.philosophy}"</Text>
             </View>
 
@@ -254,7 +257,7 @@ Return ONLY JSON:
                 style={[styles.tab, activeTab === 'morning' && styles.tabActive]}
                 onPress={() => setActiveTab('morning')}
               >
-                <Text style={[styles.tabText, activeTab === 'morning' && { color: Colors.gold }]}>🌅 Morning</Text>
+                <Text style={[styles.tabText, activeTab === 'morning' && { color: colors.gold }]}>🌅 Morning</Text>
               </Pressable>
               <Pressable
                 style={[styles.tab, activeTab === 'evening' && styles.tabActive]}
@@ -268,15 +271,15 @@ Return ONLY JSON:
             {steps.map((step, i) => (
               <View key={i} style={[styles.stepCard, step.isTallowDermics && styles.tallowStepCard]}>
                 {step.isTallowDermics && (
-                  <LinearGradient colors={[`${Colors.primary}12`, `${Colors.primary}04`]} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
                 )}
                 <View style={styles.stepTop}>
-                  <View style={[styles.stepCircle, step.isTallowDermics && { backgroundColor: Colors.primary }]}>
+                  <View style={[styles.stepCircle, step.isTallowDermics && { backgroundColor: colors.primary }]}>
                     <Text style={styles.stepCircleText}>{step.step}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.stepName}>{step.name}</Text>
-                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: Colors.primary }]}>
+                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: colors.primary }]}>
                       {step.product}
                       {step.isTallowDermics && ' 🌿'}
                     </Text>
@@ -302,7 +305,7 @@ Return ONLY JSON:
             </View>
 
             <Pressable style={styles.regenerateBtn} onPress={generateAI}>
-              <Ionicons name="sparkles-outline" size={14} color={Colors.textMuted} />
+              <Ionicons name="sparkles-outline" size={14} color={colors.textMuted} />
               <Text style={styles.regenerateBtnText}>Regenerate with AI</Text>
             </Pressable>
           </>
@@ -314,23 +317,24 @@ Return ONLY JSON:
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   refreshBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
   scroll: { paddingHorizontal: 16 },
 
@@ -338,75 +342,76 @@ const styles = StyleSheet.create({
     borderRadius: 20, overflow: 'hidden', padding: 32, gap: 12, alignItems: 'center', marginBottom: 14,
   },
   emptyEmoji: { fontSize: 48 },
-  emptyTitle: { fontSize: 22, fontWeight: '900', color: Colors.white },
+  emptyTitle: { fontSize: 22, fontWeight: '900', color: c.white },
   emptyDesc: { fontSize: 14, color: 'rgba(255,255,255,0.75)', textAlign: 'center', lineHeight: 22 },
   emptyBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
-  emptyBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  emptyBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   loadingCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 20, borderWidth: 1, borderColor: c.border,
     padding: 40, gap: 12, alignItems: 'center', marginBottom: 14,
   },
-  loadingText: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  loadingText: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   philosophyCard: {
-    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, marginBottom: 14,
   },
-  philosophyText: { fontSize: 16, color: Colors.textSecondary, fontStyle: 'italic', lineHeight: 24 },
+  philosophyText: { fontSize: 16, color: c.textSecondary, fontStyle: 'italic', lineHeight: 24 },
 
   timeRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 0 },
   timeBadge: { flex: 1, alignItems: 'center', gap: 4 },
   timeBadgeEmoji: { fontSize: 22 },
-  timeBadgeTime: { fontSize: 20, fontWeight: '900', color: Colors.textPrimary },
-  timeBadgeLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
-  timeSep: { width: 1, height: 50, backgroundColor: Colors.border },
+  timeBadgeTime: { fontSize: 20, fontWeight: '900', color: c.textPrimary },
+  timeBadgeLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
+  timeSep: { width: 1, height: 50, backgroundColor: c.border },
 
   tabs: { flexDirection: 'row', gap: 6, marginBottom: 12 },
   tab: {
-    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
+    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
   },
-  tabActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}10` },
-  tabText: { fontSize: 13, fontWeight: '700', color: Colors.textMuted },
+  tabActive: { borderColor: c.primary, backgroundColor: `${c.primary}10` },
+  tabText: { fontSize: 13, fontWeight: '700', color: c.textMuted },
 
   stepCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 8, marginBottom: 8, overflow: 'hidden',
   },
-  tallowStepCard: { borderColor: `${Colors.primary}40` },
+  tallowStepCard: { borderColor: `${c.primary}40` },
   stepTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   stepCircle: {
     width: 32, height: 32, borderRadius: 16,
-    backgroundColor: `${Colors.primary}20`, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+    backgroundColor: `${c.primary}20`, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  stepCircleText: { fontSize: 14, fontWeight: '900', color: Colors.primary },
-  stepName: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  stepProduct: { fontSize: 12, color: Colors.textMuted, marginTop: 1 },
+  stepCircleText: { fontSize: 14, fontWeight: '900', color: c.primary },
+  stepName: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  stepProduct: { fontSize: 12, color: c.textMuted, marginTop: 1 },
   stepTimeBadge: {
-    backgroundColor: Colors.bgElevated, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3,
+    borderWidth: 1, borderColor: c.border,
   },
-  stepTime: { fontSize: 11, fontWeight: '700', color: Colors.textMuted },
-  stepHowTo: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  stepTime: { fontSize: 11, fontWeight: '700', color: c.textMuted },
+  stepHowTo: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   weeklyCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 4, marginBottom: 10,
   },
-  weeklyTitle: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary },
-  weeklyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  weeklyTitle: { fontSize: 13, fontWeight: '800', color: c.textPrimary },
+  weeklyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   whyCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: `${Colors.primary}30`,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 14, gap: 6, marginBottom: 10,
   },
-  whyTitle: { fontSize: 13, fontWeight: '800', color: Colors.primary },
-  whyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  whyTitle: { fontSize: 13, fontWeight: '800', color: c.primary },
+  whyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   regenerateBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     alignSelf: 'center', padding: 10,
   },
-  regenerateBtnText: { fontSize: 12, color: Colors.textMuted, textDecorationLine: 'underline' },
-});
+  regenerateBtnText: { fontSize: 12, color: c.textMuted, textDecorationLine: 'underline' },
+  });
+}

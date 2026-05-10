@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import Groq from 'groq-sdk';
 
 const groq = new Groq({
@@ -100,6 +101,8 @@ type Result = {
 };
 
 export default function SkinQuiz() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [loading, setLoading] = useState(false);
@@ -201,11 +204,11 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
       <View style={styles.root}>
         <SafeAreaView>
           <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={Colors.primary} size="large" />
+          <ActivityIndicator color={colors.primary} size="large" />
           <Text style={styles.loadingTitle}>Analyzing your skin profile...</Text>
           <Text style={styles.loadingSub}>AI is personalizing your results</Text>
         </View>
@@ -219,7 +222,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         <SafeAreaView edges={['top']}>
           <View style={styles.resultHeader}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.resultHeaderTitle}>Your Skin Profile</Text>
             <View style={{ width: 36 }} />
@@ -255,7 +258,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
             <Text style={styles.sectionTitle}>Ideal Routine for You</Text>
             <View style={styles.routineCard}>
               <LinearGradient colors={['rgba(212,169,106,0.1)', 'rgba(212,169,106,0.03)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="list-outline" size={18} color={Colors.gold} style={{ marginBottom: 8 }} />
+              <Ionicons name="list-outline" size={18} color={colors.gold} style={{ marginBottom: 8 }} />
               <Text style={styles.routineText}>{result.routineSuggestion}</Text>
             </View>
           </View>
@@ -275,21 +278,21 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
 
           {/* Scan CTA */}
           <Pressable style={styles.scanCta} onPress={() => router.push('/scan')}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <View style={styles.scanCtaContent}>
               <View>
                 <Text style={styles.scanCtaTitle}>Get a full photo analysis</Text>
                 <Text style={styles.scanCtaSub}>30-second AI skin scan for 7 scored metrics</Text>
               </View>
-              <Ionicons name="scan" size={26} color={Colors.white} />
+              <Ionicons name="scan" size={26} color={colors.white} />
             </View>
           </Pressable>
 
           {/* Ask coach */}
           <Pressable style={styles.coachCta} onPress={() => router.push('/(tabs)/coach')}>
-            <Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.primary} />
+            <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.primary} />
             <Text style={styles.coachCtaText}>Ask the AI coach about your results</Text>
-            <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
           </Pressable>
 
           <View style={{ height: 100 }} />
@@ -315,7 +318,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={handleBack}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View style={{ flex: 1, paddingHorizontal: 16 }}>
             <View style={styles.progressTrack}>
@@ -350,7 +353,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
                 <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>{opt.label}</Text>
                 {selected && (
                   <View style={styles.optionCheck}>
-                    <Ionicons name="checkmark" size={12} color={Colors.white} />
+                    <Ionicons name="checkmark" size={12} color={colors.white} />
                   </View>
                 )}
               </Pressable>
@@ -365,9 +368,9 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
           onPress={next}
           disabled={!canNext}
         >
-          <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.nextBtnGrad}>
+          <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.nextBtnGrad}>
             <Text style={styles.nextBtnText}>{step === QUESTIONS.length - 1 ? 'See My Results' : 'Continue'}</Text>
-            <Ionicons name="arrow-forward" size={18} color={Colors.white} />
+            <Ionicons name="arrow-forward" size={18} color={colors.white} />
           </LinearGradient>
         </Pressable>
       </Animated.ScrollView>
@@ -375,79 +378,81 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  progressTrack: { height: 4, backgroundColor: Colors.bgElevated, borderRadius: 2 },
-  progressFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 2 },
-  stepCounter: { fontSize: 11, color: Colors.textMuted, marginTop: 6, textAlign: 'center' },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  progressTrack: { height: 4, backgroundColor: c.bgElevated, borderRadius: 2 },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 2 },
+  stepCounter: { fontSize: 11, color: c.textMuted, marginTop: 6, textAlign: 'center' },
 
   quizScroll: { paddingHorizontal: 20, paddingTop: 32, paddingBottom: 60 },
-  question: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, lineHeight: 32, marginBottom: 10 },
-  multiHint: { fontSize: 12, color: Colors.textMuted, marginBottom: 20, fontStyle: 'italic' },
+  question: { fontSize: 24, fontWeight: '800', color: c.textPrimary, lineHeight: 32, marginBottom: 10 },
+  multiHint: { fontSize: 12, color: c.textMuted, marginBottom: 20, fontStyle: 'italic' },
   options: { gap: 10, marginBottom: 32 },
   option: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 16,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 16,
   },
-  optionSelected: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  optionSelected: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
   optionEmoji: { fontSize: 22, width: 32, textAlign: 'center' },
-  optionLabel: { fontSize: 15, color: Colors.textSecondary, flex: 1 },
-  optionLabelSelected: { color: Colors.textPrimary, fontWeight: '600' },
-  optionCheck: { width: 20, height: 20, borderRadius: 10, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  optionLabel: { fontSize: 15, color: c.textSecondary, flex: 1 },
+  optionLabelSelected: { color: c.textPrimary, fontWeight: '600' },
+  optionCheck: { width: 20, height: 20, borderRadius: 10, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
 
   nextBtn: { borderRadius: 16, overflow: 'hidden' },
   nextBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
-  nextBtnText: { fontSize: 16, fontWeight: '800', color: Colors.white },
-  errorText: { fontSize: 13, color: Colors.scorePoor, textAlign: 'center', marginBottom: 16 },
+  nextBtnText: { fontSize: 16, fontWeight: '800', color: c.white },
+  errorText: { fontSize: 13, color: c.scorePoor, textAlign: 'center', marginBottom: 16 },
 
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
-  loadingTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  loadingSub: { fontSize: 13, color: Colors.textMuted },
+  loadingTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  loadingSub: { fontSize: 13, color: c.textMuted },
 
   scroll: { paddingHorizontal: 16 },
   resultHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 },
-  resultHeaderTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  resultHeaderTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
 
   skinTypeCard: {
     borderRadius: 20, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
     padding: 24, marginBottom: 20, gap: 8,
   },
-  skinTypeEyebrow: { fontSize: 9, fontWeight: '800', letterSpacing: 2, color: Colors.primary },
-  skinTypeLabel: { fontSize: 32, fontWeight: '800', color: Colors.textPrimary },
-  analysisText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  skinTypeEyebrow: { fontSize: 9, fontWeight: '800', letterSpacing: 2, color: c.primary },
+  skinTypeLabel: { fontSize: 32, fontWeight: '800', color: c.textPrimary },
+  analysisText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
 
-  recsCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border },
+  recsCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border },
   recRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start', padding: 16 },
-  recBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  recNum: { width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
-  recNumText: { fontSize: 12, fontWeight: '800', color: Colors.white },
-  recText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21, flex: 1 },
+  recBorder: { borderBottomWidth: 1, borderBottomColor: c.border },
+  recNum: { width: 24, height: 24, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  recNumText: { fontSize: 12, fontWeight: '800', color: c.white },
+  recText: { fontSize: 14, color: c.textSecondary, lineHeight: 21, flex: 1 },
 
   routineCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)', padding: 18 },
-  routineText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  routineText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
   tdCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.15)', padding: 18, gap: 8 },
-  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
-  tdText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21 },
+  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
+  tdText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   tdCta: { alignSelf: 'flex-start', marginTop: 4 },
-  tdCtaText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  tdCtaText: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   scanCta: { borderRadius: 18, overflow: 'hidden', marginBottom: 12 },
   scanCtaContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 22 },
-  scanCtaTitle: { fontSize: 16, fontWeight: '700', color: Colors.white, marginBottom: 4 },
+  scanCtaTitle: { fontSize: 16, fontWeight: '700', color: c.white, marginBottom: 4 },
   scanCtaSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
 
   coachCta: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 16,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 16,
   },
-  coachCtaText: { flex: 1, fontSize: 14, color: Colors.textSecondary, fontWeight: '500' },
-});
+  coachCtaText: { flex: 1, fontSize: 14, color: c.textSecondary, fontWeight: '500' },
+  });
+}
