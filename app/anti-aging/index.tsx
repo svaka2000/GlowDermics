@@ -1,26 +1,30 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    purple: c.darkCircles,
+  };
+}
 
 const TABS = [
   { id: 'science', label: 'How Aging Works', icon: '🔬' },
@@ -57,7 +61,8 @@ const AGING_SCIENCE = [
   },
 ];
 
-const PILLARS = [
+function buildPillars(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     pillar: 'Prevention (SPF)',
     priority: 1,
@@ -106,9 +111,11 @@ const PILLARS = [
     detail: 'Dehydrated skin exaggerates fine lines dramatically. Hyaluronic acid holds 1000× its weight in water — but must be applied to damp skin or it draws moisture FROM the skin. Drinking water hydrates from within.',
     action: 'HA serum on damp skin, followed by occlusive to seal. Adequate water intake (8+ glasses). Humidifier in dry environments.',
   },
-];
+  ];
+}
 
-const KEY_ACTIVES = [
+function buildKeyActives(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     active: 'Retinol / Retinoids',
     tier: 'S Tier',
@@ -163,7 +170,8 @@ const KEY_ACTIVES = [
     howToUse: 'SPF 30–50 broad spectrum, last skincare step AM, 2-finger rule for coverage, reapply every 2 hours outdoors.',
     warning: 'Most people underapply by 60–80%. Correct application is as important as formula choice.',
   },
-];
+  ];
+}
 
 const LIFESTYLE = [
   { factor: 'Sleep (7–9 hours)', impact: 'critical', detail: 'During deep sleep: growth hormone peaks (collagen synthesis), cortisol drops (reduced glycation and inflammation), skin barrier repairs. Chronic sleep deprivation visibly ages skin by 3–5 years in appearance.' },
@@ -176,13 +184,18 @@ const LIFESTYLE = [
   { factor: 'Facial sleep position', impact: 'low', detail: 'Side sleeping creates compression wrinkles (sleep lines) over decades. Silk pillowcase reduces friction. Back sleeping eliminates the problem entirely but is difficult to maintain.' },
 ];
 
-const getImpactColor = (i: string) => {
+const getImpactColor = (i: string, Colors: ReturnType<typeof shimColors>) => {
   if (i === 'critical') return Colors.red;
   if (i === 'high') return Colors.gold;
   return Colors.blue;
 };
 
 export default function AntiAgingScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const PILLARS = useMemo(() => buildPillars(Colors), [Colors]);
+  const KEY_ACTIVES = useMemo(() => buildKeyActives(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('science');
   const [expandedPillar, setExpandedPillar] = useState<number | null>(null);
   const [expandedActive, setExpandedActive] = useState<string | null>(null);
@@ -295,8 +308,8 @@ export default function AntiAgingScreen() {
           <View key={i} style={styles.lifestyleCard}>
             <View style={styles.lifestyleHeader}>
               <Text style={styles.lifestyleTitle}>{item.factor}</Text>
-              <View style={[styles.impactBadge, { borderColor: getImpactColor(item.impact) }]}>
-                <Text style={[styles.impactText, { color: getImpactColor(item.impact) }]}>{item.impact.toUpperCase()}</Text>
+              <View style={[styles.impactBadge, { borderColor: getImpactColor(item.impact, Colors) }]}>
+                <Text style={[styles.impactText, { color: getImpactColor(item.impact, Colors) }]}>{item.impact.toUpperCase()}</Text>
               </View>
             </View>
             <Text style={styles.lifestyleDetail}>{item.detail}</Text>
@@ -350,7 +363,9 @@ export default function AntiAgingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -443,4 +458,5 @@ const styles = StyleSheet.create({
   },
   tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

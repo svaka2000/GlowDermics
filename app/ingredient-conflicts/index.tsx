@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
   ActivityIndicator,
@@ -15,7 +15,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { analyzeRoutineConflicts } from '../../src/services/skinAnalysis';
 import {
@@ -101,18 +102,23 @@ const SEVERITY_LABEL: Record<ConflictSeverity, string> = {
   safe: 'SAFE',
 };
 
-const SEVERITY_COLOR: Record<ConflictSeverity, string> = {
-  avoid: Colors.scorePoor,
-  caution: Colors.scoreFair,
-  separate: Colors.gold,
-  safe: Colors.scoreExcellent,
-};
+function buildSeverityColor(c: Palette): Record<ConflictSeverity, string> {
+  return {
+    avoid: c.scorePoor,
+    caution: c.scoreFair,
+    separate: c.gold,
+    safe: c.scoreExcellent,
+  };
+}
 
 const PRESET_AM = 'AM: gentle cleanser, vitamin C serum, niacinamide, moisturizer, SPF 50';
 const PRESET_PM = 'PM: oil cleanser, salicylic acid 2%, retinol 0.5%, ceramide moisturizer';
 const PRESET_RECOVERY = 'PM recovery: hyaluronic acid serum, peptide serum, tallow cream';
 
 export default function IngredientConflictsScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SEVERITY_COLOR = useMemo(() => buildSeverityColor(colors), [colors]);
   type View = 'ai' | 'conflicts' | 'safe' | 'check';
   const [view, setView] = useState<View>('ai');
   const [search, setSearch] = useState('');
@@ -186,13 +192,13 @@ export default function IngredientConflictsScreen() {
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* Glass hero with back button */}
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <Animated.View style={[headerStyle, styles.heroHeader]}>
             <Pressable
               style={styles.backBtn}
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
-              <Ionicons name="arrow-back" size={20} color={Colors.white} />
+              <Ionicons name="arrow-back" size={20} color={colors.white} />
             </Pressable>
             <View style={{ flex: 1 }}>
               <Text style={styles.heroTitle}>Ingredient conflicts</Text>
@@ -222,7 +228,7 @@ export default function IngredientConflictsScreen() {
                 <Ionicons
                   name={t.icon}
                   size={13}
-                  color={active ? Colors.white : Colors.primary}
+                  color={active ? colors.white : colors.primary}
                 />
                 <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>{t.label}</Text>
               </Pressable>
@@ -234,10 +240,10 @@ export default function IngredientConflictsScreen() {
           {/* AI Analyze tab */}
           {view === 'ai' && (
             <View style={{ gap: 14 }}>
-              <Card variant="gradient" tint={Colors.primary} padding={18}>
+              <Card variant="gradient" tint={colors.primary} padding={18}>
                 <View style={styles.aiHeaderRow}>
                   <View style={styles.aiSparkleIcon}>
-                    <Ionicons name="sparkles" size={14} color={Colors.primary} />
+                    <Ionicons name="sparkles" size={14} color={colors.primary} />
                   </View>
                   <Text style={styles.aiHeaderTitle}>AI routine analyzer</Text>
                 </View>
@@ -253,7 +259,7 @@ export default function IngredientConflictsScreen() {
                   value={routineText}
                   onChangeText={setRoutineText}
                   placeholder={`e.g. AM — gentle cleanser, vit C serum, SPF 50\nPM — BHA 2%, retinol 0.5%, moisturizer`}
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={colors.textMuted}
                   textAlignVertical="top"
                 />
 
@@ -324,7 +330,7 @@ export default function IngredientConflictsScreen() {
                   {aiReport.warnings.length > 0 && (
                     <Card variant="elevated" padding={14}>
                       <View style={styles.warnHeader}>
-                        <Ionicons name="alert-circle-outline" size={14} color={Colors.scoreFair} />
+                        <Ionicons name="alert-circle-outline" size={14} color={colors.scoreFair} />
                         <Text style={styles.warnTitle}>Watch for these</Text>
                       </View>
                       {aiReport.warnings.map((w, i) => (
@@ -337,16 +343,16 @@ export default function IngredientConflictsScreen() {
                   )}
 
                   {aiReport.recommendations.length > 0 && (
-                    <Card variant="gradient" tint={Colors.scoreExcellent} padding={14}>
+                    <Card variant="gradient" tint={colors.scoreExcellent} padding={14}>
                       <View style={styles.warnHeader}>
-                        <Ionicons name="bulb-outline" size={14} color={Colors.scoreExcellent} />
-                        <Text style={[styles.warnTitle, { color: Colors.scoreExcellent }]}>
+                        <Ionicons name="bulb-outline" size={14} color={colors.scoreExcellent} />
+                        <Text style={[styles.warnTitle, { color: colors.scoreExcellent }]}>
                           Recommendations
                         </Text>
                       </View>
                       {aiReport.recommendations.map((r, i) => (
                         <View key={i} style={styles.bulletRow}>
-                          <View style={[styles.warnDot, { backgroundColor: Colors.scoreExcellent }]} />
+                          <View style={[styles.warnDot, { backgroundColor: colors.scoreExcellent }]} />
                           <Text style={styles.bulletText}>{r}</Text>
                         </View>
                       ))}
@@ -354,9 +360,9 @@ export default function IngredientConflictsScreen() {
                   )}
 
                   {aiReport.conflicts.length === 0 && aiReport.routineScore >= 90 && (
-                    <Card variant="gradient" tint={Colors.scoreExcellent} padding={16}>
+                    <Card variant="gradient" tint={colors.scoreExcellent} padding={16}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <Ionicons name="shield-checkmark" size={22} color={Colors.scoreExcellent} />
+                        <Ionicons name="shield-checkmark" size={22} color={colors.scoreExcellent} />
                         <View style={{ flex: 1 }}>
                           <Text style={styles.allClearTitle}>Routine looks compatible</Text>
                           <Text style={styles.allClearSub}>{aiReport.verdict}</Text>
@@ -373,13 +379,13 @@ export default function IngredientConflictsScreen() {
           {view === 'conflicts' && (
             <View style={{ gap: 12 }}>
               <View style={styles.searchWrap}>
-                <Ionicons name="search" size={14} color={Colors.textMuted} />
+                <Ionicons name="search" size={14} color={colors.textMuted} />
                 <TextInput
                   style={styles.searchInput}
                   value={search}
                   onChangeText={setSearch}
                   placeholder="Search ingredient name…"
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={colors.textMuted}
                 />
               </View>
 
@@ -412,7 +418,7 @@ export default function IngredientConflictsScreen() {
                         {conflict.workaround && (
                           <View style={styles.workaroundCard}>
                             <View style={styles.workaroundLabelRow}>
-                              <Ionicons name="checkmark-circle" size={12} color={Colors.scoreExcellent} />
+                              <Ionicons name="checkmark-circle" size={12} color={colors.scoreExcellent} />
                               <Text style={styles.workaroundLabel}>Workaround</Text>
                             </View>
                             <Text style={styles.workaroundText}>{conflict.workaround}</Text>
@@ -515,15 +521,15 @@ export default function IngredientConflictsScreen() {
                     borderWidth: 2,
                     borderColor:
                       checkResult === 'safe'
-                        ? Colors.scoreExcellent + '55'
+                        ? colors.scoreExcellent + '55'
                         : SEVERITY_COLOR[(checkResult as Conflict).severity] + '55',
                   }}
                 >
                   {checkResult === 'safe' ? (
                     <>
                       <View style={styles.resultTitleRow}>
-                        <Ionicons name="shield-checkmark" size={16} color={Colors.scoreExcellent} />
-                        <Text style={[styles.resultTitle, { color: Colors.scoreExcellent }]}>
+                        <Ionicons name="shield-checkmark" size={16} color={colors.scoreExcellent} />
+                        <Text style={[styles.resultTitle, { color: colors.scoreExcellent }]}>
                           No known conflicts
                         </Text>
                       </View>
@@ -558,7 +564,7 @@ export default function IngredientConflictsScreen() {
                       {(checkResult as Conflict).workaround && (
                         <View style={styles.workaroundCard}>
                           <View style={styles.workaroundLabelRow}>
-                            <Ionicons name="checkmark-circle" size={12} color={Colors.scoreExcellent} />
+                            <Ionicons name="checkmark-circle" size={12} color={colors.scoreExcellent} />
                             <Text style={styles.workaroundLabel}>Workaround</Text>
                           </View>
                           <Text style={styles.workaroundText}>
@@ -583,6 +589,8 @@ export default function IngredientConflictsScreen() {
 /* ---------- Sub-components ---------- */
 
 function RoutineScoreCard({ report }: { report: RoutineConflictReport }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const fill = useSharedValue(0);
 
   useEffect(() => {
@@ -598,10 +606,10 @@ function RoutineScoreCard({ report }: { report: RoutineConflictReport }) {
 
   const tint =
     report.routineScore >= 80
-      ? Colors.scoreExcellent
+      ? colors.scoreExcellent
       : report.routineScore >= 60
-      ? Colors.scoreFair
-      : Colors.scorePoor;
+      ? colors.scoreFair
+      : colors.scorePoor;
 
   return (
     <Card variant="elevated" padding={18}>
@@ -639,6 +647,9 @@ function RoutineScoreCard({ report }: { report: RoutineConflictReport }) {
 }
 
 function AIConflictCard({ conflict, delay }: { conflict: IngredientConflict; delay: number }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SEVERITY_COLOR = useMemo(() => buildSeverityColor(colors), [colors]);
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(8);
 
@@ -675,7 +686,7 @@ function AIConflictCard({ conflict, delay }: { conflict: IngredientConflict; del
         {conflict.workaround && (
           <View style={styles.workaroundCard}>
             <View style={styles.workaroundLabelRow}>
-              <Ionicons name="checkmark-circle" size={12} color={Colors.scoreExcellent} />
+              <Ionicons name="checkmark-circle" size={12} color={colors.scoreExcellent} />
               <Text style={styles.workaroundLabel}>Workaround</Text>
             </View>
             <Text style={styles.workaroundText}>{conflict.workaround}</Text>
@@ -688,8 +699,9 @@ function AIConflictCard({ conflict, delay }: { conflict: IngredientConflict; del
 
 /* ---------- Styles ---------- */
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   scroll: { paddingBottom: 40 },
 
   heroWrap: { marginBottom: 12 },
@@ -705,7 +717,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white,
+    fontSize: 22, fontWeight: '900', color: c.white,
     letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
@@ -731,11 +743,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(196,98,45,0.20)',
   },
   tabBtnActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
-  tabLabel: { fontSize: 11, fontWeight: '700', color: Colors.primary, letterSpacing: 0.2 },
-  tabLabelActive: { color: Colors.white },
+  tabLabel: { fontSize: 11, fontWeight: '700', color: c.primary, letterSpacing: 0.2 },
+  tabLabelActive: { color: c.white },
 
   content: { paddingHorizontal: 16 },
 
@@ -746,38 +758,38 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,98,45,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
-  aiHeaderTitle: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: 0.2 },
-  aiHeaderSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, marginBottom: 12, fontWeight: '500' },
+  aiHeaderTitle: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: 0.2 },
+  aiHeaderSub: { fontSize: 12, color: c.textSecondary, lineHeight: 18, marginBottom: 12, fontWeight: '500' },
   aiInput: {
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     paddingHorizontal: 14,
     paddingVertical: 12,
     minHeight: 110,
     fontSize: 14,
-    color: Colors.textPrimary,
+    color: c.textPrimary,
     fontWeight: '500',
     lineHeight: 20,
     marginBottom: 10,
   },
   presetRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 12 },
-  presetLabel: { fontSize: 10, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1 },
+  presetLabel: { fontSize: 10, fontWeight: '900', color: c.textMuted, letterSpacing: 1 },
   presetChip: {
     paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 999,
     backgroundColor: 'rgba(196,98,45,0.08)',
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
   },
-  presetChipText: { fontSize: 11, fontWeight: '700', color: Colors.primary },
+  presetChipText: { fontSize: 11, fontWeight: '700', color: c.primary },
 
   /* AI score card */
   routineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  routineLabel: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4 },
+  routineLabel: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.4 },
   routineNumberRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 4, marginTop: 2 },
   routineNumber: { fontSize: 38, fontWeight: '900', letterSpacing: -1, lineHeight: 38 },
-  routineUnit: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary, paddingBottom: 4 },
+  routineUnit: { fontSize: 13, fontWeight: '700', color: c.textSecondary, paddingBottom: 4 },
   routineBadge: {
     paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 999, borderWidth: 1,
@@ -791,24 +803,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   routineFill: { height: '100%', borderRadius: 4, overflow: 'hidden' },
-  routineVerdict: { fontSize: 13, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
+  routineVerdict: { fontSize: 13, color: c.textPrimary, lineHeight: 19, fontWeight: '500' },
 
   /* Curated conflicts */
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12,
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
   },
-  searchInput: { flex: 1, color: Colors.textPrimary, fontSize: 14, fontWeight: '500' },
+  searchInput: { flex: 1, color: c.textPrimary, fontSize: 14, fontWeight: '500' },
   conflictHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  conflictPair: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary, lineHeight: 19 },
-  conflictPlus: { color: Colors.textMuted, fontWeight: '500' },
+  conflictPair: { fontSize: 13, fontWeight: '800', color: c.textPrimary, lineHeight: 19 },
+  conflictPlus: { color: c.textMuted, fontWeight: '500' },
   conflictExpanded: {
     marginTop: 10, paddingTop: 10,
-    borderTopWidth: 1, borderTopColor: Colors.border,
+    borderTopWidth: 1, borderTopColor: c.border,
   },
-  conflictReason: { fontSize: 12.5, color: Colors.textSecondary, lineHeight: 19, marginBottom: 8 },
+  conflictReason: { fontSize: 12.5, color: c.textSecondary, lineHeight: 19, marginBottom: 8 },
 
   workaroundCard: {
     backgroundColor: 'rgba(22,163,74,0.08)',
@@ -817,12 +829,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   workaroundLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 },
-  workaroundLabel: { fontSize: 10, fontWeight: '900', color: Colors.scoreExcellent, letterSpacing: 0.6 },
-  workaroundText: { fontSize: 12, color: Colors.textPrimary, lineHeight: 17, fontWeight: '500' },
+  workaroundLabel: { fontSize: 10, fontWeight: '900', color: c.scoreExcellent, letterSpacing: 0.6 },
+  workaroundText: { fontSize: 12, color: c.textPrimary, lineHeight: 17, fontWeight: '500' },
 
   /* Safe combos */
   sectionNote: {
-    fontSize: 13, color: Colors.textSecondary, lineHeight: 19,
+    fontSize: 13, color: c.textSecondary, lineHeight: 19,
     backgroundColor: 'rgba(22,163,74,0.06)',
     borderRadius: 14, padding: 12,
     borderWidth: 1, borderColor: 'rgba(22,163,74,0.20)',
@@ -830,37 +842,38 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   safePairRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' },
-  safeIngA: { fontSize: 13, fontWeight: '800', color: Colors.primary },
-  safePlus: { fontSize: 14, color: Colors.textMuted, fontWeight: '700' },
-  safeIngB: { fontSize: 13, fontWeight: '800', color: Colors.scoreExcellent },
-  safeNote: { fontSize: 12.5, color: Colors.textSecondary, lineHeight: 19 },
+  safeIngA: { fontSize: 13, fontWeight: '800', color: c.primary },
+  safePlus: { fontSize: 14, color: c.textMuted, fontWeight: '700' },
+  safeIngB: { fontSize: 13, fontWeight: '800', color: c.scoreExcellent },
+  safeNote: { fontSize: 12.5, color: c.textSecondary, lineHeight: 19 },
 
   /* Check Two */
-  checkTitle: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, fontWeight: '500', marginBottom: 4 },
-  checkLabel: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4, marginBottom: 6, marginTop: 8 },
+  checkTitle: { fontSize: 13, color: c.textSecondary, lineHeight: 19, fontWeight: '500', marginBottom: 4 },
+  checkLabel: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.4, marginBottom: 6, marginTop: 8 },
   ingChip: {
     paddingHorizontal: 12, paddingVertical: 8,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border,
   },
-  ingChipActiveA: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.10)' },
-  ingChipActiveB: { borderColor: Colors.scorePoor, backgroundColor: 'rgba(220,38,38,0.10)' },
-  ingChipText: { fontSize: 12, color: Colors.textPrimary, fontWeight: '600' },
-  ingChipTextActiveA: { color: Colors.primary, fontWeight: '800' },
-  ingChipTextActiveB: { color: Colors.scorePoor, fontWeight: '800' },
+  ingChipActiveA: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.10)' },
+  ingChipActiveB: { borderColor: c.scorePoor, backgroundColor: 'rgba(220,38,38,0.10)' },
+  ingChipText: { fontSize: 12, color: c.textPrimary, fontWeight: '600' },
+  ingChipTextActiveA: { color: c.primary, fontWeight: '800' },
+  ingChipTextActiveB: { color: c.scorePoor, fontWeight: '800' },
 
   resultTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
   resultTitle: { fontSize: 14, fontWeight: '900', letterSpacing: 0.4 },
-  resultText: { fontSize: 13, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
+  resultText: { fontSize: 13, color: c.textPrimary, lineHeight: 19, fontWeight: '500' },
 
   /* Misc */
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   warnHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  warnTitle: { fontSize: 12, fontWeight: '900', color: Colors.scoreFair, letterSpacing: 0.4 },
-  warnDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: Colors.scoreFair, marginTop: 7 },
+  warnTitle: { fontSize: 12, fontWeight: '900', color: c.scoreFair, letterSpacing: 0.4 },
+  warnDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: c.scoreFair, marginTop: 7 },
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, paddingVertical: 3 },
-  bulletText: { fontSize: 12.5, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500', flex: 1 },
+  bulletText: { fontSize: 12.5, color: c.textPrimary, lineHeight: 19, fontWeight: '500', flex: 1 },
 
-  allClearTitle: { fontSize: 14, fontWeight: '900', color: Colors.scoreExcellent },
-  allClearSub: { fontSize: 12, color: Colors.textSecondary, marginTop: 2, fontWeight: '500' },
-});
+  allClearTitle: { fontSize: 14, fontWeight: '900', color: c.scoreExcellent },
+  allClearSub: { fontSize: 12, color: c.textSecondary, marginTop: 2, fontWeight: '500' },
+  });
+}
