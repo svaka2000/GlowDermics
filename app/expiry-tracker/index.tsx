@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const LOG_KEY = 'gd_expiry_tracker';
 
@@ -51,11 +52,11 @@ function getDaysUntilExpiry(openedDate: string, paoMonths: number): number {
   return Math.floor((expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 }
 
-function getExpiryLabel(daysLeft: number): { label: string; color: string; emoji: string } {
-  if (daysLeft < 0) return { label: 'Expired', color: Colors.scorePoor, emoji: '🚨' };
-  if (daysLeft === 0) return { label: 'Expires today', color: Colors.scorePoor, emoji: '⚠️' };
-  if (daysLeft <= 7) return { label: `${daysLeft}d left`, color: Colors.scorePoor, emoji: '⚠️' };
-  if (daysLeft <= 30) return { label: `${daysLeft}d left`, color: Colors.gold, emoji: '⏰' };
+function getExpiryLabel(daysLeft: number, c: Palette): { label: string; color: string; emoji: string } {
+  if (daysLeft < 0) return { label: 'Expired', color: c.scorePoor, emoji: '🚨' };
+  if (daysLeft === 0) return { label: 'Expires today', color: c.scorePoor, emoji: '⚠️' };
+  if (daysLeft <= 7) return { label: `${daysLeft}d left`, color: c.scorePoor, emoji: '⚠️' };
+  if (daysLeft <= 30) return { label: `${daysLeft}d left`, color: c.gold, emoji: '⏰' };
   if (daysLeft <= 60) return { label: `${daysLeft}d left`, color: '#86EFAC', emoji: '🟡' };
   const months = Math.floor(daysLeft / 30);
   return { label: `~${months}mo left`, color: '#4ADE80', emoji: '✅' };
@@ -66,6 +67,8 @@ function formatDate(isoStr: string): string {
 }
 
 export default function ExpiryTracker() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [products, setProducts] = useState<ProductEntry[]>([]);
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
@@ -137,14 +140,14 @@ export default function ExpiryTracker() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Expiry Tracker</Text>
             <Text style={styles.headerSub}>Know when to toss your products</Text>
           </View>
           <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>
-            <Ionicons name="add" size={20} color={Colors.white} />
+            <Ionicons name="add" size={20} color={colors.white} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -159,7 +162,7 @@ export default function ExpiryTracker() {
             <TextInput
               style={styles.textInput}
               placeholder="Product name (e.g. CeraVe Moisturizer)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={name}
               onChangeText={setName}
               autoFocus
@@ -175,7 +178,7 @@ export default function ExpiryTracker() {
                     onPress={() => setCategory(c)}
                   >
                     <Text style={styles.categoryEmoji}>{CATEGORY_ICONS[c]}</Text>
-                    <Text style={[styles.categoryLabel, category === c && { color: Colors.primary }]}>{c}</Text>
+                    <Text style={[styles.categoryLabel, category === c && { color: colors.primary }]}>{c}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -189,7 +192,7 @@ export default function ExpiryTracker() {
                   style={[styles.paoChip, paoMonths === m && styles.paoChipActive]}
                   onPress={() => setPaoMonths(m)}
                 >
-                  <Text style={[styles.paoLabel, paoMonths === m && { color: Colors.primary }]}>
+                  <Text style={[styles.paoLabel, paoMonths === m && { color: colors.primary }]}>
                     {m < 12 ? `${m}mo` : `${m / 12}yr`}
                   </Text>
                 </Pressable>
@@ -199,7 +202,7 @@ export default function ExpiryTracker() {
             <TextInput
               style={styles.textInput}
               placeholder="Notes (optional)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={notes}
               onChangeText={setNotes}
             />
@@ -236,7 +239,7 @@ export default function ExpiryTracker() {
             <LinearGradient colors={['rgba(212,169,106,0.1)', 'rgba(212,169,106,0.03)']} style={StyleSheet.absoluteFill} />
             <View style={styles.alertHeader}>
               <Text style={styles.alertEmoji}>⏰</Text>
-              <Text style={[styles.alertTitle, { color: Colors.gold }]}>{expiring.length} expiring in 30 days</Text>
+              <Text style={[styles.alertTitle, { color: colors.gold }]}>{expiring.length} expiring in 30 days</Text>
             </View>
           </View>
         )}
@@ -250,7 +253,7 @@ export default function ExpiryTracker() {
                 style={[styles.filterTab, filter === f && styles.filterTabActive]}
                 onPress={() => setFilter(f)}
               >
-                <Text style={[styles.filterTabText, filter === f && { color: Colors.primary }]}>
+                <Text style={[styles.filterTabText, filter === f && { color: colors.primary }]}>
                   {f === 'all' ? `All (${products.length})` : f === 'expiring' ? `Expiring (${expired.length + expiring.length})` : `Expired (${expired.length})`}
                 </Text>
               </Pressable>
@@ -272,7 +275,7 @@ export default function ExpiryTracker() {
 
         {filtered.map(product => {
           const daysLeft = getDaysUntilExpiry(product.openedDate, product.paoMonths);
-          const { label, color, emoji } = getExpiryLabel(daysLeft);
+          const { label, color, emoji } = getExpiryLabel(daysLeft, colors);
           const expiryDate = new Date(product.openedDate);
           expiryDate.setMonth(expiryDate.getMonth() + product.paoMonths);
 
@@ -287,7 +290,7 @@ export default function ExpiryTracker() {
                   <Text style={styles.productCategory}>{product.category}</Text>
                 </View>
                 <Pressable onPress={() => deleteProduct(product.id)}>
-                  <Ionicons name="trash-outline" size={16} color={Colors.textMuted} />
+                  <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                 </Pressable>
               </View>
 
@@ -344,108 +347,109 @@ export default function ExpiryTracker() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   addBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center',
   },
   scroll: { paddingHorizontal: 16 },
 
   addCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${Colors.primary}40`,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${c.primary}40`,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  addCardTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  addCardTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
   textInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: Colors.textPrimary,
+    backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: c.textPrimary,
   },
   categoryScroll: { marginHorizontal: -4 },
   categoryRow: { flexDirection: 'row', gap: 6, paddingHorizontal: 4 },
   categoryChip: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  categoryChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
+  categoryChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
   categoryEmoji: { fontSize: 12 },
-  categoryLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  categoryLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted },
   paoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   paoChip: {
     paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  paoChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  paoLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted },
+  paoChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  paoLabel: { fontSize: 13, fontWeight: '700', color: c.textMuted },
   formBtns: { flexDirection: 'row', gap: 8 },
   cancelBtn: {
-    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  cancelBtnText: { fontSize: 14, fontWeight: '600', color: Colors.textMuted },
+  cancelBtnText: { fontSize: 14, fontWeight: '600', color: c.textMuted },
   saveBtn: {
-    flex: 1, height: 44, borderRadius: 12, backgroundColor: Colors.primary,
+    flex: 1, height: 44, borderRadius: 12, backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center',
   },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   alertCard: {
     borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)',
     padding: 14, gap: 6, marginBottom: 10,
   },
   warningCard: {
-    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.gold}50`,
+    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${c.gold}50`,
     padding: 14, gap: 6, marginBottom: 10,
   },
   alertHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   alertEmoji: { fontSize: 18 },
-  alertTitle: { fontSize: 15, fontWeight: '800', color: Colors.scorePoor },
-  alertDesc: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  alertTitle: { fontSize: 15, fontWeight: '800', color: c.scorePoor },
+  alertDesc: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   filterRow: { flexDirection: 'row', gap: 6, marginBottom: 12 },
   filterTab: {
-    flex: 1, height: 34, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
+    flex: 1, height: 34, borderRadius: 10, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
   },
-  filterTabActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}12` },
-  filterTabText: { fontSize: 11, fontWeight: '700', color: Colors.textMuted },
+  filterTabActive: { borderColor: c.primary, backgroundColor: `${c.primary}12` },
+  filterTabText: { fontSize: 11, fontWeight: '700', color: c.textMuted },
 
   emptyCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 20, borderWidth: 1, borderColor: c.border,
     padding: 24, gap: 10, alignItems: 'center', marginBottom: 14,
   },
   emptyEmoji: { fontSize: 40 },
-  emptyTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
-  emptyDesc: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20 },
-  emptyBtn: { backgroundColor: Colors.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
-  emptyBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  emptyTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
+  emptyDesc: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20 },
+  emptyBtn: { backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
+  emptyBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   productCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 10, marginBottom: 10,
   },
   expiredCard: { borderColor: 'rgba(239,68,68,0.25)', opacity: 0.85 },
   productTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   categoryBadge: { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  productName: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  productCategory: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
+  productName: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  productCategory: { fontSize: 11, color: c.textMuted, marginTop: 1 },
   productMeta: { flexDirection: 'row', gap: 0 },
   metaItem: { flex: 1, gap: 2 },
-  metaLabel: { fontSize: 9, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase' },
-  metaValue: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary },
+  metaLabel: { fontSize: 9, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase' },
+  metaValue: { fontSize: 12, fontWeight: '600', color: c.textSecondary },
   expiryBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5,
@@ -453,15 +457,16 @@ const styles = StyleSheet.create({
   },
   expiryEmoji: { fontSize: 12 },
   expiryLabel: { fontSize: 12, fontWeight: '800' },
-  productNotes: { fontSize: 12, color: Colors.textMuted, fontStyle: 'italic' },
+  productNotes: { fontSize: 12, color: c.textMuted, fontStyle: 'italic' },
 
   guideCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  guideTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  guideRow: { flexDirection: 'row', gap: 10, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 10 },
-  guideProduct: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary },
-  guidePao: { fontSize: 12, color: Colors.primary, fontWeight: '700', marginTop: 1 },
-  guideNote: { flex: 1, fontSize: 11, color: Colors.textMuted, lineHeight: 16 },
-});
+  guideTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  guideRow: { flexDirection: 'row', gap: 10, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 10 },
+  guideProduct: { fontSize: 13, fontWeight: '800', color: c.textPrimary },
+  guidePao: { fontSize: 12, color: c.primary, fontWeight: '700', marginTop: 1 },
+  guideNote: { flex: 1, fontSize: 11, color: c.textMuted, lineHeight: 16 },
+  });
+}

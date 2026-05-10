@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
   Share, Animated, Easing, Dimensions,
@@ -7,18 +7,19 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 
 const { width } = Dimensions.get('window');
 const CARD_SIZE = (width - 48 - 10) / 3;
 
-function scoreColor(score: number): string {
-  if (score >= 80) return Colors.scoreExcellent;
-  if (score >= 65) return Colors.scoreGood;
-  if (score >= 50) return Colors.scoreFair;
-  return Colors.scorePoor;
+function scoreColor(score: number, c: Palette): string {
+  if (score >= 80) return c.scoreExcellent;
+  if (score >= 65) return c.scoreGood;
+  if (score >= 50) return c.scoreFair;
+  return c.scorePoor;
 }
 
 function formatDate(dateStr: string): string {
@@ -26,6 +27,8 @@ function formatDate(dateStr: string): string {
 }
 
 export default function ScanGallery() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -65,7 +68,7 @@ export default function ScanGallery() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Skin Gallery</Text>
             <View style={{ width: 36 }} />
@@ -76,7 +79,7 @@ export default function ScanGallery() {
           <Text style={styles.emptyTitle}>Start your skin journey</Text>
           <Text style={styles.emptySub}>Your scan photos will appear here. Build a visual timeline of your skin's transformation over time.</Text>
           <Pressable style={styles.scanBtn} onPress={() => router.push('/scan')}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.scanBtnGrad}>
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.scanBtnGrad}>
               <Text style={styles.scanBtnText}>Take First Scan →</Text>
             </LinearGradient>
           </Pressable>
@@ -94,14 +97,14 @@ export default function ScanGallery() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View style={{ alignItems: 'center' }}>
               <Text style={styles.headerTitle}>Skin Gallery</Text>
               <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''}</Text>
             </View>
             <Pressable style={styles.shareBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={18} color={Colors.primary} />
+              <Ionicons name="share-outline" size={18} color={colors.primary} />
             </Pressable>
           </View>
         </SafeAreaView>
@@ -116,7 +119,7 @@ export default function ScanGallery() {
         {/* Journey stats banner */}
         {history.length >= 2 && (
           <LinearGradient
-            colors={[Colors.primaryDark, Colors.primary]}
+            colors={[colors.primaryDark, colors.primary]}
             style={styles.journeyBanner}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           >
@@ -149,7 +152,7 @@ export default function ScanGallery() {
               style={StyleSheet.absoluteFill}
             />
             <View style={styles.timelineCtaIcon}>
-              <Ionicons name="film" size={18} color={Colors.primary} />
+              <Ionicons name="film" size={18} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.timelineCtaTitle}>Watch your transformation</Text>
@@ -158,7 +161,7 @@ export default function ScanGallery() {
               </Text>
             </View>
             <View style={styles.timelinePlayBtn}>
-              <Ionicons name="play" size={14} color={Colors.white} />
+              <Ionicons name="play" size={14} color={colors.white} />
             </View>
           </Pressable>
         )}
@@ -170,7 +173,7 @@ export default function ScanGallery() {
               <Image source={{ uri: latest.imageUri }} style={styles.heroImage} resizeMode="cover" />
             ) : (
               <View style={[styles.heroImage, styles.heroImageEmpty]}>
-                <Ionicons name="person" size={48} color={Colors.textMuted} />
+                <Ionicons name="person" size={48} color={colors.textMuted} />
               </View>
             )}
             <LinearGradient
@@ -202,13 +205,13 @@ export default function ScanGallery() {
               style={[styles.modeBtn, viewMode === 'grid' && styles.modeBtnActive]}
               onPress={() => setViewMode('grid')}
             >
-              <Ionicons name="grid-outline" size={16} color={viewMode === 'grid' ? Colors.primary : Colors.textMuted} />
+              <Ionicons name="grid-outline" size={16} color={viewMode === 'grid' ? colors.primary : colors.textMuted} />
             </Pressable>
             <Pressable
               style={[styles.modeBtn, viewMode === 'list' && styles.modeBtnActive]}
               onPress={() => setViewMode('list')}
             >
-              <Ionicons name="list-outline" size={16} color={viewMode === 'list' ? Colors.primary : Colors.textMuted} />
+              <Ionicons name="list-outline" size={16} color={viewMode === 'list' ? colors.primary : colors.textMuted} />
             </Pressable>
           </View>
         </View>
@@ -230,20 +233,20 @@ export default function ScanGallery() {
                     <Image source={{ uri: scan.imageUri }} style={styles.gridImage} resizeMode="cover" />
                   ) : (
                     <View style={[styles.gridImage, styles.gridImageEmpty]}>
-                      <Ionicons name="person-outline" size={24} color={Colors.textMuted} />
+                      <Ionicons name="person-outline" size={24} color={colors.textMuted} />
                     </View>
                   )}
                   <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.65)']}
                     style={styles.gridOverlay}
                   >
-                    <Text style={[styles.gridScore, { color: scoreColor(scan.overallScore) }]}>
+                    <Text style={[styles.gridScore, { color: scoreColor(scan.overallScore, colors) }]}>
                       {scan.overallScore}
                     </Text>
                     <Text style={styles.gridDate}>{formatDate(scan.date)}</Text>
                   </LinearGradient>
                   {(isFirst || isLatest) && (
-                    <View style={[styles.gridBadge, { backgroundColor: isLatest ? Colors.primary : '#6B85A8' }]}>
+                    <View style={[styles.gridBadge, { backgroundColor: isLatest ? colors.primary : '#6B85A8' }]}>
                       <Text style={styles.gridBadgeText}>{isLatest ? 'NOW' : 'START'}</Text>
                     </View>
                   )}
@@ -273,7 +276,7 @@ export default function ScanGallery() {
                     <Image source={{ uri: scan.imageUri }} style={styles.listThumb} resizeMode="cover" />
                   ) : (
                     <View style={[styles.listThumb, styles.listThumbEmpty]}>
-                      <Ionicons name="person" size={22} color={Colors.textMuted} />
+                      <Ionicons name="person" size={22} color={colors.textMuted} />
                     </View>
                   )}
                   <View style={styles.listInfo}>
@@ -296,13 +299,13 @@ export default function ScanGallery() {
                     </View>
                   </View>
                   <View style={styles.listRight}>
-                    <Text style={[styles.listScore, { color: scoreColor(scan.overallScore) }]}>{scan.overallScore}</Text>
+                    <Text style={[styles.listScore, { color: scoreColor(scan.overallScore, colors) }]}>{scan.overallScore}</Text>
                     {delta !== null && (
-                      <Text style={[styles.listDelta, { color: delta > 0 ? Colors.scoreExcellent : delta < 0 ? Colors.scorePoor : Colors.textMuted }]}>
+                      <Text style={[styles.listDelta, { color: delta > 0 ? colors.scoreExcellent : delta < 0 ? colors.scorePoor : colors.textMuted }]}>
                         {delta > 0 ? '+' : ''}{delta !== 0 ? delta : '—'}
                       </Text>
                     )}
-                    <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                    <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
                   </View>
                 </Pressable>
               );
@@ -313,7 +316,7 @@ export default function ScanGallery() {
         {/* Photo-only note */}
         {withPhotos.length < history.length && (
           <View style={styles.photoNote}>
-            <Ionicons name="information-circle-outline" size={14} color={Colors.textMuted} />
+            <Ionicons name="information-circle-outline" size={14} color={colors.textMuted} />
             <Text style={styles.photoNoteText}>
               {history.length - withPhotos.length} scan{history.length - withPhotos.length !== 1 ? 's' : ''} without a photo (quiz scans or older records)
             </Text>
@@ -323,8 +326,8 @@ export default function ScanGallery() {
         {/* Share journey CTA */}
         {history.length >= 3 && (
           <Pressable style={styles.shareCta} onPress={handleShare}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-            <Ionicons name="share-social-outline" size={20} color={Colors.white} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <Ionicons name="share-social-outline" size={20} color={colors.white} />
             <View style={{ flex: 1 }}>
               <Text style={styles.shareCtaTitle}>Share your skin journey</Text>
               <Text style={styles.shareCtaSub}>{history.length} scans · {improvement >= 0 ? '+' : ''}{improvement} points total</Text>
@@ -339,38 +342,39 @@ export default function ScanGallery() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
   shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 14 },
   emptyEmoji: { fontSize: 56 },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, textAlign: 'center' },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
   scanBtn: { borderRadius: 16, overflow: 'hidden', marginTop: 8 },
   scanBtnGrad: { paddingHorizontal: 28, paddingVertical: 15 },
-  scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  scanBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   journeyBanner: {
     borderRadius: 18, padding: 18, flexDirection: 'row', marginBottom: 16,
     alignItems: 'center',
   },
   journeyStat: { flex: 1, alignItems: 'center', gap: 2 },
-  journeyStatNum: { fontSize: 26, fontWeight: '900', color: Colors.white },
+  journeyStatNum: { fontSize: 26, fontWeight: '900', color: c.white },
   journeyStatLabel: { fontSize: 10, fontWeight: '600', color: 'rgba(255,255,255,0.65)', letterSpacing: 0.5 },
   journeySep: { width: 1, height: 36, backgroundColor: 'rgba(255,255,255,0.2)' },
 
   timelineCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: 16, borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
     padding: 14, marginBottom: 14,
     overflow: 'hidden',
@@ -382,25 +386,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,98,45,0.14)',
     alignItems: 'center', justifyContent: 'center',
   },
-  timelineCtaTitle: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
-  timelineCtaSub: { fontSize: 11, color: Colors.textSecondary, marginTop: 2, fontWeight: '600' },
+  timelineCtaTitle: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
+  timelineCtaSub: { fontSize: 11, color: c.textSecondary, marginTop: 2, fontWeight: '600' },
   timelinePlayBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center',
     paddingLeft: 2,
-    shadowColor: Colors.primary, shadowOpacity: 0.35, shadowRadius: 8,
+    shadowColor: c.primary, shadowOpacity: 0.35, shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
 
   heroCard: {
     borderRadius: 22, overflow: 'hidden', marginBottom: 16,
     height: 220,
-    backgroundColor: Colors.bgCard,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard,
+    borderWidth: 1, borderColor: c.border,
   },
   heroImage: { width: '100%', height: '100%' },
-  heroImageEmpty: { alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgElevated },
+  heroImageEmpty: { alignItems: 'center', justifyContent: 'center', backgroundColor: c.bgElevated },
   heroOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
@@ -408,9 +412,9 @@ const styles = StyleSheet.create({
   },
   heroContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   heroLabel: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.75)', letterSpacing: 1.5, marginBottom: 3 },
-  heroDate: { fontSize: 17, fontWeight: '700', color: Colors.white },
+  heroDate: { fontSize: 17, fontWeight: '700', color: c.white },
   heroScore: { alignItems: 'center' },
-  heroScoreNum: { fontSize: 36, fontWeight: '900', color: Colors.white },
+  heroScoreNum: { fontSize: 36, fontWeight: '900', color: c.white },
   heroScoreLabel: { fontSize: 10, color: 'rgba(255,255,255,0.65)', fontWeight: '600', marginTop: -3 },
   heroViewBtn: {
     position: 'absolute', top: 14, right: 14,
@@ -418,23 +422,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 6,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
   },
-  heroViewBtnText: { fontSize: 11, fontWeight: '700', color: Colors.white },
+  heroViewBtnText: { fontSize: 11, fontWeight: '700', color: c.white },
 
   modeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  modeLabel: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  modeToggle: { flexDirection: 'row', backgroundColor: Colors.bgCard, borderRadius: 10, padding: 3, borderWidth: 1, borderColor: Colors.border },
+  modeLabel: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  modeToggle: { flexDirection: 'row', backgroundColor: c.bgCard, borderRadius: 10, padding: 3, borderWidth: 1, borderColor: c.border },
   modeBtn: { width: 32, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },
-  modeBtnActive: { backgroundColor: Colors.bgElevated },
+  modeBtnActive: { backgroundColor: c.bgElevated },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 16 },
   gridCard: {
     width: CARD_SIZE, height: CARD_SIZE * 1.2,
     borderRadius: 14, overflow: 'hidden',
-    backgroundColor: Colors.bgCard,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard,
+    borderWidth: 1, borderColor: c.border,
   },
   gridImage: { width: '100%', height: '100%' },
-  gridImageEmpty: { alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgElevated },
+  gridImageEmpty: { alignItems: 'center', justifyContent: 'center', backgroundColor: c.bgElevated },
   gridOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
@@ -446,44 +450,45 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 6, left: 6,
     borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2,
   },
-  gridBadgeText: { fontSize: 8, fontWeight: '900', color: Colors.white, letterSpacing: 0.5 },
+  gridBadgeText: { fontSize: 8, fontWeight: '900', color: c.white, letterSpacing: 0.5 },
   deltaBadge: {
     position: 'absolute', top: 6, right: 6,
     borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2,
   },
-  deltaBadgeText: { fontSize: 9, fontWeight: '900', color: Colors.white },
+  deltaBadgeText: { fontSize: 9, fontWeight: '900', color: c.white },
 
   listWrap: { gap: 8, marginBottom: 16 },
   listCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 12,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 12,
   },
-  listThumb: { width: 60, height: 60, borderRadius: 12, backgroundColor: Colors.bgElevated },
+  listThumb: { width: 60, height: 60, borderRadius: 12, backgroundColor: c.bgElevated },
   listThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
   listInfo: { flex: 1, gap: 5 },
-  listDate: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  listDate: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
   listMeta: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
   listSkinBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  listSkinText: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1 },
+  listSkinText: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1 },
   concernChip: { backgroundColor: 'rgba(212,169,106,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  concernText: { fontSize: 9, color: Colors.gold, fontWeight: '600' },
+  concernText: { fontSize: 9, color: c.gold, fontWeight: '600' },
   listRight: { alignItems: 'flex-end', gap: 3 },
   listScore: { fontSize: 22, fontWeight: '900' },
   listDelta: { fontSize: 11, fontWeight: '700' },
 
   photoNote: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: Colors.bgCard, borderRadius: 12,
+    backgroundColor: c.bgCard, borderRadius: 12,
     padding: 12, marginBottom: 16,
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
   },
-  photoNoteText: { fontSize: 12, color: Colors.textMuted, flex: 1 },
+  photoNoteText: { fontSize: 12, color: c.textMuted, flex: 1 },
 
   shareCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 16,
   },
-  shareCtaTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  shareCtaTitle: { fontSize: 15, fontWeight: '700', color: c.white },
   shareCtaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
-});
+  });
+}

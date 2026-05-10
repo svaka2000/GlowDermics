@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, ActivityIndicator,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Groq from 'groq-sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const groq = new Groq({
@@ -45,6 +46,8 @@ const CLIMATE_TYPES = [
 const TRIP_DURATIONS = ['3-5 days', '1 week', '2 weeks', '3+ weeks'];
 
 export default function TravelPlanner() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [destination, setDestination] = useState('');
   const [climate, setClimate] = useState('');
   const [duration, setDuration] = useState('1 week');
@@ -144,7 +147,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Travel Skin Planner</Text>
@@ -152,7 +155,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
           </View>
           {plan && (
             <Pressable style={styles.resetBtn} onPress={() => { setPlan(null); setDestination(''); setClimate(''); }}>
-              <Ionicons name="refresh-outline" size={16} color={Colors.textMuted} />
+              <Ionicons name="refresh-outline" size={16} color={colors.textMuted} />
             </Pressable>
           )}
           {!plan && <View style={{ width: 36 }} />}
@@ -167,7 +170,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
               <TextInput
                 style={styles.textInput}
                 placeholder="City, country, or region..."
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={destination}
                 onChangeText={setDestination}
               />
@@ -181,7 +184,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
                     onPress={() => setClimate(c.id)}
                   >
                     <Text style={styles.climateEmoji}>{c.emoji}</Text>
-                    <Text style={[styles.climateLabel, climate === c.id && { color: Colors.primary }]}>{c.label}</Text>
+                    <Text style={[styles.climateLabel, climate === c.id && { color: colors.primary }]}>{c.label}</Text>
                     <Text style={styles.climateDesc}>{c.desc}</Text>
                   </Pressable>
                 ))}
@@ -195,7 +198,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
                     style={[styles.durationChip, duration === d && styles.durationChipActive]}
                     onPress={() => setDuration(d)}
                   >
-                    <Text style={[styles.durationText, duration === d && { color: Colors.primary }]}>{d}</Text>
+                    <Text style={[styles.durationText, duration === d && { color: colors.primary }]}>{d}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -205,8 +208,8 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
                 onPress={generate}
                 disabled={!destination.trim() || !climate}
               >
-                <LinearGradient colors={[Colors.primaryDark, Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
-                <Ionicons name="airplane" size={18} color={Colors.white} />
+                <LinearGradient colors={[colors.primaryDark, colors.primary, colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+                <Ionicons name="airplane" size={18} color={colors.white} />
                 <Text style={styles.generateBtnText}>Generate Travel Plan</Text>
               </Pressable>
             </View>
@@ -232,7 +235,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
 
         {loading && (
           <View style={styles.loadingCard}>
-            <ActivityIndicator size="large" color={Colors.primary} />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingTitle}>Building your travel plan...</Text>
             <Text style={styles.loadingDesc}>Analyzing {destination} climate for your skin type</Text>
           </View>
@@ -242,7 +245,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
           <>
             {/* Destination hero */}
             <View style={styles.destinationHero}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <View style={styles.destTop}>
                 <Text style={styles.destPlane}>✈️</Text>
                 <View>
@@ -275,8 +278,8 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
               <Text style={styles.cardTitle}>🌅 Morning Routine in {plan.destination}</Text>
               {plan.morningRoutine.map((step, i) => (
                 <View key={i} style={styles.routineRow}>
-                  <View style={[styles.stepNumBadge, { backgroundColor: `${Colors.gold}20` }]}>
-                    <Text style={[styles.stepNumText, { color: Colors.gold }]}>{i + 1}</Text>
+                  <View style={[styles.stepNumBadge, { backgroundColor: `${colors.gold}20` }]}>
+                    <Text style={[styles.stepNumText, { color: colors.gold }]}>{i + 1}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.routineStep}>{step.step}</Text>
@@ -331,7 +334,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
 
             {/* Tallow tip */}
             <View style={styles.tallowCard}>
-              <LinearGradient colors={[`${Colors.primary}12`, `${Colors.primary}04`]} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
               <Text style={styles.tallowTitle}>🌿 TallowDermics for {plan.climate}</Text>
               <Text style={styles.tallowText}>{plan.tallowTip}</Text>
             </View>
@@ -339,10 +342,10 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
             {/* Watch out */}
             <View style={styles.watchCard}>
               <LinearGradient colors={['rgba(239,68,68,0.08)', 'rgba(239,68,68,0.02)']} style={StyleSheet.absoluteFill} />
-              <Text style={[styles.cardTitle, { color: Colors.scorePoor }]}>⚠️ Common Mistakes to Avoid</Text>
+              <Text style={[styles.cardTitle, { color: colors.scorePoor }]}>⚠️ Common Mistakes to Avoid</Text>
               {plan.watchOut.map((item, i) => (
                 <View key={i} style={styles.watchRow}>
-                  <Ionicons name="warning-outline" size={14} color={Colors.scorePoor} />
+                  <Ionicons name="warning-outline" size={14} color={colors.scorePoor} />
                   <Text style={styles.watchText}>{item}</Text>
                 </View>
               ))}
@@ -360,132 +363,134 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   resetBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
   scroll: { paddingHorizontal: 16 },
 
   setupCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  setupTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
+  setupTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
   textInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: Colors.textPrimary,
+    backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: c.textPrimary,
   },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
 
   climateGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   climateChip: {
     flex: 1, minWidth: 120, padding: 10, borderRadius: 12, gap: 2,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  climateChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
+  climateChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
   climateEmoji: { fontSize: 20 },
-  climateLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted },
-  climateDesc: { fontSize: 10, color: Colors.textMuted },
+  climateLabel: { fontSize: 13, fontWeight: '700', color: c.textMuted },
+  climateDesc: { fontSize: 10, color: c.textMuted },
 
   durationRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   durationChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  durationChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  durationText: { fontSize: 13, fontWeight: '700', color: Colors.textMuted },
+  durationChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  durationText: { fontSize: 13, fontWeight: '700', color: c.textMuted },
 
   generateBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     height: 52, borderRadius: 14, overflow: 'hidden',
   },
-  generateBtnText: { fontSize: 15, fontWeight: '800', color: Colors.white },
-  errorText: { fontSize: 13, color: Colors.scorePoor, textAlign: 'center', marginBottom: 14 },
+  generateBtnText: { fontSize: 15, fontWeight: '800', color: c.white },
+  errorText: { fontSize: 13, color: c.scorePoor, textAlign: 'center', marginBottom: 14 },
 
   tipCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  tipCardTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
+  tipCardTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
   tipRow: { gap: 2 },
-  tipClimate: { fontSize: 12, fontWeight: '800', color: Colors.textSecondary },
-  tipText: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  tipClimate: { fontSize: 12, fontWeight: '800', color: c.textSecondary },
+  tipText: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   loadingCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 20, borderWidth: 1, borderColor: c.border,
     padding: 40, gap: 12, alignItems: 'center', marginBottom: 14,
   },
-  loadingTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
-  loadingDesc: { fontSize: 13, color: Colors.textMuted, textAlign: 'center' },
+  loadingTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
+  loadingDesc: { fontSize: 13, color: c.textMuted, textAlign: 'center' },
 
   destinationHero: {
     borderRadius: 20, overflow: 'hidden', padding: 20, gap: 10, marginBottom: 14,
   },
   destTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   destPlane: { fontSize: 32 },
-  destName: { fontSize: 22, fontWeight: '900', color: Colors.white },
+  destName: { fontSize: 22, fontWeight: '900', color: c.white },
   destClimate: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 1 },
   destNote: { fontSize: 13, color: 'rgba(255,255,255,0.75)', lineHeight: 20 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSubtitle: { fontSize: 12, color: Colors.textMuted },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSubtitle: { fontSize: 12, color: c.textMuted },
 
   routineRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   stepNumBadge: {
     width: 26, height: 26, borderRadius: 13,
-    backgroundColor: `${Colors.primary}20`, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+    backgroundColor: `${c.primary}20`, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  stepNumText: { fontSize: 12, fontWeight: '900', color: Colors.primary },
-  routineStep: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  routineProduct: { fontSize: 12, color: Colors.primary, fontWeight: '600', marginTop: 1 },
-  routineWhy: { fontSize: 12, color: Colors.textMuted, lineHeight: 18, marginTop: 2 },
+  stepNumText: { fontSize: 12, fontWeight: '900', color: c.primary },
+  routineStep: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  routineProduct: { fontSize: 12, color: c.primary, fontWeight: '600', marginTop: 1 },
+  routineWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18, marginTop: 2 },
 
   packRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingVertical: 4 },
-  essentialRow: { borderLeftWidth: 3, borderLeftColor: Colors.primary, paddingLeft: 8 },
-  essentialBadge: { backgroundColor: `${Colors.primary}20`, borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
-  essentialText: { fontSize: 8, fontWeight: '900', color: Colors.primary, letterSpacing: 1 },
-  packItem: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  packNote: { fontSize: 11, color: Colors.textMuted, lineHeight: 17 },
+  essentialRow: { borderLeftWidth: 3, borderLeftColor: c.primary, paddingLeft: 8 },
+  essentialBadge: { backgroundColor: `${c.primary}20`, borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 },
+  essentialText: { fontSize: 8, fontWeight: '900', color: c.primary, letterSpacing: 1 },
+  packItem: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  packNote: { fontSize: 11, color: c.textMuted, lineHeight: 17 },
 
   adjustRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  adjustDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: Colors.primary, marginTop: 6, flexShrink: 0 },
-  adjustText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  adjustDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: c.primary, marginTop: 6, flexShrink: 0 },
+  adjustText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tallowCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   watchCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)',
     padding: 16, gap: 8, marginBottom: 14,
   },
   watchRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  watchText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  watchText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   newPlanBtn: {
-    height: 48, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    height: 48, borderRadius: 12, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  newPlanText: { fontSize: 14, fontWeight: '700', color: Colors.textMuted },
-});
+  newPlanText: { fontSize: 14, fontWeight: '700', color: c.textMuted },
+  });
+}
