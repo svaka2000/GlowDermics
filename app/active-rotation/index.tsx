@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Active = {
   id: string;
@@ -23,7 +24,8 @@ type Active = {
   waitTime: string;
 };
 
-const ACTIVES: Active[] = [
+function buildActives(c: Palette): Active[] {
+  return [
   {
     id: 'vitc', name: 'Vitamin C (L-AA)', abbr: 'Vit C', emoji: '🍊',
     color: '#F97316', whenToUse: 'AM', conflict: ['niacinamide', 'aha', 'bha'],
@@ -74,7 +76,7 @@ const ACTIVES: Active[] = [
   },
   {
     id: 'peptides', name: 'Peptides', abbr: 'Pep', emoji: '⚡',
-    color: Colors.gold, whenToUse: 'PM', conflict: ['aha', 'bha'],
+    color: c.gold, whenToUse: 'PM', conflict: ['aha', 'bha'],
     synergy: ['retinol', 'hyaluronic', 'niacinamide'],
     sensitivity: 'low', desc: 'Stimulate collagen, firm skin, reduce fine lines',
     howToUse: 'After serums, before moisturizer. Most effective at night.',
@@ -88,7 +90,8 @@ const ACTIVES: Active[] = [
     howToUse: 'Apply to damp skin before any actives. Layer under everything.',
     waitTime: '0 min',
   },
-];
+  ];
+}
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -97,7 +100,7 @@ type Schedule = {
   pm: string[];
 }[];
 
-function generateSchedule(selectedIds: string[]): Schedule {
+function generateSchedule(selectedIds: string[], ACTIVES: Active[]): Schedule {
   const selected = ACTIVES.filter(a => selectedIds.includes(a.id));
   const amActives = selected.filter(a => a.whenToUse === 'AM');
   const pmActives = selected.filter(a => a.whenToUse === 'PM');
@@ -135,6 +138,9 @@ function generateSchedule(selectedIds: string[]): Schedule {
 }
 
 export default function ActiveRotation() {
+  const colors = useColors();
+  const ACTIVES = useMemo(() => buildActives(colors), [colors]);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [selectedActives, setSelectedActives] = useState<string[]>([]);
   const [showSchedule, setShowSchedule] = useState(false);
   const [expandedActive, setExpandedActive] = useState<string | null>(null);
@@ -172,14 +178,14 @@ export default function ActiveRotation() {
     return conflictPairs;
   })();
 
-  const schedule = showSchedule ? generateSchedule(selectedActives) : null;
+  const schedule = showSchedule ? generateSchedule(selectedActives, ACTIVES) : null;
 
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Active Rotation</Text>
@@ -204,7 +210,7 @@ export default function ActiveRotation() {
                   style={[
                     styles.activeRow,
                     isSelected && { borderColor: `${active.color}60`, backgroundColor: `${active.color}08` },
-                    hasConflict && { borderColor: Colors.scorePoor },
+                    hasConflict && { borderColor: colors.scorePoor },
                   ]}
                   onPress={() => toggleActive(active.id)}
                 >
@@ -217,18 +223,18 @@ export default function ActiveRotation() {
                     backgroundColor: active.sensitivity === 'low' ? 'rgba(74,222,128,0.15)' : active.sensitivity === 'medium' ? 'rgba(212,169,106,0.15)' : 'rgba(239,68,68,0.15)',
                   }]}>
                     <Text style={[styles.sensitivityText, {
-                      color: active.sensitivity === 'low' ? '#4ADE80' : active.sensitivity === 'medium' ? Colors.gold : Colors.scorePoor,
+                      color: active.sensitivity === 'low' ? '#4ADE80' : active.sensitivity === 'medium' ? colors.gold : colors.scorePoor,
                     }]}>
                       {active.sensitivity === 'low' ? 'Gentle' : active.sensitivity === 'medium' ? 'Medium' : 'Strong'}
                     </Text>
                   </View>
                   <Pressable onPress={() => setExpandedActive(isExpanded ? null : active.id)} style={{ padding: 4 }}>
-                    <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={14} color={Colors.textMuted} />
+                    <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={14} color={colors.textMuted} />
                   </Pressable>
                   <Ionicons
                     name={isSelected ? 'checkmark-circle' : 'ellipse-outline'}
                     size={20}
-                    color={isSelected ? active.color : Colors.textMuted}
+                    color={isSelected ? active.color : colors.textMuted}
                   />
                 </Pressable>
                 {isExpanded && (
@@ -237,7 +243,7 @@ export default function ActiveRotation() {
                     <Text style={styles.expandedLabel}>⏱ Wait time after applying: {active.waitTime}</Text>
                     <Text style={styles.expandedLabel}>💡 {active.howToUse}</Text>
                     {active.conflict.length > 0 && (
-                      <Text style={[styles.expandedLabel, { color: Colors.scorePoor }]}>
+                      <Text style={[styles.expandedLabel, { color: colors.scorePoor }]}>
                         ⚠️ Don't combine with: {active.conflict.map(c => ACTIVES.find(a => a.id === c)?.abbr).join(', ')}
                       </Text>
                     )}
@@ -257,7 +263,7 @@ export default function ActiveRotation() {
         {conflicts.length > 0 && (
           <View style={styles.conflictCard}>
             <LinearGradient colors={['rgba(239,68,68,0.12)', 'rgba(239,68,68,0.04)']} style={StyleSheet.absoluteFill} />
-            <Text style={[styles.cardTitle, { color: Colors.scorePoor }]}>⚠️ Ingredient Conflicts</Text>
+            <Text style={[styles.cardTitle, { color: colors.scorePoor }]}>⚠️ Ingredient Conflicts</Text>
             {conflicts.map(([a, b], i) => {
               const activeA = ACTIVES.find(x => x.id === a);
               const activeB = ACTIVES.find(x => x.id === b);
@@ -273,8 +279,8 @@ export default function ActiveRotation() {
         {/* Generate schedule button */}
         {selectedActives.length >= 2 && (
           <Pressable style={styles.generateBtn} onPress={() => setShowSchedule(true)}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
-            <Ionicons name="calendar-outline" size={18} color={Colors.white} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+            <Ionicons name="calendar-outline" size={18} color={colors.white} />
             <Text style={styles.generateBtnText}>Generate Weekly Schedule</Text>
           </Pressable>
         )}
@@ -292,7 +298,7 @@ export default function ActiveRotation() {
                 <Text style={styles.scheduleHeaderText}>PM</Text>
               </View>
               {DAYS.map((day, i) => (
-                <View key={day} style={[styles.scheduleRow, i % 2 === 0 && { backgroundColor: `${Colors.primary}05` }]}>
+                <View key={day} style={[styles.scheduleRow, i % 2 === 0 && { backgroundColor: `${colors.primary}05` }]}>
                   <Text style={styles.scheduleDayText}>{day}</Text>
                   <View style={styles.scheduleCell}>
                     {schedule[i].am.map((abbr, j) => (
@@ -347,75 +353,77 @@ export default function ActiveRotation() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 8, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSubtitle: { fontSize: 12, color: Colors.textMuted, marginBottom: 4 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSubtitle: { fontSize: 12, color: c.textMuted, marginBottom: 4 },
 
   activeRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgElevated, marginBottom: 4,
+    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgElevated, marginBottom: 4,
   },
   activeEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
-  activeName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  activeDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
+  activeName: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  activeDesc: { fontSize: 11, color: c.textMuted, marginTop: 1 },
   sensitivityBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   sensitivityText: { fontSize: 10, fontWeight: '800' },
   expandedInfo: {
     marginBottom: 8, marginTop: -4, padding: 12, borderRadius: 10,
-    borderWidth: 1, backgroundColor: Colors.bgElevated, gap: 4,
+    borderWidth: 1, backgroundColor: c.bgElevated, gap: 4,
   },
-  expandedLabel: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  expandedLabel: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   conflictCard: {
     borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)',
     padding: 14, gap: 8, marginBottom: 14,
   },
-  conflictText: { fontSize: 13, color: Colors.textSecondary },
+  conflictText: { fontSize: 13, color: c.textSecondary },
 
   generateBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     height: 52, borderRadius: 14, overflow: 'hidden', marginBottom: 14,
   },
-  generateBtnText: { fontSize: 15, fontWeight: '800', color: Colors.white },
+  generateBtnText: { fontSize: 15, fontWeight: '800', color: c.white },
 
   scheduleCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  scheduleNote: { fontSize: 12, color: Colors.textMuted },
+  scheduleNote: { fontSize: 12, color: c.textMuted },
   scheduleGrid: { gap: 2, marginTop: 4 },
   scheduleHeaderRow: { flexDirection: 'row', paddingHorizontal: 4, marginBottom: 2 },
-  scheduleHeaderText: { flex: 1, fontSize: 10, fontWeight: '800', color: Colors.textMuted, textAlign: 'center' },
+  scheduleHeaderText: { flex: 1, fontSize: 10, fontWeight: '800', color: c.textMuted, textAlign: 'center' },
   scheduleRow: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 4 },
   scheduleDay: { width: 32 },
-  scheduleDayText: { width: 32, fontSize: 11, fontWeight: '700', color: Colors.textMuted },
+  scheduleDayText: { width: 32, fontSize: 11, fontWeight: '700', color: c.textMuted },
   scheduleCell: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 3, justifyContent: 'center' },
   scheduleChip: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   scheduleChipText: { fontSize: 10, fontWeight: '800' },
-  restText: { fontSize: 10, color: Colors.border, fontStyle: 'italic' },
-  scheduleFootnote: { fontSize: 11, color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
+  restText: { fontSize: 10, color: c.border, fontStyle: 'italic' },
+  scheduleFootnote: { fontSize: 11, color: c.textMuted, fontStyle: 'italic', lineHeight: 17 },
 
   ruleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  ruleDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: Colors.primary, marginTop: 6, flexShrink: 0 },
-  ruleName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  ruleWhy: { fontSize: 12, color: Colors.textMuted, lineHeight: 18, marginTop: 1 },
-});
+  ruleDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: c.primary, marginTop: 6, flexShrink: 0 },
+  ruleName: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  ruleWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18, marginTop: 1 },
+  });
+}

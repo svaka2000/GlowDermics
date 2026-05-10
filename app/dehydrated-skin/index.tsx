@@ -1,20 +1,26 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Dry vs Dehydrated', 'Pinch Test', 'Causes', 'Fix It', 'Tallow Role'];
 
-const COMPARISON = {
+function buildComparison(Colors: ShimColors) {
+  return {
   dry: {
     label: 'DRY SKIN',
     color: Colors.gold,
@@ -45,7 +51,8 @@ const COMPARISON = {
     fix: 'Needs humectants (draw water in) + occlusives (seal water in). The missing ingredient is water, not oil.',
     permanent: false,
   },
-};
+  };
+}
 
 const PINCH_TEST = [
   { step: 1, instruction: 'Cleanse face and wait 30 minutes', detail: 'Remove all products. Wait 30 minutes so skin can return to its baseline state without any product influence. Do not apply anything during this time.' },
@@ -85,6 +92,10 @@ const TALLOW_ROLE = [
 ];
 
 export default function DehydratedSkinScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const COMPARISON = useMemo(() => buildComparison(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [expandedCause, setExpandedCause] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -207,52 +218,54 @@ export default function DehydratedSkinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
   comparisonGrid: { gap: 12 },
-  compCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border },
+  compCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border },
   compLabel: { fontSize: 16, fontWeight: '900', marginBottom: 6 },
   permanentBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginBottom: 8 },
   permanentText: { fontSize: 10, fontWeight: '700' },
-  compDefinition: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 10 },
-  compCharsLabel: { color: Colors.textMuted, fontSize: 11, fontWeight: '700', marginBottom: 6 },
-  compChar: { color: Colors.textSecondary, fontSize: 12, lineHeight: 20 },
-  fixBadge: { marginTop: 10, borderRadius: 8, padding: 10, borderWidth: 1, backgroundColor: Colors.cardAlt },
+  compDefinition: { color: c.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 10 },
+  compCharsLabel: { color: c.textMuted, fontSize: 11, fontWeight: '700', marginBottom: 6 },
+  compChar: { color: c.textSecondary, fontSize: 12, lineHeight: 20 },
+  fixBadge: { marginTop: 10, borderRadius: 8, padding: 10, borderWidth: 1, backgroundColor: c.cardAlt },
   fixText: { fontSize: 12, fontWeight: '600', lineHeight: 18 },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
   stepCard: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
-  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-  stepTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  stepDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  infoBox: { backgroundColor: Colors.blue + '11', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.blue + '33', marginTop: 6 },
-  infoBoxTitle: { color: Colors.blue, fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  infoBoxText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  infoBox: { backgroundColor: c.blue + '11', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.blue + '33', marginTop: 6 },
+  infoBoxTitle: { color: c.blue, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  infoBoxText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

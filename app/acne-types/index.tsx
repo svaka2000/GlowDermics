@@ -1,18 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', orange: '#FB923C',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration,
+    purple: c.darkCircles, orange: '#FB923C',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
-const ACNE_TYPES = [
+function buildAcneTypes(Colors: ShimColors) {
+  return [
   {
     type: 'Comedonal Acne',
     icon: '⚫',
@@ -134,9 +141,14 @@ const ACNE_TYPES = [
     triggers: ['Post-exercise sweat', 'Tight clothing', 'Heavy conditioner or shampoo runoff', 'Not showering immediately after exercise'],
     tallowNote: 'Tallow works well on body acne in remission (not active inflammatory acne). Apply after BHA-treated body skin on recovery days. Particularly effective on dry back and shoulder areas prone to both acne and dryness.',
   },
-];
+  ];
+}
 
 export default function AcneTypesScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const ACNE_TYPES = useMemo(() => buildAcneTypes(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [selectedType, setSelectedType] = useState<number | null>(null);
 
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -228,36 +240,38 @@ export default function AcneTypesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  intro: { paddingHorizontal: 16, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  introText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  intro: { paddingHorizontal: 16, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: c.border },
+  introText: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  typeCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  typeCard: { backgroundColor: c.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   typeHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   typeIcon: { fontSize: 20, marginTop: 2 },
   typeName: { fontSize: 15, fontWeight: '800', marginBottom: 4 },
-  typeAppearance: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  typeExpanded: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: Colors.border },
-  causeBlock: { backgroundColor: Colors.cardAlt, borderRadius: 10, padding: 10, marginBottom: 12 },
-  causeLabel: { color: Colors.textSecondary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  causeText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  blockLabel: { color: Colors.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8 },
+  typeAppearance: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  typeExpanded: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: c.border },
+  causeBlock: { backgroundColor: c.cardAlt, borderRadius: 10, padding: 10, marginBottom: 12 },
+  causeLabel: { color: c.textSecondary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  causeText: { color: c.textSecondary, fontSize: 12, lineHeight: 19 },
+  blockLabel: { color: c.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8 },
   triggerChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   triggerChip: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 4 },
   triggerChipText: { fontSize: 11, fontWeight: '600' },
   treatmentRow: { flexDirection: 'row', gap: 8, marginBottom: 6 },
   treatmentBullet: { fontSize: 14, fontWeight: '700', marginTop: 1 },
-  treatmentText: { flex: 1, color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowNote: { backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 10, borderWidth: 1, marginTop: 12 },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  disclaimer: { backgroundColor: Colors.cardAlt, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: Colors.border, marginTop: 6 },
-  disclaimerText: { color: Colors.textMuted, fontSize: 12, lineHeight: 19 },
-});
+  treatmentText: { flex: 1, color: c.textSecondary, fontSize: 12, lineHeight: 19 },
+  tallowNote: { backgroundColor: c.primary + '15', borderRadius: 10, padding: 10, borderWidth: 1, marginTop: 12 },
+  tallowNoteTitle: { color: c.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  tallowNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  disclaimer: { backgroundColor: c.cardAlt, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.border, marginTop: 6 },
+  disclaimerText: { color: c.textMuted, fontSize: 12, lineHeight: 19 },
+  });
+}

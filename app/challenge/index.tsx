@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Alert, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const CHALLENGE_KEY = 'gd_active_challenge';
 
@@ -29,7 +30,8 @@ type ActiveChallenge = {
   completedDays: string[]; // date strings
 };
 
-const CHALLENGES: Challenge[] = [
+function buildChallenges(c: Palette): Challenge[] {
+  return [
   {
     id: 'tallow-30',
     title: '30-Day Tallow Switch',
@@ -43,7 +45,7 @@ const CHALLENGES: Challenge[] = [
       'Give it 2 weeks — skin adjusting is normal',
       'Scan weekly to see your progress',
     ],
-    color: [Colors.primaryDark, Colors.primary],
+    color: [c.primaryDark, c.primary],
     category: 'tallow',
   },
   {
@@ -126,7 +128,8 @@ const CHALLENGES: Challenge[] = [
     color: ['#3D1A2E', '#8B2C6E'],
     category: 'lifestyle',
   },
-];
+  ];
+}
 
 function getTodayStr() {
   return new Date().toDateString();
@@ -137,6 +140,9 @@ function getDaysElapsed(startDate: string): number {
 }
 
 export default function ChallengePage() {
+  const colors = useColors();
+  const CHALLENGES = useMemo(() => buildChallenges(colors), [colors]);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [active, setActive] = useState<ActiveChallenge | null>(null);
   const [activeChallenge, setActiveChallenge] = useState<Challenge | null>(null);
   const [view, setView] = useState<'browse' | 'active'>('browse');
@@ -220,7 +226,7 @@ export default function ChallengePage() {
 
   const getCategoryColor = (cat: Challenge['category']) => {
     switch (cat) {
-      case 'tallow': return Colors.primary;
+      case 'tallow': return colors.primary;
       case 'routine': return '#2563EB';
       case 'hydration': return '#1B9AAA';
       case 'minimal': return '#4A5568';
@@ -246,7 +252,7 @@ export default function ChallengePage() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Challenges</Text>
@@ -254,7 +260,7 @@ export default function ChallengePage() {
           </View>
           {active && (
             <Pressable style={styles.backBtn} onPress={() => setView(view === 'active' ? 'browse' : 'active')}>
-              <Ionicons name={view === 'active' ? 'grid-outline' : 'checkmark-circle-outline'} size={20} color={Colors.primary} />
+              <Ionicons name={view === 'active' ? 'grid-outline' : 'checkmark-circle-outline'} size={20} color={colors.primary} />
             </Pressable>
           )}
           {!active && <View style={{ width: 36 }} />}
@@ -339,14 +345,14 @@ export default function ChallengePage() {
                         isPast && !done && styles.calDayMissed,
                       ]}
                     >
-                      <Text style={[styles.calDayNum, done && { color: Colors.white }]}>{i + 1}</Text>
+                      <Text style={[styles.calDayNum, done && { color: colors.white }]}>{i + 1}</Text>
                     </View>
                   );
                 })}
               </View>
               <View style={styles.calLegend}>
                 <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: '#4ADE80' }]} /><Text style={styles.legendText}>Done</Text></View>
-                <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: Colors.primary }]} /><Text style={styles.legendText}>Today</Text></View>
+                <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: colors.primary }]} /><Text style={styles.legendText}>Today</Text></View>
                 <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: 'rgba(248,113,113,0.4)' }]} /><Text style={styles.legendText}>Missed</Text></View>
               </View>
             </View>
@@ -426,8 +432,8 @@ export default function ChallengePage() {
                 {active?.challengeId === ch.id
                   ? <View style={styles.activePill}><Text style={styles.activePillText}>ACTIVE</Text></View>
                   : active
-                    ? <View style={[styles.activePill, { backgroundColor: Colors.bgElevated }]}><Text style={[styles.activePillText, { color: Colors.textMuted }]}>LOCKED</Text></View>
-                    : <Ionicons name="play-circle" size={28} color={Colors.primary} />
+                    ? <View style={[styles.activePill, { backgroundColor: colors.bgElevated }]}><Text style={[styles.activePillText, { color: colors.textMuted }]}>LOCKED</Text></View>
+                    : <Ionicons name="play-circle" size={28} color={colors.primary} />
                 }
               </Pressable>
             ))}
@@ -440,20 +446,21 @@ export default function ChallengePage() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   heroCard: { borderRadius: 20, overflow: 'hidden', padding: 24, gap: 8, marginBottom: 14, alignItems: 'center' },
   heroEmoji: { fontSize: 48 },
-  heroTitle: { fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  heroTitle: { fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center' },
   heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.8)', textAlign: 'center' },
   completedBadge: { backgroundColor: 'rgba(74,222,128,0.3)', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
   completedText: { fontSize: 13, fontWeight: '800', color: '#4ADE80' },
@@ -461,61 +468,62 @@ const styles = StyleSheet.create({
   progressBarFill: { height: 6, backgroundColor: '#4ADE80', borderRadius: 3 },
   progressText: { fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: '600' },
 
-  todayCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 14 },
+  todayCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 14 },
   todayHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  todayLabel: { fontSize: 10, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
+  todayLabel: { fontSize: 10, fontWeight: '800', color: c.textMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
   doneBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
   doneText: { fontSize: 11, fontWeight: '700', color: '#4ADE80' },
-  todayAction: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  todayAction: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
   logBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 50, borderRadius: 14, overflow: 'hidden' },
-  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  logBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
   loggedCard: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)', padding: 12 },
-  loggedText: { flex: 1, fontSize: 13, color: Colors.textSecondary },
+  loggedText: { flex: 1, fontSize: 13, color: c.textSecondary },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   calGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  calDay: { width: 34, height: 34, borderRadius: 8, backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  calDay: { width: 34, height: 34, borderRadius: 8, backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
   calDayDone: { backgroundColor: '#22C55E', borderColor: '#16A34A' },
-  calDayToday: { borderColor: Colors.primary, borderWidth: 2 },
+  calDayToday: { borderColor: c.primary, borderWidth: 2 },
   calDayMissed: { backgroundColor: 'rgba(248,113,113,0.15)', borderColor: 'rgba(248,113,113,0.3)' },
-  calDayNum: { fontSize: 11, fontWeight: '700', color: Colors.textMuted },
+  calDayNum: { fontSize: 11, fontWeight: '700', color: c.textMuted },
   calLegend: { flexDirection: 'row', gap: 16 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { fontSize: 11, color: Colors.textMuted },
+  legendText: { fontSize: 11, color: c.textMuted },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  tipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary, marginTop: 7 },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: c.primary, marginTop: 7 },
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
-  statCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14, alignItems: 'center', gap: 3 },
-  statNum: { fontSize: 24, fontWeight: '900', color: Colors.textPrimary },
-  statLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 14, alignItems: 'center', gap: 3 },
+  statNum: { fontSize: 24, fontWeight: '900', color: c.textPrimary },
+  statLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   abandonBtn: { alignItems: 'center', paddingVertical: 12 },
-  abandonText: { fontSize: 12, color: Colors.textMuted },
+  abandonText: { fontSize: 12, color: c.textMuted },
 
   activeBanner: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
   activeBannerEmoji: { fontSize: 24 },
-  activeBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  activeBannerSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-  activeBannerBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 7 },
-  activeBannerBtnText: { fontSize: 12, fontWeight: '700', color: Colors.white },
+  activeBannerTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  activeBannerSub: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  activeBannerBtn: { backgroundColor: c.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 7 },
+  activeBannerBtnText: { fontSize: 12, fontWeight: '700', color: c.white },
 
-  browseTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
-  challengeCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 10 },
-  challengeCardActive: { borderColor: Colors.primary },
+  browseTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
+  challengeCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 10 },
+  challengeCardActive: { borderColor: c.primary },
   challengeEmojiBg: { position: 'absolute', top: 0, left: 0, bottom: 0, width: 6, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 },
   challengeEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
   challengeTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  challengeTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  challengeTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, flex: 1 },
   categoryBadge: { borderRadius: 8, paddingHorizontal: 7, paddingVertical: 2 },
   categoryBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
-  challengeDesc: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
-  challengeDays: { fontSize: 11, fontWeight: '600', color: Colors.primary },
+  challengeDesc: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
+  challengeDays: { fontSize: 11, fontWeight: '600', color: c.primary },
   activePill: { backgroundColor: 'rgba(196,98,45,0.2)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
-  activePillText: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 0.5 },
-});
+  activePillText: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 0.5 },
+  });
+}
