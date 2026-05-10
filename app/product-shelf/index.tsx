@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, TextInput, Alert, Modal, Platform,
@@ -6,22 +6,26 @@ import {
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  yellow: '#FBBF24',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    yellow: c.scoreFair,
+  };
+}
 
 const STORAGE_KEY = 'gd_product_shelf';
 
@@ -54,11 +58,11 @@ const daysSince = (d: string) => Math.floor((Date.now() - new Date(d + 'T00:00:0
 
 const REACTION_OPTIONS = ['Breakout', 'Redness', 'Irritation', 'Dryness', 'Pilling', 'Stinging', 'Purging', 'Great results', 'No reaction'];
 
-const ratingColor = (r: number) => {
-  if (r >= 4) return Colors.green;
-  if (r >= 3) return Colors.gold;
-  return Colors.red;
-};
+function ratingColor(r: number, c: ReturnType<typeof shimColors>) {
+  if (r >= 4) return c.green;
+  if (r >= 3) return c.gold;
+  return c.red;
+}
 
 const categoryEmoji: Record<string, string> = {
   Cleanser: '🫧', Toner: '💧', Serum: '🧪', Moisturizer: '🧴', SPF: '☀️',
@@ -66,6 +70,9 @@ const categoryEmoji: Record<string, string> = {
 };
 
 export default function ProductShelfScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [products, setProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('active');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -236,7 +243,7 @@ export default function ProductShelfScreen() {
                     <Text style={styles.productTime}>{product.timeOfUse}</Text>
                     <Text style={styles.productDays}>{daysSince(product.dateAdded)}d</Text>
                     {'★'.repeat(product.rating).split('').map((_, i) => (
-                      <Text key={i} style={[styles.productStar, { color: ratingColor(product.rating) }]}>★</Text>
+                      <Text key={i} style={[styles.productStar, { color: ratingColor(product.rating, Colors) }]}>★</Text>
                     ))}
                   </View>
                 </View>
@@ -284,7 +291,7 @@ export default function ProductShelfScreen() {
             <View style={styles.ratingRow}>
               {RATINGS.map(r => (
                 <TouchableOpacity key={r.value} style={[styles.ratingChip, rating === r.value && styles.ratingChipActive]} onPress={() => setRating(r.value)}>
-                  <Text style={[styles.ratingChipText, rating === r.value && { color: ratingColor(r.value) }]}>{r.label}</Text>
+                  <Text style={[styles.ratingChipText, rating === r.value && { color: ratingColor(r.value, Colors) }]}>{r.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -342,7 +349,7 @@ export default function ProductShelfScreen() {
               <View style={styles.ratingRow}>
                 {RATINGS.map(r => (
                   <TouchableOpacity key={r.value} style={[styles.ratingChip, rating === r.value && styles.ratingChipActive]} onPress={() => setRating(r.value)}>
-                    <Text style={[styles.ratingChipText, rating === r.value && { color: ratingColor(r.value) }]}>{r.label}</Text>
+                    <Text style={[styles.ratingChipText, rating === r.value && { color: ratingColor(r.value, Colors) }]}>{r.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -381,7 +388,7 @@ export default function ProductShelfScreen() {
                 <Text style={styles.viewMetaItem}>{viewingProduct.timeOfUse}</Text>
                 <Text style={styles.viewMetaItem}>Since {formatDate(viewingProduct.dateAdded)}</Text>
               </View>
-              <Text style={[styles.viewDays, { color: ratingColor(viewingProduct.rating) }]}>
+              <Text style={[styles.viewDays, { color: ratingColor(viewingProduct.rating, Colors) }]}>
                 {'★'.repeat(viewingProduct.rating)} {RATINGS.find(r => r.value === viewingProduct.rating)?.label}
               </Text>
               <Text style={styles.viewDays}>{daysSince(viewingProduct.dateAdded)} days on your shelf</Text>
@@ -434,7 +441,7 @@ export default function ProductShelfScreen() {
                 <Text style={styles.viewMetaItem}>{viewingProduct.timeOfUse}</Text>
                 <Text style={styles.viewMetaItem}>Since {formatDate(viewingProduct.dateAdded)}</Text>
               </View>
-              <Text style={[styles.viewDays, { color: ratingColor(viewingProduct.rating) }]}>
+              <Text style={[styles.viewDays, { color: ratingColor(viewingProduct.rating, Colors) }]}>
                 {'★'.repeat(viewingProduct.rating)} {RATINGS.find(r => r.value === viewingProduct.rating)?.label}
               </Text>
               <Text style={styles.viewDays}>{daysSince(viewingProduct.dateAdded)} days on your shelf</Text>
@@ -468,7 +475,9 @@ export default function ProductShelfScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -599,4 +608,5 @@ const styles = StyleSheet.create({
     paddingVertical: 14, alignItems: 'center',
   },
   toggleActiveBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
-});
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
   Dimensions,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { GlassHero, Card, Badge, ScatterPlot } from '../../src/components/ui';
 import { runUVSkinAnalysis, UVSkinReport } from '../../src/engine/UVSkinEngine';
@@ -32,13 +33,15 @@ const EXPOSURE_OPTIONS = [
   { min: 240, label: '4+ hours', emoji: '🏖️' },
 ];
 
-const SPF_OPTIONS = [
-  { value: null, label: 'No SPF', color: Colors.scorePoor },
-  { value: 15, label: 'SPF 15', color: Colors.scoreFair },
-  { value: 30, label: 'SPF 30', color: Colors.scoreGood },
-  { value: 50, label: 'SPF 50', color: Colors.scoreExcellent },
-  { value: 100, label: 'SPF 100+', color: '#4ADE80' },
-];
+function buildSpfOptions(c: Palette) {
+  return [
+    { value: null, label: 'No SPF', color: c.scorePoor },
+    { value: 15, label: 'SPF 15', color: c.scoreFair },
+    { value: 30, label: 'SPF 30', color: c.scoreGood },
+    { value: 50, label: 'SPF 50', color: c.scoreExcellent },
+    { value: 100, label: 'SPF 100+', color: '#4ADE80' },
+  ];
+}
 
 const ACTIVITIES = [
   'Morning walk', 'Outdoor workout', 'Driving', 'Sitting outside',
@@ -49,17 +52,17 @@ function getTodayStr() {
   return new Date().toDateString();
 }
 
-function getUVRisk(exposureMin: number, spf: number | null, reapplied: boolean): { label: string; color: string; desc: string } {
-  if (exposureMin === 0) return { label: 'No Exposure', color: Colors.textMuted, desc: 'No UV risk today.' };
+function getUVRisk(exposureMin: number, spf: number | null, reapplied: boolean, c: Palette): { label: string; color: string; desc: string } {
+  if (exposureMin === 0) return { label: 'No Exposure', color: c.textMuted, desc: 'No UV risk today.' };
   if (!spf) {
-    if (exposureMin <= 15) return { label: 'Low Risk', color: Colors.scoreGood, desc: 'Brief exposure without SPF — watch for cumulative damage.' };
-    if (exposureMin <= 60) return { label: 'Moderate Risk', color: Colors.gold, desc: 'Extended unprotected exposure causes collagen breakdown and pigmentation.' };
-    return { label: 'High Risk', color: Colors.scorePoor, desc: 'Long unprotected sun exposure significantly accelerates skin aging.' };
+    if (exposureMin <= 15) return { label: 'Low Risk', color: c.scoreGood, desc: 'Brief exposure without SPF — watch for cumulative damage.' };
+    if (exposureMin <= 60) return { label: 'Moderate Risk', color: c.gold, desc: 'Extended unprotected exposure causes collagen breakdown and pigmentation.' };
+    return { label: 'High Risk', color: c.scorePoor, desc: 'Long unprotected sun exposure significantly accelerates skin aging.' };
   }
   const protection = spf * (reapplied ? 1.2 : 0.6);
-  if (protection >= 30 && reapplied) return { label: 'Well Protected', color: Colors.scoreExcellent, desc: 'Great SPF routine — your skin barrier is protected.' };
-  if (protection >= 20) return { label: 'Moderate Protection', color: Colors.scoreGood, desc: 'Good coverage but consider reapplying every 2 hours.' };
-  return { label: 'Limited Protection', color: Colors.gold, desc: 'SPF applied but needs reapplication for full protection.' };
+  if (protection >= 30 && reapplied) return { label: 'Well Protected', color: c.scoreExcellent, desc: 'Great SPF routine — your skin barrier is protected.' };
+  if (protection >= 20) return { label: 'Moderate Protection', color: c.scoreGood, desc: 'Good coverage but consider reapplying every 2 hours.' };
+  return { label: 'Limited Protection', color: c.gold, desc: 'SPF applied but needs reapplication for full protection.' };
 }
 
 function getVitaminDNote(exposureMin: number): string {
@@ -70,6 +73,9 @@ function getVitaminDNote(exposureMin: number): string {
 }
 
 export default function UVLog() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SPF_OPTIONS = useMemo(() => buildSpfOptions(colors), [colors]);
   const [log, setLog] = useState<UVEntry[]>([]);
   const [selectedExposure, setSelectedExposure] = useState<number | null>(null);
   const [selectedSPF, setSelectedSPF] = useState<number | null | undefined>(undefined);
@@ -162,13 +168,13 @@ export default function UVLog() {
     : 0;
 
   const riskInfo = selectedExposure !== null && selectedSPF !== undefined
-    ? getUVRisk(selectedExposure, selectedSPF, reapplied)
+    ? getUVRisk(selectedExposure, selectedSPF, reapplied, colors)
     : null;
 
   return (
     <View style={styles.root}>
       <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <Animated.View style={[styles.heroHeader, {
               opacity: headerAnim,
@@ -178,7 +184,7 @@ export default function UVLog() {
                 style={styles.heroBackBtn}
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View>
                 <Text style={styles.heroTitle}>UV & Sun Log</Text>
@@ -210,7 +216,7 @@ export default function UVLog() {
                 onPress={() => { setSelectedExposure(opt.min); setSaved(false); }}
               >
                 <Text style={styles.exposureEmoji}>{opt.emoji}</Text>
-                <Text style={[styles.exposureLabel, selectedExposure === opt.min && { color: Colors.primary }]}>{opt.label}</Text>
+                <Text style={[styles.exposureLabel, selectedExposure === opt.min && { color: colors.primary }]}>{opt.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -223,7 +229,7 @@ export default function UVLog() {
                 style={[styles.spfChip, selectedSPF === opt.value && { backgroundColor: `${opt.color}22`, borderColor: opt.color }]}
                 onPress={() => { setSelectedSPF(opt.value); setSaved(false); }}
               >
-                <Text style={[styles.spfLabel, { color: selectedSPF === opt.value ? opt.color : Colors.textMuted }]}>{opt.label}</Text>
+                <Text style={[styles.spfLabel, { color: selectedSPF === opt.value ? opt.color : colors.textMuted }]}>{opt.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -236,9 +242,9 @@ export default function UVLog() {
               <Ionicons
                 name={reapplied ? 'checkmark-circle' : 'ellipse-outline'}
                 size={18}
-                color={reapplied ? Colors.primary : Colors.textMuted}
+                color={reapplied ? colors.primary : colors.textMuted}
               />
-              <Text style={[styles.reapplyText, reapplied && { color: Colors.textPrimary }]}>Reapplied SPF every 2 hours</Text>
+              <Text style={[styles.reapplyText, reapplied && { color: colors.textPrimary }]}>Reapplied SPF every 2 hours</Text>
             </Pressable>
           )}
 
@@ -250,7 +256,7 @@ export default function UVLog() {
                 style={[styles.activityChip, selectedActivities.includes(a) && styles.activityChipActive]}
                 onPress={() => toggleActivity(a)}
               >
-                <Text style={[styles.activityText, selectedActivities.includes(a) && { color: Colors.primary }]}>{a}</Text>
+                <Text style={[styles.activityText, selectedActivities.includes(a) && { color: colors.primary }]}>{a}</Text>
               </Pressable>
             ))}
           </View>
@@ -262,7 +268,7 @@ export default function UVLog() {
           >
             {saved
               ? <><Ionicons name="checkmark-circle" size={18} color="#4ADE80" /><Text style={[styles.saveBtnText, { color: '#4ADE80' }]}>Saved</Text></>
-              : <><Ionicons name="sunny-outline" size={18} color={Colors.white} /><Text style={styles.saveBtnText}>Log Today</Text></>
+              : <><Ionicons name="sunny-outline" size={18} color={colors.white} /><Text style={styles.saveBtnText}>Log Today</Text></>
             }
           </Pressable>
         </View>
@@ -292,13 +298,13 @@ export default function UVLog() {
         {log.length >= 3 && (
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
-              <Text style={[styles.statNum, { color: spfCompliance && spfCompliance >= 80 ? '#4ADE80' : Colors.gold }]}>
+              <Text style={[styles.statNum, { color: spfCompliance && spfCompliance >= 80 ? '#4ADE80' : colors.gold }]}>
                 {spfCompliance !== null ? `${spfCompliance}%` : '—'}
               </Text>
               <Text style={styles.statLabel}>SPF compliance</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={[styles.statNum, { color: avgExposure > 60 ? Colors.scorePoor : avgExposure > 30 ? Colors.gold : '#4ADE80' }]}>
+              <Text style={[styles.statNum, { color: avgExposure > 60 ? colors.scorePoor : avgExposure > 30 ? colors.gold : '#4ADE80' }]}>
                 {avgExposure}m
               </Text>
               <Text style={styles.statLabel}>Avg exposure</Text>
@@ -317,10 +323,10 @@ export default function UVLog() {
             <View style={styles.chart}>
               {last14.map((d, i) => {
                 const barPct = chartMax > 0 ? d.exposureMin / chartMax : 0;
-                const barColor = !d.hasSpf && d.exposureMin > 0 ? Colors.scorePoor
-                  : d.exposureMin >= 60 ? Colors.gold
+                const barColor = !d.hasSpf && d.exposureMin > 0 ? colors.scorePoor
+                  : d.exposureMin >= 60 ? colors.gold
                   : d.exposureMin > 0 ? '#4ADE80'
-                  : Colors.border;
+                  : colors.border;
                 return (
                   <View key={i} style={styles.chartCol}>
                     <View style={styles.chartBarWrap}>
@@ -331,7 +337,7 @@ export default function UVLog() {
                         }]} />
                       )}
                     </View>
-                    <Text style={[styles.chartDay, d.isToday && { color: Colors.primary, fontWeight: '800' }]}>
+                    <Text style={[styles.chartDay, d.isToday && { color: colors.primary, fontWeight: '800' }]}>
                       {d.isToday ? '•' : d.day}
                     </Text>
                   </View>
@@ -340,8 +346,8 @@ export default function UVLog() {
             </View>
             <View style={styles.chartLegend}>
               <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: '#4ADE80' }]} /><Text style={styles.legendText}>Protected</Text></View>
-              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: Colors.gold }]} /><Text style={styles.legendText}>High exposure</Text></View>
-              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: Colors.scorePoor }]} /><Text style={styles.legendText}>Unprotected</Text></View>
+              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: colors.gold }]} /><Text style={styles.legendText}>High exposure</Text></View>
+              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: colors.scorePoor }]} /><Text style={styles.legendText}>Unprotected</Text></View>
             </View>
           </View>
         )}
@@ -382,13 +388,13 @@ export default function UVLog() {
                   xRange={[0, Math.max(60, Math.ceil(Math.max(...report.points.map(p => p.uvDamage)) / 30) * 30)]}
                   yRange={[40, 100]}
                   showTrendLine
-                  pointColor={Colors.primary}
-                  trendColor={Colors.gold}
+                  pointColor={colors.primary}
+                  trendColor={colors.gold}
                 />
               </View>
             ) : (
               <View style={styles.notEnoughBox}>
-                <Ionicons name="hourglass-outline" size={18} color={Colors.textMuted} />
+                <Ionicons name="hourglass-outline" size={18} color={colors.textMuted} />
                 <Text style={styles.notEnoughText}>
                   Need {Math.max(0, 8 - report.sampleSize)} more matched scans to compute a reliable trend.
                   Each UV log pairs with the next scan within 48h.
@@ -404,7 +410,7 @@ export default function UVLog() {
               <View style={styles.correlationStatDiv} />
               <View style={styles.correlationStat}>
                 <Text style={styles.correlationStatLabel}>UNPROTECTED</Text>
-                <Text style={[styles.correlationStatNum, { color: report.unprotectedDays > 0 ? Colors.scorePoor : Colors.scoreExcellent }]}>
+                <Text style={[styles.correlationStatNum, { color: report.unprotectedDays > 0 ? colors.scorePoor : colors.scoreExcellent }]}>
                   {report.unprotectedDays}
                 </Text>
               </View>
@@ -418,7 +424,7 @@ export default function UVLog() {
                   <View style={styles.correlationStatDiv} />
                   <View style={styles.correlationStat}>
                     <Text style={styles.correlationStatLabel}>TOLERATES</Text>
-                    <Text style={[styles.correlationStatNum, { color: Colors.scoreExcellent }]}>
+                    <Text style={[styles.correlationStatNum, { color: colors.scoreExcellent }]}>
                       {report.toleranceCeiling}
                     </Text>
                   </View>
@@ -429,8 +435,8 @@ export default function UVLog() {
             <View style={styles.verdictBox}>
               <Ionicons name="bulb" size={14} color={
                 report.correlationDamage <= -0.5
-                  ? Colors.scoreExcellent
-                  : report.hasEnoughData ? Colors.gold : Colors.textMuted
+                  ? colors.scoreExcellent
+                  : report.hasEnoughData ? colors.gold : colors.textMuted
               } />
               <Text style={styles.verdictText}>{report.verdict}</Text>
             </View>
@@ -460,8 +466,9 @@ export default function UVLog() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
 
   heroWrap: { marginHorizontal: -16, marginBottom: 14 },
   heroHeader: {
@@ -475,7 +482,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center', letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', textAlign: 'center', marginTop: 2, fontWeight: '600' },
@@ -484,10 +491,10 @@ const styles = StyleSheet.create({
 
   /* v2 correlation card */
   correlationCardV2: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     padding: 16,
     marginBottom: 14,
     shadowColor: '#1C1814',
@@ -497,20 +504,20 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   correlationHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
-  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4 },
+  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.4 },
   notEnoughBox: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     padding: 12, borderRadius: 12, marginTop: 10,
   },
-  notEnoughText: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 17, fontWeight: '500' },
+  notEnoughText: { flex: 1, fontSize: 12, color: c.textSecondary, lineHeight: 17, fontWeight: '500' },
   correlationStatsRow: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: Colors.bgElevated, borderRadius: 14, padding: 10, marginTop: 14,
+    backgroundColor: c.bgElevated, borderRadius: 14, padding: 10, marginTop: 14,
   },
   correlationStat: { flex: 1, alignItems: 'center', gap: 2 },
-  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1 },
-  correlationStatNum: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: c.textMuted, letterSpacing: 1 },
+  correlationStatNum: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
   correlationStatDiv: { width: 1, height: 18, backgroundColor: 'rgba(28,24,20,0.10)' },
   verdictBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 8,
@@ -518,60 +525,60 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.18)',
     borderRadius: 12, padding: 12, marginTop: 14,
   },
-  verdictText: { flex: 1, fontSize: 12.5, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
+  verdictText: { flex: 1, fontSize: 12.5, color: c.textPrimary, lineHeight: 19, fontWeight: '500' },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14,
   },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   savedBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: 'rgba(74,222,128,0.12)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3,
   },
   savedText: { fontSize: 11, fontWeight: '700', color: '#4ADE80' },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
 
   exposureGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   exposureChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  exposureChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
+  exposureChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
   exposureEmoji: { fontSize: 14 },
-  exposureLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  exposureLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted },
 
   spfRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   spfChip: {
     paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
   spfLabel: { fontSize: 12, fontWeight: '700' },
 
   reapplyBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgElevated,
+    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgElevated,
   },
-  reapplyBtnActive: { borderColor: `${Colors.primary}50`, backgroundColor: `${Colors.primary}10` },
-  reapplyText: { fontSize: 13, fontWeight: '600', color: Colors.textMuted },
+  reapplyBtnActive: { borderColor: `${c.primary}50`, backgroundColor: `${c.primary}10` },
+  reapplyText: { fontSize: 13, fontWeight: '600', color: c.textMuted },
 
   activitiesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   activityChip: {
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  activityChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  activityText: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  activityChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  activityText: { fontSize: 12, fontWeight: '600', color: c.textMuted },
 
   saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    height: 48, borderRadius: 12, backgroundColor: Colors.primary,
+    height: 48, borderRadius: 12, backgroundColor: c.primary,
   },
   saveBtnSaved: { backgroundColor: 'rgba(74,222,128,0.08)', borderWidth: 1, borderColor: 'rgba(74,222,128,0.25)' },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   riskCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1.5,
@@ -580,34 +587,35 @@ const styles = StyleSheet.create({
   riskRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   riskDot: { width: 10, height: 10, borderRadius: 5 },
   riskLabel: { fontSize: 16, fontWeight: '800' },
-  riskDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-  riskDivider: { height: 1, backgroundColor: Colors.border },
+  riskDesc: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  riskDivider: { height: 1, backgroundColor: c.border },
   vitaminDRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   vitaminDIcon: { fontSize: 16, width: 22, textAlign: 'center' },
-  vitaminDText: { flex: 1, fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  vitaminDText: { flex: 1, fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
   statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 12,
+    flex: 1, backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 12,
     alignItems: 'center', gap: 3,
   },
-  statNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statNum: { fontSize: 20, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   chart: { flexDirection: 'row', gap: 2, height: 80, alignItems: 'flex-end' },
   chartCol: { flex: 1, alignItems: 'center', gap: 3 },
   chartBarWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
   chartBar: { width: '100%', borderRadius: 3, minHeight: 3 },
-  chartDay: { fontSize: 8, color: Colors.textMuted, fontWeight: '600' },
+  chartDay: { fontSize: 8, color: c.textMuted, fontWeight: '600' },
   chartLegend: { flexDirection: 'row', gap: 12, justifyContent: 'center' },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { fontSize: 10, color: Colors.textMuted },
+  legendText: { fontSize: 10, color: c.textMuted },
 
-  correlationTitle: { fontSize: 15, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationTitle: { fontSize: 15, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Alert, TextInput, Modal, Platform, Pressable, Animated, Easing,
@@ -6,21 +6,27 @@ import {
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-};
+/** Map the old local "Colors" namespace fields onto the project Palette so
+ *  every reference in this file works after migration. */
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+  };
+}
 
 const STEPS_KEY = 'gd_checklist_steps';
 const LOG_KEY = 'gd_checklist_log';
@@ -61,6 +67,9 @@ const formatDate = (d: string) => {
 };
 
 export default function MorningChecklistScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [steps, setSteps] = useState<Step[]>([...DEFAULT_AM_STEPS, ...DEFAULT_PM_STEPS]);
   const [log, setLog] = useState<DayLog[]>([]);
   const [view, setView] = useState<'today' | 'history' | 'edit'>('today');
@@ -405,7 +414,9 @@ export default function MorningChecklistScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -538,4 +549,5 @@ const styles = StyleSheet.create({
   modalCancelText: { color: Colors.textSecondary, fontWeight: '600' },
   modalConfirm: { flex: 1, backgroundColor: Colors.primary, padding: 14, borderRadius: 12, alignItems: 'center' },
   modalConfirmText: { color: '#fff', fontWeight: '700' },
-});
+  });
+}
