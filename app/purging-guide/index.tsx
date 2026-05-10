@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', yellow: '#FBBF24',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, yellow: c.scoreFair,
+  };
+}
 
 const PURGING_SIGNS = [
   'Appears within first 2–6 weeks of starting a new active (retinol, BHA, AHA)',
@@ -97,6 +101,9 @@ const WHEN_TO_STOP = [
 ];
 
 export default function PurgingGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [view, setView] = useState<'identify' | 'science' | 'survive'>('identify');
   const [showStop, setShowStop] = useState(false);
 
@@ -259,7 +266,9 @@ export default function PurgingGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -315,4 +324,5 @@ const styles = StyleSheet.create({
   stopCard: { backgroundColor: Colors.red + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.red + '44' },
   stopTitle: { color: Colors.red, fontSize: 14, fontWeight: '700', marginBottom: 10 },
   stopNote: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19, marginTop: 10, fontStyle: 'italic' },
-});
+  });
+}

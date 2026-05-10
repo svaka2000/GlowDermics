@@ -1,18 +1,22 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8',
-  brown: '#A16207',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, purple: c.darkCircles,
+    brown: '#A16207',
+  };
+}
 
 const TABS = [
   { id: 'types', label: 'Types', icon: '🔍' },
@@ -22,7 +26,8 @@ const TABS = [
   { id: 'tallow', label: 'Tallow Role', icon: '🌿' },
 ];
 
-const TYPES = [
+function buildTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     type: 'Post-Inflammatory Hyperpigmentation (PIH)',
     icon: '🔴',
@@ -73,7 +78,8 @@ const TYPES = [
     mostEffective: 'Address root cause (medication change if possible). Laser therapy for persistent cases.',
     notes: 'If hyperpigmentation started after beginning a new medication, report to your prescribing doctor.',
   },
-];
+  ];
+}
 
 const ACTIVES = [
   {
@@ -167,13 +173,17 @@ const MYTHS = [
   { myth: 'Hyperpigmentation is permanent', truth: 'Most hyperpigmentation is epidermal and responds to treatment over time. True permanent pigmentation (blue-grey deep dermal) requires laser. The majority of common PIH and sun spots do fade with consistent treatment.' },
 ];
 
-const evidenceColor = (e: string) => {
+const evidenceColor = (e: string, Colors: ReturnType<typeof shimColors>) => {
   if (e.includes('critical') || e === 'strong') return Colors.green;
   if (e === 'moderate') return Colors.gold;
   return Colors.blue;
 };
 
 export default function HyperpigmentationScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const TYPES = useMemo(() => buildTypes(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('types');
   const [expandedType, setExpandedType] = useState<string | null>(null);
   const [expandedActive, setExpandedActive] = useState<string | null>(null);
@@ -239,8 +249,8 @@ export default function HyperpigmentationScreen() {
           <TouchableOpacity key={i} style={styles.activeCard} onPress={() => setExpandedActive(expandedActive === active.name ? null : active.name)} activeOpacity={0.85}>
             <View style={styles.activeHeader}>
               <Text style={styles.activeName}>{active.name}</Text>
-              <View style={[styles.evidBadge, { borderColor: evidenceColor(active.evidence) }]}>
-                <Text style={[styles.evidText, { color: evidenceColor(active.evidence) }]}>{active.evidence.toUpperCase()}</Text>
+              <View style={[styles.evidBadge, { borderColor: evidenceColor(active.evidence, Colors) }]}>
+                <Text style={[styles.evidText, { color: evidenceColor(active.evidence, Colors) }]}>{active.evidence.toUpperCase()}</Text>
               </View>
             </View>
             <View style={styles.bestForRow}>
@@ -341,7 +351,9 @@ export default function HyperpigmentationScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -400,4 +412,5 @@ const styles = StyleSheet.create({
   tallowPoint: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

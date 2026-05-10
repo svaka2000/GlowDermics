@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
   ActivityIndicator, Share, Animated, Easing,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -39,6 +40,8 @@ type SkinAgeResult = {
 };
 
 export default function SkinAge() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [age, setAge] = useState('');
   const [ageInput, setAgeInput] = useState('');
   const [result, setResult] = useState<SkinAgeResult | null>(null);
@@ -181,9 +184,9 @@ Return ONLY valid JSON (no markdown, no explanation):
   const getAgeColor = (gap: number) => {
     if (gap <= -3) return '#4ADE80';
     if (gap < 0) return '#86EFAC';
-    if (gap === 0) return Colors.gold;
+    if (gap === 0) return colors.gold;
     if (gap <= 3) return '#FCA5A5';
-    return Colors.scorePoor;
+    return colors.scorePoor;
   };
 
   const getAgeEmoji = (gap: number) => {
@@ -199,7 +202,7 @@ Return ONLY valid JSON (no markdown, no explanation):
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Age</Text>
@@ -207,7 +210,7 @@ Return ONLY valid JSON (no markdown, no explanation):
           </View>
           {result ? (
             <Pressable style={styles.backBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={20} color={Colors.primary} />
+              <Ionicons name="share-outline" size={20} color={colors.primary} />
             </Pressable>
           ) : (
             <View style={{ width: 36 }} />
@@ -234,7 +237,7 @@ Return ONLY valid JSON (no markdown, no explanation):
               value={ageInput}
               onChangeText={setAgeInput}
               placeholder="e.g. 28"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               keyboardType="number-pad"
               maxLength={2}
               editable={!loading}
@@ -244,9 +247,9 @@ Return ONLY valid JSON (no markdown, no explanation):
               onPress={analyze}
               disabled={loading}
             >
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
               {loading
-                ? <ActivityIndicator size="small" color={Colors.white} />
+                ? <ActivityIndicator size="small" color={colors.white} />
                 : <Text style={styles.analyzeBtnText}>Analyze</Text>
               }
             </Pressable>
@@ -320,7 +323,7 @@ Return ONLY valid JSON (no markdown, no explanation):
                 <View key={i} style={styles.factorRow}>
                   <View style={styles.factorLeft}>
                     <View style={[styles.factorDot, {
-                      backgroundColor: factor.impact === 'positive' ? '#4ADE80' : factor.impact === 'negative' ? Colors.scorePoor : Colors.textMuted,
+                      backgroundColor: factor.impact === 'positive' ? '#4ADE80' : factor.impact === 'negative' ? colors.scorePoor : colors.textMuted,
                     }]} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.factorMetric}>{factor.metric}</Text>
@@ -329,7 +332,7 @@ Return ONLY valid JSON (no markdown, no explanation):
                   </View>
                   <View style={styles.factorScore}>
                     <Text style={[styles.factorScoreNum, {
-                      color: factor.score >= 70 ? '#4ADE80' : factor.score >= 50 ? Colors.gold : Colors.scorePoor,
+                      color: factor.score >= 70 ? '#4ADE80' : factor.score >= 50 ? colors.gold : colors.scorePoor,
                     }]}>{factor.score}</Text>
                     <Text style={styles.factorScoreLabel}>/100</Text>
                   </View>
@@ -368,7 +371,7 @@ Return ONLY valid JSON (no markdown, no explanation):
 
             {/* Tallow note */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>TallowDermics Insight</Text>
@@ -380,12 +383,12 @@ Return ONLY valid JSON (no markdown, no explanation):
             {/* Rescan CTA */}
             <Pressable style={styles.rescanCard} onPress={() => router.push('/scan')}>
               <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="camera-outline" size={22} color={Colors.primary} />
+              <Ionicons name="camera-outline" size={22} color={colors.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.rescanTitle}>Rescan to Track Progress</Text>
                 <Text style={styles.rescanSub}>Scan weekly to watch your skin age improve</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
             </Pressable>
           </>
         )}
@@ -396,86 +399,88 @@ Return ONLY valid JSON (no markdown, no explanation):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
   cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: -6 },
-  regenBtn: { fontSize: 13, fontWeight: '600', color: Colors.primary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: -6 },
+  regenBtn: { fontSize: 13, fontWeight: '600', color: c.primary },
 
   ageInputRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
   ageInput: {
-    flex: 1, backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1,
-    borderColor: Colors.border, paddingHorizontal: 16, paddingVertical: 14,
-    fontSize: 22, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center',
+    flex: 1, backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1,
+    borderColor: c.border, paddingHorizontal: 16, paddingVertical: 14,
+    fontSize: 22, fontWeight: '700', color: c.textPrimary, textAlign: 'center',
   },
   analyzeBtn: {
     flex: 2, height: 50, borderRadius: 12, overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center',
   },
-  analyzeBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
-  errorText: { fontSize: 13, color: Colors.scorePoor, fontWeight: '500' },
+  analyzeBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
+  errorText: { fontSize: 13, color: c.scorePoor, fontWeight: '500' },
 
   infoCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 12, marginBottom: 14 },
-  infoTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  infoTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   infoRows: { gap: 12 },
   infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   infoIcon: { fontSize: 20, width: 28, textAlign: 'center' },
-  infoLabel: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
-  infoNote: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  infoLabel: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
+  infoNote: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
-  heroCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, padding: 20, gap: 16, marginBottom: 14 },
+  heroCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 20, gap: 16, marginBottom: 14 },
   ageRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   ageBlock: { alignItems: 'flex-start', gap: 2 },
-  ageBlockLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
-  ageNum: { fontSize: 48, fontWeight: '900', color: Colors.textPrimary, lineHeight: 56 },
-  ageBlockSub: { fontSize: 11, color: Colors.textMuted },
+  ageBlockLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted },
+  ageNum: { fontSize: 48, fontWeight: '900', color: c.textPrimary, lineHeight: 56 },
+  ageBlockSub: { fontSize: 11, color: c.textMuted },
   ageVsBlock: { alignItems: 'center', gap: 2 },
   ageGapEmoji: { fontSize: 22 },
   ageGapNum: { fontSize: 20, fontWeight: '900' },
-  ageGapSub: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  ageGapSub: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
   headlineBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
-  headlineText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
-  verdictText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  headlineText: { fontSize: 13, fontWeight: '700', color: c.primary },
+  verdictText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
-  factorRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingBottom: 10 },
+  factorRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10, borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 10 },
   factorLeft: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1 },
   factorDot: { width: 8, height: 8, borderRadius: 4, marginTop: 5 },
-  factorMetric: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
-  factorNote: { fontSize: 11, color: Colors.textMuted, marginTop: 2, lineHeight: 16 },
+  factorMetric: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
+  factorNote: { fontSize: 11, color: c.textMuted, marginTop: 2, lineHeight: 16 },
   factorScore: { flexDirection: 'row', alignItems: 'baseline', gap: 1 },
   factorScoreNum: { fontSize: 18, fontWeight: '800' },
-  factorScoreLabel: { fontSize: 10, color: Colors.textMuted },
+  factorScoreLabel: { fontSize: 10, color: c.textMuted },
 
   winRiskRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
   winCard: { backgroundColor: 'rgba(74,222,128,0.08)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)', padding: 14, gap: 8 },
   winTitle: { fontSize: 12, fontWeight: '700', color: '#4ADE80' },
-  winItem: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  winItem: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
   riskCard: { backgroundColor: 'rgba(248,113,113,0.08)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', padding: 14, gap: 8 },
-  riskTitle: { fontSize: 12, fontWeight: '700', color: Colors.scorePoor },
-  riskItem: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  riskTitle: { fontSize: 12, fontWeight: '700', color: c.scorePoor },
+  riskItem: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
-  recRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingBottom: 10 },
+  recRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 10 },
   recNum: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(196,98,45,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)' },
-  recNumText: { fontSize: 12, fontWeight: '800', color: Colors.primary },
-  recText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  recNumText: { fontSize: 12, fontWeight: '800', color: c.primary },
+  recText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 12 },
   tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 3 },
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 3 },
   tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
 
   rescanCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
-  rescanTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  rescanSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
-});
+  rescanTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  rescanSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+  });
+}

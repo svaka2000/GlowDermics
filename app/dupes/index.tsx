@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
@@ -7,7 +7,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { findDupes, DupeResult } from '../../src/services/dupeFinder';
 
 const POPULAR = [
@@ -19,6 +20,8 @@ const POPULAR = [
 ];
 
 export default function Dupes() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [productName, setProductName] = useState('');
   const [brand, setBrand] = useState('');
   const [loading, setLoading] = useState(false);
@@ -62,7 +65,7 @@ export default function Dupes() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Dupe Finder</Text>
           <View style={{ width: 40 }} />
@@ -75,7 +78,7 @@ export default function Dupes() {
           <View style={styles.hero}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'transparent']} style={styles.heroGlow} />
             <View style={styles.heroIconWrap}>
-              <LinearGradient colors={[Colors.gold, '#C4622D']} style={styles.heroIconGrad}>
+              <LinearGradient colors={[colors.gold, '#C4622D']} style={styles.heroIconGrad}>
                 <Text style={styles.heroIcon}>💰</Text>
               </LinearGradient>
             </View>
@@ -88,7 +91,7 @@ export default function Dupes() {
             <TextInput
               style={styles.input}
               placeholder="e.g. Drunk Elephant Protini"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={productName}
               onChangeText={setProductName}
               returnKeyType="next"
@@ -97,7 +100,7 @@ export default function Dupes() {
             <TextInput
               style={styles.input}
               placeholder="e.g. Drunk Elephant"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={brand}
               onChangeText={setBrand}
               returnKeyType="search"
@@ -109,15 +112,15 @@ export default function Dupes() {
               disabled={!productName.trim() || loading}
             >
               <LinearGradient
-                colors={productName.trim() ? [Colors.gold, Colors.primary] : ['#333', '#222']}
+                colors={productName.trim() ? [colors.gold, colors.primary] : ['#333', '#222']}
                 style={styles.searchBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               >
                 {loading ? (
-                  <ActivityIndicator color={Colors.white} size="small" />
+                  <ActivityIndicator color={colors.white} size="small" />
                 ) : (
                   <>
-                    <Ionicons name="search" size={18} color={Colors.white} />
+                    <Ionicons name="search" size={18} color={colors.white} />
                     <Text style={styles.searchBtnText}>Find Dupes</Text>
                   </>
                 )}
@@ -133,7 +136,7 @@ export default function Dupes() {
                   <Text style={styles.popularName}>{item.name}</Text>
                   <Text style={styles.popularBrand}>{item.brand}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+                <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
               </Pressable>
             ))}
           </View>
@@ -145,16 +148,18 @@ export default function Dupes() {
 }
 
 function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBack: () => void; onNewSearch: () => void }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable onPress={onBack} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Dupe Results</Text>
           <Pressable onPress={onNewSearch} style={styles.backBtn}>
-            <Ionicons name="search" size={20} color={Colors.primary} />
+            <Ionicons name="search" size={20} color={colors.primary} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -178,7 +183,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
 
         {/* Why they work */}
         <View style={styles.whyCard}>
-          <Ionicons name="bulb-outline" size={16} color={Colors.gold} />
+          <Ionicons name="bulb-outline" size={16} color={colors.gold} />
           <Text style={styles.whyText}>{result.whyTheyWork}</Text>
         </View>
 
@@ -191,7 +196,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
             )}
             <View style={styles.dupeTop}>
               <View style={styles.dupeMatch}>
-                <Text style={[styles.dupeMatchNum, { color: dupe.matchScore >= 80 ? Colors.scoreExcellent : dupe.matchScore >= 60 ? Colors.scoreFair : Colors.scorePoor }]}>
+                <Text style={[styles.dupeMatchNum, { color: dupe.matchScore >= 80 ? colors.scoreExcellent : dupe.matchScore >= 60 ? colors.scoreFair : colors.scorePoor }]}>
                   {dupe.matchScore}%
                 </Text>
                 <Text style={styles.dupeMatchLabel}>Match</Text>
@@ -221,7 +226,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
             <Text style={styles.dupeDiff}>{dupe.differences}</Text>
 
             <View style={styles.whereToBuyRow}>
-              <Ionicons name="storefront-outline" size={12} color={Colors.textMuted} />
+              <Ionicons name="storefront-outline" size={12} color={colors.textMuted} />
               <Text style={styles.whereToBuy}>{dupe.whereToBuy}</Text>
             </View>
           </View>
@@ -246,10 +251,11 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   content: { paddingHorizontal: 20, paddingBottom: 40 },
 
@@ -258,64 +264,65 @@ const styles = StyleSheet.create({
   heroIconWrap: { borderRadius: 26, overflow: 'hidden', marginBottom: 16 },
   heroIconGrad: { width: 80, height: 80, alignItems: 'center', justifyContent: 'center', borderRadius: 26 },
   heroIcon: { fontSize: 36 },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, marginBottom: 8 },
-  heroSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 },
+  heroTitle: { fontSize: 24, fontWeight: '800', color: c.textPrimary, marginBottom: 8 },
+  heroSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 },
 
-  searchCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 24 },
-  searchLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 8 },
-  input: { backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 13, fontSize: 15, color: Colors.textPrimary },
+  searchCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 24 },
+  searchLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5, marginBottom: 8 },
+  input: { backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 13, fontSize: 15, color: c.textPrimary },
   searchBtn: { borderRadius: 14, overflow: 'hidden', marginTop: 16 },
   searchBtnDisabled: { opacity: 0.5 },
   searchBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16 },
-  searchBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  searchBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
 
-  popularTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
-  popularList: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
-  popularItem: { flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  popularTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+  popularList: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, overflow: 'hidden' },
+  popularItem: { flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, borderBottomColor: c.border },
   popularInfo: { flex: 1 },
-  popularName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  popularBrand: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  popularName: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  popularBrand: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   resultsScroll: { paddingHorizontal: 16, paddingBottom: 40, paddingTop: 8 },
-  originalCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 12 },
-  originalEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.textMuted, marginBottom: 6 },
-  originalName: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, marginBottom: 4 },
-  originalBrand: { fontSize: 13, color: Colors.textSecondary, marginBottom: 14 },
+  originalCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 12 },
+  originalEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.textMuted, marginBottom: 6 },
+  originalName: { fontSize: 20, fontWeight: '800', color: c.textPrimary, marginBottom: 4 },
+  originalBrand: { fontSize: 13, color: c.textSecondary, marginBottom: 14 },
   keyIngredients: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
-  keyIngrLabel: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
+  keyIngrLabel: { fontSize: 12, color: c.textMuted, fontWeight: '600' },
   ingChip: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  ingChipText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
+  ingChipText: { fontSize: 11, color: c.primary, fontWeight: '600' },
 
   whyCard: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 14, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)' },
-  whyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, flex: 1 },
+  whyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20, flex: 1 },
 
-  dupesTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
-  dupeCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 10, overflow: 'hidden' },
-  dupeCardBest: { borderColor: Colors.borderStrong },
+  dupesTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+  dupeCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, marginBottom: 10, overflow: 'hidden' },
+  dupeCardBest: { borderColor: c.borderStrong },
   dupeTop: { flexDirection: 'row', gap: 12, alignItems: 'flex-start', marginBottom: 12 },
   dupeMatch: { alignItems: 'center', minWidth: 44 },
   dupeMatchNum: { fontSize: 18, fontWeight: '900' },
-  dupeMatchLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5 },
+  dupeMatchLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5 },
   dupeInfo: { flex: 1 },
   dupeNameRow: { marginBottom: 2 },
-  bestBadge: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: Colors.gold, backgroundColor: 'rgba(212,169,106,0.15)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
-  dupeName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  dupeBrand: { fontSize: 12, color: Colors.textMuted },
+  bestBadge: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.gold, backgroundColor: 'rgba(212,169,106,0.15)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
+  dupeName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  dupeBrand: { fontSize: 12, color: c.textMuted },
   dupePriceWrap: { alignItems: 'flex-end', gap: 4 },
-  dupePrice: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  dupePrice: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   savingsBadge: { backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  savingsText: { fontSize: 11, fontWeight: '700', color: Colors.scoreExcellent },
+  savingsText: { fontSize: 11, fontWeight: '700', color: c.scoreExcellent },
   sharedRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8, alignItems: 'flex-start' },
-  sharedLabel: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
-  sharedIngredients: { fontSize: 12, color: Colors.textSecondary, flex: 1 },
-  dupeDiff: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, marginBottom: 10 },
+  sharedLabel: { fontSize: 12, color: c.textMuted, fontWeight: '600' },
+  sharedIngredients: { fontSize: 12, color: c.textSecondary, flex: 1 },
+  dupeDiff: { fontSize: 13, color: c.textSecondary, lineHeight: 19, marginBottom: 10 },
   whereToBuyRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  whereToBuy: { fontSize: 11, color: Colors.textMuted },
+  whereToBuy: { fontSize: 11, color: c.textMuted },
 
-  tdNote: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.borderStrong, padding: 16, marginBottom: 14 },
-  tdNoteEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 8 },
-  tdNoteText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tdNote: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.borderStrong, padding: 16, marginBottom: 14 },
+  tdNoteEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 8 },
+  tdNoteText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   newSearchBtn: { alignItems: 'center', paddingVertical: 16 },
-  newSearchText: { fontSize: 15, fontWeight: '600', color: Colors.primary },
-});
+  newSearchText: { fontSize: 15, fontWeight: '600', color: c.primary },
+  });
+}
