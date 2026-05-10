@@ -12,9 +12,9 @@
  * Designed to live at the top of the home tab as a fast visual recall of
  * "what your skin has looked like recently".
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Image, Dimensions } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import Svg, { Circle } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
@@ -43,14 +43,14 @@ export function ScanReel({ limit = 8, paddingHorizontal = 20 }: Props) {
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const [scans, setScans] = useState<ScanHistoryEntry[] | null>(null);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let mounted = true;
     Storage.getScanHistory().then(h => {
       if (!mounted) return;
       setScans(h.slice(0, limit));
-    }).catch(() => setScans([]));
+    }).catch(() => mounted && setScans([]));
     return () => { mounted = false; };
-  }, [limit]);
+  }, [limit]));
 
   // Hide entirely if no data ever — but show the "+ scan" CTA if there are zero scans
   if (scans == null) {

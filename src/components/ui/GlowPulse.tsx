@@ -18,9 +18,9 @@
  *
  * Reanimated 4 worklets only.
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import Animated, {
   useSharedValue, useAnimatedStyle, useAnimatedReaction,
@@ -104,14 +104,14 @@ export function GlowPulse() {
 
   const [glow, setGlow] = useState<number | null>(null);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let mounted = true;
     readSignals().then(s => {
       if (!mounted) return;
       setGlow(computeGlow(s));
     });
     return () => { mounted = false; };
-  }, []);
+  }, []));
 
   const tone =
     glow == null ? colors.primary :
