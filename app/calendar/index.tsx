@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 interface DayData {
@@ -32,14 +33,16 @@ const MOOD_EMOJIS: Record<string, string> = {
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-function getScoreColor(score: number): string {
-  if (score >= 80) return Colors.scoreExcellent;
-  if (score >= 65) return Colors.scoreGood;
-  if (score >= 50) return Colors.scoreFair;
-  return Colors.scorePoor;
+function getScoreColor(score: number, c: Palette): string {
+  if (score >= 80) return c.scoreExcellent;
+  if (score >= 65) return c.scoreGood;
+  if (score >= 50) return c.scoreFair;
+  return c.scorePoor;
 }
 
 export default function SkinCalendar() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [today] = useState(new Date());
   const [viewDate, setViewDate] = useState(new Date());
   const [calendarData, setCalendarData] = useState<Record<string, DayData>>({});
@@ -139,7 +142,7 @@ export default function SkinCalendar() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Calendar</Text>
@@ -172,11 +175,11 @@ export default function SkinCalendar() {
           {/* Month nav */}
           <View style={styles.monthNav}>
             <Pressable style={styles.monthBtn} onPress={prevMonth}>
-              <Ionicons name="chevron-back" size={18} color={Colors.textPrimary} />
+              <Ionicons name="chevron-back" size={18} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.monthTitle}>{MONTH_NAMES[viewDate.getMonth()]} {viewDate.getFullYear()}</Text>
             <Pressable style={styles.monthBtn} onPress={nextMonth}>
-              <Ionicons name="chevron-forward" size={18} color={Colors.textPrimary} />
+              <Ionicons name="chevron-forward" size={18} color={colors.textPrimary} />
             </Pressable>
           </View>
 
@@ -213,13 +216,13 @@ export default function SkinCalendar() {
                   </Text>
                   {!future && (
                     <View style={styles.dayCellDots}>
-                      {cell.hasRoutine && <View style={[styles.dot, { backgroundColor: Colors.primary }]} />}
-                      {cell.hasJournal && <View style={[styles.dot, { backgroundColor: Colors.gold }]} />}
-                      {cell.hasScan && <View style={[styles.dot, { backgroundColor: Colors.scoreExcellent }]} />}
+                      {cell.hasRoutine && <View style={[styles.dot, { backgroundColor: colors.primary }]} />}
+                      {cell.hasJournal && <View style={[styles.dot, { backgroundColor: colors.gold }]} />}
+                      {cell.hasScan && <View style={[styles.dot, { backgroundColor: colors.scoreExcellent }]} />}
                     </View>
                   )}
                   {cell.hasScan && cell.scanScore && !future && (
-                    <Text style={[styles.scanScore, { color: getScoreColor(cell.scanScore) }]}>
+                    <Text style={[styles.scanScore, { color: getScoreColor(cell.scanScore, colors) }]}>
                       {cell.scanScore}
                     </Text>
                   )}
@@ -234,15 +237,15 @@ export default function SkinCalendar() {
           {/* Legend */}
           <View style={styles.legend}>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: Colors.primary }]} />
+              <View style={[styles.dot, { backgroundColor: colors.primary }]} />
               <Text style={styles.legendLabel}>Routine</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: Colors.gold }]} />
+              <View style={[styles.dot, { backgroundColor: colors.gold }]} />
               <Text style={styles.legendLabel}>Journal</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: Colors.scoreExcellent }]} />
+              <View style={[styles.dot, { backgroundColor: colors.scoreExcellent }]} />
               <Text style={styles.legendLabel}>Scan</Text>
             </View>
             <View style={styles.legendItem}>
@@ -261,35 +264,35 @@ export default function SkinCalendar() {
             </Text>
 
             <View style={styles.dayDetailGrid}>
-              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasMorning ? Colors.gold + '50' : Colors.border }]}>
-                <Ionicons name="sunny-outline" size={18} color={selectedDay.hasMorning ? Colors.gold : Colors.textMuted} />
-                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasMorning && { color: Colors.textMuted }]}>
+              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasMorning ? colors.gold + '50' : colors.border }]}>
+                <Ionicons name="sunny-outline" size={18} color={selectedDay.hasMorning ? colors.gold : colors.textMuted} />
+                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasMorning && { color: colors.textMuted }]}>
                   {selectedDay.hasMorning ? 'Morning done' : 'No morning'}
                 </Text>
               </View>
-              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasEvening ? '#6B85A850' : Colors.border }]}>
-                <Ionicons name="moon-outline" size={18} color={selectedDay.hasEvening ? '#6B85A8' : Colors.textMuted} />
-                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasEvening && { color: Colors.textMuted }]}>
+              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasEvening ? '#6B85A850' : colors.border }]}>
+                <Ionicons name="moon-outline" size={18} color={selectedDay.hasEvening ? '#6B85A8' : colors.textMuted} />
+                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasEvening && { color: colors.textMuted }]}>
                   {selectedDay.hasEvening ? 'Evening done' : 'No evening'}
                 </Text>
               </View>
-              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasJournal ? Colors.gold + '50' : Colors.border }]}>
+              <View style={[styles.dayDetailItem, { borderColor: selectedDay.hasJournal ? colors.gold + '50' : colors.border }]}>
                 <Text style={styles.dayDetailItemEmoji}>{selectedDay.mood ? MOOD_EMOJIS[selectedDay.mood] : '—'}</Text>
-                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasJournal && { color: Colors.textMuted }]}>
+                <Text style={[styles.dayDetailItemLabel, !selectedDay.hasJournal && { color: colors.textMuted }]}>
                   {selectedDay.hasJournal ? selectedDay.mood + ' mood' : 'No journal'}
                 </Text>
               </View>
               {selectedDay.hasScan && (
-                <View style={[styles.dayDetailItem, { borderColor: getScoreColor(selectedDay.scanScore!) + '50' }]}>
-                  <Text style={[styles.dayDetailItemScore, { color: getScoreColor(selectedDay.scanScore!) }]}>
+                <View style={[styles.dayDetailItem, { borderColor: getScoreColor(selectedDay.scanScore!, colors) + '50' }]}>
+                  <Text style={[styles.dayDetailItemScore, { color: getScoreColor(selectedDay.scanScore!, colors) }]}>
                     {selectedDay.scanScore}
                   </Text>
                   <Text style={styles.dayDetailItemLabel}>Skin score</Text>
                 </View>
               )}
               {selectedDay.habitPct !== undefined && (
-                <View style={[styles.dayDetailItem, { borderColor: Colors.scoreGood + '50' }]}>
-                  <Text style={[styles.dayDetailItemScore, { color: Colors.scoreGood }]}>{selectedDay.habitPct}%</Text>
+                <View style={[styles.dayDetailItem, { borderColor: colors.scoreGood + '50' }]}>
+                  <Text style={[styles.dayDetailItemScore, { color: colors.scoreGood }]}>{selectedDay.habitPct}%</Text>
                   <Text style={styles.dayDetailItemLabel}>Habits</Text>
                 </View>
               )}
@@ -313,39 +316,40 @@ export default function SkinCalendar() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, alignItems: 'center', gap: 4,
   },
-  statNum: { fontSize: 24, fontWeight: '800', color: Colors.primary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statNum: { fontSize: 24, fontWeight: '800', color: c.primary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   calendarCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border,
     padding: 16, marginBottom: 16,
   },
   monthNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
-  monthBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center' },
-  monthTitle: { fontSize: 17, fontWeight: '800', color: Colors.textPrimary },
+  monthBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center' },
+  monthTitle: { fontSize: 17, fontWeight: '800', color: c.textPrimary },
 
   dayHeaders: { flexDirection: 'row', marginBottom: 8 },
-  dayHeader: { flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: Colors.textMuted },
+  dayHeader: { flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: c.textMuted },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   emptyCell: { width: `${100 / 7}%` as any, aspectRatio: 0.9 },
@@ -354,13 +358,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'flex-start',
     paddingTop: 6, borderRadius: 10,
   },
-  dayCellToday: { backgroundColor: 'rgba(196,98,45,0.15)', borderWidth: 1, borderColor: Colors.primary + '40' },
-  dayCellSelected: { backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.borderStrong },
+  dayCellToday: { backgroundColor: 'rgba(196,98,45,0.15)', borderWidth: 1, borderColor: c.primary + '40' },
+  dayCellSelected: { backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.borderStrong },
   dayCellPerfect: { backgroundColor: 'rgba(74,222,128,0.08)' },
   dayCellFuture: { opacity: 0.3 },
-  dayCellNum: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
-  dayCellNumToday: { color: Colors.primary, fontWeight: '800' },
-  dayCellNumFuture: { color: Colors.textMuted },
+  dayCellNum: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
+  dayCellNumToday: { color: c.primary, fontWeight: '800' },
+  dayCellNumFuture: { color: c.textMuted },
   dayCellDots: { flexDirection: 'row', gap: 2, marginTop: 2 },
   dot: { width: 4, height: 4, borderRadius: 2 },
   scanScore: { fontSize: 8, fontWeight: '800', marginTop: 1 },
@@ -368,22 +372,23 @@ const styles = StyleSheet.create({
 
   legend: { flexDirection: 'row', gap: 14, justifyContent: 'center', marginTop: 12, flexWrap: 'wrap' },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  legendLabel: { fontSize: 10, color: Colors.textMuted },
+  legendLabel: { fontSize: 10, color: c.textMuted },
   legendPerfect: { width: 14, height: 10, borderRadius: 2, backgroundColor: 'rgba(74,222,128,0.3)', borderWidth: 1, borderColor: 'rgba(74,222,128,0.4)' },
 
   dayDetail: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 14, marginBottom: 16,
   },
-  dayDetailTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  todayLabel: { color: Colors.primary },
+  dayDetailTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  todayLabel: { color: c.primary },
   dayDetailGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   dayDetailItem: {
-    width: '47%', backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1,
+    width: '47%', backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1,
     padding: 12, alignItems: 'center', gap: 6,
   },
-  dayDetailItemLabel: { fontSize: 11, fontWeight: '600', color: Colors.textSecondary, textAlign: 'center', textTransform: 'capitalize' },
+  dayDetailItemLabel: { fontSize: 11, fontWeight: '600', color: c.textSecondary, textAlign: 'center', textTransform: 'capitalize' },
   dayDetailItemEmoji: { fontSize: 22 },
   dayDetailItemScore: { fontSize: 22, fontWeight: '800' },
-  dayDetailEmpty: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', fontStyle: 'italic' },
-});
+  dayDetailEmpty: { fontSize: 13, color: c.textMuted, textAlign: 'center', fontStyle: 'italic' },
+  });
+}
