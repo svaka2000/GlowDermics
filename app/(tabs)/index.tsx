@@ -16,7 +16,7 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
-import { GlassHero, Card, SkinStoryStrip, GlowPulse, ScanReel, StreakSaver } from '../../src/components/ui';
+import { GlassHero, Card, SkinStoryStrip, GlowPulse, ScanReel, StreakSaver, DailyAffirmation } from '../../src/components/ui';
 import { runSkinStories, SkinStory } from '../../src/engine/SkinStoryEngine';
 
 const WATER_KEY = 'gd_water';
@@ -300,6 +300,9 @@ export default function Home() {
 
         {/* Today's glow orb — composite real-time skin signal */}
         <GlowPulse />
+
+        {/* Daily wellness affirmation — gentle wisdom tied to persona */}
+        <DailyAffirmation />
 
         {/* Active Challenge widget */}
         {activeChallenge && (
