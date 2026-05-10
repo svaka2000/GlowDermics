@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
   Animated, Easing, Dimensions, ActivityIndicator,
@@ -7,7 +7,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { narrateProgress } from '../../src/services/skinAnalysis';
 import { SkinAnalysis } from '../../src/types';
@@ -38,6 +39,8 @@ function daysBetween(a: string, b: string) {
 }
 
 export default function Compare() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [analyses, setAnalyses] = useState<SkinAnalysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [leftIdx, setLeftIdx] = useState(1);
@@ -99,7 +102,7 @@ export default function Compare() {
   if (loading) {
     return (
       <View style={styles.root}>
-        <ActivityIndicator color={Colors.primary} style={{ marginTop: 80 }} />
+        <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
       </View>
     );
   }
@@ -113,7 +116,7 @@ export default function Compare() {
               style={styles.backBtn}
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
             >
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Compare Scans</Text>
             <View style={{ width: 36 }} />
@@ -121,7 +124,7 @@ export default function Compare() {
         </SafeAreaView>
         <View style={styles.emptyWrap}>
           <View style={styles.emptyEmojiBox}>
-            <Ionicons name="git-compare-outline" size={42} color={Colors.primary} />
+            <Ionicons name="git-compare-outline" size={42} color={colors.primary} />
           </View>
           <Text style={styles.emptyTitle}>Need 2+ scans</Text>
           <Text style={styles.emptySub}>
@@ -141,7 +144,7 @@ export default function Compare() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => setPickingFor(null)}>
-              <Ionicons name="close" size={20} color={Colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Pick {pickingFor === 'left' ? 'first' : 'second'} scan</Text>
             <View style={{ width: 36 }} />
@@ -164,7 +167,7 @@ export default function Compare() {
                   <Image source={{ uri: a.imageUri }} style={styles.pickThumb} />
                 ) : (
                   <View style={[styles.pickThumb, styles.pickThumbEmpty]}>
-                    <Ionicons name="person" size={16} color={Colors.textMuted} />
+                    <Ionicons name="person" size={16} color={colors.textMuted} />
                   </View>
                 )}
                 <View style={{ flex: 1 }}>
@@ -176,7 +179,7 @@ export default function Compare() {
                     </View>
                   )}
                 </View>
-                {active && <Ionicons name="checkmark-circle" size={22} color={Colors.primary} />}
+                {active && <Ionicons name="checkmark-circle" size={22} color={colors.primary} />}
               </Pressable>
             );
           })}
@@ -216,7 +219,7 @@ export default function Compare() {
             style={styles.backBtn}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
           >
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Progress</Text>
           <View style={{ width: 36 }} />
@@ -244,18 +247,18 @@ export default function Compare() {
         <Card variant="elevated" style={{ marginBottom: 14 }} padding={14}>
           <View style={styles.elapsedRow}>
             <View style={styles.elapsedChip}>
-              <Ionicons name="hourglass-outline" size={13} color={Colors.primary} />
+              <Ionicons name="hourglass-outline" size={13} color={colors.primary} />
               <Text style={styles.elapsedText}>
                 {sameScan ? 'Same scan' : `${elapsed} day${elapsed === 1 ? '' : 's'} apart`}
               </Text>
             </View>
             <View style={styles.scanPickRow}>
               <Pressable style={styles.scanPickBtn} onPress={() => setPickingFor('left')}>
-                <Ionicons name="swap-horizontal" size={11} color={Colors.primary} />
+                <Ionicons name="swap-horizontal" size={11} color={colors.primary} />
                 <Text style={styles.scanPickBtnText}>Change First</Text>
               </Pressable>
               <Pressable style={styles.scanPickBtn} onPress={() => setPickingFor('right')}>
-                <Ionicons name="swap-horizontal" size={11} color={Colors.primary} />
+                <Ionicons name="swap-horizontal" size={11} color={colors.primary} />
                 <Text style={styles.scanPickBtnText}>Change Second</Text>
               </Pressable>
             </View>
@@ -265,7 +268,7 @@ export default function Compare() {
         {/* Overall delta hero */}
         <Card
           variant={positive ? 'gradient' : neutral ? 'elevated' : 'gradient'}
-          tint={positive ? Colors.scoreExcellent : neutral ? Colors.primary : Colors.scorePoor}
+          tint={positive ? colors.scoreExcellent : neutral ? colors.primary : colors.scorePoor}
           style={{ marginBottom: 16 }}
         >
           <View style={styles.overallHero}>
@@ -275,7 +278,7 @@ export default function Compare() {
                 <Text
                   style={[
                     styles.overallNumber,
-                    { color: positive ? Colors.scoreExcellent : neutral ? Colors.textPrimary : Colors.scorePoor },
+                    { color: positive ? colors.scoreExcellent : neutral ? colors.textPrimary : colors.scorePoor },
                   ]}
                 >
                   {neutral ? '—' : `${positive ? '+' : ''}${overallDelta}`}
@@ -288,7 +291,7 @@ export default function Compare() {
             </View>
             <View style={styles.overallRings}>
               <ScoreRing score={left.scores.overall} size={54} strokeWidth={5} />
-              <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
+              <Ionicons name="arrow-forward" size={16} color={colors.textMuted} />
               <ScoreRing score={right.scores.overall} size={54} strokeWidth={5} />
             </View>
           </View>
@@ -298,7 +301,7 @@ export default function Compare() {
         <Card variant="glass" style={{ marginBottom: 16 }} padding={18}>
           <View style={styles.narrativeHeader}>
             <View style={styles.narrativeIcon}>
-              <Ionicons name="sparkles" size={14} color={Colors.primary} />
+              <Ionicons name="sparkles" size={14} color={colors.primary} />
             </View>
             <Text style={styles.narrativeTitle}>What changed</Text>
           </View>
@@ -374,7 +377,7 @@ export default function Compare() {
               size="sm"
               icon="ellipse-outline"
             />
-            <Ionicons name="arrow-forward" size={12} color={Colors.textMuted} />
+            <Ionicons name="arrow-forward" size={12} color={colors.textMuted} />
             <Badge
               label={`Now: ${right.skinType ?? '—'}`}
               tone={left.skinType === right.skinType ? 'neutral' : 'primary'}
@@ -410,15 +413,15 @@ export default function Compare() {
         {/* View buttons */}
         <View style={styles.viewBtnsRow}>
           <Pressable style={styles.viewBtn} onPress={() => router.push(`/results/${left.id}`)}>
-            <Ionicons name="eye-outline" size={14} color={Colors.primary} />
+            <Ionicons name="eye-outline" size={14} color={colors.primary} />
             <Text style={styles.viewBtnText}>View Before</Text>
           </Pressable>
           <Pressable
             style={[styles.viewBtn, styles.viewBtnPrimary]}
             onPress={() => router.push(`/results/${right.id}`)}
           >
-            <Ionicons name="eye" size={14} color={Colors.white} />
-            <Text style={[styles.viewBtnText, { color: Colors.white }]}>View After</Text>
+            <Ionicons name="eye" size={14} color={colors.white} />
+            <Text style={[styles.viewBtnText, { color: colors.white }]}>View After</Text>
           </Pressable>
         </View>
 
@@ -428,8 +431,9 @@ export default function Compare() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -442,13 +446,13 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary, letterSpacing: -0.3 },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary, letterSpacing: -0.3 },
   scroll: { paddingHorizontal: 16 },
 
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28, gap: 12, paddingTop: 60, paddingBottom: 80 },
@@ -458,8 +462,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 8,
   },
-  emptyTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 14 },
+  emptyTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 14 },
 
   elapsedRow: { gap: 10 },
   elapsedChip: {
@@ -468,22 +472,22 @@ const styles = StyleSheet.create({
     borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5,
     alignSelf: 'flex-start',
   },
-  elapsedText: { fontSize: 11, fontWeight: '800', color: Colors.primary, letterSpacing: 0.4 },
+  elapsedText: { fontSize: 11, fontWeight: '800', color: c.primary, letterSpacing: 0.4 },
   scanPickRow: { flexDirection: 'row', gap: 8 },
   scanPickBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderRadius: 10, paddingVertical: 8,
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
   },
-  scanPickBtnText: { fontSize: 11, fontWeight: '700', color: Colors.primary },
+  scanPickBtnText: { fontSize: 11, fontWeight: '700', color: c.primary },
 
   overallHero: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  overallLabel: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.5 },
+  overallLabel: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.5 },
   overallNumberRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 6 },
   overallNumber: { fontSize: 56, fontWeight: '900', letterSpacing: -2, lineHeight: 56 },
-  overallUnit: { fontSize: 14, fontWeight: '800', color: Colors.textSecondary, paddingBottom: 8 },
-  overallSub: { fontSize: 12, color: Colors.textSecondary, fontWeight: '600' },
+  overallUnit: { fontSize: 14, fontWeight: '800', color: c.textSecondary, paddingBottom: 8 },
+  overallSub: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
   overallRings: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 
   narrativeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
@@ -492,35 +496,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,98,45,0.12)',
     alignItems: 'center', justifyContent: 'center',
   },
-  narrativeTitle: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary, letterSpacing: 0.2 },
-  narrativeText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22, fontWeight: '500' },
+  narrativeTitle: { fontSize: 13, fontWeight: '800', color: c.textPrimary, letterSpacing: 0.2 },
+  narrativeText: { fontSize: 14, color: c.textPrimary, lineHeight: 22, fontWeight: '500' },
 
   ageRow: { flexDirection: 'row', gap: 10 },
 
-  cardTitle: { fontSize: 15, fontWeight: '800', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: 3 },
+  cardTitle: { fontSize: 15, fontWeight: '800', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: 3 },
 
-  smallLabel: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4, marginBottom: 8 },
+  smallLabel: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.4, marginBottom: 8 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
 
   viewBtnsRow: { flexDirection: 'row', gap: 10 },
   viewBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, paddingVertical: 14,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, paddingVertical: 14,
   },
-  viewBtnPrimary: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  viewBtnText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
+  viewBtnPrimary: { backgroundColor: c.primary, borderColor: c.primary },
+  viewBtnText: { fontSize: 13, fontWeight: '700', color: c.primary },
 
   pickCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 14,
     marginBottom: 10,
   },
-  pickCardActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.08)' },
-  pickThumb: { width: 50, height: 50, borderRadius: 10, backgroundColor: Colors.bgElevated },
+  pickCardActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.08)' },
+  pickThumb: { width: 50, height: 50, borderRadius: 10, backgroundColor: c.bgElevated },
   pickThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
-  pickDate: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 3 },
-  pickScore: { fontSize: 12, color: Colors.textSecondary },
-});
+  pickDate: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 3 },
+  pickScore: { fontSize: 12, color: c.textSecondary },
+  });
+}
