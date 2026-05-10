@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,15 +6,17 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const FATTY_ACIDS = [
+function buildFattyAcids(colors: Palette) {
+  return [
   {
     name: 'Palmitic Acid',
     type: 'Saturated',
     pct: '26%',
     skinRole: 'Barrier forming',
-    color: Colors.primary,
+    color: colors.primary,
     desc: 'A key component of the skin\'s natural lipid barrier. Provides structural stability and helps maintain skin softness. Identical to what your own sebaceous glands produce.',
   },
   {
@@ -22,7 +24,7 @@ const FATTY_ACIDS = [
     type: 'Monounsaturated',
     pct: '40%',
     skinRole: 'Emollient',
-    color: Colors.gold,
+    color: colors.gold,
     desc: 'Penetrates deeply into the stratum corneum, making it an excellent carrier for fat-soluble vitamins. Helps soften and condition skin. Anti-inflammatory at the cellular level.',
   },
   {
@@ -57,9 +59,11 @@ const FATTY_ACIDS = [
     color: '#6B85A8',
     desc: 'Found almost exclusively in grass-fed ruminant fat — 3-5x higher in grass-fed vs grain-fed. Potent anti-inflammatory that reduces acne, eczema, and rosacea flares. Also shows anti-cancer properties in research.',
   },
-];
+  ];
+}
 
-const VITAMINS = [
+function buildVitamins(colors: Palette) {
+  return [
   {
     name: 'Vitamin A (Retinol)',
     emoji: '🔬',
@@ -70,7 +74,7 @@ const VITAMINS = [
   {
     name: 'Vitamin D (D3)',
     emoji: '☀️',
-    color: Colors.gold,
+    color: colors.gold,
     desc: 'Skin cells contain vitamin D receptors — it regulates cell growth and immune function in skin. Vitamin D deficiency is associated with eczema, psoriasis, and impaired wound healing.',
     comparison: 'Tallow contains D3 (cholecalciferol) — the same form produced by skin in sunlight, and far more bioavailable than plant-derived D2.',
   },
@@ -88,7 +92,8 @@ const VITAMINS = [
     desc: 'K2 in particular (found in grass-fed animal products) activates proteins that regulate calcium in soft tissue. May reduce dark circles and vascular redness when applied topically.',
     comparison: 'K2 (menaquinone-4) is found only in grass-fed animal products — not in plant-based fats or conventional grain-fed tallow.',
   },
-];
+  ];
+}
 
 const SCIENCE_FACTS = [
   {
@@ -129,6 +134,10 @@ const SCIENCE_FACTS = [
 ];
 
 export default function TallowScience() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const FATTY_ACIDS = useMemo(() => buildFattyAcids(colors), [colors]);
+  const VITAMINS = useMemo(() => buildVitamins(colors), [colors]);
   const [activeTab, setActiveTab] = useState<'fatty' | 'vitamins' | 'science'>('fatty');
 
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -146,7 +155,7 @@ export default function TallowScience() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>The Science of Tallow</Text>
@@ -159,7 +168,7 @@ export default function TallowScience() {
       <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
         {/* Hero */}
         <View style={styles.hero}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary, colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.heroEmoji}>🧬</Text>
           <Text style={styles.heroTitle}>Tallow Is Your Skin</Text>
           <Text style={styles.heroDesc}>
@@ -172,9 +181,9 @@ export default function TallowScience() {
           <Text style={styles.compTitle}>Tallow vs Human Sebum</Text>
           <View style={styles.compTable}>
             <View style={[styles.compRow, styles.compHeader]}>
-              <Text style={[styles.compCell, { fontWeight: '800', color: Colors.textPrimary }]}>Fatty Acid</Text>
-              <Text style={[styles.compCellSmall, { fontWeight: '800', color: Colors.textPrimary }]}>Tallow</Text>
-              <Text style={[styles.compCellSmall, { fontWeight: '800', color: Colors.textPrimary }]}>Sebum</Text>
+              <Text style={[styles.compCell, { fontWeight: '800', color: colors.textPrimary }]}>Fatty Acid</Text>
+              <Text style={[styles.compCellSmall, { fontWeight: '800', color: colors.textPrimary }]}>Tallow</Text>
+              <Text style={[styles.compCellSmall, { fontWeight: '800', color: colors.textPrimary }]}>Sebum</Text>
             </View>
             {[
               ['Palmitic Acid', '26%', '25%'],
@@ -183,10 +192,10 @@ export default function TallowScience() {
               ['Stearic Acid', '16%', '10%'],
               ['Linoleic Acid', '5%', '5%'],
             ].map(([acid, tallow, sebum], i) => (
-              <View key={i} style={[styles.compRow, { backgroundColor: i % 2 === 0 ? `${Colors.primary}05` : 'transparent' }]}>
+              <View key={i} style={[styles.compRow, { backgroundColor: i % 2 === 0 ? `${colors.primary}05` : 'transparent' }]}>
                 <Text style={styles.compCell}>{acid}</Text>
-                <Text style={[styles.compCellSmall, { color: Colors.primary, fontWeight: '700' }]}>{tallow}</Text>
-                <Text style={[styles.compCellSmall, { color: Colors.gold, fontWeight: '700' }]}>{sebum}</Text>
+                <Text style={[styles.compCellSmall, { color: colors.primary, fontWeight: '700' }]}>{tallow}</Text>
+                <Text style={[styles.compCellSmall, { color: colors.gold, fontWeight: '700' }]}>{sebum}</Text>
               </View>
             ))}
           </View>
@@ -205,7 +214,7 @@ export default function TallowScience() {
               style={[styles.tab, activeTab === tab.id && styles.tabActive]}
               onPress={() => setActiveTab(tab.id as any)}
             >
-              <Text style={[styles.tabText, activeTab === tab.id && { color: Colors.primary }]}>{tab.label}</Text>
+              <Text style={[styles.tabText, activeTab === tab.id && { color: colors.primary }]}>{tab.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -240,7 +249,7 @@ export default function TallowScience() {
                 </View>
                 <Text style={styles.vitDesc}>{v.desc}</Text>
                 <View style={styles.vitComparison}>
-                  <Ionicons name="information-circle-outline" size={14} color={Colors.textMuted} />
+                  <Ionicons name="information-circle-outline" size={14} color={colors.textMuted} />
                   <Text style={styles.vitComparisonText}>{v.comparison}</Text>
                 </View>
               </View>
@@ -275,7 +284,7 @@ export default function TallowScience() {
 
         {/* CTA */}
         <Pressable style={styles.cta} onPress={() => router.push('/product')}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
           <Text style={styles.ctaText}>Shop TallowDermics →</Text>
         </Pressable>
 
@@ -285,58 +294,59 @@ export default function TallowScience() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   hero: { borderRadius: 20, overflow: 'hidden', padding: 24, gap: 10, marginBottom: 16, alignItems: 'center' },
   heroEmoji: { fontSize: 52 },
-  heroTitle: { fontSize: 28, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  heroTitle: { fontSize: 28, fontWeight: '900', color: c.white, textAlign: 'center' },
   heroDesc: { fontSize: 13, color: 'rgba(255,255,255,0.8)', textAlign: 'center', lineHeight: 22 },
 
   compCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  compTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  compTable: { borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border },
+  compTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  compTable: { borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: c.border },
   compRow: { flexDirection: 'row' },
-  compHeader: { backgroundColor: Colors.bgElevated },
-  compCell: { flex: 2, padding: 10, fontSize: 12, color: Colors.textSecondary },
-  compCellSmall: { flex: 1, padding: 10, fontSize: 12, color: Colors.textSecondary, textAlign: 'center' },
-  compNote: { fontSize: 10, color: Colors.textMuted, fontStyle: 'italic' },
+  compHeader: { backgroundColor: c.bgElevated },
+  compCell: { flex: 2, padding: 10, fontSize: 12, color: c.textSecondary },
+  compCellSmall: { flex: 1, padding: 10, fontSize: 12, color: c.textSecondary, textAlign: 'center' },
+  compNote: { fontSize: 10, color: c.textMuted, fontStyle: 'italic' },
 
   tabs: { flexDirection: 'row', gap: 6, marginBottom: 10 },
   tab: {
-    flex: 1, height: 38, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
+    flex: 1, height: 38, borderRadius: 10, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
   },
-  tabActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}12` },
-  tabText: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
+  tabActive: { borderColor: c.primary, backgroundColor: `${c.primary}12` },
+  tabText: { fontSize: 12, fontWeight: '700', color: c.textMuted },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 10, marginBottom: 14,
   },
 
   faCard: { borderLeftWidth: 3, paddingLeft: 10, gap: 4 },
   faHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   faName: { fontSize: 13, fontWeight: '800' },
-  faType: { fontSize: 11, color: Colors.textMuted },
+  faType: { fontSize: 11, color: c.textMuted },
   faBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   faBadgeText: { fontSize: 10, fontWeight: '800' },
-  faDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  faDesc: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   vitCard: {
     borderRadius: 14, overflow: 'hidden', borderWidth: 1,
@@ -345,25 +355,26 @@ const styles = StyleSheet.create({
   vitHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   vitEmoji: { fontSize: 22 },
   vitName: { fontSize: 14, fontWeight: '800', flex: 1 },
-  vitDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  vitDesc: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
   vitComparison: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
-  vitComparisonText: { flex: 1, fontSize: 11, color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
+  vitComparisonText: { flex: 1, fontSize: 11, color: c.textMuted, fontStyle: 'italic', lineHeight: 17 },
 
-  scienceRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 10 },
+  scienceRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 10 },
   scienceIcon: { fontSize: 20, width: 28, textAlign: 'center' },
-  scienceFact: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary },
-  scienceDetail: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, marginTop: 2 },
+  scienceFact: { fontSize: 13, fontWeight: '800', color: c.textPrimary },
+  scienceDetail: { fontSize: 12, color: c.textSecondary, lineHeight: 18, marginTop: 2 },
 
   ancestralCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${Colors.primary}30`,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  ancestralTitle: { fontSize: 15, fontWeight: '700', color: Colors.primary },
-  ancestralText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 21 },
+  ancestralTitle: { fontSize: 15, fontWeight: '700', color: c.primary },
+  ancestralText: { fontSize: 13, color: c.textSecondary, lineHeight: 21 },
 
   cta: {
     height: 52, borderRadius: 14, overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  ctaText: { fontSize: 16, fontWeight: '800', color: Colors.white },
-});
+  ctaText: { fontSize: 16, fontWeight: '800', color: c.white },
+  });
+}

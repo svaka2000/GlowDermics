@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image, Animated, Easing,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { getFoodImage } from '../../src/services/imageSearch';
 
@@ -33,6 +34,8 @@ type DietGuide = {
 };
 
 export default function DietForSkin() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [guide, setGuide] = useState<DietGuide | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -138,10 +141,10 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
   const IMPACT_COLORS: Record<string, string> = {
     hydration: '#60A5FA',
-    clarity: Colors.scoreExcellent,
+    clarity: colors.scoreExcellent,
     texture: '#6B85A8',
-    evenness: Colors.gold,
-    firmness: Colors.primary,
+    evenness: colors.gold,
+    firmness: colors.primary,
   };
 
   return (
@@ -149,14 +152,14 @@ Respond ONLY with valid JSON (no markdown, no code fences):
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Diet for Skin</Text>
             <Text style={styles.headerSub}>Eat your way to better skin</Text>
           </View>
           <Pressable style={styles.reloadBtn} onPress={generate}>
-            <Ionicons name="refresh-outline" size={18} color={Colors.textMuted} />
+            <Ionicons name="refresh-outline" size={18} color={colors.textMuted} />
           </Pressable>
         </Animated.View>
       </SafeAreaView>
@@ -165,7 +168,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
         {loading && (
           <View style={styles.loadCard}>
-            <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 16 }} />
+            <ActivityIndicator color={colors.primary} size="large" style={{ marginBottom: 16 }} />
             <Text style={styles.loadTitle}>Building your skin nutrition plan…</Text>
             <Text style={styles.loadSub}>Personalizing to your skin type, concerns, and goals</Text>
           </View>
@@ -193,7 +196,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             {/* Gut-skin */}
             <View style={styles.infoCard}>
               <View style={styles.infoHeader}>
-                <Ionicons name="body-outline" size={16} color={Colors.primary} />
+                <Ionicons name="body-outline" size={16} color={colors.primary} />
                 <Text style={styles.infoTitle}>The Gut-Skin Connection</Text>
               </View>
               <Text style={styles.infoText}>{guide.gutSkinAxis}</Text>
@@ -215,7 +218,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               <View style={styles.foodGrid}>
                 {guide.topFoods.map((food, i) => {
                   const imgUrl = getFoodImage(food.name);
-                  const impactColor = IMPACT_COLORS[food.skinImpact?.toLowerCase()] || Colors.primary;
+                  const impactColor = IMPACT_COLORS[food.skinImpact?.toLowerCase()] || colors.primary;
                   return (
                     <View key={i} style={styles.foodCard}>
                       {/* Real food image */}
@@ -271,7 +274,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                     <Text style={styles.nutrientName}>{n.nutrient}</Text>
                     <Text style={styles.nutrientWhy}>{n.why}</Text>
                     <View style={styles.sourcesRow}>
-                      <Ionicons name="leaf-outline" size={12} color={Colors.scoreExcellent} />
+                      <Ionicons name="leaf-outline" size={12} color={colors.scoreExcellent} />
                       <Text style={styles.sourcesText}>{n.sources}</Text>
                     </View>
                   </View>
@@ -311,7 +314,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 <Text style={styles.ancestralTitle}>Ancestral Nutrition</Text>
                 <Text style={styles.ancestralText}>{guide.ancestralNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color={Colors.primary} />
+              <Ionicons name="chevron-forward" size={14} color={colors.primary} />
             </Pressable>
           </>
         )}
@@ -322,52 +325,53 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  reloadBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  reloadBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   loadCard: { alignItems: 'center', paddingVertical: 60, gap: 10 },
-  loadTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
-  loadSub: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', maxWidth: 280, lineHeight: 20 },
+  loadTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+  loadSub: { fontSize: 13, color: c.textMuted, textAlign: 'center', maxWidth: 280, lineHeight: 20 },
   errorCard: { alignItems: 'center', padding: 24, gap: 12 },
-  errorText: { fontSize: 13, color: Colors.scorePoor, textAlign: 'center' },
-  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
-  retryText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  errorText: { fontSize: 13, color: c.scorePoor, textAlign: 'center' },
+  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
+  retryText: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   heroCard: {
     borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)',
     padding: 20, gap: 10, marginBottom: 12, alignItems: 'center',
   },
   heroEmoji: { fontSize: 44 },
-  headline: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  overview: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22, textAlign: 'center' },
+  headline: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  overview: { fontSize: 14, color: c.textSecondary, lineHeight: 22, textAlign: 'center' },
 
   infoCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 8, marginBottom: 12,
   },
   infoHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  infoTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  infoText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  infoTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  infoText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tabBar: { flexDirection: 'row', backgroundColor: Colors.bgCard, borderRadius: 14, padding: 4, marginBottom: 12, borderWidth: 1, borderColor: Colors.border },
+  tabBar: { flexDirection: 'row', backgroundColor: c.bgCard, borderRadius: 14, padding: 4, marginBottom: 12, borderWidth: 1, borderColor: c.border },
   tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 10 },
-  tabBtnActive: { backgroundColor: Colors.bgElevated },
-  tabLabel: { fontSize: 10, fontWeight: '600', color: Colors.textMuted },
-  tabLabelActive: { color: Colors.textPrimary },
+  tabBtnActive: { backgroundColor: c.bgElevated },
+  tabLabel: { fontSize: 10, fontWeight: '600', color: c.textMuted },
+  tabLabelActive: { color: c.textPrimary },
 
   foodGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 12 },
   foodCard: {
     width: '47%', height: 160, borderRadius: 16, overflow: 'hidden',
-    backgroundColor: Colors.bgElevated, position: 'relative',
+    backgroundColor: c.bgElevated, position: 'relative',
   },
   foodCardImg: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
@@ -389,24 +393,24 @@ const styles = StyleSheet.create({
   foodName: { fontSize: 13, fontWeight: '700', color: '#fff', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
   foodBenefit: { fontSize: 10, color: 'rgba(255,255,255,0.8)', lineHeight: 14 },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 12 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 12 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   avoidRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   avoidEmoji: { fontSize: 22 },
-  avoidName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 3 },
-  avoidWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  avoidName: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 3 },
+  avoidWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
-  nutrientCard: { backgroundColor: Colors.bgElevated, borderRadius: 12, padding: 12, gap: 4 },
-  nutrientName: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  nutrientWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  nutrientCard: { backgroundColor: c.bgElevated, borderRadius: 12, padding: 12, gap: 4 },
+  nutrientName: { fontSize: 14, fontWeight: '700', color: c.primary },
+  nutrientWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
   sourcesRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  sourcesText: { fontSize: 11, color: Colors.scoreExcellent, fontWeight: '500' },
+  sourcesText: { fontSize: 11, color: c.scoreExcellent, fontWeight: '500' },
 
-  mealRow: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.border, gap: 4 },
+  mealRow: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: c.border, gap: 4 },
   mealLabel: {},
-  mealName: { fontSize: 12, fontWeight: '800', color: Colors.primary, letterSpacing: 0.5 },
-  mealSuggestions: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  mealName: { fontSize: 12, fontWeight: '800', color: c.primary, letterSpacing: 0.5 },
+  mealSuggestions: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   hydrationCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 12,
@@ -414,7 +418,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(96,165,250,0.2)', padding: 14, marginBottom: 12,
   },
   hydrationLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: '#60A5FA', marginBottom: 4 },
-  hydrationText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  hydrationText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   ancestralCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -423,6 +427,7 @@ const styles = StyleSheet.create({
     padding: 16, marginBottom: 12,
   },
   ancestralEmoji: { fontSize: 24 },
-  ancestralTitle: { fontSize: 13, fontWeight: '700', color: Colors.primary, marginBottom: 4 },
-  ancestralText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-});
+  ancestralTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  ancestralText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   ActivityIndicator, Share, Animated, Easing,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -37,10 +38,12 @@ type DigestResult = {
   ts: number;
 };
 
-const GRADE_COLORS: Record<string, string> = {
-  'A+': '#4ADE80', A: '#4ADE80', 'B+': '#86EFAC', B: '#86EFAC',
-  'C+': Colors.gold, C: Colors.gold, D: '#FCA5A5', F: Colors.scorePoor,
-};
+function buildGradeColors(c: Palette): Record<string, string> {
+  return {
+    'A+': '#4ADE80', A: '#4ADE80', 'B+': '#86EFAC', B: '#86EFAC',
+    'C+': c.gold, C: c.gold, D: '#FCA5A5', F: c.scorePoor,
+  };
+}
 
 const GRADE_BG: Record<string, string> = {
   'A+': 'rgba(74,222,128,0.15)', A: 'rgba(74,222,128,0.12)', 'B+': 'rgba(134,239,172,0.12)',
@@ -49,6 +52,9 @@ const GRADE_BG: Record<string, string> = {
 };
 
 export default function WeeklyDigest() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const GRADE_COLORS = useMemo(() => buildGradeColors(colors), [colors]);
   const [digest, setDigest] = useState<DigestResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [weekStats, setWeekStats] = useState<any>(null);
@@ -221,12 +227,12 @@ Return ONLY valid JSON (no markdown):
     });
   };
 
-  const impactColor = (impact: string) => impact === 'high' ? Colors.primary : impact === 'medium' ? Colors.gold : Colors.textMuted;
+  const impactColor = (impact: string) => impact === 'high' ? colors.primary : impact === 'medium' ? colors.gold : colors.textMuted;
 
   const trendIcon = (trend: string) => {
     if (trend === 'improving') return { name: 'trending-up' as const, color: '#4ADE80' };
-    if (trend === 'declining') return { name: 'trending-down' as const, color: Colors.scorePoor };
-    return { name: 'remove' as const, color: Colors.gold };
+    if (trend === 'declining') return { name: 'trending-down' as const, color: colors.scorePoor };
+    return { name: 'remove' as const, color: colors.gold };
   };
 
   const weekLabel = () => {
@@ -246,7 +252,7 @@ Return ONLY valid JSON (no markdown):
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
               <Text style={styles.headerTitle}>Weekly Digest</Text>
@@ -254,7 +260,7 @@ Return ONLY valid JSON (no markdown):
             </View>
             {digest ? (
               <Pressable style={styles.backBtn} onPress={handleShare}>
-                <Ionicons name="share-outline" size={20} color={Colors.primary} />
+                <Ionicons name="share-outline" size={20} color={colors.primary} />
               </Pressable>
             ) : (
               <View style={{ width: 36 }} />
@@ -272,7 +278,7 @@ Return ONLY valid JSON (no markdown):
         {loading && (
           <View style={styles.loadingCard}>
             <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
-            <ActivityIndicator color={Colors.primary} />
+            <ActivityIndicator color={colors.primary} />
             <Text style={styles.loadingText}>Analyzing your week...</Text>
           </View>
         )}
@@ -283,7 +289,7 @@ Return ONLY valid JSON (no markdown):
             <Text style={styles.noDataTitle}>No digest yet</Text>
             <Text style={styles.noDataSub}>Start tracking your routine and journal to generate weekly insights.</Text>
             <Pressable style={styles.generateBtn} onPress={() => generate(weekStats)}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
               <Text style={styles.generateBtnText}>Generate Digest</Text>
             </Pressable>
           </View>
@@ -296,18 +302,18 @@ Return ONLY valid JSON (no markdown):
               <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
               <View style={styles.gradeLeft}>
                 <Text style={styles.gradeWeek}>{weekLabel()}</Text>
-                <Text style={[styles.gradeNum, { color: GRADE_COLORS[digest.weekGrade] ?? Colors.primary }]}>{digest.weekGrade}</Text>
+                <Text style={[styles.gradeNum, { color: GRADE_COLORS[digest.weekGrade] ?? colors.primary }]}>{digest.weekGrade}</Text>
                 <Text style={styles.gradeLabel}>{digest.gradeLabel}</Text>
               </View>
               <View style={styles.gradeStats}>
                 <View style={styles.gradeStat}>
-                  <Text style={[styles.gradeStatNum, { color: digest.routineScore >= 70 ? '#4ADE80' : digest.routineScore >= 50 ? Colors.gold : Colors.scorePoor }]}>
+                  <Text style={[styles.gradeStatNum, { color: digest.routineScore >= 70 ? '#4ADE80' : digest.routineScore >= 50 ? colors.gold : colors.scorePoor }]}>
                     {digest.routineScore}%
                   </Text>
                   <Text style={styles.gradeStatLabel}>Routine</Text>
                 </View>
                 <View style={styles.gradeStat}>
-                  <Text style={[styles.gradeStatNum, { color: digest.waterScore >= 70 ? '#4ADE80' : digest.waterScore >= 50 ? Colors.gold : Colors.scorePoor }]}>
+                  <Text style={[styles.gradeStatNum, { color: digest.waterScore >= 70 ? '#4ADE80' : digest.waterScore >= 50 ? colors.gold : colors.scorePoor }]}>
                     {digest.waterScore}%
                   </Text>
                   <Text style={styles.gradeStatLabel}>Hydration</Text>
@@ -328,7 +334,7 @@ Return ONLY valid JSON (no markdown):
                     <Text style={styles.highlightText}>{digest.bestHabit}</Text>
                   </View>
                 </View>
-                <View style={[styles.highlightItem, { borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 10 }]}>
+                <View style={[styles.highlightItem, { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 10 }]}>
                   <Text style={styles.highlightIcon}>⚡</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.highlightLabel}>Needs Attention</Text>
@@ -397,7 +403,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Motivational note */}
             <View style={styles.motCard}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.motEmoji}>🌿</Text>
               <Text style={styles.motText}>{digest.motivationalNote}</Text>
             </View>
@@ -407,7 +413,7 @@ Return ONLY valid JSON (no markdown):
               style={styles.regenBtn}
               onPress={() => { AsyncStorage.removeItem(CACHE_KEY); weekStats && generate(weekStats); }}
             >
-              <Ionicons name="refresh-outline" size={16} color={Colors.textMuted} />
+              <Ionicons name="refresh-outline" size={16} color={colors.textMuted} />
               <Text style={styles.regenText}>Regenerate digest</Text>
             </Pressable>
           </>
@@ -419,71 +425,73 @@ Return ONLY valid JSON (no markdown):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   loadingCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 32, alignItems: 'center', gap: 14, marginBottom: 14 },
-  loadingText: { fontSize: 14, color: Colors.textSecondary },
+  loadingText: { fontSize: 14, color: c.textSecondary },
 
   noDataCard: { alignItems: 'center', paddingVertical: 48, gap: 12 },
   noDataEmoji: { fontSize: 48 },
-  noDataTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  noDataSub: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
+  noDataTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  noDataSub: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
   generateBtn: { borderRadius: 14, overflow: 'hidden', height: 50, paddingHorizontal: 32, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
-  generateBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  generateBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: -8 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: -8 },
 
-  gradeCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  gradeCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   gradeLeft: { gap: 2 },
-  gradeWeek: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
+  gradeWeek: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
   gradeNum: { fontSize: 56, fontWeight: '900', lineHeight: 64 },
-  gradeLabel: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
+  gradeLabel: { fontSize: 14, fontWeight: '600', color: c.textSecondary },
   gradeStats: { gap: 16 },
   gradeStat: { alignItems: 'center' },
   gradeStatNum: { fontSize: 20, fontWeight: '800' },
-  gradeStatLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  gradeStatLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
 
-  narrativeText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  narrativeText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
   highlightRow: { gap: 0 },
   highlightItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingVertical: 10 },
   highlightIcon: { fontSize: 18 },
-  highlightLabel: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 },
-  highlightText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18 },
+  highlightLabel: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 },
+  highlightText: { fontSize: 13, color: c.textSecondary, lineHeight: 18 },
 
-  trendCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, padding: 14, marginBottom: 14 },
-  trendLabel: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  trendNote: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  trendCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 14, marginBottom: 14 },
+  trendLabel: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  trendNote: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  statBlock: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, padding: 10, alignItems: 'center', gap: 3 },
+  statBlock: { flex: 1, backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.border, padding: 10, alignItems: 'center', gap: 3 },
   statIcon: { fontSize: 16 },
-  statValue: { fontSize: 15, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 12 },
+  statValue: { fontSize: 15, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center', lineHeight: 12 },
 
-  focusRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start', borderBottomWidth: 1, borderBottomColor: Colors.border, paddingBottom: 12 },
+  focusRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start', borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 12 },
   focusNum: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   focusNumText: { fontSize: 13, fontWeight: '800' },
   focusHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  focusAction: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, flex: 1 },
+  focusAction: { fontSize: 13, fontWeight: '600', color: c.textPrimary, flex: 1 },
   focusImpact: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   focusImpactText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
-  focusWhy: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  focusWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   motCard: { borderRadius: 16, overflow: 'hidden', padding: 18, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   motEmoji: { fontSize: 28 },
-  motText: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.white, lineHeight: 22, fontStyle: 'italic' },
+  motText: { flex: 1, fontSize: 14, fontWeight: '600', color: c.white, lineHeight: 22, fontStyle: 'italic' },
 
   regenBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12 },
-  regenText: { fontSize: 12, color: Colors.textMuted },
-});
+  regenText: { fontSize: 12, color: c.textMuted },
+  });
+}

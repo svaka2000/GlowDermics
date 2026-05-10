@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, purple: c.darkCircles, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Why Antioxidants', 'Top Antioxidants', 'Free Radicals', 'Stacking', 'Tallow AOs'];
 
@@ -22,7 +26,8 @@ const WHY_FACTS = [
   { fact: 'Different antioxidants protect different compartments', detail: 'Water-soluble antioxidants (vitamin C, glutathione) work in the aqueous phase — within cells and in the dermis. Fat-soluble antioxidants (vitamin E, CoQ10, carotenoids) protect lipid membranes and the stratum corneum lipid bilayer. Comprehensive protection requires both phases to be covered simultaneously.', icon: '🗂️' },
 ];
 
-const ANTIOXIDANTS = [
+function buildAntioxidants(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     name: 'Vitamin C (L-Ascorbic Acid)',
     phase: 'water-soluble',
@@ -127,7 +132,8 @@ const ANTIOXIDANTS = [
     color: Colors.teal,
     icon: '🧬',
   },
-];
+  ];
+}
 
 const FREE_RADICALS = [
   { type: 'Superoxide radical (O2·⁻)', source: 'Generated during mitochondrial respiration and by UV. The "seed" free radical — triggers cascade of other radical species.', neutralised: 'Superoxide dismutase (SOD) enzyme, CoQ10, resveratrol' },
@@ -137,13 +143,15 @@ const FREE_RADICALS = [
   { type: 'ROS from pollution (PM2.5)', source: 'Particulate matter generates Fenton-reaction radicals. Accumulates in stratum corneum. Particularly relevant in urban environments.', neutralised: 'Vitamin C, ferulic acid, niacinamide (NAD+ pathway). Physical removal via cleansing.' },
 ];
 
-const STACKING = [
-  { stack: 'Classic AM Stack', combo: 'Vitamin C (15%) + Vitamin E (1%) + Ferulic Acid (0.5%)', why: 'The gold standard combination. Vitamin C and E synergise (each regenerates the other). Ferulic acid doubles the stability and efficacy. Together: 8× more UV protection than C alone, comprehensive radical neutralisation. Apply before SPF.', rating: Colors.green },
-  { stack: 'Budget AM Stack', combo: 'Vitamin C serum (any stable form) + SPF with vitamin E', why: 'Many SPF products contain tocopherol (vitamin E). A separate vitamin C serum + tocopherol-containing SPF achieves meaningful C+E synergy without a premium formulation.', rating: Colors.teal },
-  { stack: 'Sensitive Skin AM Stack', combo: 'Niacinamide 5% + Stable vitamin C derivative (ascorbyl glucoside) + SPF', why: 'Avoids irritating LAA. Niacinamide handles the NAD+/DNA repair pathway. Stable C derivative contributes antioxidant protection. Gentler but still comprehensive.', rating: Colors.blue },
-  { stack: 'PM Anti-aging Stack', combo: 'Retinol + Resveratrol + Tallow (vitamin E)', why: 'Retinol increases collagen. Resveratrol activates sirtuins (longevity proteins) and is PM-appropriate (photosensitive). Tallow delivers vitamin E to complete the C+E network (if vitamin C was applied AM). Comprehensive overnight anti-aging antioxidant coverage.', rating: Colors.gold },
-  { stack: 'Dietary Antioxidant Foundation', combo: 'Astaxanthin supplement 4–8mg + Vitamin C food sources + Omega-3 fish oil', why: 'Oral astaxanthin accumulates in skin over 8 weeks, providing 24-hour antioxidant protection from inside. Fish oil omega-3 reduces the inflammatory free radical cascade. This is the dietary layer that supports topical work.', rating: Colors.primary },
-];
+function buildStacking(Colors: ReturnType<typeof shimColors>) {
+  return [
+    { stack: 'Classic AM Stack', combo: 'Vitamin C (15%) + Vitamin E (1%) + Ferulic Acid (0.5%)', why: 'The gold standard combination. Vitamin C and E synergise (each regenerates the other). Ferulic acid doubles the stability and efficacy. Together: 8× more UV protection than C alone, comprehensive radical neutralisation. Apply before SPF.', rating: Colors.green },
+    { stack: 'Budget AM Stack', combo: 'Vitamin C serum (any stable form) + SPF with vitamin E', why: 'Many SPF products contain tocopherol (vitamin E). A separate vitamin C serum + tocopherol-containing SPF achieves meaningful C+E synergy without a premium formulation.', rating: Colors.teal },
+    { stack: 'Sensitive Skin AM Stack', combo: 'Niacinamide 5% + Stable vitamin C derivative (ascorbyl glucoside) + SPF', why: 'Avoids irritating LAA. Niacinamide handles the NAD+/DNA repair pathway. Stable C derivative contributes antioxidant protection. Gentler but still comprehensive.', rating: Colors.blue },
+    { stack: 'PM Anti-aging Stack', combo: 'Retinol + Resveratrol + Tallow (vitamin E)', why: 'Retinol increases collagen. Resveratrol activates sirtuins (longevity proteins) and is PM-appropriate (photosensitive). Tallow delivers vitamin E to complete the C+E network (if vitamin C was applied AM). Comprehensive overnight anti-aging antioxidant coverage.', rating: Colors.gold },
+    { stack: 'Dietary Antioxidant Foundation', combo: 'Astaxanthin supplement 4–8mg + Vitamin C food sources + Omega-3 fish oil', why: 'Oral astaxanthin accumulates in skin over 8 weeks, providing 24-hour antioxidant protection from inside. Fish oil omega-3 reduces the inflammatory free radical cascade. This is the dietary layer that supports topical work.', rating: Colors.primary },
+  ];
+}
 
 const TALLOW_AO = [
   { title: 'Vitamin E in tallow: the lipid-phase antioxidant', body: 'Grass-fed tallow contains tocopherols (vitamin E) — the primary lipid-phase antioxidant in the stratum corneum. When you apply tallow PM, you are replenishing the vitamin E reserves that UV, pollution, and normal metabolic oxidation depleted during the day. This overnight replenishment ensures the stratum corneum\'s antioxidant capacity is restored before the next day.' },
@@ -154,6 +162,11 @@ const TALLOW_AO = [
 ];
 
 export default function AntioxidantsScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const ANTIOXIDANTS = useMemo(() => buildAntioxidants(Colors), [Colors]);
+  const STACKING = useMemo(() => buildStacking(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedAO, setExpandedAO] = useState<number | null>(null);
@@ -282,7 +295,9 @@ export default function AntioxidantsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -321,4 +336,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}
