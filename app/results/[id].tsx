@@ -22,6 +22,7 @@ import {
   BiomarkerCloud,
   ScoreGrid,
   ScanCelebration,
+  SkinSpectrum,
 } from '../../src/components/ui';
 import { runSkinIdentity, SkinIdentity } from '../../src/engine/SkinIdentityEngine';
 import { FaceRegion } from '../../src/types';
@@ -291,6 +292,24 @@ export default function Results() {
         {/* Scores tab */}
         {tab === 'scores' && (
           <>
+            {/* v2: 16-axis radar visualization */}
+            {analysis.scoresV2 && (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Skin Spectrum</Text>
+                <Text style={styles.cardSub}>
+                  {prevAnalysis?.scoresV2
+                    ? 'Filled = current scan · dashed = previous'
+                    : 'Each axis is one of 15 clinical dimensions'}
+                </Text>
+                <SkinSpectrum
+                  current={analysis.scoresV2}
+                  previous={prevAnalysis?.scoresV2}
+                  size={320}
+                  delay={120}
+                />
+              </View>
+            )}
+
             {/* v2: full 16-dimension score grid */}
             {analysis.scoresV2 && (
               <View style={styles.card}>

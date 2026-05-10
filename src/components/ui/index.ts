@@ -34,3 +34,4 @@ export { CameraGuide } from './CameraGuide';
 export { GlowPulse } from './GlowPulse';
 export { SkinAura } from './SkinAura';
 export { ScanReel } from './ScanReel';
+export { SkinSpectrum } from './SkinSpectrum';
