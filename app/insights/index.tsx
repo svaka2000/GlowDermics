@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
 import { Storage } from '../../src/services/storage';
 import {
   GlassHero, Card, Badge, Section, ScatterPlot, BiomarkerCloud, SkinAgeBadge, Skeleton,

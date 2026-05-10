@@ -5,7 +5,8 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry, SkinAnalysis } from '../../src/types';
 import {
@@ -26,6 +27,8 @@ function daysBetween(a: string, b: string): number {
 }
 
 export default function Timeline() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [analyses, setAnalyses] = useState<SkinAnalysis[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -81,14 +84,14 @@ export default function Timeline() {
   if (frames.length === 0) {
     return (
       <View style={styles.root}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Timeline</Text>
@@ -101,7 +104,7 @@ export default function Timeline() {
 
         <View style={styles.emptyWrap}>
           <View style={styles.emptyEmojiBox}>
-            <Ionicons name="film-outline" size={42} color={Colors.primary} />
+            <Ionicons name="film-outline" size={42} color={colors.primary} />
           </View>
           <Text style={styles.emptyTitle}>No timeline yet</Text>
           <Text style={styles.emptySub}>
@@ -122,14 +125,14 @@ export default function Timeline() {
   return (
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <GlassHero height={150} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={150} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Timeline</Text>
@@ -139,7 +142,7 @@ export default function Timeline() {
                 </Text>
               </View>
               <Pressable style={styles.heroShareBtn} onPress={handleShare}>
-                <Ionicons name="share-outline" size={18} color={Colors.white} />
+                <Ionicons name="share-outline" size={18} color={colors.white} />
               </Pressable>
             </View>
           </SafeAreaView>
@@ -183,14 +186,14 @@ export default function Timeline() {
                   <Ionicons
                     name={activeFrame.score - oldest.score >= 0 ? 'trending-up' : 'trending-down'}
                     size={11}
-                    color={activeFrame.score - oldest.score >= 0 ? Colors.scoreExcellent : Colors.scorePoor}
+                    color={activeFrame.score - oldest.score >= 0 ? colors.scoreExcellent : colors.scorePoor}
                   />
                   <Text
                     style={[
                       styles.deltaBadgeText,
                       {
                         color:
-                          activeFrame.score - oldest.score >= 0 ? Colors.scoreExcellent : Colors.scorePoor,
+                          activeFrame.score - oldest.score >= 0 ? colors.scoreExcellent : colors.scorePoor,
                       },
                     ]}
                   >
@@ -212,7 +215,7 @@ export default function Timeline() {
                 value={`${newest.score}`}
                 sub={fmtDate(newest.date)}
                 accent={
-                  overallDelta > 0 ? Colors.scoreExcellent : overallDelta < 0 ? Colors.scorePoor : Colors.primary
+                  overallDelta > 0 ? colors.scoreExcellent : overallDelta < 0 ? colors.scorePoor : colors.primary
                 }
               />
             </View>
@@ -232,7 +235,7 @@ export default function Timeline() {
                         ? 'rgba(22,163,74,0.22)'
                         : overallDelta < 0
                         ? 'rgba(220,38,38,0.22)'
-                        : Colors.border,
+                        : colors.border,
                   },
                 ]}
               >
@@ -242,10 +245,10 @@ export default function Timeline() {
                     {
                       color:
                         overallDelta > 0
-                          ? Colors.scoreExcellent
+                          ? colors.scoreExcellent
                           : overallDelta < 0
-                          ? Colors.scorePoor
-                          : Colors.textPrimary,
+                          ? colors.scorePoor
+                          : colors.textPrimary,
                     },
                   ]}
                 >
@@ -261,10 +264,10 @@ export default function Timeline() {
           </Section>
 
           {/* Tip */}
-          <Card variant="gradient" tint={Colors.gold} padding={14} style={{ marginTop: 14 }}>
+          <Card variant="gradient" tint={colors.gold} padding={14} style={{ marginTop: 14 }}>
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
               <View style={styles.tipIcon}>
-                <Ionicons name="information-circle" size={14} color={Colors.gold} />
+                <Ionicons name="information-circle" size={14} color={colors.gold} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tipTitle}>Pro tip</Text>
@@ -279,19 +282,19 @@ export default function Timeline() {
           {/* Quick links */}
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 18 }}>
             <Pressable style={styles.quickLink} onPress={() => router.push('/scan-gallery')}>
-              <Ionicons name="grid" size={14} color={Colors.primary} />
+              <Ionicons name="grid" size={14} color={colors.primary} />
               <Text style={styles.quickLinkText}>Gallery</Text>
             </Pressable>
             <Pressable style={styles.quickLink} onPress={() => router.push('/compare')}>
-              <Ionicons name="git-compare" size={14} color={Colors.primary} />
+              <Ionicons name="git-compare" size={14} color={colors.primary} />
               <Text style={styles.quickLinkText}>Compare 2 scans</Text>
             </Pressable>
             <Pressable
               style={[styles.quickLink, styles.quickLinkPrimary]}
               onPress={() => router.push('/scan')}
             >
-              <Ionicons name="add" size={14} color={Colors.white} />
-              <Text style={[styles.quickLinkText, { color: Colors.white }]}>New scan</Text>
+              <Ionicons name="add" size={14} color={colors.white} />
+              <Text style={[styles.quickLinkText, { color: colors.white }]}>New scan</Text>
             </Pressable>
           </View>
 
@@ -305,6 +308,8 @@ export default function Timeline() {
 /* ---------- Sub-components ---------- */
 
 function Stat({ label, value, sub, accent }: { label: string; value: string; sub: string; accent?: string }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   return (
     <View style={styles.statBlock}>
       <Text style={styles.statLabel}>{label.toUpperCase()}</Text>
@@ -315,17 +320,20 @@ function Stat({ label, value, sub, accent }: { label: string; value: string; sub
 }
 
 function Arrow() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   return (
     <View style={styles.arrow}>
-      <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
+      <Ionicons name="arrow-forward" size={16} color={colors.textMuted} />
     </View>
   );
 }
 
 /* ---------- Styles ---------- */
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   scroll: { paddingBottom: 40 },
 
   heroWrap: { marginBottom: 14 },
@@ -346,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2, fontWeight: '600' },
@@ -363,12 +371,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 8,
   },
-  emptyTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, letterSpacing: -0.4 },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 21 },
+  emptyTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, letterSpacing: -0.4 },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 21 },
 
   deltaRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  deltaCaption: { fontSize: 10, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.2 },
-  deltaDate: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginTop: 2 },
+  deltaCaption: { fontSize: 10, fontWeight: '900', color: c.textMuted, letterSpacing: 1.2 },
+  deltaDate: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginTop: 2 },
   deltaBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999,
@@ -379,13 +387,13 @@ const styles = StyleSheet.create({
   statsRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statBlock: {
     flex: 1, alignItems: 'center',
-    backgroundColor: Colors.bgCard, borderRadius: 14, padding: 12,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, padding: 12,
+    borderWidth: 1, borderColor: c.border,
     gap: 2,
   },
-  statLabel: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.2 },
-  statValue: { fontSize: 28, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.6 },
-  statSub: { fontSize: 10, color: Colors.textSecondary, fontWeight: '700' },
+  statLabel: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.2 },
+  statValue: { fontSize: 28, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.6 },
+  statSub: { fontSize: 10, color: c.textSecondary, fontWeight: '700' },
   arrow: { width: 22, alignItems: 'center' },
 
   bigDeltaRow: { alignItems: 'center', marginTop: 4 },
@@ -395,15 +403,15 @@ const styles = StyleSheet.create({
     borderRadius: 999, borderWidth: 1,
   },
   bigDeltaNum: { fontSize: 18, fontWeight: '900', letterSpacing: -0.4 },
-  bigDeltaLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '700' },
+  bigDeltaLabel: { fontSize: 12, color: c.textSecondary, fontWeight: '700' },
 
   tipIcon: {
     width: 26, height: 26, borderRadius: 13,
     backgroundColor: 'rgba(184,136,46,0.18)',
     alignItems: 'center', justifyContent: 'center',
   },
-  tipTitle: { fontSize: 12, fontWeight: '900', color: Colors.gold, letterSpacing: 0.4 },
-  tipText: { fontSize: 12, color: Colors.textPrimary, lineHeight: 18, fontWeight: '500', marginTop: 2 },
+  tipTitle: { fontSize: 12, fontWeight: '900', color: c.gold, letterSpacing: 0.4 },
+  tipText: { fontSize: 12, color: c.textPrimary, lineHeight: 18, fontWeight: '500', marginTop: 2 },
 
   quickLink: {
     flex: 1,
@@ -414,8 +422,9 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
   },
   quickLinkPrimary: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
-  quickLinkText: { fontSize: 11, fontWeight: '800', color: Colors.primary, letterSpacing: 0.2 },
-});
+  quickLinkText: { fontSize: 11, fontWeight: '800', color: c.primary, letterSpacing: 0.2 },
+  });
+}

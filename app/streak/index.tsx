@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +12,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import {
   GlassHero, Card, Badge, Button, Section, StreakRing,
 } from '../../src/components/ui';
@@ -21,6 +22,8 @@ import { runStreakAnalysis, StreakReport, MILESTONES } from '../../src/engine/St
 const { width: SCREEN_W } = Dimensions.get('window');
 
 export default function StreakScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [report, setReport] = useState<StreakReport | null>(null);
 
   useFocusEffect(useCallback(() => {
@@ -34,14 +37,14 @@ export default function StreakScreen() {
   if (!report) {
     return (
       <View style={styles.root}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Streak</Text>
@@ -60,14 +63,14 @@ export default function StreakScreen() {
   return (
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Your streak</Text>
@@ -100,7 +103,7 @@ export default function StreakScreen() {
             {/* At-risk banner */}
             {report.atRisk && (
               <View style={styles.riskBanner}>
-                <Ionicons name="alert-circle" size={14} color={Colors.scorePoor} />
+                <Ionicons name="alert-circle" size={14} color={colors.scorePoor} />
                 <Text style={styles.riskText}>
                   Don't break the chain — log a routine or take a scan today.
                 </Text>
@@ -110,7 +113,7 @@ export default function StreakScreen() {
             {/* Today logged celebration */}
             {report.todayLogged && report.currentStreak > 0 && !report.atRisk && (
               <View style={styles.celebrateBanner}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.scoreExcellent} />
+                <Ionicons name="checkmark-circle" size={14} color={colors.scoreExcellent} />
                 <Text style={styles.celebrateText}>
                   Today's locked in — see you tomorrow.
                 </Text>
@@ -120,15 +123,15 @@ export default function StreakScreen() {
             {/* Quick actions */}
             <View style={styles.actionsRow}>
               <Pressable style={styles.actionBtn} onPress={() => router.push('/scan')}>
-                <Ionicons name="scan-outline" size={14} color={Colors.primary} />
+                <Ionicons name="scan-outline" size={14} color={colors.primary} />
                 <Text style={styles.actionText}>Scan</Text>
               </Pressable>
               <Pressable style={styles.actionBtn} onPress={() => router.push('/(tabs)/routine')}>
-                <Ionicons name="checkmark-done-outline" size={14} color={Colors.primary} />
+                <Ionicons name="checkmark-done-outline" size={14} color={colors.primary} />
                 <Text style={styles.actionText}>Log routine</Text>
               </Pressable>
               <Pressable style={styles.actionBtn} onPress={() => router.push('/checkin')}>
-                <Ionicons name="sparkles-outline" size={14} color={Colors.primary} />
+                <Ionicons name="sparkles-outline" size={14} color={colors.primary} />
                 <Text style={styles.actionText}>Check-in</Text>
               </Pressable>
             </View>
@@ -139,19 +142,19 @@ export default function StreakScreen() {
             <Stat
               label="Best ever"
               value={`${report.longestStreak}d`}
-              tone={report.longestStreak >= 30 ? Colors.gold : Colors.primary}
+              tone={report.longestStreak >= 30 ? colors.gold : colors.primary}
               icon="trophy"
             />
             <Stat
               label="Total days"
               value={`${report.totalActiveDays}`}
-              tone={Colors.scoreExcellent}
+              tone={colors.scoreExcellent}
               icon="calendar"
             />
             <Stat
               label="Unlocked"
               value={`${report.unlocksCount}/${MILESTONES.length}`}
-              tone={Colors.darkCircles}
+              tone={colors.darkCircles}
               icon="ribbon"
             />
           </View>
@@ -166,7 +169,7 @@ export default function StreakScreen() {
               </View>
               <View style={styles.calendarLegend}>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.primary }]} />
+                  <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
                   <Text style={styles.legendText}>Active</Text>
                 </View>
                 <View style={styles.legendItem}>
@@ -182,7 +185,7 @@ export default function StreakScreen() {
                   <View
                     style={[
                       styles.legendDot,
-                      { backgroundColor: Colors.gold, borderWidth: 2, borderColor: '#fff' },
+                      { backgroundColor: colors.gold, borderWidth: 2, borderColor: '#fff' },
                     ]}
                   />
                   <Text style={styles.legendText}>Today</Text>
@@ -207,7 +210,7 @@ export default function StreakScreen() {
 
           {/* Empty state nudge */}
           {noStreakYet && (
-            <Card variant="gradient" tint={Colors.primary} padding={18} style={{ marginTop: 14 }}>
+            <Card variant="gradient" tint={colors.primary} padding={18} style={{ marginTop: 14 }}>
               <Text style={styles.emptyTitle}>Start your first streak</Text>
               <Text style={styles.emptySub}>
                 Take a scan or log a routine today and you're on the board. The first 3-day streak unlocks
@@ -239,6 +242,8 @@ function Stat({
   tone: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
 }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   return (
     <Card variant="elevated" padding={12} style={styles.statCard}>
       <View style={[styles.statIconBubble, { backgroundColor: tone + '15' }]}>
@@ -251,6 +256,8 @@ function Stat({
 }
 
 function CalendarCell({ day, index }: { day: { date: string; logged: boolean; isToday: boolean }; index: number }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.6);
 
@@ -271,11 +278,11 @@ function CalendarCell({ day, index }: { day: { date: string; logged: boolean; is
         styles.calendarCell,
         {
           backgroundColor: day.logged
-            ? Colors.primary
+            ? colors.primary
             : day.isToday
-            ? Colors.gold + '40'
+            ? colors.gold + '40'
             : 'rgba(28,24,20,0.10)',
-          borderColor: day.isToday ? Colors.gold : 'transparent',
+          borderColor: day.isToday ? colors.gold : 'transparent',
           borderWidth: day.isToday ? 2 : 0,
         },
         animStyle,
@@ -293,6 +300,8 @@ function MilestoneRow({
   isCurrent: boolean;
   delay: number;
 }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(-8);
 
@@ -311,7 +320,7 @@ function MilestoneRow({
     <Animated.View style={animStyle}>
       <Card
         variant={milestone.unlocked ? 'gradient' : isCurrent ? 'glow' : 'outline'}
-        tint={milestone.unlocked ? Colors.scoreExcellent : Colors.primary}
+        tint={milestone.unlocked ? colors.scoreExcellent : colors.primary}
         padding={14}
       >
         <View style={styles.milestoneRow}>
@@ -330,10 +339,10 @@ function MilestoneRow({
             <Text style={styles.milestoneEmoji}>{milestone.emoji}</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.milestoneLabel, !milestone.unlocked && !isCurrent && { color: Colors.textMuted }]}>
+            <Text style={[styles.milestoneLabel, !milestone.unlocked && !isCurrent && { color: colors.textMuted }]}>
               {milestone.label}
             </Text>
-            <Text style={[styles.milestoneSub, !milestone.unlocked && !isCurrent && { color: Colors.textMuted }]}>
+            <Text style={[styles.milestoneSub, !milestone.unlocked && !isCurrent && { color: colors.textMuted }]}>
               {milestone.days}-day streak
             </Text>
           </View>
@@ -342,7 +351,7 @@ function MilestoneRow({
           ) : isCurrent ? (
             <Badge label="NEXT" tone="primary" size="xs" />
           ) : (
-            <Ionicons name="lock-closed" size={14} color={Colors.textMuted} />
+            <Ionicons name="lock-closed" size={14} color={colors.textMuted} />
           )}
         </View>
       </Card>
@@ -352,8 +361,9 @@ function MilestoneRow({
 
 /* ---------- Styles ---------- */
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   scroll: { paddingBottom: 40 },
 
   heroWrap: { marginBottom: 14 },
@@ -368,7 +378,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2, fontWeight: '600' },
@@ -384,7 +394,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 12,
   },
-  riskText: { flex: 1, fontSize: 12, fontWeight: '700', color: Colors.scorePoor, lineHeight: 17 },
+  riskText: { flex: 1, fontSize: 12, fontWeight: '700', color: c.scorePoor, lineHeight: 17 },
 
   celebrateBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
@@ -395,7 +405,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 12,
   },
-  celebrateText: { flex: 1, fontSize: 12, fontWeight: '700', color: Colors.scoreExcellent },
+  celebrateText: { flex: 1, fontSize: 12, fontWeight: '700', color: c.scoreExcellent },
 
   actionsRow: { flexDirection: 'row', gap: 8, width: '100%' },
   actionBtn: {
@@ -406,7 +416,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 10,
   },
-  actionText: { fontSize: 11, fontWeight: '800', color: Colors.primary, letterSpacing: 0.2 },
+  actionText: { fontSize: 11, fontWeight: '800', color: c.primary, letterSpacing: 0.2 },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   statCard: { flex: 1, alignItems: 'center', gap: 4 },
@@ -414,8 +424,8 @@ const styles = StyleSheet.create({
     width: 30, height: 30, borderRadius: 15,
     alignItems: 'center', justifyContent: 'center', marginBottom: 2,
   },
-  statValue: { fontSize: 18, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.3 },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '900', letterSpacing: 1 },
+  statValue: { fontSize: 18, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.3 },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '900', letterSpacing: 1 },
 
   calendarGrid: {
     flexDirection: 'row',
@@ -436,7 +446,7 @@ const styles = StyleSheet.create({
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendDot: { width: 10, height: 10, borderRadius: 3 },
-  legendText: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.4 },
+  legendText: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.4 },
 
   milestoneRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   milestoneEmojiWrap: {
@@ -444,9 +454,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   milestoneEmoji: { fontSize: 18 },
-  milestoneLabel: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
-  milestoneSub: { fontSize: 11, color: Colors.textSecondary, fontWeight: '600', marginTop: 1 },
+  milestoneLabel: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
+  milestoneSub: { fontSize: 11, color: c.textSecondary, fontWeight: '600', marginTop: 1 },
 
-  emptyTitle: { fontSize: 17, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.3 },
-  emptySub: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, fontWeight: '500', marginTop: 4 },
-});
+  emptyTitle: { fontSize: 17, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.3 },
+  emptySub: { fontSize: 13, color: c.textSecondary, lineHeight: 19, fontWeight: '500', marginTop: 4 },
+  });
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +16,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import {
   GlassHero, Card, Badge, Button, Section, XPBar,
 } from '../../src/components/ui';
@@ -43,15 +44,19 @@ const DIFF_LABEL: Record<DailyChallenge['difficulty'], string> = {
   hard: 'HARD',
 };
 
-const CATEGORY_TINT: Record<DailyChallenge['category'], string> = {
-  hydration: Colors.hydration,
-  protection: Colors.primary,
-  lifestyle: Colors.darkCircles,
-  routine: Colors.evenness,
-  diet: Colors.scoreExcellent,
-};
+function buildCategoryTint(c: Palette): Record<DailyChallenge['category'], string> {
+  return {
+    hydration: c.hydration,
+    protection: c.primary,
+    lifestyle: c.darkCircles,
+    routine: c.evenness,
+    diet: c.scoreExcellent,
+  };
+}
 
 export default function DailyChallengesScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [report, setReport] = useState<DailyChallengeReport | null>(null);
   const [celebratingBadge, setCelebratingBadge] = useState<BadgeDef | null>(null);
 
@@ -91,14 +96,14 @@ export default function DailyChallengesScreen() {
   if (!report) {
     return (
       <View style={styles.root}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Daily challenges</Text>
@@ -115,14 +120,14 @@ export default function DailyChallengesScreen() {
   return (
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={styles.heroTitle}>Daily challenges</Text>
@@ -184,11 +189,11 @@ export default function DailyChallengesScreen() {
                   <Text style={styles.legendText}>None</Text>
                 </View>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.primary + '50' }]} />
+                  <View style={[styles.legendDot, { backgroundColor: colors.primary + '50' }]} />
                   <Text style={styles.legendText}>1</Text>
                 </View>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.primary }]} />
+                  <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
                   <Text style={styles.legendText}>2+</Text>
                 </View>
               </View>
@@ -240,7 +245,9 @@ function ChallengeHero({
   onUndo: () => void;
   isPrimary?: boolean;
 }) {
-  const tint = CATEGORY_TINT[challenge.category];
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const tint = useMemo(() => buildCategoryTint(colors)[challenge.category], [colors, challenge.category]);
 
   // Subtle pulse to draw attention to the unfinished primary card.
   const pulse = useSharedValue(0);
@@ -278,7 +285,7 @@ function ChallengeHero({
       />
       <Card
         variant={done ? 'gradient' : 'elevated'}
-        tint={done ? Colors.scoreExcellent : tint}
+        tint={done ? colors.scoreExcellent : tint}
         padding={18}
         style={done ? { borderWidth: 1, borderColor: 'rgba(22,163,74,0.35)' } : undefined}
       >
@@ -303,7 +310,7 @@ function ChallengeHero({
 
         {challenge.tip && (
           <View style={styles.tipBox}>
-            <Ionicons name="bulb-outline" size={12} color={Colors.gold} />
+            <Ionicons name="bulb-outline" size={12} color={colors.gold} />
             <Text style={styles.tipText}>{challenge.tip}</Text>
           </View>
         )}
@@ -311,7 +318,7 @@ function ChallengeHero({
         {done ? (
           <View style={styles.doneRow}>
             <View style={styles.doneBadge}>
-              <Ionicons name="checkmark-circle" size={14} color={Colors.scoreExcellent} />
+              <Ionicons name="checkmark-circle" size={14} color={colors.scoreExcellent} />
               <Text style={styles.doneText}>Completed today · +{challenge.xp} XP earned</Text>
             </View>
             <Pressable hitSlop={6} onPress={onUndo}>
@@ -333,6 +340,8 @@ function ChallengeHero({
 }
 
 function ActivityCell({ count, delay }: { count: number; delay: number }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.6);
 
@@ -352,9 +361,9 @@ function ActivityCell({ count, delay }: { count: number; delay: number }) {
 
   const bg =
     count >= 2
-      ? Colors.primary
+      ? colors.primary
       : count === 1
-      ? Colors.primary + '50'
+      ? colors.primary + '50'
       : 'rgba(28,24,20,0.10)';
 
   return (
@@ -377,6 +386,8 @@ function BadgeTile({
   unlocked: boolean;
   delay: number;
 }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.85);
 
@@ -400,17 +411,17 @@ function BadgeTile({
         style={[
           styles.badgeEmojiWrap,
           unlocked
-            ? { backgroundColor: 'rgba(184,136,46,0.18)', borderColor: Colors.gold }
+            ? { backgroundColor: 'rgba(184,136,46,0.18)', borderColor: colors.gold }
             : { backgroundColor: 'rgba(28,24,20,0.05)', borderColor: 'rgba(28,24,20,0.10)' },
         ]}
       >
         <Text style={[styles.badgeEmoji, !unlocked && { opacity: 0.35 }]}>{badge.emoji}</Text>
       </View>
-      <Text style={[styles.badgeName, !unlocked && { color: Colors.textMuted }]}>{badge.name}</Text>
+      <Text style={[styles.badgeName, !unlocked && { color: colors.textMuted }]}>{badge.name}</Text>
       <Text style={styles.badgeXP}>{badge.xp.toLocaleString()} XP</Text>
       {!unlocked && (
         <View style={styles.lockedDot}>
-          <Ionicons name="lock-closed" size={10} color={Colors.textMuted} />
+          <Ionicons name="lock-closed" size={10} color={colors.textMuted} />
         </View>
       )}
     </Animated.View>
@@ -424,6 +435,8 @@ function CelebrationOverlay({
   badge: BadgeDef;
   onDismiss: () => void;
 }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.6);
 
@@ -470,8 +483,9 @@ function CelebrationOverlay({
 
 /* ---------- Styles ---------- */
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   scroll: { paddingBottom: 40 },
 
   heroWrap: { marginBottom: 14 },
@@ -486,7 +500,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2, fontWeight: '600' },
@@ -510,8 +524,8 @@ const styles = StyleSheet.create({
   },
   challengeEmoji: { fontSize: 26 },
   challengeMetaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 2 },
-  challengeTitle: { fontSize: 17, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.3 },
-  challengeDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, fontWeight: '500' },
+  challengeTitle: { fontSize: 17, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.3 },
+  challengeDesc: { fontSize: 13, color: c.textSecondary, lineHeight: 19, fontWeight: '500' },
 
   tipBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 6,
@@ -519,7 +533,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(184,136,46,0.25)',
     borderRadius: 10, padding: 10, marginTop: 12,
   },
-  tipText: { flex: 1, fontSize: 12, color: Colors.textPrimary, lineHeight: 17, fontWeight: '500' },
+  tipText: { flex: 1, fontSize: 12, color: c.textPrimary, lineHeight: 17, fontWeight: '500' },
 
   doneRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -532,8 +546,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderRadius: 10,
     paddingHorizontal: 10, paddingVertical: 6,
   },
-  doneText: { fontSize: 12, fontWeight: '800', color: Colors.scoreExcellent },
-  undoText: { fontSize: 12, color: Colors.textMuted, fontWeight: '700', textDecorationLine: 'underline' },
+  doneText: { fontSize: 12, fontWeight: '800', color: c.scoreExcellent },
+  undoText: { fontSize: 12, color: c.textMuted, fontWeight: '700', textDecorationLine: 'underline' },
 
   activityRow: {
     flexDirection: 'row',
@@ -554,7 +568,7 @@ const styles = StyleSheet.create({
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendDot: { width: 10, height: 10, borderRadius: 3 },
-  legendText: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.4 },
+  legendText: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.4 },
 
   badgeGrid: {
     flexDirection: 'row',
@@ -563,10 +577,10 @@ const styles = StyleSheet.create({
   },
   badgeTile: {
     width: '31%',
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     padding: 12,
     alignItems: 'center',
     gap: 6,
@@ -577,13 +591,13 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   badgeEmoji: { fontSize: 22 },
-  badgeName: { fontSize: 11, fontWeight: '900', color: Colors.textPrimary, textAlign: 'center', letterSpacing: -0.1 },
-  badgeXP: { fontSize: 9, fontWeight: '800', color: Colors.gold, letterSpacing: 0.4 },
+  badgeName: { fontSize: 11, fontWeight: '900', color: c.textPrimary, textAlign: 'center', letterSpacing: -0.1 },
+  badgeXP: { fontSize: 9, fontWeight: '800', color: c.gold, letterSpacing: 0.4 },
   lockedDot: {
     position: 'absolute', top: 8, right: 8,
     width: 18, height: 18, borderRadius: 9,
     backgroundColor: 'rgba(255,255,255,0.92)',
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
 
@@ -607,7 +621,7 @@ const styles = StyleSheet.create({
   },
   celebrateLabel: { fontSize: 10, fontWeight: '900', color: 'rgba(255,255,255,0.85)', letterSpacing: 1.4 },
   celebrateEmoji: { fontSize: 64, marginVertical: 12 },
-  celebrateName: { fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.4 },
+  celebrateName: { fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4 },
   celebrateDesc: {
     fontSize: 13, color: 'rgba(255,255,255,0.85)', textAlign: 'center', lineHeight: 18,
     marginTop: 6, marginBottom: 16, fontWeight: '500',
@@ -617,5 +631,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
     borderRadius: 999, paddingHorizontal: 28, paddingVertical: 11,
   },
-  celebrateBtnText: { fontSize: 14, fontWeight: '900', color: Colors.white, letterSpacing: 0.3 },
-});
+  celebrateBtnText: { fontSize: 14, fontWeight: '900', color: c.white, letterSpacing: 0.3 },
+  });
+}
