@@ -1,17 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, purple: c.darkCircles,
+  };
+}
 
 const TABS = [
   { id: 'intro', label: 'What Is It?', icon: '🔬' },
@@ -48,7 +52,8 @@ const INTRO_FACTS = [
   },
 ];
 
-const RETINOID_TYPES = [
+function buildRetinoidTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     name: 'Bakuchiol',
     strength: 0,
@@ -109,9 +114,11 @@ const RETINOID_TYPES = [
     convert: 'Binds directly — no conversion',
     bestFor: 'Acne-focused users, comedonal acne, less anti-aging than tretinoin',
   },
-];
+  ];
+}
 
-const START_GUIDE = [
+function buildStartGuide(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     phase: 'Week 1–2: Introduction',
     color: Colors.green,
@@ -153,7 +160,8 @@ const START_GUIDE = [
       'Introduce skin cycling if daily use causes buildup of sensitivity',
     ],
   },
-];
+  ];
+}
 
 const MISTAKES = [
   { mistake: 'Starting too strong', detail: 'Beginning with 0.5%+ or tretinoin without tolerance building causes severe irritation that damages the barrier and forces people to quit. Start low, build slow.' },
@@ -167,6 +175,11 @@ const MISTAKES = [
 ];
 
 export default function RetinolGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const RETINOID_TYPES = useMemo(() => buildRetinoidTypes(Colors), [Colors]);
+  const START_GUIDE = useMemo(() => buildStartGuide(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('intro');
   const [expandedType, setExpandedType] = useState<string | null>(null);
 
@@ -317,7 +330,9 @@ export default function RetinolGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -368,4 +383,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
@@ -7,7 +7,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SHELF_KEY = 'gd_product_shelf';
@@ -45,6 +46,8 @@ async function saveShelf(shelf: ShelfProduct[]): Promise<void> {
 }
 
 export default function ProductShelf() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [shelf, setShelf] = useState<ShelfProduct[]>([]);
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
@@ -121,14 +124,14 @@ export default function ProductShelf() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
               <Text style={styles.headerTitle}>My Shelf</Text>
               <Text style={styles.headerSub}>{shelf.length} product{shelf.length !== 1 ? 's' : ''} saved</Text>
             </View>
             <Pressable style={styles.addBtn} onPress={() => setAdding(!adding)}>
-              <Ionicons name={adding ? 'close' : 'add'} size={22} color={Colors.white} />
+              <Ionicons name={adding ? 'close' : 'add'} size={22} color={colors.white} />
             </Pressable>
           </View>
         </SafeAreaView>
@@ -152,7 +155,7 @@ export default function ProductShelf() {
               value={name}
               onChangeText={setName}
               placeholder="e.g. CeraVe Moisturizing Cream"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
             />
 
             <Text style={[styles.fieldLabel, { marginTop: 12 }]}>Brand</Text>
@@ -161,7 +164,7 @@ export default function ProductShelf() {
               value={brand}
               onChangeText={setBrand}
               placeholder="Brand name"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
             />
 
             <Text style={[styles.fieldLabel, { marginTop: 12 }]}>Category</Text>
@@ -199,7 +202,7 @@ export default function ProductShelf() {
               value={notes}
               onChangeText={setNotes}
               placeholder="How your skin reacted, when you use it..."
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               multiline
               textAlignVertical="top"
             />
@@ -209,7 +212,7 @@ export default function ProductShelf() {
                 <Text style={styles.cancelBtnText}>Cancel</Text>
               </Pressable>
               <Pressable style={[styles.saveBtn, !name.trim() && { opacity: 0.4 }]} onPress={save} disabled={!name.trim()}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.saveBtnGrad}>
+                <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.saveBtnGrad}>
                   <Text style={styles.saveBtnText}>Save to Shelf</Text>
                 </LinearGradient>
               </Pressable>
@@ -241,7 +244,7 @@ export default function ProductShelf() {
               Track everything you're using. Your AI skin coach will use your shelf to give you personalized advice.
             </Text>
             <Pressable style={styles.emptyBtn} onPress={() => setAdding(true)}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.emptyBtnGrad}>
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.emptyBtnGrad}>
                 <Text style={styles.emptyBtnText}>Add Your First Product</Text>
               </LinearGradient>
             </Pressable>
@@ -267,7 +270,7 @@ export default function ProductShelf() {
                       <Text style={[styles.ratingBadgeText, { color: r.color }]}>{r.label}</Text>
                     </View>
                     <Pressable onPress={() => deleteProduct(product.id)} style={styles.deleteBtn}>
-                      <Ionicons name="trash-outline" size={14} color={Colors.textMuted} />
+                      <Ionicons name="trash-outline" size={14} color={colors.textMuted} />
                     </Pressable>
                   </View>
                 </View>
@@ -286,12 +289,12 @@ export default function ProductShelf() {
         {shelf.length > 0 && (
           <Pressable style={styles.coachTip} onPress={() => router.push('/(tabs)/coach')}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-            <Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.primary} />
+            <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.coachTipTitle}>Ask your AI coach about your routine</Text>
               <Text style={styles.coachTipSub}>Your shelf gives it full context about what you're using</Text>
             </View>
-            <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
           </Pressable>
         )}
 
@@ -301,72 +304,73 @@ export default function ProductShelf() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
-  addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
+  addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 16 },
 
   addCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    backgroundColor: c.bgCard, borderRadius: 20,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 20, marginBottom: 16, gap: 4,
   },
-  addCardTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
-  fieldLabel: { fontSize: 11, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 6 },
+  addCardTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 8 },
+  fieldLabel: { fontSize: 11, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5, marginBottom: 6 },
   input: {
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
     borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11,
-    fontSize: 14, color: Colors.textPrimary,
+    fontSize: 14, color: c.textPrimary,
   },
   catRow: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
-  catChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  catChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  catChipText: { fontSize: 12, color: Colors.textMuted },
-  catChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  catChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  catChipText: { fontSize: 12, color: c.textMuted },
+  catChipTextActive: { color: c.primary, fontWeight: '600' },
   ratingRow: { gap: 6 },
-  ratingBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated, paddingHorizontal: 14, paddingVertical: 10 },
-  ratingStars: { fontSize: 14, color: Colors.gold, letterSpacing: 2 },
-  ratingLabel: { fontSize: 13, color: Colors.textMuted, fontWeight: '500' },
+  ratingBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated, paddingHorizontal: 14, paddingVertical: 10 },
+  ratingStars: { fontSize: 14, color: c.gold, letterSpacing: 2 },
+  ratingLabel: { fontSize: 13, color: c.textMuted, fontWeight: '500' },
   formBtns: { flexDirection: 'row', gap: 10, marginTop: 8 },
-  cancelBtn: { flex: 1, backgroundColor: Colors.bgElevated, borderRadius: 14, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderWidth: 1, borderColor: Colors.border },
-  cancelBtnText: { fontSize: 15, fontWeight: '600', color: Colors.textMuted },
+  cancelBtn: { flex: 1, backgroundColor: c.bgElevated, borderRadius: 14, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderWidth: 1, borderColor: c.border },
+  cancelBtnText: { fontSize: 15, fontWeight: '600', color: c.textMuted },
   saveBtn: { flex: 1.5, borderRadius: 14, overflow: 'hidden' },
   saveBtnGrad: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14 },
-  saveBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   filterScroll: { marginBottom: 14 },
   filterContent: { gap: 8, paddingVertical: 4 },
-  filterChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard },
-  filterChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  filterChipText: { fontSize: 12, color: Colors.textMuted },
-  filterChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  filterChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard },
+  filterChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  filterChipText: { fontSize: 12, color: c.textMuted },
+  filterChipTextActive: { color: c.primary, fontWeight: '600' },
 
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyEmoji: { fontSize: 52 },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
   emptyBtn: { borderRadius: 16, overflow: 'hidden', marginTop: 8 },
   emptyBtnGrad: { paddingHorizontal: 28, paddingVertical: 15 },
-  emptyBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  emptyBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   productList: { gap: 10 },
-  productCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 8 },
+  productCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 8 },
   productTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
   productInfo: { flex: 1, gap: 4 },
   productCatBadge: { backgroundColor: 'rgba(196,98,45,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  productCatText: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: Colors.primary },
-  productName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, lineHeight: 21 },
-  productBrand: { fontSize: 12, color: Colors.textMuted },
+  productCatText: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.primary },
+  productName: { fontSize: 15, fontWeight: '700', color: c.textPrimary, lineHeight: 21 },
+  productBrand: { fontSize: 12, color: c.textMuted },
   productRight: { alignItems: 'flex-end', gap: 8 },
   ratingBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   ratingBadgeText: { fontSize: 11, fontWeight: '700' },
   deleteBtn: { padding: 4 },
-  productNotes: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-  productDate: { fontSize: 11, color: Colors.textMuted },
+  productNotes: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  productDate: { fontSize: 11, color: c.textMuted },
 
   coachTip: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -374,6 +378,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
     padding: 16, marginTop: 6,
   },
-  coachTipTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  coachTipSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-});
+  coachTipTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  coachTipSub: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  });
+}
