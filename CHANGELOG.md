@@ -4,6 +4,36 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Notifications + Habits + Dark-Mode Finale (Pass 51–61)
+
+Eleven more iterations. Highlights below.
+
+### 🔔 Notifications Center (Pass 56) — `src/engine/NotificationsEngine.ts` + `app/notifications/index.tsx`
+6-source aggregator (badges/milestones/persona shifts/at-risk streak/scan-overdue/score-warning) with persisted dismissals + seen-state. GlassHero unread count, "New" + "Earlier" sections, deeplink tap, dismiss buttons.
+
+### ✨ DailyAffirmation widget (Pass 55) — `src/components/ui/DailyAffirmation.tsx`
+30 affirmations across 8 themes, persona-tilted day-of-year picking, two-sparkle ambient animation (1.1s repeat with 550ms phase offset), tap-to-rotate.
+
+### 📅 SkinCalendar (Pass 54)
+Migrated existing /calendar screen to dark mode.
+
+### 📊 HabitMatrix (Pass 61) — `src/components/ui/HabitMatrix.tsx` + `app/habit-matrix/index.tsx`
+GitHub-contributions-style 7×12 weekly heatmap. 5 intensity bands (alpha-blended primary), Mon-first orientation, day-of-week labels, auto month markers, staggered cell entrance. Hero stats screen with tap-to-detail and all-time aggregates.
+
+### 🌙 Dark-mode marathon (Pass 51, 52, 53, 57, 58, 59, 60) — 23 screens, ~1,000+ Colors refs
+Migrated:
+- Pass 51 (4): oil-guide + water-quality + skin-cycling + hormonal-acne
+- Pass 52 (4): spf-guide + blacklist + rosacea-guide + sensitivity
+- Pass 53 (4): hyperpigmentation + purging-guide + dupes + skin-age
+- Pass 57 (4): scanner + ingredient/[name] + skin-report + exfoliation
+- Pass 58 (3): environment-log + cold-therapy + skin-dna
+- Pass 59 (4): quiz + minimal-routine + mens-skin + ingredient-check
+- Pass 60 (4): skin-type/[type] + skin-scorecard + retinol-guide + products
+
+Established patterns reused: `shimColors(palette)` for old inline-Colors objects; `buildXxx(c: Palette)` factories for module-level color maps; helper functions like `getResultColor(score, c)` taking palette as second arg.
+
+---
+
 ## 2026-05-09 — Achievements + Spectrum + Dark-Mode Sweep (Pass 41–47)
 
 Seven more iterations.
