@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Section = {
   id: string;
@@ -42,6 +43,8 @@ const MARKETING_TERMS: { term: string; reality: string }[] = [
 ];
 
 export default function LabelGuide() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
@@ -171,7 +174,7 @@ export default function LabelGuide() {
             <View key={i} style={styles.concRow}>
               <View style={styles.concRange}>
                 <Text style={styles.concRangeText}>{item.range}</Text>
-                <Text style={[styles.concPct, { color: Colors.primary }]}>{item.pct}</Text>
+                <Text style={[styles.concPct, { color: colors.primary }]}>{item.pct}</Text>
               </View>
               <Text style={styles.concExample}>{item.example}</Text>
             </View>
@@ -206,7 +209,7 @@ export default function LabelGuide() {
               ['Silicones (dimethicone)', 'Natural oils (jojoba, squalane, tallow)'],
             ].map(([conv, better], i) => (
               <View key={i} style={styles.compRow}>
-                <Text style={[styles.compCell, { color: Colors.scorePoor }]}>{conv}</Text>
+                <Text style={[styles.compCell, { color: colors.scorePoor }]}>{conv}</Text>
                 <Text style={[styles.compCell, { color: '#4ADE80' }]}>{better}</Text>
               </View>
             ))}
@@ -221,7 +224,7 @@ export default function LabelGuide() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Label Reading Guide</Text>
@@ -233,7 +236,7 @@ export default function LabelGuide() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.hero}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.heroEmoji}>🔍</Text>
           <Text style={styles.heroTitle}>Read Every Label Like a Chemist</Text>
           <Text style={styles.heroDesc}>
@@ -244,12 +247,12 @@ export default function LabelGuide() {
         {SECTIONS.map(section => (
           <View key={section.id}>
             <Pressable
-              style={[styles.sectionHeader, activeSection === section.id && { borderColor: `${Colors.primary}50`, backgroundColor: `${Colors.primary}05` }]}
+              style={[styles.sectionHeader, activeSection === section.id && { borderColor: `${colors.primary}50`, backgroundColor: `${colors.primary}05` }]}
               onPress={() => setActiveSection(activeSection === section.id ? null : section.id)}
             >
               <Text style={styles.sectionEmoji}>{section.emoji}</Text>
               <Text style={styles.sectionTitle}>{section.title}</Text>
-              <Ionicons name={activeSection === section.id ? 'chevron-up' : 'chevron-down'} size={16} color={Colors.textMuted} />
+              <Ionicons name={activeSection === section.id ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textMuted} />
             </Pressable>
             {activeSection === section.id && (
               <View style={styles.sectionBody}>
@@ -260,7 +263,7 @@ export default function LabelGuide() {
         ))}
 
         <View style={styles.tallowCard}>
-          <LinearGradient colors={[`${Colors.primary}12`, `${Colors.primary}04`]} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
           <Text style={styles.tallowTitle}>🌿 Why TallowDermics Is Different</Text>
           <Text style={styles.tallowText}>
             TallowDermics Balm ingredient list: Grass-fed Beef Tallow, Beeswax, Calendula. That's it. No water means no preservatives. No synthetic emulsifiers. No fragrance. No fillers. The ingredient list is the entire formula.
@@ -273,82 +276,84 @@ export default function LabelGuide() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   hero: { borderRadius: 20, overflow: 'hidden', padding: 24, gap: 8, marginBottom: 16, alignItems: 'center' },
   heroEmoji: { fontSize: 40 },
-  heroTitle: { fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  heroTitle: { fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center' },
   heroDesc: { fontSize: 14, color: 'rgba(255,255,255,0.75)', textAlign: 'center', lineHeight: 22 },
 
   sectionHeader: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard, marginBottom: 4,
+    padding: 14, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard, marginBottom: 4,
   },
   sectionEmoji: { fontSize: 20 },
-  sectionTitle: { flex: 1, fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  sectionTitle: { flex: 1, fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   sectionBody: {
-    backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.border,
     marginBottom: 8, overflow: 'hidden',
   },
   sectionContent: { padding: 16, gap: 12 },
-  sectionText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 21 },
-  sectionNote: { fontSize: 11, color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
+  sectionText: { fontSize: 13, color: c.textSecondary, lineHeight: 21 },
+  sectionNote: { fontSize: 11, color: c.textMuted, fontStyle: 'italic', lineHeight: 17 },
 
-  inci: { backgroundColor: Colors.bgElevated, borderRadius: 10, padding: 12, gap: 6 },
-  inciTitle: { fontSize: 12, fontWeight: '800', color: Colors.textPrimary },
+  inci: { backgroundColor: c.bgElevated, borderRadius: 10, padding: 12, gap: 6 },
+  inciTitle: { fontSize: 12, fontWeight: '800', color: c.textPrimary },
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  bullet: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary, marginTop: 6, flexShrink: 0 },
-  bulletText: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  bullet: { width: 6, height: 6, borderRadius: 3, backgroundColor: c.primary, marginTop: 6, flexShrink: 0 },
+  bulletText: { flex: 1, fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
-  inciExample: { backgroundColor: Colors.bgElevated, borderRadius: 10, padding: 12, gap: 6 },
-  inciExampleTitle: { fontSize: 11, fontWeight: '800', color: Colors.textMuted, marginBottom: 4 },
+  inciExample: { backgroundColor: c.bgElevated, borderRadius: 10, padding: 12, gap: 6 },
+  inciExampleTitle: { fontSize: 11, fontWeight: '800', color: c.textMuted, marginBottom: 4 },
   inciExampleRow: { gap: 2 },
-  inciExampleIngredient: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary, fontFamily: 'monospace' },
-  inciExampleNote: { fontSize: 11, color: Colors.textMuted, lineHeight: 16 },
+  inciExampleIngredient: { fontSize: 13, fontWeight: '800', color: c.textPrimary, fontFamily: 'monospace' },
+  inciExampleNote: { fontSize: 11, color: c.textMuted, lineHeight: 16 },
 
-  pointRow: { gap: 2, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 8 },
-  pointName: { fontSize: 13, fontWeight: '800', color: Colors.textPrimary },
-  pointDetail: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  pointRow: { gap: 2, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 8 },
+  pointName: { fontSize: 13, fontWeight: '800', color: c.textPrimary },
+  pointDetail: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
-  redFlagRow: { gap: 2, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 8 },
-  redFlagName: { fontSize: 13, fontWeight: '800', color: Colors.scorePoor },
-  redFlagWhy: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  redFlagRow: { gap: 2, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 8 },
+  redFlagName: { fontSize: 13, fontWeight: '800', color: c.scorePoor },
+  redFlagWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
-  marketingRow: { gap: 2, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 8 },
-  marketingTerm: { fontSize: 13, fontWeight: '800', color: Colors.gold },
-  marketingReality: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  marketingRow: { gap: 2, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 8 },
+  marketingTerm: { fontSize: 13, fontWeight: '800', color: c.gold },
+  marketingReality: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
-  concRow: { flexDirection: 'row', gap: 10, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 8 },
+  concRow: { flexDirection: 'row', gap: 10, borderTopWidth: 1, borderTopColor: c.border, paddingTop: 8 },
   concRange: { width: 100, gap: 2 },
-  concRangeText: { fontSize: 11, fontWeight: '700', color: Colors.textMuted },
+  concRangeText: { fontSize: 11, fontWeight: '700', color: c.textMuted },
   concPct: { fontSize: 14, fontWeight: '900' },
-  concExample: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  concExample: { flex: 1, fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
-  comparisonTable: { borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border },
-  compRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border },
-  compHeader: { backgroundColor: Colors.bgElevated },
+  comparisonTable: { borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: c.border },
+  compRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: c.border },
+  compHeader: { backgroundColor: c.bgElevated },
   compCell: { flex: 1, padding: 10, fontSize: 12, lineHeight: 18 },
-  compHeaderText: { fontWeight: '800', color: Colors.textPrimary, fontSize: 11 },
+  compHeaderText: { fontWeight: '800', color: c.textPrimary, fontSize: 11 },
 
   tallowCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14, marginTop: 10,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

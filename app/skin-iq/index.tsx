@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Question = {
   question: string;
@@ -135,13 +136,18 @@ const IQ_LABELS: Record<number, string> = {
   0: 'Keep Reading!',
 };
 
-const SCORE_COLORS: Record<string, string> = {
-  high: '#4ADE80',
-  mid: Colors.gold,
-  low: Colors.scorePoor,
-};
+function buildScoreColors(c: Palette): Record<string, string> {
+  return {
+    high: '#4ADE80',
+    mid: c.gold,
+    low: c.scorePoor,
+  };
+}
 
 export default function SkinIQ() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SCORE_COLORS = useMemo(() => buildScoreColors(colors), [colors]);
   const [currentQ, setCurrentQ] = useState(-1); // -1 = intro
   const [answers, setAnswers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
@@ -197,7 +203,7 @@ export default function SkinIQ() {
         <SafeAreaView edges={['top']}>
           <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Skin IQ Quiz</Text>
             <View style={{ width: 36 }} />
@@ -205,7 +211,7 @@ export default function SkinIQ() {
         </SafeAreaView>
         <Animated.ScrollView contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
           <View style={styles.introCard}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <Text style={styles.introEmoji}>🧠</Text>
             <Text style={styles.introTitle}>How Much Do You Know About Skin?</Text>
             <Text style={styles.introSub}>{QUESTIONS.length} questions · Ingredients, routines, science</Text>
@@ -226,7 +232,7 @@ export default function SkinIQ() {
           </View>
 
           <Pressable style={styles.startBtn} onPress={start}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <Text style={styles.startBtnText}>Start the Quiz →</Text>
           </Pressable>
           <View style={{ height: 100 }} />
@@ -242,7 +248,7 @@ export default function SkinIQ() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Your Results</Text>
             <View style={{ width: 36 }} />
@@ -274,9 +280,9 @@ export default function SkinIQ() {
             return (
               <View key={i} style={[styles.reviewCard, { borderColor: isCorrect ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)' }]}>
                 <View style={styles.reviewHeader}>
-                  <Ionicons name={isCorrect ? 'checkmark-circle' : 'close-circle'} size={20} color={isCorrect ? '#4ADE80' : Colors.scorePoor} />
+                  <Ionicons name={isCorrect ? 'checkmark-circle' : 'close-circle'} size={20} color={isCorrect ? '#4ADE80' : colors.scorePoor} />
                   <Text style={[styles.reviewDifficulty, {
-                    color: question.difficulty === 'easy' ? '#4ADE80' : question.difficulty === 'medium' ? Colors.gold : Colors.scorePoor,
+                    color: question.difficulty === 'easy' ? '#4ADE80' : question.difficulty === 'medium' ? colors.gold : colors.scorePoor,
                   }]}>{question.difficulty.toUpperCase()}</Text>
                 </View>
                 <Text style={styles.reviewQ}>{question.question}</Text>
@@ -302,7 +308,7 @@ export default function SkinIQ() {
           </Pressable>
 
           <Pressable style={styles.labBtn} onPress={() => router.push('/learn')}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <Text style={styles.labBtnText}>Explore Skin Lab →</Text>
           </Pressable>
 
@@ -318,12 +324,12 @@ export default function SkinIQ() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Question {currentQ + 1}/{QUESTIONS.length}</Text>
           <View style={[styles.backBtn, { backgroundColor: 'transparent', borderColor: 'transparent' }]}>
             <Text style={[styles.difficultyBadge, {
-              color: q.difficulty === 'easy' ? '#4ADE80' : q.difficulty === 'medium' ? Colors.gold : Colors.scorePoor,
+              color: q.difficulty === 'easy' ? '#4ADE80' : q.difficulty === 'medium' ? colors.gold : colors.scorePoor,
             }]}>{q.difficulty}</Text>
           </View>
         </View>
@@ -338,15 +344,15 @@ export default function SkinIQ() {
 
         <View style={styles.optionsWrap}>
           {q.options.map((opt, i) => {
-            let bg = Colors.bgCard;
-            let border = Colors.border;
-            let textColor = Colors.textPrimary;
+            let bg = colors.bgCard;
+            let border = colors.border;
+            let textColor = colors.textPrimary;
 
             if (selected !== null) {
               if (i === q.correct) { bg = 'rgba(74,222,128,0.12)'; border = '#4ADE80'; textColor = '#4ADE80'; }
-              else if (i === selected && selected !== q.correct) { bg = 'rgba(248,113,113,0.12)'; border = Colors.scorePoor; textColor = Colors.scorePoor; }
+              else if (i === selected && selected !== q.correct) { bg = 'rgba(248,113,113,0.12)'; border = colors.scorePoor; textColor = colors.scorePoor; }
             } else if (selected === i) {
-              bg = 'rgba(196,98,45,0.12)'; border = Colors.primary; textColor = Colors.primary;
+              bg = 'rgba(196,98,45,0.12)'; border = colors.primary; textColor = colors.primary;
             }
 
             return (
@@ -356,7 +362,7 @@ export default function SkinIQ() {
                 onPress={() => selectAnswer(i)}
               >
                 <View style={[styles.optionLetter, { borderColor: border }]}>
-                  <Text style={[styles.optionLetterText, { color: border === Colors.border ? Colors.textMuted : border }]}>
+                  <Text style={[styles.optionLetterText, { color: border === colors.border ? colors.textMuted : border }]}>
                     {['A', 'B', 'C', 'D'][i]}
                   </Text>
                 </View>
@@ -365,7 +371,7 @@ export default function SkinIQ() {
                   <Ionicons name="checkmark-circle" size={20} color="#4ADE80" />
                 )}
                 {selected !== null && i === selected && selected !== q.correct && (
-                  <Ionicons name="close-circle" size={20} color={Colors.scorePoor} />
+                  <Ionicons name="close-circle" size={20} color={colors.scorePoor} />
                 )}
               </Pressable>
             );
@@ -375,7 +381,7 @@ export default function SkinIQ() {
         {showExplanation && (
           <View style={styles.explanationCard}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
-            <Ionicons name="bulb-outline" size={18} color={Colors.gold} />
+            <Ionicons name="bulb-outline" size={18} color={colors.gold} />
             <View style={{ flex: 1 }}>
               <Text style={styles.explanationTitle}>
                 {selected === q.correct ? '✅ Correct!' : '❌ Not quite'}
@@ -387,7 +393,7 @@ export default function SkinIQ() {
 
         {selected !== null && (
           <Pressable style={styles.nextBtn} onPress={next}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <Text style={styles.nextBtnText}>
               {currentQ < QUESTIONS.length - 1 ? 'Next Question →' : 'See My Score →'}
             </Text>
@@ -400,31 +406,32 @@ export default function SkinIQ() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
   difficultyBadge: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   scroll: { paddingHorizontal: 20 },
 
-  progressBarOuter: { height: 3, backgroundColor: Colors.border },
-  progressBarInner: { height: 3, backgroundColor: Colors.primary },
+  progressBarOuter: { height: 3, backgroundColor: c.border },
+  progressBarInner: { height: 3, backgroundColor: c.primary },
 
   introCard: { borderRadius: 20, overflow: 'hidden', padding: 32, alignItems: 'center', gap: 10, marginBottom: 20, marginTop: 8 },
   introEmoji: { fontSize: 52 },
-  introTitle: { fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  introTitle: { fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center' },
   introSub: { fontSize: 13, color: 'rgba(255,255,255,0.8)', textAlign: 'center' },
 
-  infoCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 18, gap: 14, marginBottom: 20 },
+  infoCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 18, gap: 14, marginBottom: 20 },
   infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   infoIcon: { fontSize: 20, width: 28, textAlign: 'center' },
-  infoText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  infoText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   startBtn: { height: 56, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  startBtnText: { fontSize: 16, fontWeight: '800', color: Colors.white },
+  startBtnText: { fontSize: 16, fontWeight: '800', color: c.white },
 
-  question: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, lineHeight: 30, marginVertical: 20 },
+  question: { fontSize: 20, fontWeight: '800', color: c.textPrimary, lineHeight: 30, marginVertical: 20 },
 
   optionsWrap: { gap: 10 },
   option: { flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 14, borderWidth: 1.5, padding: 16 },
@@ -433,31 +440,32 @@ const styles = StyleSheet.create({
   optionText: { flex: 1, fontSize: 14, fontWeight: '500', lineHeight: 22 },
 
   explanationCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginTop: 16 },
-  explanationTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 6 },
-  explanationText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  explanationTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 6 },
+  explanationText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   nextBtn: { height: 52, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  nextBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  nextBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
-  resultCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, padding: 28, alignItems: 'center', gap: 8, marginBottom: 24 },
+  resultCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 28, alignItems: 'center', gap: 8, marginBottom: 24 },
   resultScore: { fontSize: 52, fontWeight: '900', lineHeight: 60 },
   resultPct: { fontSize: 20, fontWeight: '700' },
-  resultLabel: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  resultSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 },
+  resultLabel: { fontSize: 22, fontWeight: '800', color: c.textPrimary },
+  resultSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 },
 
-  reviewTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
-  reviewCard: { backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1.5, padding: 14, gap: 8, marginBottom: 12 },
+  reviewTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
+  reviewCard: { backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1.5, padding: 14, gap: 8, marginBottom: 12 },
   reviewHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   reviewDifficulty: { fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  reviewQ: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
+  reviewQ: { fontSize: 13, fontWeight: '600', color: c.textPrimary, lineHeight: 20 },
   reviewCorrect: { fontSize: 13, fontWeight: '600', lineHeight: 20 },
-  reviewWrong: { fontSize: 13, color: Colors.scorePoor, lineHeight: 20 },
-  reviewExplanation: { fontSize: 12, color: Colors.textMuted, lineHeight: 19 },
+  reviewWrong: { fontSize: 13, color: c.scorePoor, lineHeight: 20 },
+  reviewExplanation: { fontSize: 12, color: c.textMuted, lineHeight: 19 },
   learnMoreBtn: { paddingTop: 4 },
-  learnMoreText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  learnMoreText: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
-  retryBtn: { alignItems: 'center', paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  retryText: { fontSize: 14, fontWeight: '600', color: Colors.textMuted },
+  retryBtn: { alignItems: 'center', paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  retryText: { fontSize: 14, fontWeight: '600', color: c.textMuted },
   labBtn: { height: 52, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  labBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
-});
+  labBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
+  });
+}

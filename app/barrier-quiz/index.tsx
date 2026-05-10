@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Question = {
   id: string;
@@ -109,7 +110,7 @@ type BarrierResult = {
   tallowNote: string;
 };
 
-function getResult(totalScore: number, maxScore: number): BarrierResult {
+function getResult(totalScore: number, maxScore: number, c: Palette): BarrierResult {
   const pct = totalScore / maxScore;
 
   if (pct < 0.25) {
@@ -131,7 +132,7 @@ function getResult(totalScore: number, maxScore: number): BarrierResult {
 
   if (pct < 0.5) {
     return {
-      level: 'Mildly Compromised', score: totalScore, color: Colors.gold, emoji: '⚠️',
+      level: 'Mildly Compromised', score: totalScore, color: c.gold, emoji: '⚠️',
       summary: 'Your barrier shows mild signs of compromise. A 2-4 week repair protocol will significantly restore function.',
       protocol: [
         { phase: 'Phase 1: Simplify', duration: 'Weeks 1-2', steps: ['Stop all actives (AHA, BHA, retinol, vitamin C)', 'Use only micellar water to cleanse', 'Apply ceramide moisturizer twice daily', 'Seal with tallow balm at night'] },
@@ -170,7 +171,7 @@ function getResult(totalScore: number, maxScore: number): BarrierResult {
   }
 
   return {
-    level: 'Severely Compromised', score: totalScore, color: Colors.scorePoor, emoji: '🚨',
+    level: 'Severely Compromised', score: totalScore, color: c.scorePoor, emoji: '🚨',
     summary: 'Your barrier is severely compromised. Focus is on wound-healing mode for at least 6-8 weeks. Consider seeing a dermatologist.',
     protocol: [
       { phase: 'Emergency Phase', duration: 'Weeks 1-4', steps: ['Cleanse only with mineral/lukewarm water — no cleanser', 'Apply thick layer of tallow immediately after washing (damp skin)', 'No products of any kind except tallow', 'Use humidifier in bedroom', 'Drink 8+ glasses of water daily', 'Consult a dermatologist — you may have a condition like eczema or rosacea'] },
@@ -188,6 +189,8 @@ function getResult(totalScore: number, maxScore: number): BarrierResult {
 }
 
 export default function BarrierQuiz() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [phase, setPhase] = useState<'intro' | 'quiz' | 'result'>('intro');
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -210,7 +213,7 @@ export default function BarrierQuiz() {
       setCurrentQ(prev => prev + 1);
     } else {
       const total = newAnswers.reduce((s, v) => s + v, 0);
-      setResult(getResult(total, QUESTIONS.length * 3));
+      setResult(getResult(total, QUESTIONS.length * 3, colors));
       setPhase('result');
     }
   };
@@ -228,7 +231,7 @@ export default function BarrierQuiz() {
         <SafeAreaView edges={['top']}>
           <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Barrier Health Quiz</Text>
             <View style={{ width: 36 }} />
@@ -237,7 +240,7 @@ export default function BarrierQuiz() {
 
         <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
           <View style={styles.hero}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <Text style={styles.heroEmoji}>🛡️</Text>
             <Text style={styles.heroTitle}>Skin Barrier Assessment</Text>
             <Text style={styles.heroDesc}>
@@ -255,16 +258,16 @@ export default function BarrierQuiz() {
               'How tallow fits into your barrier repair',
             ].map((item, i) => (
               <View key={i} style={styles.listRow}>
-                <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
+                <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
                 <Text style={styles.listText}>{item}</Text>
               </View>
             ))}
           </View>
 
           <Pressable style={styles.startBtn} onPress={() => setPhase('quiz')}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary, colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
             <Text style={styles.startBtnText}>Start ({QUESTIONS.length} Questions)</Text>
-            <Ionicons name="arrow-forward" size={18} color={Colors.white} />
+            <Ionicons name="arrow-forward" size={18} color={colors.white} />
           </Pressable>
 
           <View style={{ height: 80 }} />
@@ -282,7 +285,7 @@ export default function BarrierQuiz() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={restart}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>{currentQ + 1} of {QUESTIONS.length}</Text>
             <View style={{ width: 36 }} />
@@ -301,7 +304,7 @@ export default function BarrierQuiz() {
                   <Text style={styles.optionLetterText}>{String.fromCharCode(65 + i)}</Text>
                 </View>
                 <Text style={styles.optionText}>{opt.text}</Text>
-                <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
               </Pressable>
             ))}
           </View>
@@ -315,7 +318,7 @@ export default function BarrierQuiz() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Your Barrier Result</Text>
           <Pressable onPress={restart}>
@@ -366,17 +369,17 @@ export default function BarrierQuiz() {
 
           <View style={styles.avoidCard}>
             <LinearGradient colors={['rgba(239,68,68,0.08)', 'rgba(239,68,68,0.02)']} style={StyleSheet.absoluteFill} />
-            <Text style={[styles.cardTitle, { color: Colors.scorePoor }]}>⚠️ Avoid Right Now</Text>
+            <Text style={[styles.cardTitle, { color: colors.scorePoor }]}>⚠️ Avoid Right Now</Text>
             {result.avoid.map((item, i) => (
               <View key={i} style={styles.avoidRow}>
-                <Ionicons name="close-circle" size={14} color={Colors.scorePoor} />
+                <Ionicons name="close-circle" size={14} color={colors.scorePoor} />
                 <Text style={styles.avoidText}>{item}</Text>
               </View>
             ))}
           </View>
 
           <View style={styles.tallowCard}>
-            <LinearGradient colors={[`${Colors.primary}12`, `${Colors.primary}04`]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
             <Text style={styles.tallowTitle}>🌿 Tallow for Your Barrier Level</Text>
             <Text style={styles.tallowText}>{result.tallowNote}</Text>
           </View>
@@ -392,55 +395,56 @@ export default function BarrierQuiz() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
-  retakeText: { fontSize: 13, color: Colors.textMuted, textDecorationLine: 'underline' },
-  progressBg: { height: 3, backgroundColor: Colors.border },
-  progressFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 2 },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
+  retakeText: { fontSize: 13, color: c.textMuted, textDecorationLine: 'underline' },
+  progressBg: { height: 3, backgroundColor: c.border },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 2 },
   scroll: { paddingHorizontal: 16 },
   quizScroll: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 60 },
 
   hero: { borderRadius: 20, overflow: 'hidden', padding: 24, gap: 10, marginBottom: 16, alignItems: 'center' },
   heroEmoji: { fontSize: 48 },
-  heroTitle: { fontSize: 24, fontWeight: '900', color: Colors.white },
+  heroTitle: { fontSize: 24, fontWeight: '900', color: c.white },
   heroDesc: { fontSize: 14, color: 'rgba(255,255,255,0.75)', textAlign: 'center', lineHeight: 22 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   listRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  listText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  listText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   startBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     height: 56, borderRadius: 16, overflow: 'hidden', marginBottom: 14,
   },
-  startBtnText: { fontSize: 16, fontWeight: '800', color: Colors.white },
+  startBtnText: { fontSize: 16, fontWeight: '800', color: c.white },
 
-  questionText: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, lineHeight: 28, marginBottom: 24 },
+  questionText: { fontSize: 20, fontWeight: '800', color: c.textPrimary, lineHeight: 28, marginBottom: 24 },
   optionsWrap: { gap: 10 },
   optionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 14,
   },
   optionLetter: {
     width: 28, height: 28, borderRadius: 8,
-    backgroundColor: `${Colors.primary}15`, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: `${c.primary}15`, alignItems: 'center', justifyContent: 'center',
   },
-  optionLetterText: { fontSize: 12, fontWeight: '900', color: Colors.primary },
-  optionText: { flex: 1, fontSize: 14, color: Colors.textSecondary, lineHeight: 20 },
+  optionLetterText: { fontSize: 12, fontWeight: '900', color: c.primary },
+  optionText: { flex: 1, fontSize: 14, color: c.textSecondary, lineHeight: 20 },
 
   resultHero: {
     borderRadius: 20, overflow: 'hidden', borderWidth: 2,
@@ -448,40 +452,41 @@ const styles = StyleSheet.create({
   },
   resultEmoji: { fontSize: 48 },
   resultLevel: { fontSize: 24, fontWeight: '900' },
-  resultSummary: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20 },
+  resultSummary: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20 },
 
-  protocolPhase: { gap: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: Colors.border },
+  protocolPhase: { gap: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: c.border },
   phaseHeader: { borderLeftWidth: 3, paddingLeft: 10 },
   phaseName: { fontSize: 14, fontWeight: '800' },
-  phaseDuration: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
+  phaseDuration: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   stepDot: { width: 6, height: 6, borderRadius: 3, marginTop: 6, flexShrink: 0 },
-  stepText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  stepText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
-  ingRow: { gap: 2, paddingVertical: 6, borderTopWidth: 1, borderTopColor: Colors.border },
-  highPriorityRow: { borderTopColor: `${Colors.primary}30` },
-  highBadge: { backgroundColor: `${Colors.primary}20`, borderRadius: 5, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },
-  highBadgeText: { fontSize: 9, fontWeight: '900', color: Colors.primary, letterSpacing: 1 },
-  ingName: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  ingRole: { fontSize: 12, color: Colors.textMuted, lineHeight: 17 },
+  ingRow: { gap: 2, paddingVertical: 6, borderTopWidth: 1, borderTopColor: c.border },
+  highPriorityRow: { borderTopColor: `${c.primary}30` },
+  highBadge: { backgroundColor: `${c.primary}20`, borderRadius: 5, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },
+  highBadgeText: { fontSize: 9, fontWeight: '900', color: c.primary, letterSpacing: 1 },
+  ingName: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  ingRole: { fontSize: 12, color: c.textMuted, lineHeight: 17 },
 
   avoidCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)',
     padding: 16, gap: 8, marginBottom: 14,
   },
   avoidRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  avoidText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  avoidText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   tallowCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   doneBtn: {
-    height: 52, borderRadius: 14, backgroundColor: Colors.primary,
+    height: 52, borderRadius: 14, backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  doneBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
-});
+  doneBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
+  });
+}

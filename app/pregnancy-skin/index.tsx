@@ -1,20 +1,25 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Avoid', 'Safe Ingredients', 'Skin Changes', 'Routine', 'Tallow in Pregnancy'];
 
-const AVOID_INGREDIENTS = [
+function buildAvoidIngredients(Colors: ReturnType<typeof shimColors>) {
+  return [
   { ingredient: 'Retinoids (ALL forms)', reason: 'Retinol, tretinoin, retinaldehyde, adapalene, tazarotene, isotretinoin — all vitamin A derivatives are teratogenic at high systemic doses. While topical retinoids are minimally absorbed, the established animal and case study data means avoidance is universally recommended during pregnancy.', risk: 'High — avoid entirely', category: 'avoid', color: Colors.red },
   { ingredient: 'Salicylic acid (>2%, oral/systemic)', reason: 'Topical salicylic acid at low concentrations (≤2% as a leave-on, ≤3% as rinse-off) is generally considered low-risk. High-concentration peels and oral salicylate-containing medications are the concern. The systemic absorption from a 2% BHA toner is negligible.', risk: 'High concentration: avoid. Low % topical: generally accepted with caution', category: 'caution', color: Colors.gold },
   { ingredient: 'Hydroquinone', reason: 'Skin brightening agent with 35–45% systemic absorption (high for a topical). Limited pregnancy safety data. Most dermatologists recommend avoiding during pregnancy — the systemic exposure concern is real given its high topical absorption rate.', risk: 'Moderate-high — avoid', category: 'avoid', color: Colors.red },
@@ -23,9 +28,11 @@ const AVOID_INGREDIENTS = [
   { ingredient: 'Essential oils (high concentration)', reason: 'Certain essential oils (clary sage, rosemary, thyme, basil) are considered uterine stimulants. Even aromatherapy concentrations are concerning in the first trimester. Formulated skincare with trace fragrance amounts is different from applying essential oil concentrates directly.', risk: 'Some: high risk. Diluted fragrance in formulas: lower risk', category: 'caution', color: Colors.gold },
   { ingredient: 'Formaldehyde-releasing preservatives', reason: 'DMDM hydantoin, quaternium-15, diazolidinyl urea — found in some drugstore products. Formaldehyde is a known carcinogen. Avoid during pregnancy (and generally). Look for formaldehyde-free preservative systems.', risk: 'High — avoid', category: 'avoid', color: Colors.red },
   { ingredient: 'Dihydroxyacetone (DHA) in self-tanners', reason: 'DHA reacts with amino acids in dead skin cells to create colour. While topical DHA on intact skin has low systemic absorption, inhalation from spray tans is a concern. Avoid spray tan application (inhalation risk). Lotion-based self-tanners with minimal skin contact may be discussed with your OB.', risk: 'Spray application: avoid. Lotion: discuss with OB', category: 'caution', color: Colors.gold },
-];
+  ];
+}
 
-const SAFE_INGREDIENTS = [
+function buildSafeIngredients(Colors: ReturnType<typeof shimColors>) {
+  return [
   { ingredient: 'Hyaluronic acid', safety: 'Safe', note: 'Naturally occurring in the body. Topical HA has negligible systemic absorption. No pregnancy concerns. Excellent for the dehydration and skin stretching common in pregnancy.', icon: '💧', color: Colors.teal },
   { ingredient: 'Niacinamide (B3)', safety: 'Safe', note: 'Water-soluble vitamin. Topical absorption is low. No teratogenic concerns. Excellent for the hyperpigmentation (melasma) that commonly worsens during pregnancy. Safe at standard 2–10% concentrations.', icon: '💊', color: Colors.blue },
   { ingredient: 'Vitamin C (topical)', safety: 'Safe', note: 'Water-soluble, antioxidant. No pregnancy concerns with topical application. Excellent for melasma control (inhibits melanin at the synthesis step). Stable derivatives preferred for sensitive pregnancy skin.', icon: '🍊', color: Colors.gold },
@@ -35,7 +42,8 @@ const SAFE_INGREDIENTS = [
   { ingredient: 'Ceramides and barrier lipids', safety: 'Safe', note: 'Naturally occurring skin barrier components. Topical ceramide formulations have no systemic concerns. Highly recommended for barrier support during pregnancy when skin is stretched and more reactive.', icon: '🛡️', color: Colors.green },
   { ingredient: 'Centella asiatica (Cica)', safety: 'Generally accepted', note: 'Plant extract with wound healing and anti-inflammatory properties. Commonly used for stretch mark prevention during pregnancy. Topical application generally considered safe — not classified as a concern.', icon: '🌿', color: Colors.green },
   { ingredient: 'Vitamin E (tocopherol)', safety: 'Safe', note: 'Topical vitamin E is antioxidant and non-irritating. No pregnancy concerns with topical application. Supports the skin during rapid stretching. Found naturally in grass-fed tallow.', icon: '🌻', color: Colors.green },
-];
+  ];
+}
 
 const SKIN_CHANGES = [
   { change: 'Melasma ("mask of pregnancy")', detail: 'Estrogen stimulates melanocytes, causing hyperpigmentation particularly on the upper lip, forehead, and cheeks. Affects ~50–70% of pregnant women. Worsens dramatically with UV exposure. Primary treatment: strict mineral SPF + vitamin C + niacinamide. Melasma often resolves postpartum but may persist in some women.', trimester: 'Usually 2nd–3rd trimester', icon: '🎭' },
@@ -71,6 +79,11 @@ const TALLOW_PREGNANCY = [
 ];
 
 export default function PregnancySkinScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const AVOID_INGREDIENTS = useMemo(() => buildAvoidIngredients(Colors), [Colors]);
+  const SAFE_INGREDIENTS = useMemo(() => buildSafeIngredients(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedAvoid, setExpandedAvoid] = useState<number | null>(null);
   const [expandedSafe, setExpandedSafe] = useState<number | null>(null);
@@ -209,7 +222,9 @@ export default function PregnancySkinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -250,4 +265,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}
