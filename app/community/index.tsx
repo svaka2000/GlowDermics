@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   Animated, Easing, RefreshControl, Image,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -55,6 +56,8 @@ const LIVE_STATS = [
 ];
 
 function LiveStatTicker() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [idx, setIdx] = useState(0);
   const anim = useRef(new Animated.Value(1)).current;
 
@@ -81,6 +84,8 @@ function LiveStatTicker() {
 }
 
 function LeaderboardRow({ member, rank, isYou }: { member: typeof COMMUNITY_MEMBERS[0]; rank: number; isYou: boolean }) {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const rankColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
   const isTopThree = rank <= 3;
   return (
@@ -90,12 +95,12 @@ function LeaderboardRow({ member, rank, isYou }: { member: typeof COMMUNITY_MEMB
           {isTopThree ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
         </Text>
       </View>
-      <View style={[styles.lbAvatar, { backgroundColor: isYou ? Colors.primary : Colors.primaryLight }]}>
+      <View style={[styles.lbAvatar, { backgroundColor: isYou ? colors.primary : colors.primaryLight }]}>
         <Text style={styles.lbAvatarText}>{member.initials}</Text>
       </View>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <Text style={[styles.lbName, isYou && { color: Colors.primary }]}>
+          <Text style={[styles.lbName, isYou && { color: colors.primary }]}>
             {isYou ? 'You' : member.name}
           </Text>
           {isYou && <View style={styles.youBadge}><Text style={styles.youBadgeText}>YOU</Text></View>}
@@ -114,6 +119,8 @@ function LeaderboardRow({ member, rank, isYou }: { member: typeof COMMUNITY_MEMB
 }
 
 export default function Community() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [refreshing, setRefreshing] = useState(false);
   const [userScore, setUserScore] = useState<number | null>(null);
   const [userStreak, setUserStreak] = useState(0);
@@ -199,7 +206,7 @@ export default function Community() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {/* Header */}
         <Animated.View style={{
@@ -208,7 +215,7 @@ export default function Community() {
         }}>
           <SafeAreaView edges={['top']}>
             <LinearGradient
-              colors={[Colors.primary + '18', 'transparent']}
+              colors={[colors.primary + '18', 'transparent']}
               style={styles.headerGrad}
             >
               <View style={styles.header}>
@@ -217,7 +224,7 @@ export default function Community() {
                   <Text style={styles.headerTitle}>Community</Text>
                 </View>
                 <Pressable style={styles.shareBtn} onPress={() => router.push('/skin-scorecard')}>
-                  <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.shareBtnGrad}>
+                  <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.shareBtnGrad}>
                     <Ionicons name="share-outline" size={16} color="#fff" />
                     <Text style={styles.shareBtnText}>My Card</Text>
                   </LinearGradient>
@@ -230,7 +237,7 @@ export default function Community() {
               {/* User rank card */}
               {userScore !== null && (
                 <View style={styles.myRankCard}>
-                  <LinearGradient colors={[Colors.primary + '20', Colors.primary + '08']} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={[colors.primary + '20', colors.primary + '08']} style={StyleSheet.absoluteFill} />
                   <View style={{ flex: 1 }}>
                     <Text style={styles.myRankLabel}>YOUR GLOBAL RANK</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
@@ -266,7 +273,7 @@ export default function Community() {
                 <Ionicons
                   name={tab.icon}
                   size={14}
-                  color={selectedTab === tab.key ? Colors.white : Colors.textSecondary}
+                  color={selectedTab === tab.key ? colors.white : colors.textSecondary}
                 />
                 <Text style={[styles.tabChipText, selectedTab === tab.key && styles.tabChipTextActive]}>
                   {tab.label}
@@ -298,7 +305,7 @@ export default function Community() {
                 ))}
               </View>
               <View style={styles.lbFootnote}>
-                <Ionicons name="information-circle-outline" size={12} color={Colors.textMuted} />
+                <Ionicons name="information-circle-outline" size={12} color={colors.textMuted} />
                 <Text style={styles.lbFootnoteText}>Rankings update every 24 hours based on streak length and score</Text>
               </View>
             </View>
@@ -314,7 +321,7 @@ export default function Community() {
               {TRENDING_CHALLENGES.map(ch => (
                 <View key={ch.id} style={styles.challengeCard}>
                   <LinearGradient
-                    colors={ch.hot ? [Colors.primary + '14', Colors.primary + '05'] : ['transparent', 'transparent']}
+                    colors={ch.hot ? [colors.primary + '14', colors.primary + '05'] : ['transparent', 'transparent']}
                     style={StyleSheet.absoluteFill}
                   />
                   <View style={styles.challengeTop}>
@@ -379,7 +386,7 @@ export default function Community() {
                       <Text style={styles.tipSkinText}>{tip.skinType}</Text>
                     </View>
                     <View style={styles.tipLikes}>
-                      <Ionicons name="heart" size={12} color={Colors.primary} />
+                      <Ionicons name="heart" size={12} color={colors.primary} />
                       <Text style={styles.tipLikesText}>{tip.likes.toLocaleString()}</Text>
                     </View>
                   </View>
@@ -396,7 +403,7 @@ export default function Community() {
 
               {/* CTA to share your tip */}
               <Pressable style={styles.shareTipCta} onPress={() => router.push('/skin-scorecard')}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={[colors.primaryLight, colors.primary]} style={StyleSheet.absoluteFill} />
                 <Ionicons name="add-circle-outline" size={20} color="#fff" />
                 <Text style={styles.shareTipCtaText}>Share Your Journey Card</Text>
                 <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />
@@ -438,7 +445,7 @@ export default function Community() {
 
               {/* Could you be next? */}
               <View style={styles.couldYouCard}>
-                <LinearGradient colors={[Colors.primary + '15', Colors.primary + '05']} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={[colors.primary + '15', colors.primary + '05']} style={StyleSheet.absoluteFill} />
                 <Text style={styles.couldYouTitle}>Could you be next week's winner?</Text>
                 <Text style={styles.couldYouSub}>Log your routine daily, hit your water goal, and keep your streak alive to climb the rankings.</Text>
                 <Pressable style={styles.couldYouBtn} onPress={() => router.push('/(tabs)/routine')}>
@@ -453,7 +460,7 @@ export default function Community() {
         {/* Invite friends CTA */}
         <Pressable style={styles.inviteCta} onPress={() => router.push('/skin-scorecard')}>
           <LinearGradient
-            colors={[Colors.primaryLight, Colors.primary]}
+            colors={[colors.primaryLight, colors.primary]}
             style={StyleSheet.absoluteFill}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           />
@@ -472,118 +479,119 @@ export default function Community() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   scroll: { paddingHorizontal: 20 },
 
   headerGrad: { borderRadius: 0, paddingBottom: 16 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: 16, paddingBottom: 12 },
-  headerEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 2 },
-  headerTitle: { fontSize: 28, fontWeight: '900', color: Colors.textPrimary },
+  headerEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 2 },
+  headerTitle: { fontSize: 28, fontWeight: '900', color: c.textPrimary },
   shareBtn: { borderRadius: 14, overflow: 'hidden' },
   shareBtnGrad: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9 },
   shareBtnText: { fontSize: 12, fontWeight: '700', color: '#fff' },
 
   liveStat: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 14 },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4ADE80' },
-  liveStatText: { fontSize: 12, color: Colors.textSecondary },
-  liveStatVal: { fontWeight: '700', color: Colors.textPrimary },
+  liveStatText: { fontSize: 12, color: c.textSecondary },
+  liveStatVal: { fontWeight: '700', color: c.textPrimary },
 
   myRankCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 16,
   },
-  myRankLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.primary, marginBottom: 4 },
-  myRankNum: { fontSize: 32, fontWeight: '900', color: Colors.textPrimary },
-  myRankSub: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
-  myRankDetail: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  myRankLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.primary, marginBottom: 4 },
+  myRankNum: { fontSize: 32, fontWeight: '900', color: c.textPrimary },
+  myRankSub: { fontSize: 13, color: c.textSecondary, fontWeight: '500' },
+  myRankDetail: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   tabsContent: { paddingVertical: 16, gap: 8 },
   tabChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 14, paddingVertical: 9,
-    borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard,
+    borderRadius: 20, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard,
   },
-  tabChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  tabChipText: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary },
-  tabChipTextActive: { color: Colors.white },
+  tabChipActive: { backgroundColor: c.primary, borderColor: c.primary },
+  tabChipText: { fontSize: 12, fontWeight: '600', color: c.textSecondary },
+  tabChipTextActive: { color: c.white },
 
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
-  sectionSub: { fontSize: 11, color: Colors.textMuted },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+  sectionSub: { fontSize: 11, color: c.textMuted },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18,
+    borderWidth: 1, borderColor: c.border,
     overflow: 'hidden',
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  divider: { height: 1, backgroundColor: Colors.border, marginHorizontal: 16 },
+  divider: { height: 1, backgroundColor: c.border, marginHorizontal: 16 },
 
   lbRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingVertical: 12 },
-  lbRowYou: { backgroundColor: Colors.primary + '08' },
-  lbRank: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgElevated },
-  lbRankText: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
+  lbRowYou: { backgroundColor: c.primary + '08' },
+  lbRank: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: c.bgElevated },
+  lbRankText: { fontSize: 13, fontWeight: '700', color: c.textSecondary },
   lbAvatar: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   lbAvatarText: { fontSize: 15, fontWeight: '800', color: '#fff' },
-  lbName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  youBadge: { backgroundColor: Colors.primary, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 },
+  lbName: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  youBadge: { backgroundColor: c.primary, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 },
   youBadgeText: { fontSize: 8, fontWeight: '900', color: '#fff', letterSpacing: 0.5 },
-  lbSkinType: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
+  lbSkinType: { fontSize: 11, color: c.textMuted, marginTop: 1 },
   lbRight: { alignItems: 'center' },
-  lbStreakNum: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  lbStreakLabel: { fontSize: 9, color: Colors.textMuted },
+  lbStreakNum: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  lbStreakLabel: { fontSize: 9, color: c.textMuted },
   lbScoreWrap: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  lbScore: { fontSize: 13, fontWeight: '800', color: Colors.primary },
+  lbScore: { fontSize: 13, fontWeight: '800', color: c.primary },
 
   lbFootnote: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8 },
-  lbFootnoteText: { fontSize: 10, color: Colors.textMuted, flex: 1 },
+  lbFootnoteText: { fontSize: 10, color: c.textMuted, flex: 1 },
 
   challengeCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     padding: 16, marginBottom: 12,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
   },
   challengeTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
   challengeEmoji: { fontSize: 28 },
-  challengeTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  challengeStats: { fontSize: 11, color: Colors.textMuted, marginTop: 3 },
+  challengeTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  challengeStats: { fontSize: 11, color: c.textMuted, marginTop: 3 },
   hotBadge: { backgroundColor: 'rgba(196,98,45,0.15)', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  hotBadgeText: { fontSize: 8, fontWeight: '800', color: Colors.primary },
-  challengeBarWrap: { height: 6, backgroundColor: Colors.bgElevated, borderRadius: 3, marginBottom: 10, overflow: 'hidden' },
-  challengeBarFill: { height: 6, backgroundColor: Colors.primary, borderRadius: 3 },
+  hotBadgeText: { fontSize: 8, fontWeight: '800', color: c.primary },
+  challengeBarWrap: { height: 6, backgroundColor: c.bgElevated, borderRadius: 3, marginBottom: 10, overflow: 'hidden' },
+  challengeBarFill: { height: 6, backgroundColor: c.primary, borderRadius: 3 },
   challengeFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  challengePct: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
-  joinBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 7 },
+  challengePct: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
+  joinBtn: { backgroundColor: c.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 7 },
   joinBtnText: { fontSize: 12, fontWeight: '700', color: '#fff' },
   challengeActiveBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 10, borderWidth: 1, borderColor: '#4ADE80', paddingHorizontal: 12, paddingVertical: 6 },
   challengeActiveBadgeText: { fontSize: 12, fontWeight: '700', color: '#4ADE80' },
 
   tipCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18,
+    borderWidth: 1, borderColor: c.border,
     padding: 16, marginBottom: 12,
   },
   tipTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   tipSkinBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4 },
-  tipSkinText: { fontSize: 10, fontWeight: '700', color: Colors.primary },
+  tipSkinText: { fontSize: 10, fontWeight: '700', color: c.primary },
   tipLikes: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  tipLikesText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '600' },
-  tipText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22, fontStyle: 'italic', marginBottom: 12 },
+  tipLikesText: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
+  tipText: { fontSize: 14, color: c.textPrimary, lineHeight: 22, fontStyle: 'italic', marginBottom: 12 },
   tipFooter: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  tipAuthorDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  tipAuthorDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: c.primaryLight, alignItems: 'center', justifyContent: 'center' },
   tipAuthorDotText: { fontSize: 11, fontWeight: '700', color: '#fff' },
-  tipAuthor: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary },
-  tipAgo: { fontSize: 11, color: Colors.textMuted },
+  tipAuthor: { fontSize: 12, fontWeight: '600', color: c.textSecondary },
+  tipAgo: { fontSize: 11, color: c.textMuted },
 
   shareTipCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -594,25 +602,25 @@ const styles = StyleSheet.create({
   winnerCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     padding: 16, marginBottom: 10,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
   },
   winnerBadge: { fontSize: 22 },
-  winnerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  winnerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   winnerAvatarText: { fontSize: 17, fontWeight: '800', color: '#fff' },
-  winnerName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  winnerCity: { fontSize: 11, color: Colors.textMuted, marginBottom: 2 },
-  winnerAchievement: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  winnerName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  winnerCity: { fontSize: 11, color: c.textMuted, marginBottom: 2 },
+  winnerAchievement: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
   couldYouCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 20, marginTop: 8,
   },
-  couldYouTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary, marginBottom: 8 },
-  couldYouSub: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, marginBottom: 14 },
-  couldYouBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
+  couldYouTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary, marginBottom: 8 },
+  couldYouSub: { fontSize: 13, color: c.textSecondary, lineHeight: 20, marginBottom: 14 },
+  couldYouBtn: { backgroundColor: c.primary, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
   couldYouBtnText: { fontSize: 13, fontWeight: '700', color: '#fff' },
 
   inviteCta: {
@@ -626,4 +634,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center', justifyContent: 'center',
   },
-});
+  });
+}

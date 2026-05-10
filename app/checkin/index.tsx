@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { JournalEntry } from '../../src/types';
 
@@ -17,12 +18,14 @@ const HABITS_KEY = 'gd_daily_habits';
 
 type Mood = 'great' | 'good' | 'okay' | 'bad';
 
-const MOODS: { value: Mood; emoji: string; label: string; color: string }[] = [
-  { value: 'great', emoji: '😍', label: 'Great', color: Colors.scoreExcellent },
-  { value: 'good', emoji: '😊', label: 'Good', color: Colors.scoreGood },
-  { value: 'okay', emoji: '😐', label: 'Okay', color: Colors.scoreFair },
-  { value: 'bad', emoji: '😔', label: 'Bad', color: Colors.scorePoor },
-];
+function buildMoods(c: Palette): { value: Mood; emoji: string; label: string; color: string }[] {
+  return [
+    { value: 'great', emoji: '😍', label: 'Great', color: c.scoreExcellent },
+    { value: 'good', emoji: '😊', label: 'Good', color: c.scoreGood },
+    { value: 'okay', emoji: '😐', label: 'Okay', color: c.scoreFair },
+    { value: 'bad', emoji: '😔', label: 'Bad', color: c.scorePoor },
+  ];
+}
 
 const QUICK_TAGS = ['Clear skin', 'Breakout', 'Dry', 'Oily', 'Glowing', 'Irritated', 'Balanced', 'Tired skin'];
 
@@ -39,6 +42,9 @@ function generateId() {
 }
 
 export default function DailyCheckIn() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const MOODS = useMemo(() => buildMoods(colors), [colors]);
   const screenAnim = useRef(new Animated.Value(0)).current;
   const [step, setStep] = useState(0);
   const [routineLog, setRoutineLog] = useState({ morning: false, evening: false });
@@ -157,7 +163,7 @@ export default function DailyCheckIn() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View style={{ width: 36 }} />
           </View>
@@ -188,7 +194,7 @@ export default function DailyCheckIn() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Daily Check-In</Text>
@@ -217,13 +223,13 @@ export default function DailyCheckIn() {
                 style={[styles.routineCard, routineLog.morning && styles.routineCardDone]}
                 onPress={() => !routineLog.morning && logRoutine('morning')}
               >
-                <Ionicons name="sunny-outline" size={24} color={routineLog.morning ? Colors.scoreExcellent : Colors.gold} />
-                <Text style={[styles.routineCardLabel, routineLog.morning && { color: Colors.scoreExcellent }]}>
+                <Ionicons name="sunny-outline" size={24} color={routineLog.morning ? colors.scoreExcellent : colors.gold} />
+                <Text style={[styles.routineCardLabel, routineLog.morning && { color: colors.scoreExcellent }]}>
                   Morning Routine
                 </Text>
                 {routineLog.morning ? (
                   <View style={styles.doneChip}>
-                    <Ionicons name="checkmark" size={12} color={Colors.scoreExcellent} />
+                    <Ionicons name="checkmark" size={12} color={colors.scoreExcellent} />
                     <Text style={styles.doneChipText}>Done!</Text>
                   </View>
                 ) : (
@@ -234,13 +240,13 @@ export default function DailyCheckIn() {
                 style={[styles.routineCard, routineLog.evening && styles.routineCardDone]}
                 onPress={() => !routineLog.evening && logRoutine('evening')}
               >
-                <Ionicons name="moon-outline" size={24} color={routineLog.evening ? Colors.scoreExcellent : '#6B85A8'} />
-                <Text style={[styles.routineCardLabel, routineLog.evening && { color: Colors.scoreExcellent }]}>
+                <Ionicons name="moon-outline" size={24} color={routineLog.evening ? colors.scoreExcellent : '#6B85A8'} />
+                <Text style={[styles.routineCardLabel, routineLog.evening && { color: colors.scoreExcellent }]}>
                   Evening Routine
                 </Text>
                 {routineLog.evening ? (
                   <View style={styles.doneChip}>
-                    <Ionicons name="checkmark" size={12} color={Colors.scoreExcellent} />
+                    <Ionicons name="checkmark" size={12} color={colors.scoreExcellent} />
                     <Text style={styles.doneChipText}>Done!</Text>
                   </View>
                 ) : (
@@ -260,14 +266,14 @@ export default function DailyCheckIn() {
 
             <View style={styles.waterControls}>
               <Pressable style={styles.waterBtn} onPress={() => adjustWater(-1)}>
-                <Ionicons name="remove" size={22} color={Colors.textPrimary} />
+                <Ionicons name="remove" size={22} color={colors.textPrimary} />
               </Pressable>
               <View style={styles.waterCountWrap}>
                 <Text style={styles.waterBig}>{waterGlasses}</Text>
                 <Text style={styles.waterGoalText}>goal: {WATER_GOAL}</Text>
               </View>
               <Pressable style={[styles.waterBtn, styles.waterBtnAdd]} onPress={() => adjustWater(1)}>
-                <Ionicons name="add" size={22} color={Colors.white} />
+                <Ionicons name="add" size={22} color={colors.white} />
               </Pressable>
             </View>
 
@@ -281,7 +287,7 @@ export default function DailyCheckIn() {
 
             {waterGlasses >= WATER_GOAL && (
               <View style={styles.goalReached}>
-                <Ionicons name="checkmark-circle" size={16} color={Colors.scoreExcellent} />
+                <Ionicons name="checkmark-circle" size={16} color={colors.scoreExcellent} />
                 <Text style={styles.goalReachedText}>Daily goal reached! Great for your skin.</Text>
               </View>
             )}
@@ -303,7 +309,7 @@ export default function DailyCheckIn() {
                   onPress={() => toggleHabit(i)}
                 >
                   <View style={[styles.habitCheck, checkedHabits.has(i) && styles.habitCheckDone]}>
-                    {checkedHabits.has(i) && <Ionicons name="checkmark" size={14} color={Colors.white} />}
+                    {checkedHabits.has(i) && <Ionicons name="checkmark" size={14} color={colors.white} />}
                   </View>
                   <Text style={[styles.habitLabel, checkedHabits.has(i) && styles.habitLabelDone]}>{habit}</Text>
                 </Pressable>
@@ -356,7 +362,7 @@ export default function DailyCheckIn() {
             <TextInput
               style={styles.noteInput}
               placeholder="Any observations about your skin today…"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={note}
               onChangeText={setNote}
               multiline
@@ -376,7 +382,7 @@ export default function DailyCheckIn() {
         )}
         {step < totalSteps - 1 ? (
           <Pressable style={styles.nextBtn} onPress={() => setStep(s => s + 1)}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.nextGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.nextGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <Text style={styles.nextText}>Continue →</Text>
             </LinearGradient>
           </Pressable>
@@ -386,7 +392,7 @@ export default function DailyCheckIn() {
             onPress={finish}
             disabled={!mood || loading}
           >
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.nextGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.nextGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <Text style={styles.nextText}>{loading ? 'Saving…' : 'Complete Check-In ✓'}</Text>
             </LinearGradient>
           </Pressable>
@@ -396,106 +402,108 @@ export default function DailyCheckIn() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 10,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
-  progressTrack: { height: 3, backgroundColor: Colors.bgElevated, marginHorizontal: 20 },
-  progressFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 2 },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
+  progressTrack: { height: 3, backgroundColor: c.bgElevated, marginHorizontal: 20 },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 2 },
   scroll: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: 20 },
 
   stepWrap: { gap: 16 },
   stepEmoji: { fontSize: 44, textAlign: 'center' },
-  stepTitle: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  stepSub: { fontSize: 15, color: Colors.textSecondary, textAlign: 'center', lineHeight: 23 },
+  stepTitle: { fontSize: 26, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  stepSub: { fontSize: 15, color: c.textSecondary, textAlign: 'center', lineHeight: 23 },
 
   routineCards: { flexDirection: 'row', gap: 12 },
   routineCard: {
-    flex: 1, borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgCard, padding: 20, alignItems: 'center', gap: 10,
+    flex: 1, borderRadius: 18, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgCard, padding: 20, alignItems: 'center', gap: 10,
   },
-  routineCardDone: { borderColor: Colors.scoreExcellent + '40', backgroundColor: 'rgba(74,222,128,0.06)' },
-  routineCardLabel: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
+  routineCardDone: { borderColor: c.scoreExcellent + '40', backgroundColor: 'rgba(74,222,128,0.06)' },
+  routineCardLabel: { fontSize: 14, fontWeight: '700', color: c.textPrimary, textAlign: 'center' },
   doneChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(74,222,128,0.15)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
-  doneChipText: { fontSize: 12, color: Colors.scoreExcellent, fontWeight: '700' },
-  tapToLog: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
+  doneChipText: { fontSize: 12, color: c.scoreExcellent, fontWeight: '700' },
+  tapToLog: { fontSize: 11, color: c.primary, fontWeight: '600' },
 
   waterControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 28 },
   waterBtn: {
     width: 52, height: 52, borderRadius: 26,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
   waterBtnAdd: { backgroundColor: '#60A5FA', borderColor: '#60A5FA' },
   waterCountWrap: { alignItems: 'center' },
-  waterBig: { fontSize: 56, fontWeight: '800', color: Colors.textPrimary },
-  waterGoalText: { fontSize: 13, color: Colors.textMuted },
+  waterBig: { fontSize: 56, fontWeight: '800', color: c.textPrimary },
+  waterGoalText: { fontSize: 13, color: c.textMuted },
   dropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
   dropBtn: { padding: 4 },
   dropIcon: { fontSize: 24 },
   goalReached: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(74,222,128,0.10)', borderRadius: 12, padding: 12 },
-  goalReachedText: { fontSize: 13, color: Colors.scoreExcellent, fontWeight: '600' },
+  goalReachedText: { fontSize: 13, color: c.scoreExcellent, fontWeight: '600' },
 
   habitsList: { gap: 10 },
   habitRow: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 16,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 16,
   },
-  habitRowChecked: { borderColor: Colors.scoreExcellent + '40', backgroundColor: 'rgba(74,222,128,0.06)' },
+  habitRowChecked: { borderColor: c.scoreExcellent + '40', backgroundColor: 'rgba(74,222,128,0.06)' },
   habitCheck: {
     width: 26, height: 26, borderRadius: 13,
-    borderWidth: 2, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: c.border, alignItems: 'center', justifyContent: 'center',
   },
-  habitCheckDone: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  habitLabel: { fontSize: 14, color: Colors.textSecondary, flex: 1 },
-  habitLabelDone: { color: Colors.textPrimary, fontWeight: '600' },
-  habitNote: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', fontStyle: 'italic' },
+  habitCheckDone: { backgroundColor: c.primary, borderColor: c.primary },
+  habitLabel: { fontSize: 14, color: c.textSecondary, flex: 1 },
+  habitLabelDone: { color: c.textPrimary, fontWeight: '600' },
+  habitNote: { fontSize: 13, color: c.textMuted, textAlign: 'center', fontStyle: 'italic' },
 
   moodRow: { flexDirection: 'row', gap: 10 },
   moodCard: {
     flex: 1, alignItems: 'center', gap: 8,
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 14,
   },
   moodEmoji: { fontSize: 28 },
-  moodLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted },
-  fieldLabel: { fontSize: 12, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5 },
+  moodLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted },
+  fieldLabel: { fontSize: 12, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5 },
   tagGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tagChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  tagChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  tagChipText: { fontSize: 13, color: Colors.textSecondary },
-  tagChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipText: { fontSize: 13, color: c.textSecondary },
+  tagChipTextActive: { color: c.primary, fontWeight: '600' },
   noteInput: {
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
     borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12,
-    fontSize: 14, color: Colors.textPrimary, minHeight: 80, textAlignVertical: 'top',
+    fontSize: 14, color: c.textPrimary, minHeight: 80, textAlignVertical: 'top',
   },
 
   footer: { flexDirection: 'row', gap: 12, paddingHorizontal: 24, paddingVertical: 20, alignItems: 'center' },
   prevBtn: { paddingHorizontal: 16, paddingVertical: 14 },
-  prevText: { color: Colors.textMuted, fontSize: 15 },
+  prevText: { color: c.textMuted, fontSize: 15 },
   nextBtn: { flex: 1, borderRadius: 16, overflow: 'hidden' },
   nextGrad: { paddingVertical: 18, alignItems: 'center' },
-  nextText: { color: Colors.white, fontSize: 16, fontWeight: '700' },
+  nextText: { color: c.white, fontSize: 16, fontWeight: '700' },
 
   doneWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, gap: 16 },
   doneEmoji: { fontSize: 60 },
-  doneTitle: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  doneSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
+  doneTitle: { fontSize: 26, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  doneSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
   doneBtns: { gap: 12, width: '100%' },
-  donePrimary: { backgroundColor: Colors.primary, borderRadius: 16, paddingVertical: 18, alignItems: 'center' },
-  donePrimaryText: { fontSize: 16, fontWeight: '700', color: Colors.white },
-  doneSecondary: { borderRadius: 16, borderWidth: 1, borderColor: Colors.borderStrong, paddingVertical: 16, alignItems: 'center' },
-  doneSecondaryText: { fontSize: 15, fontWeight: '600', color: Colors.primary },
-});
+  donePrimary: { backgroundColor: c.primary, borderRadius: 16, paddingVertical: 18, alignItems: 'center' },
+  donePrimaryText: { fontSize: 16, fontWeight: '700', color: c.white },
+  doneSecondary: { borderRadius: 16, borderWidth: 1, borderColor: c.borderStrong, paddingVertical: 16, alignItems: 'center' },
+  doneSecondaryText: { fontSize: 15, fontWeight: '600', color: c.primary },
+  });
+}
