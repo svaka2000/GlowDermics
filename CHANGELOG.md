@@ -4,6 +4,23 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Content-Guide Dark-Mode Sweep (Pass 65–68)
+
+Four more iterations. 16 content-guide screens migrated to the dark palette via the established `shimColors(palette)` + `buildXxx(c)` factory pattern. ~692 Colors refs total.
+
+### 🌙 Dark-mode marathon (Pass 65, 66, 67, 68) — 16 screens
+
+- Pass 65 (4): skin-foods + cleansing-guide + aging-timeline + sleep-log (179 refs) — required `buildSkinNutrients` / `buildAntiInflammatory` / `buildCleanserTypes` / `buildDoubleCleanse` / `buildDecades` / `buildAccelerators` / `buildSlowIt` / `buildQualityColors` factories
+- Pass 66 (4): skin-journal + photodamage + goals + diy-recipes (177 refs) — `conditionColor(value, Colors)` helper signature change, `buildDamageTypes` + `buildRecipes` + `buildDifficultyColor` factories
+- Pass 67 (4): diet + antioxidants + weekly-digest + tallow-science (174 refs) — `buildAntioxidants` + `buildStacking` + `buildGradeColors` + `buildFattyAcids` + `buildVitamins` factories
+- Pass 68 (4): microbiome + vitamin-c + routine-builder + eczema-guide (162 refs) — `getSeverityColor(level, Colors)` + `getImpactColor(level, Colors)` helper signatures, `buildVcForms` + `buildCombinations` factories
+
+Pattern reused: every screen with an inline dark-only `Colors` object got the `shimColors(palette)` shim mapping legacy field names (bg/card/cardAlt/border/primary/gold/text*/green/red/blue/purple/teal) to the project `Palette`. Module-level color-dependent arrays converted to `build*(c: Palette)` factory functions and called via `useMemo(() => buildXxx(colors), [colors])`. Helper functions like `conditionColor` / `getSeverityColor` / `getImpactColor` got `c: Palette` as a second argument so they can compose at every callsite.
+
+After Pass 68, the great majority of registered screens in `app/_layout.tsx` now respond to the dark/light theme toggle. Only ~10 niche guides (dehydrated-skin, acne-diary, acne-types, active-rotation, anti-aging-list, body-care, budget, challenge, collagen-guide, ...) remain on the static-Colors path.
+
+---
+
 ## 2026-05-09 — Notifications + Habits + Dark-Mode Finale (Pass 51–61)
 
 Eleven more iterations. Highlights below.
