@@ -1,27 +1,31 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-  pink: '#F472B6',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    purple: c.darkCircles,
+    pink: '#F472B6',
+  };
+}
 
 const TABS = [
   { id: 'signs', label: 'Identify It', icon: '🎯' },
@@ -40,7 +44,8 @@ const SIGNS = [
   { sign: 'Worsens under stress', detail: 'Cortisol (the stress hormone) stimulates androgen production, which directly increases sebum output. Stress acne clustering along the jaw is a hormonal chain reaction.' },
 ];
 
-const CYCLE_PHASES = [
+function buildCyclePhases(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     phase: 'Menstrual (Day 1–5)',
     color: Colors.red,
@@ -77,7 +82,8 @@ const CYCLE_PHASES = [
     skincare: 'Daily BHA on affected zones. Spot treatment with niacinamide or tallow + zinc. Increase anti-inflammatory actives. Do NOT over-exfoliate — barrier is more vulnerable now. Sleep is critical.',
     diet: 'Strict low-glycemic for this week. Reduce dairy and alcohol. Spearmint tea 2× daily. Increase zinc, magnesium, B6. Reduce inflammatory omega-6 oils.',
   },
-];
+  ];
+}
 
 const DIET = [
   {
@@ -124,6 +130,10 @@ const SKINCARE_STEPS = [
 ];
 
 export default function HormonalAcneScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const CYCLE_PHASES = useMemo(() => buildCyclePhases(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('signs');
   const [expandedSign, setExpandedSign] = useState<number | null>(null);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
@@ -290,7 +300,9 @@ export default function HormonalAcneScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -389,4 +401,5 @@ const styles = StyleSheet.create({
   cautionLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 6 },
   tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

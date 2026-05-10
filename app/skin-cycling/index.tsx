@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Alert,
@@ -7,22 +7,26 @@ import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    purple: c.darkCircles,
+  };
+}
 
 const STORAGE_KEY = 'gd_skin_cycling';
 
@@ -31,7 +35,8 @@ interface CycleState {
   currentDay: number; // 1–4, cycles
 }
 
-const CYCLE_NIGHTS = [
+function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     day: 1,
     name: 'Exfoliation Night',
@@ -92,7 +97,8 @@ const CYCLE_NIGHTS = [
     warnings: ['Still no actives', 'Tomorrow night the cycle repeats from Night 1', 'Consistency over weeks is what produces results'],
     tallowNote: 'Second tallow night — keep it consistent. By cycling recovery nights with active nights, you prevent the chronic barrier damage that makes actives unsustainable long-term.',
   },
-];
+  ];
+}
 
 const HOW_IT_WORKS = `Skin cycling is a strategic 4-night PM routine rotation developed by dermatologists to maximize the benefits of actives (exfoliants and retinoids) while giving the skin barrier sufficient recovery time between applications.
 
@@ -120,6 +126,10 @@ const getCurrentNight = (state: CycleState): number => {
 };
 
 export default function SkinCyclingScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const CYCLE_NIGHTS = useMemo(() => buildCycleNights(Colors), [Colors]);
   const [cycleState, setCycleState] = useState<CycleState | null>(null);
   const [view, setView] = useState<'tracker' | 'guide'>('guide');
 
@@ -334,7 +344,9 @@ export default function SkinCyclingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -455,4 +467,5 @@ const styles = StyleSheet.create({
   upNextDay: { color: Colors.textMuted, fontSize: 12, fontWeight: '700' },
   resetBtn: { alignItems: 'center', paddingVertical: 14, marginTop: 8 },
   resetBtnText: { color: Colors.textMuted, fontSize: 13 },
-});
+  });
+}

@@ -1,26 +1,30 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    purple: c.darkCircles,
+  };
+}
 
 const TABS = [
   { id: 'science', label: 'The Problem', icon: '🔬' },
@@ -151,7 +155,7 @@ const HARD_WATER_ROUTINE = {
   ],
 };
 
-const getRatingColor = (r: string) => {
+const getRatingColor = (r: string, Colors: ReturnType<typeof shimColors>) => {
   if (r === 'best') return Colors.green;
   if (r === 'good') return Colors.blue;
   if (r === 'premium') return Colors.purple;
@@ -166,6 +170,9 @@ const getRatingLabel = (r: string) => {
 };
 
 export default function WaterQualityScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [activeTab, setActiveTab] = useState('science');
   const [expandedSolution, setExpandedSolution] = useState<string | null>(null);
   const [expandedSign, setExpandedSign] = useState<number | null>(null);
@@ -266,8 +273,8 @@ export default function WaterQualityScreen() {
                       <Text style={styles.solutionDifficulty}>{sol.difficulty}</Text>
                     </View>
                   </View>
-                  <View style={[styles.ratingBadge, { borderColor: getRatingColor(sol.rating), backgroundColor: getRatingColor(sol.rating) + '22' }]}>
-                    <Text style={[styles.ratingText, { color: getRatingColor(sol.rating) }]}>{getRatingLabel(sol.rating)}</Text>
+                  <View style={[styles.ratingBadge, { borderColor: getRatingColor(sol.rating, Colors), backgroundColor: getRatingColor(sol.rating, Colors) + '22' }]}>
+                    <Text style={[styles.ratingText, { color: getRatingColor(sol.rating, Colors) }]}>{getRatingLabel(sol.rating)}</Text>
                   </View>
                 </View>
                 {expandedSolution === sol.solution && (
@@ -334,7 +341,9 @@ export default function WaterQualityScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -435,4 +444,5 @@ const styles = StyleSheet.create({
   },
   tallowNoteTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 8 },
   tallowNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
-});
+  });
+}

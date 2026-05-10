@@ -1,25 +1,29 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, TextInput, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  yellow: '#FBBF24',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    yellow: c.scoreFair,
+  };
+}
 
 interface Oil {
   name: string;
@@ -151,7 +155,7 @@ const LAYERING_ORDER = [
   { order: 4, type: 'Heavy occlusives / balms', example: 'Tallow, coconut oil (body)', principle: 'Seal everything in. Nothing penetrates after this layer.' },
 ];
 
-const comedogenicColor = (c: number) => {
+const comedogenicColor = (c: number, Colors: ReturnType<typeof shimColors>) => {
   if (c <= 1) return Colors.green;
   if (c <= 2) return Colors.yellow;
   if (c <= 3) return Colors.gold;
@@ -168,6 +172,9 @@ const comedogenicLabel = (c: number) => {
 };
 
 export default function OilGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [activeTab, setActiveTab] = useState<'compare' | 'layering' | 'skintype'>('compare');
   const [search, setSearch] = useState('');
   const [expandedOil, setExpandedOil] = useState<string | null>(null);
@@ -243,10 +250,10 @@ export default function OilGuideScreen() {
                     <Text style={styles.oilFatty}>{oil.keyFattyAcids}</Text>
                   </View>
                   <View>
-                    <View style={[styles.comedoBadge, { borderColor: comedogenicColor(oil.comedogenic) }]}>
-                      <Text style={[styles.comedo, { color: comedogenicColor(oil.comedogenic) }]}>{oil.comedogenic}/5</Text>
+                    <View style={[styles.comedoBadge, { borderColor: comedogenicColor(oil.comedogenic, Colors) }]}>
+                      <Text style={[styles.comedo, { color: comedogenicColor(oil.comedogenic, Colors) }]}>{oil.comedogenic}/5</Text>
                     </View>
-                    <Text style={[styles.comedoLabel, { color: comedogenicColor(oil.comedogenic) }]}>
+                    <Text style={[styles.comedoLabel, { color: comedogenicColor(oil.comedogenic, Colors) }]}>
                       {comedogenicLabel(oil.comedogenic)}
                     </Text>
                   </View>
@@ -340,8 +347,8 @@ export default function OilGuideScreen() {
                   <Text style={styles.typeOilName}>{oil.name}</Text>
                   <Text style={styles.typeOilBenefits}>{oil.benefits.split('.')[0]}.</Text>
                 </View>
-                <View style={[styles.comedoBadge, { borderColor: comedogenicColor(oil.comedogenic), alignSelf: 'flex-start' }]}>
-                  <Text style={[styles.comedo, { color: comedogenicColor(oil.comedogenic) }]}>{oil.comedogenic}/5</Text>
+                <View style={[styles.comedoBadge, { borderColor: comedogenicColor(oil.comedogenic, Colors), alignSelf: 'flex-start' }]}>
+                  <Text style={[styles.comedo, { color: comedogenicColor(oil.comedogenic, Colors) }]}>{oil.comedogenic}/5</Text>
                 </View>
               </View>
             ))}
@@ -354,7 +361,9 @@ export default function OilGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -449,4 +458,5 @@ const styles = StyleSheet.create({
   typeOilLeft: { flex: 1 },
   typeOilName: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
   typeOilBenefits: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-});
+  });
+}
