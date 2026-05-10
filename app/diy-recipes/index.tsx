@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Recipe = {
   id: string;
@@ -25,7 +26,8 @@ type Recipe = {
   skinTypes: string[];
 };
 
-const RECIPES: Recipe[] = [
+function buildRecipes(colors: Palette): Recipe[] {
+  return [
   {
     id: 'basic-balm',
     name: 'Original Tallow Balm',
@@ -34,7 +36,7 @@ const RECIPES: Recipe[] = [
     time: '15 min',
     difficulty: 'Easy',
     benefit: 'Deep barrier repair and all-over moisturizing',
-    color: Colors.primary,
+    color: colors.primary,
     skinTypes: ['All skin types'],
     ingredients: [
       { name: 'Grass-fed beef tallow', amount: '4 tbsp', note: 'Must be rendered and filtered' },
@@ -65,7 +67,7 @@ const RECIPES: Recipe[] = [
     time: '10 min',
     difficulty: 'Easy',
     benefit: 'Brightening, anti-aging, and glow-inducing',
-    color: Colors.gold,
+    color: colors.gold,
     skinTypes: ['Normal', 'Dry', 'Combination'],
     ingredients: [
       { name: 'Grass-fed beef tallow', amount: '2 tbsp' },
@@ -162,7 +164,7 @@ const RECIPES: Recipe[] = [
     time: '15 min',
     difficulty: 'Medium',
     benefit: 'Healing, hydrating, and naturally tinted',
-    color: Colors.scorePoor,
+    color: colors.scorePoor,
     skinTypes: ['All skin types'],
     ingredients: [
       { name: 'Beeswax pastilles', amount: '1 tsp', note: 'Creates firm but spreadable texture' },
@@ -221,13 +223,20 @@ const RECIPES: Recipe[] = [
     storage: 'Glass jar in cool location (will melt above 75°F)',
     shelfLife: '12-18 months',
   },
-];
+  ];
+}
 
 const CATEGORIES_FILTER = ['All', 'Moisturizer', 'Serum', 'Eye Treatment', 'Mask', 'Lip', 'Body'];
 
-const DIFFICULTY_COLOR = { Easy: '#4ADE80', Medium: Colors.gold, Advanced: Colors.scorePoor };
+function buildDifficultyColor(c: Palette) {
+  return { Easy: '#4ADE80', Medium: c.gold, Advanced: c.scorePoor } as const;
+}
 
 export default function DIYRecipes() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const RECIPES = useMemo(() => buildRecipes(colors), [colors]);
+  const DIFFICULTY_COLOR = useMemo(() => buildDifficultyColor(colors), [colors]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('All');
 
@@ -239,7 +248,7 @@ export default function DIYRecipes() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => setSelectedRecipe(null)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>{selectedRecipe.name}</Text>
             <View style={{ width: 36 }} />
@@ -255,14 +264,14 @@ export default function DIYRecipes() {
             <Text style={styles.recipeHeroBenefit}>{selectedRecipe.benefit}</Text>
             <View style={styles.recipeMeta}>
               <View style={styles.recipeMetaItem}>
-                <Ionicons name="time-outline" size={13} color={Colors.textMuted} />
+                <Ionicons name="time-outline" size={13} color={colors.textMuted} />
                 <Text style={styles.recipeMetaText}>{selectedRecipe.time}</Text>
               </View>
               <View style={[styles.difficultyBadge, { backgroundColor: `${DIFFICULTY_COLOR[selectedRecipe.difficulty]}20` }]}>
                 <Text style={[styles.difficultyText, { color: DIFFICULTY_COLOR[selectedRecipe.difficulty] }]}>{selectedRecipe.difficulty}</Text>
               </View>
               <View style={styles.recipeMetaItem}>
-                <Ionicons name="person-outline" size={13} color={Colors.textMuted} />
+                <Ionicons name="person-outline" size={13} color={colors.textMuted} />
                 <Text style={styles.recipeMetaText}>{selectedRecipe.skinTypes.join(', ')}</Text>
               </View>
             </View>
@@ -301,14 +310,14 @@ export default function DIYRecipes() {
           {/* Storage */}
           <View style={styles.storageCard}>
             <View style={styles.storageItem}>
-              <Ionicons name="cube-outline" size={16} color={Colors.textMuted} />
+              <Ionicons name="cube-outline" size={16} color={colors.textMuted} />
               <View>
                 <Text style={styles.storageLabel}>Storage</Text>
                 <Text style={styles.storageValue}>{selectedRecipe.storage}</Text>
               </View>
             </View>
             <View style={styles.storageItem}>
-              <Ionicons name="calendar-outline" size={16} color={Colors.textMuted} />
+              <Ionicons name="calendar-outline" size={16} color={colors.textMuted} />
               <View>
                 <Text style={styles.storageLabel}>Shelf life</Text>
                 <Text style={styles.storageValue}>{selectedRecipe.shelfLife}</Text>
@@ -338,7 +347,7 @@ export default function DIYRecipes() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>DIY Tallow Recipes</Text>
@@ -351,7 +360,7 @@ export default function DIYRecipes() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* Hero */}
         <View style={styles.listHero}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.listHeroTitle}>🌿 Craft Your Routine</Text>
           <Text style={styles.listHeroDesc}>
             All recipes use grass-fed tallow as the base — the closest thing to your skin's own sebum. These are the formulas our ancestors used before the synthetic skincare industry existed.
@@ -367,7 +376,7 @@ export default function DIYRecipes() {
                 style={[styles.filterChip, categoryFilter === cat && styles.filterChipActive]}
                 onPress={() => setCategoryFilter(cat)}
               >
-                <Text style={[styles.filterChipText, categoryFilter === cat && { color: Colors.primary }]}>{cat}</Text>
+                <Text style={[styles.filterChipText, categoryFilter === cat && { color: colors.primary }]}>{cat}</Text>
               </Pressable>
             ))}
           </View>
@@ -412,59 +421,60 @@ export default function DIYRecipes() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   listHero: {
     borderRadius: 20, overflow: 'hidden', padding: 20, gap: 8, marginBottom: 16,
   },
-  listHeroTitle: { fontSize: 22, fontWeight: '900', color: Colors.white },
+  listHeroTitle: { fontSize: 22, fontWeight: '900', color: c.white },
   listHeroDesc: { fontSize: 13, color: 'rgba(255,255,255,0.75)', lineHeight: 20 },
 
   filterScroll: { marginBottom: 12, marginHorizontal: -4 },
   filterRow: { flexDirection: 'row', gap: 6, paddingHorizontal: 4 },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  filterChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  filterChipText: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
+  filterChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  filterChipText: { fontSize: 12, fontWeight: '700', color: c.textMuted },
 
   recipeCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 6, marginBottom: 10,
   },
   recipeCardTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   recipeCardEmoji: { fontSize: 28 },
-  recipeCardName: { fontSize: 15, fontWeight: '800', color: Colors.textPrimary },
-  recipeCardCategory: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
-  recipeCardBenefit: { fontSize: 13, color: Colors.textSecondary },
-  recipeCardSkinTypes: { fontSize: 11, color: Colors.textMuted, fontStyle: 'italic' },
-  recipeCardTime: { fontSize: 10, color: Colors.textMuted, textAlign: 'right' },
+  recipeCardName: { fontSize: 15, fontWeight: '800', color: c.textPrimary },
+  recipeCardCategory: { fontSize: 11, color: c.textMuted, marginTop: 1 },
+  recipeCardBenefit: { fontSize: 13, color: c.textSecondary },
+  recipeCardSkinTypes: { fontSize: 11, color: c.textMuted, fontStyle: 'italic' },
+  recipeCardTime: { fontSize: 10, color: c.textMuted, textAlign: 'right' },
 
   difficultyBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   difficultyText: { fontSize: 10, fontWeight: '800' },
 
   qualityCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${Colors.primary}40`,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: `${c.primary}40`,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  qualityTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  qualityText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  qualityTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  qualityText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   qualityBtn: { alignSelf: 'flex-start' },
-  qualityBtnText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
+  qualityBtnText: { fontSize: 13, fontWeight: '700', color: c.primary },
 
   // Recipe detail styles
   recipeHero: {
@@ -472,39 +482,40 @@ const styles = StyleSheet.create({
     padding: 20, gap: 6, marginBottom: 14, alignItems: 'center',
   },
   recipeHeroEmoji: { fontSize: 40 },
-  recipeHeroName: { fontSize: 22, fontWeight: '900', color: Colors.textPrimary },
-  recipeHeroBenefit: { fontSize: 13, color: Colors.textMuted, textAlign: 'center' },
+  recipeHeroName: { fontSize: 22, fontWeight: '900', color: c.textPrimary },
+  recipeHeroBenefit: { fontSize: 13, color: c.textMuted, textAlign: 'center' },
   recipeMeta: { flexDirection: 'row', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 },
   recipeMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  recipeMetaText: { fontSize: 11, color: Colors.textMuted },
+  recipeMetaText: { fontSize: 11, color: c.textMuted },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   ingredientRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   ingredientDot: { width: 8, height: 8, borderRadius: 4, marginTop: 6, flexShrink: 0 },
   ingredientTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 },
-  ingredientName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  ingredientName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, flex: 1 },
   ingredientAmount: { fontSize: 13, fontWeight: '800' },
-  ingredientNote: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  ingredientNote: { fontSize: 11, color: c.textMuted, marginTop: 2 },
 
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   stepNum: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  stepNumText: { fontSize: 12, fontWeight: '900', color: Colors.white },
-  stepText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  stepNumText: { fontSize: 12, fontWeight: '900', color: c.white },
+  stepText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   storageCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 10, marginBottom: 14,
   },
   storageItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  storageLabel: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
-  storageValue: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary, marginTop: 2 },
+  storageLabel: { fontSize: 10, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  storageValue: { fontSize: 13, fontWeight: '600', color: c.textSecondary, marginTop: 2 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipEmoji: { fontSize: 16, width: 22, textAlign: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

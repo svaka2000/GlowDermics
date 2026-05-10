@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, TextInput, KeyboardAvoidingView,
@@ -7,22 +7,17 @@ import {
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, purple: c.darkCircles,
+  };
+}
 
 const STORAGE_KEY = 'gd_skin_journal';
 
@@ -69,15 +64,18 @@ const formatDate = (dateStr: string) => {
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 };
 
-const conditionColor = (v: number) => {
+function conditionColor(v: number, Colors: ReturnType<typeof shimColors>) {
   if (v >= 5) return Colors.green;
   if (v >= 4) return '#86EFAC';
   if (v >= 3) return Colors.gold;
   if (v >= 2) return '#FB923C';
   return Colors.red;
-};
+}
 
 export default function SkinJournalScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [view, setView] = useState<'log' | 'history'>('log');
   const [condition, setCondition] = useState(3);
@@ -221,11 +219,11 @@ export default function SkinJournalScreen() {
                 {CONDITIONS.map(c => (
                   <TouchableOpacity
                     key={c.value}
-                    style={[styles.conditionBtn, condition === c.value && { borderColor: conditionColor(c.value), backgroundColor: conditionColor(c.value) + '22' }]}
+                    style={[styles.conditionBtn, condition === c.value && { borderColor: conditionColor(c.value, Colors), backgroundColor: conditionColor(c.value, Colors) + '22' }]}
                     onPress={() => setCondition(c.value)}
                   >
                     <Text style={styles.conditionEmoji}>{c.emoji}</Text>
-                    <Text style={[styles.conditionLabel, condition === c.value && { color: conditionColor(c.value) }]}>{c.label}</Text>
+                    <Text style={[styles.conditionLabel, condition === c.value && { color: conditionColor(c.value, Colors) }]}>{c.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -273,7 +271,7 @@ export default function SkinJournalScreen() {
                   </View>
                   {avg && (
                     <View style={styles.statCard}>
-                      <Text style={[styles.statValue, { color: conditionColor(parseFloat(avg)) }]}>{avg}</Text>
+                      <Text style={[styles.statValue, { color: conditionColor(parseFloat(avg), Colors) }]}>{avg}</Text>
                       <Text style={styles.statLabel}>14-Day Avg</Text>
                     </View>
                   )}
@@ -314,7 +312,7 @@ export default function SkinJournalScreen() {
                         <Text style={styles.entryDate}>{formatDate(entry.date)}</Text>
                         <View style={styles.entryConditionRow}>
                           <Text style={styles.entryEmoji}>{CONDITIONS.find(c => c.value === entry.condition)?.emoji}</Text>
-                          <Text style={[styles.entryConditionText, { color: conditionColor(entry.condition) }]}>
+                          <Text style={[styles.entryConditionText, { color: conditionColor(entry.condition, Colors) }]}>
                             {CONDITIONS.find(c => c.value === entry.condition)?.label}
                           </Text>
                         </View>
@@ -348,7 +346,9 @@ export default function SkinJournalScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -439,4 +439,5 @@ const styles = StyleSheet.create({
   },
   miniChipText: { color: Colors.textSecondary, fontSize: 11 },
   entryNotes: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19, fontStyle: 'italic' },
-});
+  });
+}

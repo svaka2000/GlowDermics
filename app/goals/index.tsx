@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, Alert, Animated, Easing,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 interface Goal {
   id: string;
@@ -54,6 +55,8 @@ function generateId() {
 }
 
 export default function Goals() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [title, setTitle] = useState('');
@@ -161,11 +164,11 @@ export default function Goals() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
         }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Skin Goals</Text>
           <Pressable onPress={() => setShowAdd(true)} style={styles.addBtn}>
-            <Ionicons name="add" size={24} color={Colors.primary} />
+            <Ionicons name="add" size={24} color={colors.primary} />
           </Pressable>
         </Animated.View>
       </SafeAreaView>
@@ -181,7 +184,7 @@ export default function Goals() {
             <TextInput
               style={styles.input}
               placeholder="Goal title (e.g. Clear my acne)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={title}
               onChangeText={setTitle}
             />
@@ -206,7 +209,7 @@ export default function Goals() {
                   onChangeText={setTargetScore}
                   keyboardType="number-pad"
                   maxLength={3}
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={colors.textMuted}
                 />
               </View>
               <View style={styles.halfInput}>
@@ -217,7 +220,7 @@ export default function Goals() {
                   onChangeText={setWeeksAway}
                   keyboardType="number-pad"
                   maxLength={2}
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={colors.textMuted}
                 />
               </View>
             </View>
@@ -226,7 +229,7 @@ export default function Goals() {
                 <Text style={styles.cancelText}>Cancel</Text>
               </Pressable>
               <Pressable style={[styles.saveBtn, !title.trim() && styles.saveBtnDisabled]} onPress={addGoal} disabled={!title.trim()}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.saveBtnGrad}>
+                <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.saveBtnGrad}>
                   <Text style={styles.saveText}>Add Goal</Text>
                 </LinearGradient>
               </Pressable>
@@ -257,7 +260,7 @@ export default function Goals() {
                   <Text style={styles.presetTitle}>{p.title}</Text>
                   <Text style={styles.presetMeta}>{METRIC_OPTIONS.find(m => m.key === p.metric)?.label} → {p.targetScore}</Text>
                 </View>
-                <Ionicons name="add-circle-outline" size={22} color={Colors.primary} />
+                <Ionicons name="add-circle-outline" size={22} color={colors.primary} />
               </Pressable>
             ))}
           </View>
@@ -281,15 +284,15 @@ export default function Goals() {
                   </View>
                   <View style={styles.goalActions}>
                     <Pressable style={styles.goalActionBtn} onPress={() => toggleComplete(goal.id)}>
-                      <Ionicons name="checkmark-circle-outline" size={22} color={Colors.scoreExcellent} />
+                      <Ionicons name="checkmark-circle-outline" size={22} color={colors.scoreExcellent} />
                     </Pressable>
                     <Pressable style={styles.goalActionBtn} onPress={() => deleteGoal(goal.id)}>
-                      <Ionicons name="trash-outline" size={18} color={Colors.textMuted} />
+                      <Ionicons name="trash-outline" size={18} color={colors.textMuted} />
                     </Pressable>
                   </View>
                 </View>
                 <View style={styles.goalFooter}>
-                  <Ionicons name="calendar-outline" size={12} color={Colors.textMuted} />
+                  <Ionicons name="calendar-outline" size={12} color={colors.textMuted} />
                   <Text style={styles.goalDeadline}>
                     {daysUntil(goal.targetDate)} · Due {new Date(goal.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </Text>
@@ -302,18 +305,18 @@ export default function Goals() {
         {/* Completed goals */}
         {completed.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: Colors.scoreExcellent }]}>Completed ✓</Text>
+            <Text style={[styles.sectionTitle, { color: colors.scoreExcellent }]}>Completed ✓</Text>
             {completed.map(goal => (
               <View key={goal.id} style={[styles.goalCard, styles.goalCardCompleted]}>
                 <View style={styles.goalTop}>
                   <View style={styles.goalInfo}>
-                    <Text style={[styles.goalTitle, { textDecorationLine: 'line-through', color: Colors.textMuted }]}>{goal.title}</Text>
+                    <Text style={[styles.goalTitle, { textDecorationLine: 'line-through', color: colors.textMuted }]}>{goal.title}</Text>
                     <Text style={styles.goalCompletedDate}>
                       Completed {new Date(goal.completedDate!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </Text>
                   </View>
                   <Pressable onPress={() => deleteGoal(goal.id)}>
-                    <Ionicons name="trash-outline" size={16} color={Colors.textMuted} />
+                    <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                   </Pressable>
                 </View>
               </View>
@@ -338,60 +341,62 @@ export default function Goals() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   addBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 16, paddingBottom: 40 },
-  addCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 16 },
-  addTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
-  fieldLabel: { fontSize: 11, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5, marginTop: 12, marginBottom: 8 },
-  input: { backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: Colors.textPrimary },
+  addCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 16 },
+  addTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
+  fieldLabel: { fontSize: 11, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5, marginTop: 12, marginBottom: 8 },
+  input: { backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: c.textPrimary },
   metricRow: { gap: 8, paddingBottom: 4 },
-  metricChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  metricChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  metricChipText: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
-  metricChipTextActive: { color: Colors.primary, fontWeight: '700' },
+  metricChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  metricChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  metricChipText: { fontSize: 12, color: c.textMuted, fontWeight: '500' },
+  metricChipTextActive: { color: c.primary, fontWeight: '700' },
   row: { flexDirection: 'row', gap: 12 },
   halfInput: { flex: 1 },
   addActions: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  cancelBtn: { flex: 1, paddingVertical: 14, alignItems: 'center', borderRadius: 12, borderWidth: 1, borderColor: Colors.border },
-  cancelText: { fontSize: 14, color: Colors.textMuted, fontWeight: '600' },
+  cancelBtn: { flex: 1, paddingVertical: 14, alignItems: 'center', borderRadius: 12, borderWidth: 1, borderColor: c.border },
+  cancelText: { fontSize: 14, color: c.textMuted, fontWeight: '600' },
   saveBtn: { flex: 2, borderRadius: 12, overflow: 'hidden' },
   saveBtnDisabled: { opacity: 0.5 },
   saveBtnGrad: { paddingVertical: 14, alignItems: 'center' },
-  saveText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveText: { fontSize: 14, fontWeight: '700', color: c.white },
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20, marginTop: 4 },
-  statCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14, alignItems: 'center', gap: 4 },
-  statNum: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
+  statCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 14, alignItems: 'center', gap: 4 },
+  statNum: { fontSize: 26, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
-  sectionSub: { fontSize: 12, color: Colors.textMuted, marginBottom: 12 },
-  presetItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14, marginBottom: 8 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
+  sectionSub: { fontSize: 12, color: c.textMuted, marginBottom: 12 },
+  presetItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 14, marginBottom: 8 },
   presetContent: { flex: 1 },
-  presetTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 3 },
-  presetMeta: { fontSize: 11, color: Colors.textMuted },
-  goalCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderLeftWidth: 3, borderLeftColor: Colors.primary, padding: 16, marginBottom: 10 },
+  presetTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 3 },
+  presetMeta: { fontSize: 11, color: c.textMuted },
+  goalCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, borderLeftWidth: 3, borderLeftColor: c.primary, padding: 16, marginBottom: 10 },
   goalCardCompleted: { opacity: 0.6 },
   goalTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 },
   goalInfo: { flex: 1 },
-  goalTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
+  goalTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 8 },
   goalMeta: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   goalMetricBadge: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  goalMetricText: { fontSize: 10, color: Colors.primary, fontWeight: '700' },
-  goalTarget: { fontSize: 12, color: Colors.textMuted },
+  goalMetricText: { fontSize: 10, color: c.primary, fontWeight: '700' },
+  goalTarget: { fontSize: 12, color: c.textMuted },
   goalActions: { flexDirection: 'row', gap: 4 },
   goalActionBtn: { width: 34, height: 34, alignItems: 'center', justifyContent: 'center' },
   goalFooter: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  goalDeadline: { fontSize: 11, color: Colors.textMuted },
-  goalCompletedDate: { fontSize: 11, color: Colors.scoreExcellent, marginTop: 4 },
+  goalDeadline: { fontSize: 11, color: c.textMuted },
+  goalCompletedDate: { fontSize: 11, color: c.scoreExcellent, marginTop: 4 },
   emptyWrap: { alignItems: 'center', paddingVertical: 48 },
   emptyIcon: { fontSize: 48, marginBottom: 14 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 24, maxWidth: 280 },
-  addGoalBtn: { backgroundColor: Colors.primary, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 14 },
-  addGoalBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
-});
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, marginBottom: 8 },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 24, maxWidth: 280 },
+  addGoalBtn: { backgroundColor: c.primary, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 14 },
+  addGoalBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
+  });
+}

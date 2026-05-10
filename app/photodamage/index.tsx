@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['UV Science', 'Damage Types', 'Reversal', 'Prevention Stack', 'Tallow Role'];
 
@@ -23,14 +27,16 @@ const UV_SCIENCE = [
   { title: 'Infrared A (IRA) is emerging as a third photodamage source', detail: 'IR-A (760–1440nm) penetrates deepest of all — to the hypodermis. It generates reactive oxygen species in dermal mitochondria, impairs the barrier, and may contribute to collagen breakdown independently of UV. Heat from intense sun exposure is partly IR-A. Antioxidants reduce IR-A damage.', icon: '🔥' },
 ];
 
-const DAMAGE_TYPES = [
-  { type: 'Fine Lines and Wrinkles', mechanism: 'MMP-mediated collagen breakdown (UVA), loss of HA matrix, epidermal thinning. Collagen types I and III are reduced; collagen type III (the "young" collagen) is the most rapidly depleted.', reversibility: 'Moderate — retinoids stimulate new collagen synthesis. Cannot fully reverse established deep wrinkles without professional intervention.', color: Colors.gold, icon: '〰️' },
-  { type: 'Solar Lentigines (Age Spots)', mechanism: 'UV stimulates melanocytes to produce excess melanin in localised clusters. Unlike freckles (genetic), solar lentigines are purely UV-induced and grow with continued exposure. Mark sites of accumulated DNA damage.', reversibility: 'High — respond well to vitamin C, niacinamide, arbutin, azelaic acid, retinoids, and laser/IPL professionally.', color: Colors.primary, icon: '⭕' },
-  { type: 'Mottled Pigmentation', mechanism: 'Diffuse uneven melanin deposition from decades of inconsistent UV exposure. Creates the "splotchy" look of significantly photoaged skin — irregular dark areas against lighter background.', reversibility: 'Moderate — responds to retinoids and brightening agents but requires 6–18 months of consistent treatment.', color: Colors.blue, icon: '🎨' },
-  { type: 'Loss of Elasticity (Elastosis)', mechanism: 'UV directly damages elastin fibres and stimulates abnormal elastin production (solar elastosis). The characteristic "leathery" appearance of heavily sun-damaged skin is abnormal elastin accumulation, not normal aging.', reversibility: 'Low — established solar elastosis cannot be fully reversed topically. Retinoids slow progression. Professional treatments (laser, RF) show partial improvement.', color: Colors.red, icon: '📏' },
-  { type: 'Rough Texture / Keratosis', mechanism: 'UV-induced changes in keratinocyte differentiation produce irregular, thickened skin surface. Actinic keratoses (AKs) are premalignant lesions requiring medical monitoring. Rough texture represents epidermal dysregulation.', reversibility: 'Moderate topically (AHAs, retinoids improve texture). AKs require medical treatment — do not self-treat.', color: Colors.teal, icon: '🔵' },
-  { type: 'Dilated Capillaries / Redness', mechanism: 'Repeated UV exposure causes chronic vasodilation and weakening of capillary walls. The permanent facial flushing and visible broken capillaries of sun-damaged skin are vascular, not inflammatory.', reversibility: 'Low for established telangiectasia — laser vascular treatment is most effective. Prevention is strongly preferable.', color: Colors.red + 'CC', icon: '🩸' },
-];
+function buildDamageTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
+    { type: 'Fine Lines and Wrinkles', mechanism: 'MMP-mediated collagen breakdown (UVA), loss of HA matrix, epidermal thinning. Collagen types I and III are reduced; collagen type III (the "young" collagen) is the most rapidly depleted.', reversibility: 'Moderate — retinoids stimulate new collagen synthesis. Cannot fully reverse established deep wrinkles without professional intervention.', color: Colors.gold, icon: '〰️' },
+    { type: 'Solar Lentigines (Age Spots)', mechanism: 'UV stimulates melanocytes to produce excess melanin in localised clusters. Unlike freckles (genetic), solar lentigines are purely UV-induced and grow with continued exposure. Mark sites of accumulated DNA damage.', reversibility: 'High — respond well to vitamin C, niacinamide, arbutin, azelaic acid, retinoids, and laser/IPL professionally.', color: Colors.primary, icon: '⭕' },
+    { type: 'Mottled Pigmentation', mechanism: 'Diffuse uneven melanin deposition from decades of inconsistent UV exposure. Creates the "splotchy" look of significantly photoaged skin — irregular dark areas against lighter background.', reversibility: 'Moderate — responds to retinoids and brightening agents but requires 6–18 months of consistent treatment.', color: Colors.blue, icon: '🎨' },
+    { type: 'Loss of Elasticity (Elastosis)', mechanism: 'UV directly damages elastin fibres and stimulates abnormal elastin production (solar elastosis). The characteristic "leathery" appearance of heavily sun-damaged skin is abnormal elastin accumulation, not normal aging.', reversibility: 'Low — established solar elastosis cannot be fully reversed topically. Retinoids slow progression. Professional treatments (laser, RF) show partial improvement.', color: Colors.red, icon: '📏' },
+    { type: 'Rough Texture / Keratosis', mechanism: 'UV-induced changes in keratinocyte differentiation produce irregular, thickened skin surface. Actinic keratoses (AKs) are premalignant lesions requiring medical monitoring. Rough texture represents epidermal dysregulation.', reversibility: 'Moderate topically (AHAs, retinoids improve texture). AKs require medical treatment — do not self-treat.', color: Colors.teal, icon: '🔵' },
+    { type: 'Dilated Capillaries / Redness', mechanism: 'Repeated UV exposure causes chronic vasodilation and weakening of capillary walls. The permanent facial flushing and visible broken capillaries of sun-damaged skin are vascular, not inflammatory.', reversibility: 'Low for established telangiectasia — laser vascular treatment is most effective. Prevention is strongly preferable.', color: Colors.red + 'CC', icon: '🩸' },
+  ];
+}
 
 const REVERSAL = [
   { ingredient: 'Retinoids (tretinoin / retinol)', priority: 'first-line', mechanism: 'Upregulates collagen gene expression, reverses MMP-mediated collagen breakdown, normalises keratinocyte differentiation, reduces pigmentation. The most clinically validated topical for photoaging reversal.', protocol: 'Start with 0.025% tretinoin or 0.3% retinol. Apply PM only. Increase concentration every 3–6 months. Minimum 6 months to assess collagen benefit. Sun protection non-negotiable.', icon: '⭐' },
@@ -60,6 +66,10 @@ const TALLOW_ROLE = [
 ];
 
 export default function PhotodamageScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const DAMAGE_TYPES = useMemo(() => buildDamageTypes(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedScience, setExpandedScience] = useState<number | null>(null);
   const [expandedDamage, setExpandedDamage] = useState<number | null>(null);
@@ -203,7 +213,9 @@ export default function PhotodamageScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -250,4 +262,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}
