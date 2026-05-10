@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const LOG_KEY = 'gd_patch_tests';
 
@@ -28,12 +29,14 @@ type PatchTest = {
   result: 'pending' | 'passed' | 'failed';
 };
 
-const REACTION_OPTIONS: { value: CheckIn['reaction']; label: string; emoji: string; color: string }[] = [
-  { value: 'none', label: 'No reaction', emoji: '✅', color: '#4ADE80' },
-  { value: 'mild', label: 'Mild redness', emoji: '🟡', color: Colors.gold },
-  { value: 'moderate', label: 'Moderate', emoji: '🟠', color: '#F97316' },
-  { value: 'severe', label: 'Severe', emoji: '🔴', color: Colors.scorePoor },
-];
+function buildReactionOptions(c: Palette): { value: CheckIn['reaction']; label: string; emoji: string; color: string }[] {
+  return [
+    { value: 'none', label: 'No reaction', emoji: '✅', color: '#4ADE80' },
+    { value: 'mild', label: 'Mild redness', emoji: '🟡', color: c.gold },
+    { value: 'moderate', label: 'Moderate', emoji: '🟠', color: '#F97316' },
+    { value: 'severe', label: 'Severe', emoji: '🔴', color: c.scorePoor },
+  ];
+}
 
 const TEST_ZONES = ['Inner wrist', 'Behind ear', 'Inner elbow', 'Jawline', 'Neck'];
 
@@ -45,10 +48,10 @@ function getHoursSince(dateStr: string): number {
   return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60));
 }
 
-function getResultColor(result: PatchTest['result']) {
+function getResultColor(result: PatchTest['result'], c: Palette) {
   if (result === 'passed') return '#4ADE80';
-  if (result === 'failed') return Colors.scorePoor;
-  return Colors.gold;
+  if (result === 'failed') return c.scorePoor;
+  return c.gold;
 }
 
 function getResultLabel(test: PatchTest): string {
@@ -62,6 +65,9 @@ function getResultLabel(test: PatchTest): string {
 }
 
 export default function PatchTestTracker() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const REACTION_OPTIONS = useMemo(() => buildReactionOptions(colors), [colors]);
   const [tests, setTests] = useState<PatchTest[]>([]);
   const [adding, setAdding] = useState(false);
   const [productName, setProductName] = useState('');
@@ -151,14 +157,14 @@ export default function PatchTestTracker() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Patch Test Tracker</Text>
             <Text style={styles.headerSub}>Test new products safely</Text>
           </View>
           <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>
-            <Ionicons name="add" size={20} color={Colors.white} />
+            <Ionicons name="add" size={20} color={colors.white} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -174,7 +180,7 @@ export default function PatchTestTracker() {
             <TextInput
               style={styles.textInput}
               placeholder="Product name"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={productName}
               onChangeText={setProductName}
               autoFocus
@@ -182,7 +188,7 @@ export default function PatchTestTracker() {
             <TextInput
               style={[styles.textInput, { minHeight: 60, textAlignVertical: 'top' }]}
               placeholder="Key ingredients (optional)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={ingredients}
               onChangeText={setIngredients}
               multiline
@@ -196,7 +202,7 @@ export default function PatchTestTracker() {
                   style={[styles.zoneChip, testZone === z && styles.zoneChipActive]}
                   onPress={() => setTestZone(z)}
                 >
-                  <Text style={[styles.zoneText, testZone === z && { color: Colors.primary }]}>{z}</Text>
+                  <Text style={[styles.zoneText, testZone === z && { color: colors.primary }]}>{z}</Text>
                 </Pressable>
               ))}
             </View>
@@ -243,7 +249,7 @@ export default function PatchTestTracker() {
               <TextInput
                 style={styles.textInput}
                 placeholder="Notes (itching, swelling, etc.)"
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={checkInNotes}
                 onChangeText={setCheckInNotes}
               />
@@ -289,11 +295,11 @@ export default function PatchTestTracker() {
                       <Text style={styles.testMeta}>{test.testZone} · Started {Math.floor(hours)}h ago</Text>
                     </View>
                     <Pressable onPress={() => deleteTest(test.id)}>
-                      <Ionicons name="trash-outline" size={16} color={Colors.textMuted} />
+                      <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                     </Pressable>
                   </View>
 
-                  <Text style={[styles.testStatus, { color: Colors.gold }]}>{getResultLabel(test)}</Text>
+                  <Text style={[styles.testStatus, { color: colors.gold }]}>{getResultLabel(test)}</Text>
 
                   {/* Timeline */}
                   <View style={styles.timeline}>
@@ -301,15 +307,15 @@ export default function PatchTestTracker() {
                       const checkIn = test.checkIns.find(c => c.hour === h);
                       const unlocked = hours >= h;
                       const color = checkIn
-                        ? (checkIn.reaction === 'none' ? '#4ADE80' : checkIn.reaction === 'mild' ? Colors.gold : Colors.scorePoor)
-                        : unlocked ? Colors.primary : Colors.border;
+                        ? (checkIn.reaction === 'none' ? '#4ADE80' : checkIn.reaction === 'mild' ? colors.gold : colors.scorePoor)
+                        : unlocked ? colors.primary : colors.border;
                       return (
                         <View key={h} style={styles.timelineItem}>
-                          {i > 0 && <View style={[styles.timelineLine, { backgroundColor: hours >= h ? Colors.primary : Colors.border }]} />}
-                          <View style={[styles.timelineDot, { backgroundColor: checkIn ? color : unlocked ? `${Colors.primary}30` : Colors.bgElevated, borderColor: color }]}>
-                            {checkIn && <Ionicons name={checkIn.reaction === 'none' ? 'checkmark' : 'close'} size={10} color={Colors.white} />}
+                          {i > 0 && <View style={[styles.timelineLine, { backgroundColor: hours >= h ? colors.primary : colors.border }]} />}
+                          <View style={[styles.timelineDot, { backgroundColor: checkIn ? color : unlocked ? `${colors.primary}30` : colors.bgElevated, borderColor: color }]}>
+                            {checkIn && <Ionicons name={checkIn.reaction === 'none' ? 'checkmark' : 'close'} size={10} color={colors.white} />}
                           </View>
-                          <Text style={[styles.timelineLabel, { color: unlocked ? Colors.textSecondary : Colors.textMuted }]}>{h}h</Text>
+                          <Text style={[styles.timelineLabel, { color: unlocked ? colors.textSecondary : colors.textMuted }]}>{h}h</Text>
                           {checkIn && <Text style={[styles.timelineReaction, { color }]}>{REACTION_OPTIONS.find(r => r.value === checkIn.reaction)?.label}</Text>}
                         </View>
                       );
@@ -346,8 +352,8 @@ export default function PatchTestTracker() {
                     <Text style={styles.testName}>{test.productName}</Text>
                     <Text style={styles.testMeta}>{test.testZone}</Text>
                   </View>
-                  <View style={[styles.resultBadge, { backgroundColor: `${getResultColor(test.result)}20`, borderColor: `${getResultColor(test.result)}50` }]}>
-                    <Text style={[styles.resultBadgeText, { color: getResultColor(test.result) }]}>
+                  <View style={[styles.resultBadge, { backgroundColor: `${getResultColor(test.result, colors)}20`, borderColor: `${getResultColor(test.result, colors)}50` }]}>
+                    <Text style={[styles.resultBadgeText, { color: getResultColor(test.result, colors) }]}>
                       {test.result === 'passed' ? 'PASSED' : 'FAILED'}
                     </Text>
                   </View>
@@ -385,97 +391,98 @@ export default function PatchTestTracker() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   addBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center',
   },
   scroll: { paddingHorizontal: 16 },
 
   addCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}40`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}40`,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  addCardTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  addCardTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
   textInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderRadius: 12,
+    borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 12, paddingVertical: 10,
-    fontSize: 14, color: Colors.textPrimary,
+    fontSize: 14, color: c.textPrimary,
   },
   zoneRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   zoneChip: {
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  zoneChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  zoneText: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  zoneChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  zoneText: { fontSize: 12, fontWeight: '600', color: c.textMuted },
   addFormBtns: { flexDirection: 'row', gap: 8 },
   cancelBtn: {
-    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  cancelBtnText: { fontSize: 14, fontWeight: '600', color: Colors.textMuted },
+  cancelBtnText: { fontSize: 14, fontWeight: '600', color: c.textMuted },
   startBtn: {
-    flex: 1, height: 44, borderRadius: 12, backgroundColor: Colors.primary,
+    flex: 1, height: 44, borderRadius: 12, backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center',
   },
-  startBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  startBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   checkInCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}40`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}40`,
     padding: 16, gap: 10, marginBottom: 14,
   },
-  checkInTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  checkInProduct: { fontSize: 13, color: Colors.textMuted },
+  checkInTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  checkInProduct: { fontSize: 13, color: c.textMuted },
   reactionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   reactionChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
   reactionEmoji: { fontSize: 14 },
-  reactionLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  reactionLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted },
 
   emptyCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 20, borderWidth: 1, borderColor: c.border,
     padding: 24, gap: 10, marginBottom: 14, alignItems: 'center',
   },
   emptyEmoji: { fontSize: 40 },
-  emptyTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
-  emptyDesc: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20 },
+  emptyTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
+  emptyDesc: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20 },
   emptyBtn: {
-    backgroundColor: Colors.primary, paddingHorizontal: 20, paddingVertical: 12,
+    backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12,
     borderRadius: 12, marginTop: 4,
   },
-  emptyBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  emptyBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   sectionLabel: {
-    fontSize: 10, fontWeight: '800', color: Colors.textMuted,
+    fontSize: 10, fontWeight: '800', color: c.textMuted,
     letterSpacing: 1.5, marginBottom: 8, marginTop: 4,
   },
 
   testCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 10, marginBottom: 10,
   },
   completedTestCard: { opacity: 0.8 },
   testHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  testName: { fontSize: 15, fontWeight: '800', color: Colors.textPrimary },
-  testMeta: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  testName: { fontSize: 15, fontWeight: '800', color: c.textPrimary },
+  testMeta: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   testStatus: { fontSize: 12, fontWeight: '600' },
 
   timeline: { flexDirection: 'row', alignItems: 'center', gap: 0, paddingHorizontal: 4 },
@@ -490,28 +497,29 @@ const styles = StyleSheet.create({
 
   checkInBtnRow: { flexDirection: 'row', gap: 8 },
   checkInBtn: {
-    flex: 1, height: 38, borderRadius: 10, backgroundColor: Colors.primary,
+    flex: 1, height: 38, borderRadius: 10, backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center',
   },
-  checkInBtnText: { fontSize: 12, fontWeight: '700', color: Colors.white },
+  checkInBtnText: { fontSize: 12, fontWeight: '700', color: c.white },
 
   resultBadge: {
     borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 4,
   },
   resultBadgeText: { fontSize: 11, fontWeight: '800' },
   deleteBtn: { alignSelf: 'flex-start' },
-  deleteBtnText: { fontSize: 11, color: Colors.textMuted, textDecorationLine: 'underline' },
+  deleteBtnText: { fontSize: 11, color: c.textMuted, textDecorationLine: 'underline' },
 
   guideCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   guideRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   stepBadge: {
-    width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.primary,
+    width: 24, height: 24, borderRadius: 12, backgroundColor: c.primary,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  stepNum: { fontSize: 12, fontWeight: '900', color: Colors.white },
-  guideText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  stepNum: { fontSize: 12, fontWeight: '900', color: c.white },
+  guideText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}
