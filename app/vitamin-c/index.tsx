@@ -1,16 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', orange: '#FB923C', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, orange: '#FB923C', teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Science', 'Forms', 'How to Use', 'Combinations', 'Tallow Stack'];
 
@@ -24,7 +28,8 @@ const VC_FACTS = [
   { fact: 'Vitamin C recycling: E regenerates C', detail: 'After vitamin C neutralises a free radical, it becomes a dehydroascorbyl radical (spent vitamin C). Vitamin E can donate an electron to regenerate active vitamin C. This is why vitamin C + vitamin E combinations are synergistic — each regenerates the other in a recycling loop.', icon: '♻️' },
 ];
 
-const VC_FORMS = [
+function buildVcForms(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     name: 'L-Ascorbic Acid (LAA)',
     stability: 'low',
@@ -85,7 +90,8 @@ const VC_FORMS = [
     note: 'The most hydrating vitamin C form. Converts to ascorbic acid slowly in skin. At 10%, provides measurable antioxidant protection with a hydration boost. Often paired with hyaluronic acid.',
     color: (Colors as any).purple ?? '#6B85A8',
   },
-];
+  ];
+}
 
 const HOW_TO_USE = [
   { step: 1, title: 'Choose the right form for your skin', detail: 'Healthy, non-sensitive skin: start with 10% L-ascorbic acid and work up to 15–20%. Sensitive/compromised skin: begin with ascorbyl glucoside or SAP. Acne-prone: SAP specifically. Dry/oil-routine users: VC-IP for compatibility with oils and tallow.' },
@@ -96,7 +102,8 @@ const HOW_TO_USE = [
   { step: 6, title: 'Store correctly', detail: 'L-ascorbic acid: refrigerate, use within 3 months of opening, discard if orange/yellow/brown (oxidised). Stable derivatives: room temperature, away from light. An oxidised vitamin C serum does not work — it may even produce free radicals instead of neutralising them.' },
 ];
 
-const COMBINATIONS = [
+function buildCombinations(Colors: ReturnType<typeof shimColors>) {
+  return [
   { combo: 'Vitamin C + Vitamin E', verdict: 'Synergistic', detail: 'The classic duo. Vitamin E regenerates spent vitamin C after free radical neutralisation. Together they provide 8× more UV protection than either alone (Pinnell 1996 study). Always combine for maximum antioxidant effect.', color: Colors.green },
   { combo: 'Vitamin C + SPF', verdict: 'Synergistic', detail: 'SPF prevents photon damage. Vitamin C neutralises breakthrough free radical damage. Different mechanisms, complementary protection. Apply vitamin C first, SPF over. Never skip SPF when using vitamin C — UV degrades it rapidly.', color: Colors.green },
   { combo: 'Vitamin C + Ferulic Acid', verdict: 'Synergistic', detail: 'Ferulic acid doubles the stability of L-ascorbic acid and extends its antioxidant efficacy by reducing its oxidation rate. Found in the famous SkinCeuticals CE Ferulic formulation. Provides 4× better UV protection than C+E alone.', color: Colors.green },
@@ -104,7 +111,8 @@ const COMBINATIONS = [
   { combo: 'Vitamin C + Retinol', verdict: 'Separate (different times)', detail: 'Both are effective but vitamin C is best AM (antioxidant during UV exposure) and retinol is best PM (photosensitive, needs overnight dwell time). Layering them together is not harmful, but using them at their optimal times is more effective.', color: Colors.gold },
   { combo: 'Vitamin C + AHA/BHA', verdict: 'Caution — separate', detail: 'LAA at pH 3.5 and AHA at pH 3.5: stacking two low-pH products significantly increases irritation risk and barrier disruption. Use at separate times (vitamin C AM, acids PM) or choose stable vitamin C derivatives that do not require low pH.', color: Colors.red },
   { combo: 'Vitamin C + Benzoyl Peroxide', verdict: 'Avoid together', detail: 'Benzoyl peroxide oxidises vitamin C on contact, rendering it inactive. If using BP in a routine, apply vitamin C at a completely separate time (morning vs evening) with thorough cleansing between applications.', color: Colors.red },
-];
+  ];
+}
 
 const TALLOW_STACK = [
   { title: 'VC-IP + Tallow: the oil-soluble pairing', body: 'Ascorbyl tetraisopalmitate (VC-IP) is oil-soluble — it disperses readily in fatty acids. A VC-IP serum applied before tallow means the vitamin C is carried deeper into the lipid-rich stratum corneum as the tallow integrates. This pairing works particularly well for dry and mature skin.' },
@@ -116,6 +124,11 @@ const TALLOW_STACK = [
 ];
 
 export default function VitaminCScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const VC_FORMS = useMemo(() => buildVcForms(Colors), [Colors]);
+  const COMBINATIONS = useMemo(() => buildCombinations(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedForm, setExpandedForm] = useState<number | null>(null);
@@ -261,7 +274,9 @@ export default function VitaminCScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -305,4 +320,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

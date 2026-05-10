@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   ActivityIndicator, Share, Animated, Easing,
@@ -9,7 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -44,6 +45,8 @@ type BuiltRoutine = {
 };
 
 export default function RoutineBuilder() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [budget, setBudget] = useState('');
   const [time, setTime] = useState('');
   const [concerns, setConcerns] = useState<string[]>([]);
@@ -189,7 +192,7 @@ Return ONLY valid JSON (no markdown):
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Routine Builder</Text>
@@ -197,7 +200,7 @@ Return ONLY valid JSON (no markdown):
           </View>
           {routine ? (
             <Pressable style={styles.backBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={20} color={Colors.primary} />
+              <Ionicons name="share-outline" size={20} color={colors.primary} />
             </Pressable>
           ) : (
             <View style={{ width: 36 }} />
@@ -263,12 +266,12 @@ Return ONLY valid JSON (no markdown):
               onPress={build}
               disabled={!budget || !time || loading}
             >
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
               {loading
-                ? <ActivityIndicator color={Colors.white} />
+                ? <ActivityIndicator color={colors.white} />
                 : (
                   <>
-                    <Ionicons name="sparkles-outline" size={18} color={Colors.white} />
+                    <Ionicons name="sparkles-outline" size={18} color={colors.white} />
                     <Text style={styles.buildBtnText}>Build My Routine</Text>
                   </>
                 )
@@ -283,11 +286,11 @@ Return ONLY valid JSON (no markdown):
             {/* Summary strip */}
             <View style={styles.summaryRow}>
               <View style={styles.summaryChip}>
-                <Ionicons name="cash-outline" size={14} color={Colors.primary} />
+                <Ionicons name="cash-outline" size={14} color={colors.primary} />
                 <Text style={styles.summaryText}>{routine.monthlyCost}</Text>
               </View>
               <View style={styles.summaryChip}>
-                <Ionicons name="time-outline" size={14} color={Colors.primary} />
+                <Ionicons name="time-outline" size={14} color={colors.primary} />
                 <Text style={styles.summaryText}>{routine.totalTime}</Text>
               </View>
             </View>
@@ -320,7 +323,7 @@ Return ONLY valid JSON (no markdown):
                 <View key={i} style={[styles.stepRow, i < steps.length - 1 && styles.stepBorder]}>
                   <View style={styles.stepOrderCol}>
                     <View style={[styles.stepCircle, step.isTallowDermics && styles.stepCircleTD]}>
-                      <Text style={[styles.stepNum, step.isTallowDermics && { color: Colors.white }]}>{step.order}</Text>
+                      <Text style={[styles.stepNum, step.isTallowDermics && { color: colors.white }]}>{step.order}</Text>
                     </View>
                     {i < steps.length - 1 && <View style={styles.stepLine} />}
                   </View>
@@ -329,7 +332,7 @@ Return ONLY valid JSON (no markdown):
                       <Text style={styles.stepName}>{step.step}</Text>
                       <Text style={styles.stepDuration}>{step.duration}</Text>
                     </View>
-                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: Colors.primary }]}>
+                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: colors.primary }]}>
                       {step.isTallowDermics && '🌿 '}{step.product}
                     </Text>
                     <Text style={styles.stepWhy}>{step.why}</Text>
@@ -341,7 +344,7 @@ Return ONLY valid JSON (no markdown):
             {/* TallowDermics role */}
             {routine.tallowDermicsRole && (
               <Pressable style={styles.tdCard} onPress={() => router.push('/product')}>
-                <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+                <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
                 <Text style={styles.tdEmoji}>🌿</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.tdTitle}>TallowDermics in Your Routine</Text>
@@ -370,69 +373,71 @@ Return ONLY valid JSON (no markdown):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
   cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  regenBtn: { fontSize: 13, fontWeight: '600', color: Colors.primary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  regenBtn: { fontSize: 13, fontWeight: '600', color: c.primary },
 
-  prefLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
+  prefLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  chipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  chipText: { fontSize: 12, color: Colors.textMuted },
-  chipTextActive: { color: Colors.primary, fontWeight: '600' },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  chipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  chipText: { fontSize: 12, color: c.textMuted },
+  chipTextActive: { color: c.primary, fontWeight: '600' },
 
   buildBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, height: 52, borderRadius: 14, overflow: 'hidden', marginTop: 4,
   },
-  buildBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  buildBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
 
   summaryRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
-  summaryChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.bgCard, borderRadius: 10, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8, flex: 1, justifyContent: 'center' },
-  summaryText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500', flex: 1 },
+  summaryChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: c.bgCard, borderRadius: 10, borderWidth: 1, borderColor: c.border, paddingHorizontal: 12, paddingVertical: 8, flex: 1, justifyContent: 'center' },
+  summaryText: { fontSize: 12, color: c.textSecondary, fontWeight: '500', flex: 1 },
 
   philosophyCard: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 8, marginBottom: 14 },
-  philosophyKey: { fontSize: 15, fontWeight: '800', color: Colors.primary, fontStyle: 'italic' },
-  philosophyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  philosophyKey: { fontSize: 15, fontWeight: '800', color: c.primary, fontStyle: 'italic' },
+  philosophyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tabs: { flexDirection: 'row', gap: 6, marginBottom: 12 },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: 'center', backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: Colors.primary },
-  tabText: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
-  tabTextActive: { color: Colors.primary },
+  tab: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: 'center', backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: c.primary },
+  tabText: { fontSize: 12, fontWeight: '600', color: c.textMuted },
+  tabTextActive: { color: c.primary },
 
   stepRow: { flexDirection: 'row', gap: 12, paddingBottom: 14 },
   stepBorder: { borderBottomWidth: 0 },
   stepOrderCol: { alignItems: 'center', width: 28 },
-  stepCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  stepCircleTD: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  stepNum: { fontSize: 13, fontWeight: '800', color: Colors.textMuted },
-  stepLine: { flex: 1, width: 1, backgroundColor: Colors.border, marginTop: 4 },
+  stepCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  stepCircleTD: { backgroundColor: c.primary, borderColor: c.primary },
+  stepNum: { fontSize: 13, fontWeight: '800', color: c.textMuted },
+  stepLine: { flex: 1, width: 1, backgroundColor: c.border, marginTop: 4 },
   stepContent: { flex: 1, gap: 3 },
   stepHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  stepName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  stepDuration: { fontSize: 11, color: Colors.textMuted, fontWeight: '500' },
-  stepProduct: { fontSize: 13, color: Colors.textSecondary, fontWeight: '600' },
-  stepWhy: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  stepName: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  stepDuration: { fontSize: 11, color: c.textMuted, fontWeight: '500' },
+  stepProduct: { fontSize: 13, color: c.textSecondary, fontWeight: '600' },
+  stepWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   tdCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
   tdEmoji: { fontSize: 22 },
-  tdTitle: { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 3 },
+  tdTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 3 },
   tdText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  tipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary, marginTop: 7 },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: c.primary, marginTop: 7 },
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}
