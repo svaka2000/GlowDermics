@@ -36,4 +36,6 @@ export { SkinAura } from './SkinAura';
 export { ScanReel } from './ScanReel';
 export { SkinSpectrum } from './SkinSpectrum';
 export { StreakSaver } from './StreakSaver';
+export { HabitMatrix } from './HabitMatrix';
+export type { HabitDay } from './HabitMatrix';
 export { DailyAffirmation } from './DailyAffirmation';

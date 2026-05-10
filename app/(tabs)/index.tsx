@@ -636,6 +636,11 @@ export default function Home() {
               <Ionicons name="medal-outline" size={22} color={colors.gold} />
               <Text style={[styles.quickLabel, { color: colors.gold }]}>Achiev{'\n'}ements</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/habit-matrix' as any)}>
+              <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="grid-outline" size={22} color={colors.primary} />
+              <Text style={styles.quickLabel}>Habit{'\n'}Matrix</Text>
+            </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/notifications' as any)}>
               <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="notifications-outline" size={22} color={'#9B5BA8'} />

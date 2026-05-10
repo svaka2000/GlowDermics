@@ -155,6 +155,7 @@ function RootContent() {
           <Stack.Screen name="seven-day/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="identity/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="achievements/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="habit-matrix/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="notifications/index" options={{ animation: 'slide_from_right' }} />
         </Stack>
         </SafeAreaProvider>
