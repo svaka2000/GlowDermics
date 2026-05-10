@@ -1,16 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Science', 'Molecular Weights', 'Common Mistakes', 'Layering', 'With Tallow'];
 
@@ -23,7 +28,8 @@ const HA_FACTS = [
   { fact: 'Skin makes its own HA via hyaluronidase balance', detail: 'The skin is constantly synthesising and degrading HA through hyaluronidase enzymes. UV radiation dramatically increases hyaluronidase activity — which is one mechanism by which UV ages skin (it breaks down the HA matrix that maintains skin volume and suppleness). SPF protection directly preserves the HA matrix.', icon: '☀️' },
 ];
 
-const MOLECULAR_WEIGHTS = [
+function buildMolecularWeights(Colors: ShimColors) {
+  return [
   {
     weight: 'Very High MW (>1,500 kDa)',
     penetration: 'Surface only',
@@ -69,7 +75,8 @@ const MOLECULAR_WEIGHTS = [
     color: Colors.red,
     sizeLabel: '●○○○○',
   },
-];
+  ];
+}
 
 const MISTAKES = [
   { mistake: 'Applying HA to dry skin in dry conditions', fix: 'Always apply HA to damp skin (immediately after cleansing, while skin still has some moisture). If your environment is dry, seal immediately with an occlusive (tallow, moisturiser) within 30 seconds.', icon: '❌' },
@@ -98,6 +105,10 @@ const TALLOW_NOTES = [
 ];
 
 export default function HyaluronicAcidScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const MOLECULAR_WEIGHTS = useMemo(() => buildMolecularWeights(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedMW, setExpandedMW] = useState<number | null>(null);
@@ -244,51 +255,53 @@ export default function HyaluronicAcidScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  sizeLabel: { color: Colors.gold, fontSize: 12, letterSpacing: 3, marginBottom: 2 },
-  penetrationText: { color: Colors.textMuted, fontSize: 12 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  sizeLabel: { color: c.gold, fontSize: 12, letterSpacing: 3, marginBottom: 2 },
+  penetrationText: { color: c.textMuted, fontSize: 12 },
   infoRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
-  infoLabel: { color: Colors.textMuted, fontSize: 12, fontWeight: '600', width: 65 },
-  infoVal: { color: Colors.textSecondary, fontSize: 12, flex: 1 },
-  riskBlock: { marginTop: 8, backgroundColor: Colors.red + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.red + '33' },
-  riskText: { color: Colors.red, fontSize: 12, lineHeight: 18 },
-  fixBlock: { marginTop: 10, backgroundColor: Colors.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.teal + '33' },
-  fixLabel: { color: Colors.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  fixText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
+  infoLabel: { color: c.textMuted, fontSize: 12, fontWeight: '600', width: 65 },
+  infoVal: { color: c.textSecondary, fontSize: 12, flex: 1 },
+  riskBlock: { marginTop: 8, backgroundColor: c.red + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.red + '33' },
+  riskText: { color: c.red, fontSize: 12, lineHeight: 18 },
+  fixBlock: { marginTop: 10, backgroundColor: c.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.teal + '33' },
+  fixLabel: { color: c.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  fixText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
   stepCard: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
-  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   stepHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  stepTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700' },
-  stepTiming: { color: Colors.textMuted, fontSize: 11 },
-  stepDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700' },
+  stepTiming: { color: c.textMuted, fontSize: 11 },
+  stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

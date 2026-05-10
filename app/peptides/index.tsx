@@ -1,16 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration,
+    purple: c.darkCircles, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['What Are Peptides', 'Types', 'Top Peptides', 'How to Use', 'Tallow & Peptides'];
 
@@ -23,7 +29,8 @@ const INTRO_FACTS = [
   { fact: 'Clinical evidence varies widely by specific peptide', detail: 'Some peptides have robust double-blind clinical trial data (Matrixyl 3000, Argireline, copper peptides). Others are proprietary ingredients with only in-vitro or manufacturer-funded data. Understanding which specific peptides are in a product matters more than "contains peptides" marketing.', icon: '📊' },
 ];
 
-const PEPTIDE_TYPES = [
+function buildPeptideTypes(Colors: ShimColors) {
+  return [
   {
     type: 'Signal Peptides',
     color: Colors.blue,
@@ -60,7 +67,8 @@ const PEPTIDE_TYPES = [
     bestFor: 'UV-induced collagen loss, inflammatory skin conditions, maintaining collagen in already-damaged skin.',
     evidence: 'moderate',
   },
-];
+  ];
+}
 
 const TOP_PEPTIDES = [
   { name: 'Matrixyl 3000', concentration: '3–8%', mechanism: 'Dual signal peptide combo. Palmitoyl tripeptide-1 mimics collagen fragment signalling. Palmitoyl tetrapeptide-7 reduces IL-6 (pro-inflammatory cytokine that degrades collagen). Together: stimulate collagen synthesis + reduce breakdown simultaneously.', clinical: 'Independent studies: 27–33% reduction in wrinkle depth at 3 months. One of the most studied cosmetic peptides. Palmitoyl group improves stratum corneum penetration.', icon: '⭐' },
@@ -89,6 +97,10 @@ const TALLOW_PEPTIDES = [
 ];
 
 export default function PeptidesScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const PEPTIDE_TYPES = useMemo(() => buildPeptideTypes(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedType, setExpandedType] = useState<number | null>(null);
@@ -244,51 +256,53 @@ export default function PeptidesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
   evidenceBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   evidenceText: { fontSize: 10, fontWeight: '700' },
-  examplesLabel: { color: Colors.textMuted, fontSize: 11, fontWeight: '700', marginTop: 12, marginBottom: 4 },
-  exampleItem: { color: Colors.textSecondary, fontSize: 12, marginBottom: 4 },
-  bestForBlock: { backgroundColor: Colors.cardAlt, borderRadius: 8, padding: 10, marginTop: 10 },
-  bestForLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  bestForText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  concText: { color: Colors.textMuted, fontSize: 12 },
-  mechanismLabel: { color: Colors.textMuted, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  clinicalBlock: { backgroundColor: Colors.green + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.green + '33', marginTop: 10 },
-  clinicalLabel: { color: Colors.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  clinicalText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  examplesLabel: { color: c.textMuted, fontSize: 11, fontWeight: '700', marginTop: 12, marginBottom: 4 },
+  exampleItem: { color: c.textSecondary, fontSize: 12, marginBottom: 4 },
+  bestForBlock: { backgroundColor: c.cardAlt, borderRadius: 8, padding: 10, marginTop: 10 },
+  bestForLabel: { color: c.gold, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  bestForText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  concText: { color: c.textMuted, fontSize: 12 },
+  mechanismLabel: { color: c.textMuted, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  clinicalBlock: { backgroundColor: c.green + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.green + '33', marginTop: 10 },
+  clinicalLabel: { color: c.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  clinicalText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
   stepCard: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
-  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-  stepTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  stepDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

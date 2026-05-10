@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const DETOX_KEY = 'gd_skin_detox';
 
@@ -37,7 +38,8 @@ type ActiveDetox = {
   checkIns: string[]; // dates completed
 };
 
-const PROTOCOLS: DetoxProtocol[] = [
+function buildProtocols(c: Palette): DetoxProtocol[] {
+  return [
   {
     id: 'purge-7',
     name: '7-Day Skin Purge Reset',
@@ -72,7 +74,7 @@ const PROTOCOLS: DetoxProtocol[] = [
     emoji: '🛡️',
     duration: '14 days',
     days: 14,
-    color: Colors.primary,
+    color: c.primary,
     tagline: 'Systematically rebuild a damaged skin barrier',
     idealFor: ['Skin that stings or burns with products', 'Chronic redness or sensitization', 'Over-exfoliated or over-treated skin', 'Eczema or seborrheic dermatitis flares'],
     whatToExpect: 'Week 1: Reduction in stinging and burning. Week 2: Visible reduction in redness, skin feels more comfortable. Post-protocol: Dramatically improved tolerance for actives.',
@@ -100,7 +102,7 @@ const PROTOCOLS: DetoxProtocol[] = [
     emoji: '⚡',
     duration: '30 days',
     days: 30,
-    color: Colors.gold,
+    color: c.gold,
     tagline: 'Discover what your skin actually needs (vs what you think it needs)',
     idealFor: ['Anyone wanting to simplify', 'Those spending too much on skincare', 'Figuring out which products are actually working', 'Building a sustainable long-term routine'],
     whatToExpect: 'Weeks 1-2: Adjustment period, skin may crave products. Week 3: Skin\'s natural rhythm restores. Week 4: Clear picture of what\'s actually necessary.',
@@ -129,7 +131,8 @@ const PROTOCOLS: DetoxProtocol[] = [
     ],
     tallowRole: 'Challenge: can TallowDermics replace your moisturizer AND eye cream AND body lotion? Most users find it can. This challenge is a way to test whether their expensive multi-step routine is actually outperforming a single ancestral ingredient.',
   },
-];
+  ];
+}
 
 function getDaysCompleted(detox: ActiveDetox): number {
   return detox.checkIns.length;
@@ -144,6 +147,9 @@ function getTodayCheckedIn(detox: ActiveDetox): boolean {
 }
 
 export default function SkinDetox() {
+  const colors = useColors();
+  const PROTOCOLS = useMemo(() => buildProtocols(colors), [colors]);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [activeDetox, setActiveDetox] = useState<ActiveDetox | null>(null);
   const [selectedProtocol, setSelectedProtocol] = useState<DetoxProtocol | null>(null);
 
@@ -187,7 +193,7 @@ export default function SkinDetox() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={() => setSelectedProtocol(null)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>{selectedProtocol.name}</Text>
             <View style={{ width: 36 }} />
@@ -239,7 +245,7 @@ export default function SkinDetox() {
           ))}
 
           <View style={styles.tallowRoleCard}>
-            <LinearGradient colors={[`${Colors.primary}12`, `${Colors.primary}04`]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
             <Text style={styles.tallowRoleTitle}>🌿 TallowDermics in This Protocol</Text>
             <Text style={styles.tallowRoleText}>{selectedProtocol.tallowRole}</Text>
           </View>
@@ -265,7 +271,7 @@ export default function SkinDetox() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Detox</Text>
@@ -299,7 +305,7 @@ export default function SkinDetox() {
 
             {!getTodayCheckedIn(activeDetox) ? (
               <Pressable style={[styles.checkInBtn, { backgroundColor: currentProtocol.color }]} onPress={checkIn}>
-                <Ionicons name="checkmark" size={18} color={Colors.white} />
+                <Ionicons name="checkmark" size={18} color={colors.white} />
                 <Text style={styles.checkInBtnText}>Mark Today Complete</Text>
               </Pressable>
             ) : (
@@ -326,7 +332,7 @@ export default function SkinDetox() {
                 <Text style={[styles.protocolCardName, { color: protocol.color }]}>{protocol.name}</Text>
                 <Text style={styles.protocolCardDuration}>{protocol.duration}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
             </View>
             <Text style={styles.protocolCardTagline}>{protocol.tagline}</Text>
           </Pressable>
@@ -344,7 +350,7 @@ export default function SkinDetox() {
             'You can\'t go a day without products without discomfort',
           ].map((sign, i) => (
             <View key={i} style={styles.signRow}>
-              <Ionicons name="alert-circle-outline" size={14} color={Colors.gold} />
+              <Ionicons name="alert-circle-outline" size={14} color={colors.gold} />
               <Text style={styles.signText}>{sign}</Text>
             </View>
           ))}
@@ -356,19 +362,20 @@ export default function SkinDetox() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center', flex: 1 },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center', flex: 1 },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   activeDetoxCard: {
@@ -377,44 +384,44 @@ const styles = StyleSheet.create({
   },
   activeDetoxHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   activeDetoxEmoji: { fontSize: 28 },
-  activeDetoxName: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary },
-  activeDetoxProgress: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
-  activeProgressBar: { height: 6, backgroundColor: Colors.bgElevated, borderRadius: 3, overflow: 'hidden' },
+  activeDetoxName: { fontSize: 14, fontWeight: '800', color: c.textPrimary },
+  activeDetoxProgress: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+  activeProgressBar: { height: 6, backgroundColor: c.bgElevated, borderRadius: 3, overflow: 'hidden' },
   activeProgressFill: { height: '100%', borderRadius: 3 },
   checkInBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     height: 46, borderRadius: 12,
   },
-  checkInBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  checkInBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
   todayDone: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   todayDoneText: { fontSize: 14, fontWeight: '700', color: '#4ADE80' },
   endBtn: { alignSelf: 'center' },
-  endBtnText: { fontSize: 12, color: Colors.textMuted, textDecorationLine: 'underline' },
+  endBtnText: { fontSize: 12, color: c.textMuted, textDecorationLine: 'underline' },
 
-  sectionLabel: { fontSize: 10, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1.5, marginBottom: 10 },
+  sectionLabel: { fontSize: 10, fontWeight: '800', color: c.textMuted, letterSpacing: 1.5, marginBottom: 10 },
 
   protocolCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 6, marginBottom: 10,
   },
   protocolCardTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   protocolCardEmoji: { fontSize: 26 },
   protocolCardName: { fontSize: 14, fontWeight: '800' },
-  protocolCardDuration: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
-  protocolCardTagline: { fontSize: 12, color: Colors.textSecondary },
+  protocolCardDuration: { fontSize: 11, color: c.textMuted, marginTop: 1 },
+  protocolCardTagline: { fontSize: 12, color: c.textSecondary },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 8, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   listRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  listText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  listText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   signRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  signText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  signText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   // Protocol detail
   protocolHero: {
@@ -423,37 +430,38 @@ const styles = StyleSheet.create({
   },
   protocolEmoji: { fontSize: 40 },
   protocolName: { fontSize: 22, fontWeight: '900', textAlign: 'center' },
-  protocolTagline: { fontSize: 13, color: Colors.textMuted, textAlign: 'center' },
+  protocolTagline: { fontSize: 13, color: c.textMuted, textAlign: 'center' },
 
   phaseCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1,
     padding: 14, gap: 6, marginBottom: 10,
   },
   phaseName: { fontSize: 15, fontWeight: '800' },
-  phaseDayRange: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
-  phaseDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, marginTop: 2 },
+  phaseDayRange: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
+  phaseDesc: { fontSize: 13, color: c.textSecondary, lineHeight: 19, marginTop: 2 },
   phaseAllowed: { gap: 4, marginTop: 6 },
   phaseAllowedTitle: { fontSize: 12, fontWeight: '800', color: '#4ADE80' },
-  phaseAllowedItem: { fontSize: 12, color: Colors.textSecondary, paddingLeft: 4 },
+  phaseAllowedItem: { fontSize: 12, color: c.textSecondary, paddingLeft: 4 },
   phaseNotAllowed: { gap: 4, marginTop: 6 },
-  phaseNotAllowedTitle: { fontSize: 12, fontWeight: '800', color: Colors.scorePoor },
-  phaseNotAllowedItem: { fontSize: 12, color: Colors.textSecondary, paddingLeft: 4 },
+  phaseNotAllowedTitle: { fontSize: 12, fontWeight: '800', color: c.scorePoor },
+  phaseNotAllowedItem: { fontSize: 12, color: c.textSecondary, paddingLeft: 4 },
 
   tallowRoleCard: {
-    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 14, gap: 6, marginBottom: 14,
   },
-  tallowRoleTitle: { fontSize: 14, fontWeight: '700', color: Colors.primary },
-  tallowRoleText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tallowRoleTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  tallowRoleText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   startBtn: {
     height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  startBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  startBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
 
   alreadyRunning: {
-    backgroundColor: `${Colors.gold}15`, borderRadius: 12, padding: 12, marginBottom: 14,
-    borderWidth: 1, borderColor: `${Colors.gold}30`,
+    backgroundColor: `${c.gold}15`, borderRadius: 12, padding: 12, marginBottom: 14,
+    borderWidth: 1, borderColor: `${c.gold}30`,
   },
-  alreadyRunningText: { fontSize: 13, color: Colors.gold, textAlign: 'center' },
-});
+  alreadyRunningText: { fontSize: 13, color: c.gold, textAlign: 'center' },
+  });
+}

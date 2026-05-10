@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, Alert, KeyboardAvoidingView, Platform, Animated, Easing,
@@ -7,7 +7,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { JournalEntry } from '../../src/types';
 
@@ -28,6 +29,8 @@ function getMoodConfig(mood: JournalEntry['mood']) {
 }
 
 export default function Journal() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [writing, setWriting] = useState(false);
   const [note, setNote] = useState('');
@@ -121,7 +124,7 @@ export default function Journal() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Journal</Text>
@@ -131,7 +134,7 @@ export default function Journal() {
             style={styles.addBtn}
             onPress={() => writing ? resetForm() : openCompose()}
           >
-            <Ionicons name={writing ? 'close' : 'add'} size={22} color={Colors.white} />
+            <Ionicons name={writing ? 'close' : 'add'} size={22} color={colors.white} />
           </Pressable>
         </Animated.View>
       </SafeAreaView>
@@ -181,7 +184,7 @@ export default function Journal() {
               value={note}
               onChangeText={setNote}
               placeholder="How does your skin feel? Any new reactions, changes you noticed..."
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
@@ -192,7 +195,7 @@ export default function Journal() {
                 <Text style={styles.cancelBtnText}>Cancel</Text>
               </Pressable>
               <Pressable style={[styles.saveBtn, !note.trim() && { opacity: 0.4 }]} onPress={save} disabled={!note.trim()}>
-                <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.saveBtnGrad}>
+                <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.saveBtnGrad}>
                   <Text style={styles.saveBtnText}>Save Entry</Text>
                 </LinearGradient>
               </Pressable>
@@ -204,12 +207,12 @@ export default function Journal() {
         {!writing && !hasTodayEntry && entries.length > 0 && (
           <Pressable style={styles.nudgeCard} onPress={openCompose}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-            <Ionicons name="create-outline" size={20} color={Colors.primary} />
+            <Ionicons name="create-outline" size={20} color={colors.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.nudgeTitle}>Log today's skin check-in</Text>
               <Text style={styles.nudgeSub}>Track how your skin feels, what you noticed</Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
           </Pressable>
         )}
 
@@ -220,7 +223,7 @@ export default function Journal() {
             <Text style={styles.emptyTitle}>Your skin story starts here</Text>
             <Text style={styles.emptySub}>Daily check-ins let you track patterns, spot triggers, and celebrate your progress over time.</Text>
             <Pressable style={styles.startBtn} onPress={openCompose}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.startBtnGrad}>
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.startBtnGrad}>
                 <Text style={styles.startBtnText}>Write First Entry</Text>
               </LinearGradient>
             </Pressable>
@@ -249,7 +252,7 @@ export default function Journal() {
                         <Text style={[styles.moodBadgeLabel, { color: m.color }]}>{m.label}</Text>
                       </View>
                       <Pressable onPress={() => deleteEntry(entry.id)} style={styles.deleteBtn}>
-                        <Ionicons name="trash-outline" size={14} color={Colors.textMuted} />
+                        <Ionicons name="trash-outline" size={14} color={colors.textMuted} />
                       </Pressable>
                     </View>
 
@@ -277,46 +280,47 @@ export default function Journal() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
-  addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
+  addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 16 },
 
   composeCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    backgroundColor: c.bgCard, borderRadius: 20,
+    borderWidth: 1, borderColor: c.borderStrong,
     padding: 20, marginBottom: 20, gap: 16,
   },
-  composeTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  composeTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   moodRow: { flexDirection: 'row', gap: 8 },
   moodBtn: {
     flex: 1, alignItems: 'center', gap: 6, paddingVertical: 12,
-    borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.bgElevated,
+    borderRadius: 14, borderWidth: 1, borderColor: c.border,
+    backgroundColor: c.bgElevated,
   },
   moodEmoji: { fontSize: 20 },
-  moodLabel: { fontSize: 11, fontWeight: '600', color: Colors.textMuted },
-  tagSectionLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5 },
+  moodLabel: { fontSize: 11, fontWeight: '600', color: c.textMuted },
+  tagSectionLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5 },
   tagWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  tagChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  tagChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  tagChipText: { fontSize: 12, color: Colors.textMuted },
-  tagChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  tagChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipText: { fontSize: 12, color: c.textMuted },
+  tagChipTextActive: { color: c.primary, fontWeight: '600' },
   noteInput: {
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
-    borderRadius: 14, padding: 14, fontSize: 14, color: Colors.textPrimary,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
+    borderRadius: 14, padding: 14, fontSize: 14, color: c.textPrimary,
     minHeight: 100, lineHeight: 22,
   },
   composeBtns: { flexDirection: 'row', gap: 10 },
-  cancelBtn: { flex: 1, backgroundColor: Colors.bgElevated, borderRadius: 14, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderWidth: 1, borderColor: Colors.border },
-  cancelBtnText: { fontSize: 15, fontWeight: '600', color: Colors.textMuted },
+  cancelBtn: { flex: 1, backgroundColor: c.bgElevated, borderRadius: 14, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderWidth: 1, borderColor: c.border },
+  cancelBtnText: { fontSize: 15, fontWeight: '600', color: c.textMuted },
   saveBtn: { flex: 1.5, borderRadius: 14, overflow: 'hidden' },
   saveBtnGrad: { alignItems: 'center', justifyContent: 'center', paddingVertical: 14 },
-  saveBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   nudgeCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -324,34 +328,35 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
     padding: 16, marginBottom: 20,
   },
-  nudgeTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  nudgeSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  nudgeTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  nudgeSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyEmoji: { fontSize: 52 },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
   startBtn: { borderRadius: 16, overflow: 'hidden', marginTop: 8 },
   startBtnGrad: { paddingHorizontal: 28, paddingVertical: 15 },
-  startBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  startBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   monthGroup: { marginBottom: 24 },
-  monthLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 10, textTransform: 'uppercase' },
+  monthLabel: { fontSize: 13, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, marginBottom: 10, textTransform: 'uppercase' },
   monthEntries: { gap: 10 },
 
   entryCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 16, gap: 10,
   },
   entryHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   moodDot: { width: 8, height: 8, borderRadius: 4 },
-  entryDate: { fontSize: 12, color: Colors.textMuted, flex: 1 },
+  entryDate: { fontSize: 12, color: c.textMuted, flex: 1 },
   moodBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4 },
   moodBadgeEmoji: { fontSize: 12 },
   moodBadgeLabel: { fontSize: 11, fontWeight: '600' },
   deleteBtn: { padding: 4 },
   entryTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  entryTag: { backgroundColor: Colors.bgElevated, borderRadius: 20, paddingHorizontal: 9, paddingVertical: 4, borderWidth: 1, borderColor: Colors.border },
-  entryTagText: { fontSize: 11, color: Colors.textSecondary },
-  entryNote: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
-});
+  entryTag: { backgroundColor: c.bgElevated, borderRadius: 20, paddingHorizontal: 9, paddingVertical: 4, borderWidth: 1, borderColor: c.border },
+  entryTagText: { fontSize: 11, color: c.textSecondary },
+  entryNote: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
+  });
+}
