@@ -1,25 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  cyan: '#22D3EE',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, cyan: '#22D3EE',
+  };
+}
 
 const TABS = [
   { id: 'science', label: 'Science', icon: '🔬' },
@@ -109,6 +104,9 @@ const COLD_SHOWER_PROTOCOL = [
 ];
 
 export default function ColdTherapyScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
   const [activeTab, setActiveTab] = useState('science');
   const [rollingActive, setRollingActive] = useState(false);
   const [currentZone, setCurrentZone] = useState(0);
@@ -366,7 +364,9 @@ export default function ColdTherapyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -460,4 +460,5 @@ const styles = StyleSheet.create({
     borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 10,
   },
   doneBtnText: { color: Colors.green, fontSize: 15, fontWeight: '700' },
-});
+  });
+}

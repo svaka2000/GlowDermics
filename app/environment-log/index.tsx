@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const LOG_KEY = 'gd_environment_log';
@@ -22,20 +23,24 @@ type EnvEntry = {
 };
 
 const HUMIDITY_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-const POLLUTION_OPTIONS = [
-  { value: 1, label: 'Clean', emoji: '🌿', color: '#4ADE80' },
-  { value: 2, label: 'Mild', emoji: '😊', color: '#86EFAC' },
-  { value: 3, label: 'Moderate', emoji: '😐', color: Colors.gold },
-  { value: 4, label: 'High', emoji: '😷', color: '#F97316' },
-  { value: 5, label: 'Severe', emoji: '🚨', color: Colors.scorePoor },
-];
-const TEMP_OPTIONS = [
-  { value: 'cold', label: 'Cold', emoji: '🥶', desc: 'Below 40°F / 5°C', color: '#93C5FD' },
-  { value: 'cool', label: 'Cool', emoji: '🧥', desc: '40-60°F / 5-15°C', color: '#60A5FA' },
-  { value: 'mild', label: 'Mild', emoji: '😊', desc: '60-75°F / 15-24°C', color: '#4ADE80' },
-  { value: 'warm', label: 'Warm', emoji: '☀️', desc: '75-90°F / 24-32°C', color: Colors.gold },
-  { value: 'hot', label: 'Hot', emoji: '🔥', desc: 'Above 90°F / 32°C', color: Colors.scorePoor },
-];
+function buildPollutionOptions(c: Palette) {
+  return [
+    { value: 1, label: 'Clean', emoji: '🌿', color: '#4ADE80' },
+    { value: 2, label: 'Mild', emoji: '😊', color: '#86EFAC' },
+    { value: 3, label: 'Moderate', emoji: '😐', color: c.gold },
+    { value: 4, label: 'High', emoji: '😷', color: '#F97316' },
+    { value: 5, label: 'Severe', emoji: '🚨', color: c.scorePoor },
+  ];
+}
+function buildTempOptions(c: Palette) {
+  return [
+    { value: 'cold', label: 'Cold', emoji: '🥶', desc: 'Below 40°F / 5°C', color: '#93C5FD' },
+    { value: 'cool', label: 'Cool', emoji: '🧥', desc: '40-60°F / 5-15°C', color: '#60A5FA' },
+    { value: 'mild', label: 'Mild', emoji: '😊', desc: '60-75°F / 15-24°C', color: '#4ADE80' },
+    { value: 'warm', label: 'Warm', emoji: '☀️', desc: '75-90°F / 24-32°C', color: c.gold },
+    { value: 'hot', label: 'Hot', emoji: '🔥', desc: 'Above 90°F / 32°C', color: c.scorePoor },
+  ];
+}
 
 function getTodayStr() { return new Date().toDateString(); }
 
@@ -84,6 +89,10 @@ function getSkinImpact(entry: Partial<EnvEntry>): { issues: string[]; advice: st
 }
 
 export default function EnvironmentLog() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const POLLUTION_OPTIONS = useMemo(() => buildPollutionOptions(colors), [colors]);
+  const TEMP_OPTIONS = useMemo(() => buildTempOptions(colors), [colors]);
   const [log, setLog] = useState<EnvEntry[]>([]);
   const [humidity, setHumidity] = useState<number | null>(null);
   const [pollution, setPollution] = useState<number | null>(null);
@@ -180,7 +189,7 @@ export default function EnvironmentLog() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Environment Log</Text>
@@ -212,7 +221,7 @@ export default function EnvironmentLog() {
                 style={[styles.humChip, humidity === h && styles.humChipActive]}
                 onPress={() => { setHumidity(h); setSaved(false); }}
               >
-                <Text style={[styles.humChipText, humidity === h && { color: Colors.primary }]}>{h}%</Text>
+                <Text style={[styles.humChipText, humidity === h && { color: colors.primary }]}>{h}%</Text>
               </Pressable>
             ))}
           </View>
@@ -253,8 +262,8 @@ export default function EnvironmentLog() {
               { key: 'water', label: 'Hard water area', value: hardWater, set: (v: boolean) => { setHardWater(v); setSaved(false); } },
             ].map(item => (
               <Pressable key={item.key} style={[styles.toggleChip, item.value && styles.toggleChipActive]} onPress={() => item.set(!item.value)}>
-                <Ionicons name={item.value ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={item.value ? Colors.primary : Colors.textMuted} />
-                <Text style={[styles.toggleLabel, item.value && { color: Colors.textPrimary }]}>{item.label}</Text>
+                <Ionicons name={item.value ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={item.value ? colors.primary : colors.textMuted} />
+                <Text style={[styles.toggleLabel, item.value && { color: colors.textPrimary }]}>{item.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -266,7 +275,7 @@ export default function EnvironmentLog() {
           >
             {saved
               ? <><Ionicons name="checkmark-circle" size={18} color="#4ADE80" /><Text style={[styles.saveBtnText, { color: '#4ADE80' }]}>Saved</Text></>
-              : <><Ionicons name="leaf-outline" size={18} color={Colors.white} /><Text style={styles.saveBtnText}>Log Today</Text></>
+              : <><Ionicons name="leaf-outline" size={18} color={colors.white} /><Text style={styles.saveBtnText}>Log Today</Text></>
             }
           </Pressable>
         </View>
@@ -281,7 +290,7 @@ export default function EnvironmentLog() {
                 <Text style={styles.impactSubtitle}>⚠️ Conditions to watch</Text>
                 {impact.issues.map((issue, i) => (
                   <View key={i} style={styles.impactRow}>
-                    <View style={[styles.impactDot, { backgroundColor: Colors.gold }]} />
+                    <View style={[styles.impactDot, { backgroundColor: colors.gold }]} />
                     <Text style={styles.impactText}>{issue}</Text>
                   </View>
                 ))}
@@ -306,15 +315,15 @@ export default function EnvironmentLog() {
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
               <Text style={[styles.statNum, {
-                color: avgHumidity && avgHumidity < 40 ? Colors.scorePoor
-                  : avgHumidity && avgHumidity > 70 ? Colors.gold : '#4ADE80'
+                color: avgHumidity && avgHumidity < 40 ? colors.scorePoor
+                  : avgHumidity && avgHumidity > 70 ? colors.gold : '#4ADE80'
               }]}>
                 {avgHumidity}%
               </Text>
               <Text style={styles.statLabel}>Avg humidity</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={[styles.statNum, { color: parseFloat(avgPollution!) > 3 ? Colors.scorePoor : '#4ADE80' }]}>
+              <Text style={[styles.statNum, { color: parseFloat(avgPollution!) > 3 ? colors.scorePoor : '#4ADE80' }]}>
                 {avgPollution}
               </Text>
               <Text style={styles.statLabel}>Avg pollution</Text>
@@ -336,9 +345,9 @@ export default function EnvironmentLog() {
                 <Text style={[styles.correlationScore, { color: '#4ADE80' }]}>{lowPollutionScanAvg}</Text>
                 <Text style={styles.correlationLabel}>After clean air</Text>
               </View>
-              <Ionicons name="arrow-forward" size={20} color={Colors.textMuted} />
+              <Ionicons name="arrow-forward" size={20} color={colors.textMuted} />
               <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: Colors.scorePoor }]}>{highPollutionScanAvg}</Text>
+                <Text style={[styles.correlationScore, { color: colors.scorePoor }]}>{highPollutionScanAvg}</Text>
                 <Text style={styles.correlationLabel}>After high pollution</Text>
               </View>
             </View>
@@ -368,105 +377,107 @@ export default function EnvironmentLog() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   savedBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: 'rgba(74,222,128,0.12)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3,
   },
   savedText: { fontSize: 11, fontWeight: '700', color: '#4ADE80' },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
 
   humidityRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   humChip: {
     paddingHorizontal: 10, paddingVertical: 7, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  humChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  humChipText: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
+  humChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  humChipText: { fontSize: 12, fontWeight: '700', color: c.textMuted },
 
   pollutionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   pollChip: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 10, paddingVertical: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
   pollEmoji: { fontSize: 14 },
-  pollLabel: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
+  pollLabel: { fontSize: 12, fontWeight: '700', color: c.textMuted },
 
   tempGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tempChip: {
     flex: 1, minWidth: 80, alignItems: 'center', gap: 2,
     paddingVertical: 10, paddingHorizontal: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
   tempEmoji: { fontSize: 18 },
-  tempLabel: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
-  tempDesc: { fontSize: 9, color: Colors.textMuted, textAlign: 'center' },
+  tempLabel: { fontSize: 12, fontWeight: '700', color: c.textMuted },
+  tempDesc: { fontSize: 9, color: c.textMuted, textAlign: 'center' },
 
   toggleRow: { gap: 6 },
   toggleChip: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    padding: 12, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  toggleChipActive: { borderColor: `${Colors.primary}50`, backgroundColor: `${Colors.primary}10` },
-  toggleLabel: { fontSize: 13, fontWeight: '600', color: Colors.textMuted },
+  toggleChipActive: { borderColor: `${c.primary}50`, backgroundColor: `${c.primary}10` },
+  toggleLabel: { fontSize: 13, fontWeight: '600', color: c.textMuted },
 
   saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    height: 48, borderRadius: 12, backgroundColor: Colors.primary,
+    height: 48, borderRadius: 12, backgroundColor: c.primary,
   },
   saveBtnSaved: { backgroundColor: 'rgba(74,222,128,0.08)', borderWidth: 1, borderColor: 'rgba(74,222,128,0.25)' },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   impactCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${Colors.primary}30`,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 8, marginBottom: 14,
   },
-  impactTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  impactSubtitle: { fontSize: 12, fontWeight: '700', color: Colors.textMuted, marginTop: 4 },
+  impactTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  impactSubtitle: { fontSize: 12, fontWeight: '700', color: c.textMuted, marginTop: 4 },
   impactRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   impactDot: { width: 7, height: 7, borderRadius: 3.5, marginTop: 6, flexShrink: 0 },
-  impactText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  impactText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
   statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3,
+    flex: 1, backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 12, alignItems: 'center', gap: 3,
   },
-  statNum: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statNum: { fontSize: 20, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   correlationCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  correlationTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  correlationTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   correlationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
   correlationItem: { alignItems: 'center', gap: 4 },
   correlationScore: { fontSize: 28, fontWeight: '900' },
-  correlationLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  correlationLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

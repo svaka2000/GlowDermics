@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Share,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const groq = new Groq({
@@ -37,6 +38,8 @@ type SkinDNA = {
 };
 
 export default function SkinDNA() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [dna, setDna] = useState<SkinDNA | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -168,14 +171,14 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   };
 
   const lifecycleColor = (score: number) =>
-    score >= 75 ? Colors.scoreExcellent : score >= 55 ? Colors.scoreGood : score >= 35 ? Colors.scoreFair : Colors.scorePoor;
+    score >= 75 ? colors.scoreExcellent : score >= 55 ? colors.scoreGood : score >= 35 ? colors.scoreFair : colors.scorePoor;
 
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>My Skin DNA</Text>
@@ -183,7 +186,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
           </View>
           {dna ? (
             <Pressable style={styles.shareBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={18} color={Colors.primary} />
+              <Ionicons name="share-outline" size={18} color={colors.primary} />
             </Pressable>
           ) : <View style={{ width: 36 }} />}
         </View>
@@ -193,7 +196,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
         {loading && (
           <View style={styles.loadCard}>
-            <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 16 }} />
+            <ActivityIndicator color={colors.primary} size="large" style={{ marginBottom: 16 }} />
             <Text style={styles.loadTitle}>Reading your skin's signature…</Text>
             <Text style={styles.loadSub}>Synthesizing scans, habits, lifestyle, and goals into your unique profile</Text>
           </View>
@@ -219,7 +222,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
           <>
             {/* Archetype hero card */}
             <LinearGradient
-              colors={[Colors.primaryDark, Colors.primary, Colors.primaryLight]}
+              colors={[colors.primaryDark, colors.primary, colors.primaryLight]}
               style={styles.heroCard}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             >
@@ -258,7 +261,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             {/* Unique strength */}
             <View style={styles.strengthCard}>
               <LinearGradient colors={['rgba(74,222,128,0.12)', 'rgba(74,222,128,0.04)']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="star-outline" size={16} color={Colors.scoreExcellent} />
+              <Ionicons name="star-outline" size={16} color={colors.scoreExcellent} />
               <Text style={styles.strengthText}>{dna.uniqueStrength}</Text>
             </View>
 
@@ -280,7 +283,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                   <Text style={styles.cardTitle}>Growth Areas</Text>
                   {dna.growthAreas.map((g, i) => (
                     <View key={i} style={styles.bulletRow}>
-                      <Ionicons name="chevron-up-circle-outline" size={16} color={Colors.primary} />
+                      <Ionicons name="chevron-up-circle-outline" size={16} color={colors.primary} />
                       <Text style={styles.bulletText}>{g}</Text>
                     </View>
                   ))}
@@ -308,12 +311,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                       style={styles.ingRow}
                       onPress={() => router.push(`/ingredient/${encodeURIComponent(ing.name)}`)}
                     >
-                      <Ionicons name="checkmark-circle" size={18} color={Colors.scoreExcellent} />
+                      <Ionicons name="checkmark-circle" size={18} color={colors.scoreExcellent} />
                       <View style={{ flex: 1 }}>
                         <Text style={styles.ingName}>{ing.name}</Text>
                         <Text style={styles.ingWhy}>{ing.why}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={12} color={Colors.textMuted} />
+                      <Ionicons name="chevron-forward" size={12} color={colors.textMuted} />
                     </Pressable>
                   ))}
                 </View>
@@ -326,12 +329,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                       style={styles.ingRow}
                       onPress={() => router.push(`/ingredient/${encodeURIComponent(ing.name)}`)}
                     >
-                      <Ionicons name="close-circle" size={18} color={Colors.scorePoor} />
+                      <Ionicons name="close-circle" size={18} color={colors.scorePoor} />
                       <View style={{ flex: 1 }}>
                         <Text style={styles.ingName}>{ing.name}</Text>
                         <Text style={styles.ingWhy}>{ing.why}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={12} color={Colors.textMuted} />
+                      <Ionicons name="chevron-forward" size={12} color={colors.textMuted} />
                     </Pressable>
                   ))}
                 </View>
@@ -359,7 +362,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
             {/* Regenerate */}
             <Pressable style={styles.regenBtn} onPress={() => generate()}>
-              <Ionicons name="refresh-outline" size={14} color={Colors.textMuted} />
+              <Ionicons name="refresh-outline" size={14} color={colors.textMuted} />
               <Text style={styles.regenText}>Regenerate profile</Text>
             </Pressable>
           </>
@@ -371,28 +374,29 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
   shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   loadCard: { alignItems: 'center', paddingVertical: 60, gap: 10 },
-  loadTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  loadSub: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', maxWidth: 280, lineHeight: 20 },
+  loadTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  loadSub: { fontSize: 13, color: c.textMuted, textAlign: 'center', maxWidth: 280, lineHeight: 20 },
   errorCard: { alignItems: 'center', padding: 24, gap: 12 },
-  errorText: { fontSize: 13, color: Colors.scorePoor, textAlign: 'center' },
-  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
-  retryText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  errorText: { fontSize: 13, color: c.scorePoor, textAlign: 'center' },
+  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
+  retryText: { fontSize: 13, color: c.primary, fontWeight: '600' },
   emptyCard: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyEmoji: { fontSize: 48 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
 
   heroCard: {
     borderRadius: 22, padding: 28, marginBottom: 14, gap: 10,
@@ -400,53 +404,54 @@ const styles = StyleSheet.create({
   },
   heroEmoji: { fontSize: 52, marginBottom: 4 },
   heroEyebrow: { fontSize: 9, fontWeight: '800', letterSpacing: 2, color: 'rgba(255,255,255,0.65)' },
-  heroTitle: { fontSize: 28, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.5 },
+  heroTitle: { fontSize: 28, fontWeight: '900', color: c.white, textAlign: 'center', letterSpacing: -0.5 },
   heroTagline: { fontSize: 14, color: 'rgba(255,255,255,0.8)', textAlign: 'center', lineHeight: 21, maxWidth: 280 },
   traitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 4 },
   traitChip: { backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5 },
-  traitChipText: { fontSize: 11, fontWeight: '700', color: Colors.white },
+  traitChipText: { fontSize: 11, fontWeight: '700', color: c.white },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 12 },
-  cardLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: -6 },
-  personalityText: { fontSize: 15, color: Colors.textSecondary, lineHeight: 24, fontStyle: 'italic' },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 12 },
+  cardLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: -6 },
+  personalityText: { fontSize: 15, color: c.textSecondary, lineHeight: 24, fontStyle: 'italic' },
 
-  lifestyleCard: { flexDirection: 'row', backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 16, marginBottom: 12 },
+  lifestyleCard: { flexDirection: 'row', backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 16, marginBottom: 12 },
   lifestyleLeft: { alignItems: 'center', gap: 4 },
-  lifestyleLabel: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
+  lifestyleLabel: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted },
   lifestyleScore: { fontSize: 34, fontWeight: '800' },
-  lifestyleOf: { fontSize: 16, fontWeight: '400', color: Colors.textMuted },
+  lifestyleOf: { fontSize: 16, fontWeight: '400', color: c.textMuted },
   lifestyleRight: { flex: 1, justifyContent: 'center' },
-  lifestyleInsight: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  lifestyleInsight: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   strengthCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)', padding: 14, marginBottom: 12 },
-  strengthText: { flex: 1, fontSize: 14, color: Colors.textPrimary, lineHeight: 21, fontWeight: '500' },
+  strengthText: { flex: 1, fontSize: 14, color: c.textPrimary, lineHeight: 21, fontWeight: '500' },
 
-  tabBar: { flexDirection: 'row', backgroundColor: Colors.bgCard, borderRadius: 14, padding: 4, marginBottom: 12, borderWidth: 1, borderColor: Colors.border },
+  tabBar: { flexDirection: 'row', backgroundColor: c.bgCard, borderRadius: 14, padding: 4, marginBottom: 12, borderWidth: 1, borderColor: c.border },
   tabBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  tabBtnActive: { backgroundColor: Colors.bgElevated },
-  tabLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
-  tabLabelActive: { color: Colors.textPrimary },
+  tabBtnActive: { backgroundColor: c.bgElevated },
+  tabLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted },
+  tabLabelActive: { color: c.textPrimary },
 
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  bulletText: { flex: 1, fontSize: 14, color: Colors.textSecondary, lineHeight: 20 },
+  bulletText: { flex: 1, fontSize: 14, color: c.textSecondary, lineHeight: 20 },
 
   tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, marginBottom: 12 },
   tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   ingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  ingName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 2 },
-  ingWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
+  ingName: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 2 },
+  ingWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 17 },
 
   blueprintStep: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   blueprintNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
-  blueprintNumText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
-  blueprintStepName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 3 },
-  blueprintNote: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  blueprintNumText: { fontSize: 12, fontWeight: '700', color: c.primary },
+  blueprintStepName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 3 },
+  blueprintNote: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   regenBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14 },
-  regenText: { fontSize: 13, color: Colors.textMuted },
-});
+  regenText: { fontSize: 13, color: c.textMuted },
+  });
+}
