@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type ProductCategory = {
   label: string;
@@ -35,6 +36,8 @@ const TALLOW_PRODUCT = {
 };
 
 export default function BudgetCalculator() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [prices, setPrices] = useState<Record<string, string>>({});
   const [showResult, setShowResult] = useState(false);
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -76,7 +79,7 @@ export default function BudgetCalculator() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Budget Calculator</Text>
@@ -113,7 +116,7 @@ export default function BudgetCalculator() {
                 <TextInput
                   style={styles.priceInput}
                   placeholder={cat.placeholder.replace('$', '')}
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={colors.textMuted}
                   value={prices[cat.label] || ''}
                   onChangeText={val => updatePrice(cat.label, val)}
                   keyboardType="decimal-pad"
@@ -141,8 +144,8 @@ export default function BudgetCalculator() {
                   <Text style={styles.vsText}>VS</Text>
                 </View>
                 <View style={[styles.compItem, { alignItems: 'flex-end' }]}>
-                  <Text style={[styles.compLabel, { color: Colors.primary }]}>TALLOWDERMICS</Text>
-                  <Text style={[styles.compAmount, { color: Colors.primary }]}>${Math.round(tdAnnual)}</Text>
+                  <Text style={[styles.compLabel, { color: colors.primary }]}>TALLOWDERMICS</Text>
+                  <Text style={[styles.compAmount, { color: colors.primary }]}>${Math.round(tdAnnual)}</Text>
                   <Text style={styles.compSub}>per year</Text>
                   <Text style={styles.compMonthly}>(${Math.round(tdMonthlyFull)}/month)</Text>
                 </View>
@@ -151,7 +154,7 @@ export default function BudgetCalculator() {
               {/* Savings bar */}
               {savings > 0 && (
                 <View style={styles.savingsCard}>
-                  <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+                  <LinearGradient colors={[colors.primaryLight, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
                   <View>
                     <Text style={styles.savingsLabel}>YOU'D SAVE</Text>
                     <Text style={styles.savingsAmount}>${Math.round(savings)}</Text>
@@ -161,11 +164,11 @@ export default function BudgetCalculator() {
                 </View>
               )}
               {savings <= 0 && conventionalAnnual > 0 && (
-                <View style={[styles.savingsCard, { backgroundColor: Colors.bgElevated }]}>
+                <View style={[styles.savingsCard, { backgroundColor: colors.bgElevated }]}>
                   <View>
-                    <Text style={[styles.savingsLabel, { color: Colors.textMuted }]}>SIMILAR COST</Text>
-                    <Text style={[styles.savingsAmount, { color: Colors.textPrimary }]}>With fewer products</Text>
-                    <Text style={[styles.savingsSub, { color: Colors.textMuted }]}>Simpler routine, same or better results</Text>
+                    <Text style={[styles.savingsLabel, { color: colors.textMuted }]}>SIMILAR COST</Text>
+                    <Text style={[styles.savingsAmount, { color: colors.textPrimary }]}>With fewer products</Text>
+                    <Text style={[styles.savingsSub, { color: colors.textMuted }]}>Simpler routine, same or better results</Text>
                   </View>
                 </View>
               )}
@@ -179,7 +182,7 @@ export default function BudgetCalculator() {
               <View style={styles.replacesGrid}>
                 {['Moisturizer', 'Face Oil', 'Eye Cream', 'Night Cream'].map(r => (
                   <View key={r} style={styles.replacesChip}>
-                    <Ionicons name="checkmark" size={12} color={Colors.scoreExcellent} />
+                    <Ionicons name="checkmark" size={12} color={colors.scoreExcellent} />
                     <Text style={styles.replacesChipText}>{r}</Text>
                   </View>
                 ))}
@@ -213,7 +216,7 @@ export default function BudgetCalculator() {
 
         {/* CTA */}
         <Pressable style={styles.ctaCard} onPress={() => router.push('/product')}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <View style={{ flex: 1 }}>
             <Text style={styles.ctaTitle}>See What's in the Balm</Text>
             <Text style={styles.ctaSub}>4 ingredients. Ancestral formula. No synthetics.</Text>
@@ -227,63 +230,65 @@ export default function BudgetCalculator() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, marginBottom: 16 },
   introEmoji: { fontSize: 30 },
-  introTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  introSub: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, marginTop: 3 },
+  introTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  introSub: { fontSize: 13, color: c.textSecondary, lineHeight: 20, marginTop: 3 },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: -6 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: -6 },
 
   productRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   productIcon: { fontSize: 20, width: 28, textAlign: 'center' },
-  productLabel: { fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
-  priceInputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.bgElevated, borderRadius: 10, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 10, paddingVertical: 7 },
-  dollarSign: { fontSize: 14, color: Colors.textMuted, marginRight: 2 },
-  priceInput: { fontSize: 14, color: Colors.textPrimary, width: 60 },
+  productLabel: { fontSize: 14, color: c.textPrimary, fontWeight: '500' },
+  priceInputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.bgElevated, borderRadius: 10, borderWidth: 1, borderColor: c.border, paddingHorizontal: 10, paddingVertical: 7 },
+  dollarSign: { fontSize: 14, color: c.textMuted, marginRight: 2 },
+  priceInput: { fontSize: 14, color: c.textPrimary, width: 60 },
 
-  compCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, gap: 16, marginBottom: 14 },
-  compTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  compCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, gap: 16, marginBottom: 14 },
+  compTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   compRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   compItem: { flex: 1, gap: 2 },
-  compLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted },
-  compAmount: { fontSize: 30, fontWeight: '900', color: Colors.textPrimary },
-  compSub: { fontSize: 11, color: Colors.textMuted },
-  compMonthly: { fontSize: 11, color: Colors.textMuted },
-  vsCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  vsText: { fontSize: 10, fontWeight: '800', color: Colors.textMuted },
+  compLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted },
+  compAmount: { fontSize: 30, fontWeight: '900', color: c.textPrimary },
+  compSub: { fontSize: 11, color: c.textMuted },
+  compMonthly: { fontSize: 11, color: c.textMuted },
+  vsCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  vsText: { fontSize: 10, fontWeight: '800', color: c.textMuted },
 
   savingsCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 14, overflow: 'hidden', padding: 16 },
   savingsLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: 'rgba(255,255,255,0.7)', marginBottom: 4 },
-  savingsAmount: { fontSize: 26, fontWeight: '900', color: Colors.white },
+  savingsAmount: { fontSize: 26, fontWeight: '900', color: c.white },
   savingsSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
 
-  replaceDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  replaceDesc: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   replacesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   replacesChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(74,222,128,0.12)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(74,222,128,0.25)' },
-  replacesChipText: { fontSize: 12, color: Colors.scoreExcellent, fontWeight: '600' },
+  replacesChipText: { fontSize: 12, color: c.scoreExcellent, fontWeight: '600' },
 
-  tdRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingBottom: 10 },
-  tdItem: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  tdNote: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-  tdPrice: { fontSize: 13, color: Colors.primary, fontWeight: '700', marginTop: 2 },
+  tdRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 10 },
+  tdItem: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  tdNote: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  tdPrice: { fontSize: 13, color: c.primary, fontWeight: '700', marginTop: 2 },
   tdTotal: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: 4 },
-  tdTotalLabel: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
-  tdTotalAmount: { fontSize: 18, fontWeight: '800', color: Colors.primary },
+  tdTotalLabel: { fontSize: 13, fontWeight: '700', color: c.textPrimary },
+  tdTotalAmount: { fontSize: 18, fontWeight: '800', color: c.primary },
 
   ctaCard: { flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 16, overflow: 'hidden', padding: 18, marginBottom: 14 },
-  ctaTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  ctaTitle: { fontSize: 15, fontWeight: '700', color: c.white },
   ctaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 3 },
-});
+  });
+}

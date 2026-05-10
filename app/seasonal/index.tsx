@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const groq = new Groq({
@@ -41,6 +42,8 @@ type SeasonalGuide = {
 };
 
 export default function Seasonal() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [guide, setGuide] = useState<SeasonalGuide | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -144,14 +147,14 @@ Respond ONLY with valid JSON (no markdown, no code fences):
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>{season.emoji} {season.season} Guide</Text>
             <Text style={styles.headerSub}>Seasonal skincare adjustments</Text>
           </View>
           <Pressable style={styles.reloadBtn} onPress={generate}>
-            <Ionicons name="refresh-outline" size={18} color={Colors.textMuted} />
+            <Ionicons name="refresh-outline" size={18} color={colors.textMuted} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -172,7 +175,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
         {loading && (
           <View style={styles.loadCard}>
-            <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 14 }} />
+            <ActivityIndicator color={colors.primary} size="large" style={{ marginBottom: 14 }} />
             <Text style={styles.loadTitle}>Generating your {season.season} guide…</Text>
             <Text style={styles.loadSub}>Personalizing to your skin type and goals</Text>
           </View>
@@ -216,7 +219,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               <Text style={styles.cardTitle}>⚠ Watch Out For</Text>
               {guide.watchOutFor.map((w, i) => (
                 <View key={i} style={styles.warnRow}>
-                  <Ionicons name="alert-circle-outline" size={14} color={Colors.scoreFair} />
+                  <Ionicons name="alert-circle-outline" size={14} color={colors.scoreFair} />
                   <Text style={styles.warnText}>{w}</Text>
                 </View>
               ))}
@@ -242,7 +245,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               <>
                 <View style={styles.card}>
                   <View style={styles.routineHeader}>
-                    <Ionicons name="sunny-outline" size={16} color={Colors.gold} />
+                    <Ionicons name="sunny-outline" size={16} color={colors.gold} />
                     <Text style={styles.cardTitle}>Morning Adjustments</Text>
                   </View>
                   {guide.morningRoutineAdjustments.map((a, i) => (
@@ -289,13 +292,13 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                       onPress={() => router.push(`/ingredient/${encodeURIComponent(ing.name)}`)}
                     >
                       <View style={styles.ingIconWrap}>
-                        <Ionicons name="add-circle" size={18} color={Colors.scoreExcellent} />
+                        <Ionicons name="add-circle" size={18} color={colors.scoreExcellent} />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.ingName}>{ing.name}</Text>
                         <Text style={styles.ingReason}>{ing.reason}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                      <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
                     </Pressable>
                   ))}
                 </View>
@@ -308,13 +311,13 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                       onPress={() => router.push(`/ingredient/${encodeURIComponent(ing.name)}`)}
                     >
                       <View style={styles.ingIconWrap}>
-                        <Ionicons name="remove-circle" size={18} color={Colors.scorePoor} />
+                        <Ionicons name="remove-circle" size={18} color={colors.scorePoor} />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.ingName}>{ing.name}</Text>
                         <Text style={styles.ingReason}>{ing.reason}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                      <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
                     </Pressable>
                   ))}
                 </View>
@@ -342,7 +345,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 <Text style={styles.tallowTitle}>TallowDermics This {season.season}</Text>
                 <Text style={styles.tallowText}>{guide.tallowNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
+              <Ionicons name="chevron-forward" size={16} color={colors.primary} />
             </Pressable>
           </>
         )}
@@ -353,24 +356,25 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
   reloadBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   heroCard: {
@@ -379,18 +383,18 @@ const styles = StyleSheet.create({
   },
   heroEmoji: { fontSize: 32 },
   heroSeason: { fontSize: 16, fontWeight: '800', letterSpacing: 0.5 },
-  heroMonths: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  heroMonths: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   heroBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   heroBadgeText: { fontSize: 10, fontWeight: '800', letterSpacing: 1 },
 
   loadCard: { alignItems: 'center', paddingVertical: 48, gap: 8 },
-  loadTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  loadSub: { fontSize: 13, color: Colors.textMuted, textAlign: 'center' },
+  loadTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  loadSub: { fontSize: 13, color: c.textMuted, textAlign: 'center' },
 
   errorCard: { alignItems: 'center', padding: 24, gap: 12 },
-  errorText: { fontSize: 13, color: Colors.scorePoor, textAlign: 'center' },
-  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
-  retryText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  errorText: { fontSize: 13, color: c.scorePoor, textAlign: 'center' },
+  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
+  retryText: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   headlineCard: {
     borderRadius: 18, overflow: 'hidden',
@@ -398,29 +402,29 @@ const styles = StyleSheet.create({
     padding: 20, gap: 12, marginBottom: 14,
   },
   headline: { fontSize: 20, fontWeight: '800', lineHeight: 27 },
-  overview: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  overview: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 12,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   changeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   changeDot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
-  changeText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  changeText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   warnRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  warnText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  warnText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tabBar: {
-    flexDirection: 'row', backgroundColor: Colors.bgCard, borderRadius: 14,
-    padding: 4, marginBottom: 12, borderWidth: 1, borderColor: Colors.border,
+    flexDirection: 'row', backgroundColor: c.bgCard, borderRadius: 14,
+    padding: 4, marginBottom: 12, borderWidth: 1, borderColor: c.border,
   },
   tabBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  tabBtnActive: { backgroundColor: Colors.bgElevated },
-  tabLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
-  tabLabelActive: { color: Colors.textPrimary },
+  tabBtnActive: { backgroundColor: c.bgElevated },
+  tabLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted },
+  tabLabelActive: { color: c.textPrimary },
 
   routineHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   adjustRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginTop: 4 },
@@ -428,17 +432,17 @@ const styles = StyleSheet.create({
     width: 26, height: 26, borderRadius: 13,
     backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center',
   },
-  adjustNumText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
-  adjustStep: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 3, lineHeight: 20 },
-  adjustWhy: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  adjustNumText: { fontSize: 12, fontWeight: '700', color: c.primary },
+  adjustStep: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 3, lineHeight: 20 },
+  adjustWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   ingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   ingIconWrap: { width: 28, alignItems: 'center' },
-  ingName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, marginBottom: 2 },
-  ingReason: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
+  ingName: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 2 },
+  ingReason: { fontSize: 12, color: c.textSecondary, lineHeight: 17 },
 
   lifestyleTipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  lifestyleTipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  lifestyleTipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tallowCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -447,6 +451,7 @@ const styles = StyleSheet.create({
     padding: 16, marginTop: 4, marginBottom: 14,
   },
   tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-});
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  });
+}
