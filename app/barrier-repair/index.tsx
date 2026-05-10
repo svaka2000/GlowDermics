@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Signs', 'Causes', 'Protocol', 'Ingredients', 'Tallow Role'];
 
@@ -34,13 +39,15 @@ const CAUSES = [
   { cause: 'Stress and cortisol', detail: 'Cortisol directly suppresses skin barrier function and reduces hyaluronic acid synthesis. Chronic stress measurably reduces ceramide production and increases skin permeability.', fix: 'Stress management is a skincare intervention. Sleep, exercise, and nervous system regulation all measurably improve barrier function.', icon: '🧠' },
 ];
 
-const PROTOCOL_STEPS = [
+function buildProtocolSteps(Colors: ShimColors) {
+  return [
   { step: 1, phase: 'Days 1–3: Eliminate', action: 'Strip routine to minimum', detail: 'Stop all actives immediately: retinoids, acids (AHA/BHA/PHA), vitamin C, exfoliants, clay masks, peels. Use only cleanser + moisturiser. Actives through a damaged barrier penetrate too deep and worsen inflammation.', warning: 'Do not use niacinamide if everything stings — even it can irritate at this stage.', color: Colors.red },
   { step: 2, phase: 'Days 3–7: Cleanse gently', action: 'Switch to ultra-mild cleanser', detail: 'Use micellar water, cleansing balm, or pH-balanced gentle gel (5.0–5.5 pH). No foaming cleansers. Rinse with lukewarm water only. Consider the "no-wash" evening approach: micellar water only (no rinse-off cleanser) to preserve any remaining lipids.', warning: null, color: Colors.gold },
   { step: 3, phase: 'Days 3–14: Rebuild lipids', action: 'Apply occlusive + ceramide combo', detail: 'The holy grail combo: ceramide-containing moisturiser (CeraVe, La Roche-Posay Cicaplast) or tallow as your lipid donor. Apply while skin is still slightly damp to trap water. Top with a thin occlusive layer at night.', warning: null, color: Colors.teal },
   { step: 4, phase: 'Days 7–21: Protect during day', action: 'SPF + anti-pollution barrier', detail: 'Mineral SPF during barrier repair. Chemical SPF actives (oxybenzone, avobenzone) can penetrate more through compromised barrier. Zinc oxide SPF is inert and non-irritating. Apply SPF as the last step every morning without fail.', warning: 'Skip SPF only if you\'re completely indoors — UV makes barrier repair much harder.', color: Colors.blue },
   { step: 5, phase: 'Week 3+: Reintroduce slowly', action: 'One product at a time', detail: 'Reintroduce actives one-at-a-time with 2 weeks between additions. Start with the gentlest: niacinamide → PHA → low-strength BHA → retinol → higher-strength acids. If stinging returns, retreat to Step 1.', warning: null, color: Colors.green },
-];
+  ];
+}
 
 const REPAIR_INGREDIENTS = [
   { name: 'Ceramides', role: 'Primary lipid of stratum corneum (50% of barrier lipids). Direct structural rebuild.', found: 'CeraVe, tallow (contains ceramide precursors), sunflower seed oil', use: 'AM + PM moisturiser', rating: 'essential' },
@@ -63,6 +70,10 @@ const TALLOW_POINTS = [
 ];
 
 export default function BarrierRepairScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const PROTOCOL_STEPS = useMemo(() => buildProtocolSteps(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedSign, setExpandedSign] = useState<number | null>(null);
   const [expandedCause, setExpandedCause] = useState<number | null>(null);
@@ -213,53 +224,55 @@ export default function BarrierRepairScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
   severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   severityText: { fontSize: 10, fontWeight: '700' },
-  fixBlock: { marginTop: 10, backgroundColor: Colors.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.teal + '33' },
-  fixLabel: { color: Colors.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  fixText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  protocolCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, borderLeftWidth: 4, marginBottom: 10 },
+  fixBlock: { marginTop: 10, backgroundColor: c.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.teal + '33' },
+  fixLabel: { color: c.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  fixText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  protocolCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, borderLeftWidth: 4, marginBottom: 10 },
   protocolHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   stepBadge: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   stepBadgeText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   protocolPhase: { fontSize: 11, fontWeight: '700', marginBottom: 2 },
-  protocolAction: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700' },
-  protocolDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  warningBlock: { marginTop: 10, backgroundColor: Colors.red + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.red + '33' },
-  warningText: { color: Colors.red, fontSize: 12, lineHeight: 18 },
+  protocolAction: { color: c.textPrimary, fontSize: 14, fontWeight: '700' },
+  protocolDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  warningBlock: { marginTop: 10, backgroundColor: c.red + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.red + '33' },
+  warningText: { color: c.red, fontSize: 12, lineHeight: 18 },
   ratingBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   ratingText: { fontSize: 10, fontWeight: '700' },
   infoRow: { flexDirection: 'row', gap: 8, marginTop: 6 },
-  infoLabel: { color: Colors.textMuted, fontSize: 12, fontWeight: '600', width: 60 },
-  infoValue: { color: Colors.textSecondary, fontSize: 12, flex: 1 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  infoLabel: { color: c.textMuted, fontSize: 12, fontWeight: '600', width: 60 },
+  infoValue: { color: c.textSecondary, fontSize: 12, flex: 1 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}
