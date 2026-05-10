@@ -16,7 +16,7 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
-import { GlassHero, Card, SkinStoryStrip, GlowPulse } from '../../src/components/ui';
+import { GlassHero, Card, SkinStoryStrip, GlowPulse, ScanReel } from '../../src/components/ui';
 import { runSkinStories, SkinStory } from '../../src/engine/SkinStoryEngine';
 
 const WATER_KEY = 'gd_water';
@@ -284,6 +284,11 @@ export default function Home() {
             </View>
           </Animated.View>
         </GlassHero>
+
+        {/* Recent scans reel — Instagram-style thumbnails with score rings */}
+        <View style={{ marginHorizontal: -20, marginBottom: 14 }}>
+          <ScanReel paddingHorizontal={20} />
+        </View>
 
         {/* Daily skin stories — personalized 1-card insights */}
         <View style={{ marginHorizontal: -20 }}>
