@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Animated, Easing,
   Dimensions,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import {
   GlassHero, Card, Badge, ScatterPlot,
@@ -25,7 +26,9 @@ type SleepEntry = {
 
 const QUALITY_LABELS = ['', 'Terrible', 'Poor', 'Fair', 'Good', 'Great'];
 const QUALITY_EMOJIS = ['', '😫', '😪', '😐', '😌', '😊'];
-const QUALITY_COLORS = ['', Colors.scorePoor, '#FCA5A5', Colors.gold, '#86EFAC', '#4ADE80'];
+function buildQualityColors(c: Palette) {
+  return ['', c.scorePoor, '#FCA5A5', c.gold, '#86EFAC', '#4ADE80'];
+}
 
 const HOUR_BUCKETS = [4, 5, 6, 7, 8, 9, 10];
 
@@ -34,6 +37,9 @@ function getTodayStr() {
 }
 
 export default function SleepLog() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const QUALITY_COLORS = useMemo(() => buildQualityColors(colors), [colors]);
   const [log, setLog] = useState<SleepEntry[]>([]);
   const [todayHours, setTodayHours] = useState('');
   const [todayQuality, setTodayQuality] = useState(0);
@@ -113,14 +119,14 @@ export default function SleepLog() {
         contentContainerStyle={styles.scroll}
         style={{ opacity: contentAnim }}
       >
-        <GlassHero height={130} tint={Colors.primary} style={styles.heroWrap}>
+        <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <SafeAreaView edges={['top']}>
             <Animated.View style={[styles.heroHeader, {
               opacity: headerAnim,
               transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
             }]}>
               <Pressable style={styles.heroBackBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-                <Ionicons name="arrow-back" size={20} color={Colors.white} />
+                <Ionicons name="arrow-back" size={20} color={colors.white} />
               </Pressable>
               <View>
                 <Text style={styles.heroTitle}>Sleep Tracker</Text>
@@ -152,13 +158,13 @@ export default function SleepLog() {
                 style={[styles.hourBtn, parseFloat(todayHours) === h && styles.hourBtnActive]}
                 onPress={() => { setTodayHours(String(h)); setSaved(false); }}
               >
-                <Text style={[styles.hourBtnText, parseFloat(todayHours) === h && { color: Colors.white }]}>{h}h</Text>
+                <Text style={[styles.hourBtnText, parseFloat(todayHours) === h && { color: colors.white }]}>{h}h</Text>
               </Pressable>
             ))}
             <TextInput
               style={styles.customHourInput}
               placeholder="Other"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={parseFloat(todayHours) && !HOUR_BUCKETS.includes(parseFloat(todayHours)) ? todayHours : ''}
               onChangeText={v => { setTodayHours(v); setSaved(false); }}
               keyboardType="decimal-pad"
@@ -175,7 +181,7 @@ export default function SleepLog() {
                 onPress={() => { setTodayQuality(q); setSaved(false); }}
               >
                 <Text style={styles.qualityEmoji}>{QUALITY_EMOJIS[q]}</Text>
-                <Text style={[styles.qualityLabel, { color: todayQuality === q ? QUALITY_COLORS[q] : Colors.textMuted }]}>{QUALITY_LABELS[q]}</Text>
+                <Text style={[styles.qualityLabel, { color: todayQuality === q ? QUALITY_COLORS[q] : colors.textMuted }]}>{QUALITY_LABELS[q]}</Text>
               </Pressable>
             ))}
           </View>
@@ -187,7 +193,7 @@ export default function SleepLog() {
           >
             {saved
               ? <><Ionicons name="checkmark-circle" size={18} color="#4ADE80" /><Text style={[styles.saveBtnText, { color: '#4ADE80' }]}>Saved</Text></>
-              : <><Ionicons name="moon-outline" size={18} color={Colors.white} /><Text style={styles.saveBtnText}>Log Sleep</Text></>
+              : <><Ionicons name="moon-outline" size={18} color={colors.white} /><Text style={styles.saveBtnText}>Log Sleep</Text></>
             }
           </Pressable>
         </View>
@@ -196,7 +202,7 @@ export default function SleepLog() {
         {log.length > 0 && (
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
-              <Text style={[styles.statNum, { color: parseFloat(avgHours) >= 7 ? '#4ADE80' : parseFloat(avgHours) >= 6 ? Colors.gold : Colors.scorePoor }]}>
+              <Text style={[styles.statNum, { color: parseFloat(avgHours) >= 7 ? '#4ADE80' : parseFloat(avgHours) >= 6 ? colors.gold : colors.scorePoor }]}>
                 {avgHours}h
               </Text>
               <Text style={styles.statLabel}>14-day avg</Text>
@@ -223,7 +229,7 @@ export default function SleepLog() {
                     {d.hours > 0 && (
                       <View style={[styles.chartBar, {
                         height: `${(d.hours / chartMax) * 100}%` as any,
-                        backgroundColor: d.hours >= 8 ? '#4ADE80' : d.hours >= 7 ? '#86EFAC' : d.hours >= 6 ? Colors.gold : Colors.scorePoor,
+                        backgroundColor: d.hours >= 8 ? '#4ADE80' : d.hours >= 7 ? '#86EFAC' : d.hours >= 6 ? colors.gold : colors.scorePoor,
                       }]} />
                     )}
                   </View>
@@ -272,13 +278,13 @@ export default function SleepLog() {
                   xRange={[3, 11]}
                   yRange={[40, 100]}
                   showTrendLine
-                  pointColor={Colors.primary}
-                  trendColor={Colors.gold}
+                  pointColor={colors.primary}
+                  trendColor={colors.gold}
                 />
               </View>
             ) : (
               <View style={styles.notEnoughBox}>
-                <Ionicons name="hourglass-outline" size={18} color={Colors.textMuted} />
+                <Ionicons name="hourglass-outline" size={18} color={colors.textMuted} />
                 <Text style={styles.notEnoughText}>
                   Need {Math.max(0, 8 - report.sampleSize)} more matched scans to compute a reliable trend.
                   Each sleep entry pairs with the next scan within 36h.
@@ -306,7 +312,7 @@ export default function SleepLog() {
                   <View style={styles.correlationStatDiv} />
                   <View style={styles.correlationStat}>
                     <Text style={styles.correlationStatLabel}>YOUR BEST</Text>
-                    <Text style={[styles.correlationStatNum, { color: Colors.scoreExcellent }]}>
+                    <Text style={[styles.correlationStatNum, { color: colors.scoreExcellent }]}>
                       {report.optimalRange}
                     </Text>
                   </View>
@@ -320,8 +326,8 @@ export default function SleepLog() {
                 size={14}
                 color={
                   Math.abs(report.correlationHours) > 0.5
-                    ? Colors.scoreExcellent
-                    : report.hasEnoughData ? Colors.gold : Colors.textMuted
+                    ? colors.scoreExcellent
+                    : report.hasEnoughData ? colors.gold : colors.textMuted
                 }
               />
               <Text style={styles.verdictText}>{report.verdict}</Text>
@@ -352,8 +358,9 @@ export default function SleepLog() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
 
   heroWrap: { marginHorizontal: -16, marginBottom: 14 },
   heroHeader: {
@@ -367,7 +374,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center', letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center', letterSpacing: -0.4,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', textAlign: 'center', marginTop: 2, fontWeight: '600' },
@@ -376,10 +383,10 @@ const styles = StyleSheet.create({
 
   /* v2 correlation card */
   correlationCardV2: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     padding: 16,
     marginBottom: 14,
     shadowColor: '#1C1814',
@@ -389,29 +396,29 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   correlationHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
-  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1.4 },
+  correlationLabelTop: { fontSize: 9, fontWeight: '900', color: c.textMuted, letterSpacing: 1.4 },
   notEnoughBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     padding: 12,
     borderRadius: 12,
     marginTop: 10,
   },
-  notEnoughText: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 17, fontWeight: '500' },
+  notEnoughText: { flex: 1, fontSize: 12, color: c.textSecondary, lineHeight: 17, fontWeight: '500' },
   correlationStatsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderRadius: 14,
     padding: 10,
     marginTop: 14,
   },
   correlationStat: { flex: 1, alignItems: 'center', gap: 2 },
-  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: Colors.textMuted, letterSpacing: 1 },
-  correlationStatNum: { fontSize: 14, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationStatLabel: { fontSize: 8, fontWeight: '900', color: c.textMuted, letterSpacing: 1 },
+  correlationStatNum: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
   correlationStatDiv: { width: 1, height: 18, backgroundColor: 'rgba(28,24,20,0.10)' },
   verdictBox: {
     flexDirection: 'row',
@@ -424,50 +431,51 @@ const styles = StyleSheet.create({
     padding: 12,
     marginTop: 14,
   },
-  verdictText: { flex: 1, fontSize: 12.5, color: Colors.textPrimary, lineHeight: 19, fontWeight: '500' },
+  verdictText: { flex: 1, fontSize: 12.5, color: c.textPrimary, lineHeight: 19, fontWeight: '500' },
 
-  todayCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 12, marginBottom: 14 },
+  todayCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 14 },
   todayHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  todayLabel: { fontSize: 9, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
+  todayLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
   savedBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(74,222,128,0.12)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
   savedText: { fontSize: 11, fontWeight: '700', color: '#4ADE80' },
-  todayQ: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  todayQ: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
 
   hourBtnRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, alignItems: 'center' },
-  hourBtn: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  hourBtnActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  hourBtnText: { fontSize: 14, fontWeight: '700', color: Colors.textMuted },
-  customHourInput: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated, fontSize: 14, color: Colors.textPrimary, width: 70, textAlign: 'center' },
+  hourBtn: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  hourBtnActive: { backgroundColor: c.primary, borderColor: c.primary },
+  hourBtnText: { fontSize: 14, fontWeight: '700', color: c.textMuted },
+  customHourInput: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated, fontSize: 14, color: c.textPrimary, width: 70, textAlign: 'center' },
 
   qualityRow: { flexDirection: 'row', gap: 6 },
-  qualityBtn: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
+  qualityBtn: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
   qualityEmoji: { fontSize: 18 },
   qualityLabel: { fontSize: 8, fontWeight: '600', textAlign: 'center' },
 
-  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 12, backgroundColor: Colors.primary },
+  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 12, backgroundColor: c.primary },
   saveBtnSaved: { backgroundColor: 'rgba(74,222,128,0.08)', borderWidth: 1, borderColor: 'rgba(74,222,128,0.25)' },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  statCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
-  statNum: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 12, alignItems: 'center', gap: 3 },
+  statNum: { fontSize: 22, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   chart: { flexDirection: 'row', gap: 3, height: 80, alignItems: 'flex-end', position: 'relative' },
   chartCol: { flex: 1, alignItems: 'center', gap: 3 },
   chartBarWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
   chartBar: { width: '100%', borderRadius: 3, minHeight: 3 },
-  chartDay: { fontSize: 8, color: Colors.textMuted, fontWeight: '600' },
+  chartDay: { fontSize: 8, color: c.textMuted, fontWeight: '600' },
   chartRef: { position: 'absolute', left: 0, right: 0, height: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', bottom: 20 },
   refLine: { flex: 1, height: 1, borderTopWidth: 1, borderTopColor: 'rgba(74,222,128,0.3)', borderStyle: 'dashed' },
   refLabel: { fontSize: 9, color: '#4ADE80', marginLeft: 4 },
 
-  correlationTitle: { fontSize: 15, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.2 },
+  correlationTitle: { fontSize: 15, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

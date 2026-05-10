@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Science', 'Cleanser Types', 'Double Cleanse', 'pH', 'Tallow Cleansing'];
 
@@ -23,7 +27,8 @@ const CLEANSING_SCIENCE = [
   { fact: 'Night is the only essential cleanse', detail: 'AM skin: has accumulated only what skin naturally produced overnight (sebum, minor debris). PM skin: carries sunscreen, makeup, pollution particles, and heavy oxidative sebum from the day. The evening cleanse is by far the most critical. Many dermatologists recommend just rinsing with water in the AM for non-oily skin types.', icon: '🌙' },
 ];
 
-const CLEANSER_TYPES = [
+function buildCleanserTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     type: 'Cleansing Oil / Balm',
     icon: '🫧',
@@ -74,12 +79,15 @@ const CLEANSER_TYPES = [
     cons: ['Highly stripping if used daily — not recommended for regular use', 'Can over-dry even oily skin with frequent use', 'Should be used as a mask 1–2× weekly, not daily cleanser'],
     bestFor: '1–2× weekly treatment for oily and congested skin. Not daily cleansing.',
   },
-];
+  ];
+}
 
-const DOUBLE_CLEANSE = [
-  { step: 1, label: 'First Cleanse: Oil-Based', icon: '🫧', detail: 'Apply cleansing oil or balm to dry skin. Massage for 60 seconds — this is what dissolves sunscreen and makeup. Add a small amount of water to emulsify (the cleanser will turn milky white). Rinse thoroughly. This removes oil-soluble soil (SPF, makeup, oxidised sebum).', skipWhen: 'You wore no SPF and no makeup', color: Colors.gold },
-  { step: 2, label: 'Second Cleanse: Water-Based', icon: '💧', detail: 'Apply gentle pH-balanced gel or cream cleanser on damp skin. Massage 30–60 seconds. Rinse with lukewarm water. This removes water-soluble soil (sweat, pollution particles, environmental bacteria) and prepares skin for serums with a clean, pH-appropriate surface.', skipWhen: 'AM cleanse (water rinse only is often sufficient)', color: Colors.teal },
-];
+function buildDoubleCleanse(Colors: ReturnType<typeof shimColors>) {
+  return [
+    { step: 1, label: 'First Cleanse: Oil-Based', icon: '🫧', detail: 'Apply cleansing oil or balm to dry skin. Massage for 60 seconds — this is what dissolves sunscreen and makeup. Add a small amount of water to emulsify (the cleanser will turn milky white). Rinse thoroughly. This removes oil-soluble soil (SPF, makeup, oxidised sebum).', skipWhen: 'You wore no SPF and no makeup', color: Colors.gold },
+    { step: 2, label: 'Second Cleanse: Water-Based', icon: '💧', detail: 'Apply gentle pH-balanced gel or cream cleanser on damp skin. Massage 30–60 seconds. Rinse with lukewarm water. This removes water-soluble soil (sweat, pollution particles, environmental bacteria) and prepares skin for serums with a clean, pH-appropriate surface.', skipWhen: 'AM cleanse (water rinse only is often sufficient)', color: Colors.teal },
+  ];
+}
 
 const PH_GUIDE = [
   { item: 'Why pH matters for your cleanser', detail: 'Skin naturally sits at pH 4.5–5.5. A cleanser at pH 9 creates a 4–5 unit pH swing across the entire facial surface. This temporarily deactivates the lipid-synthesising enzymes (serine proteases) in the stratum corneum, impairs the antimicrobial barrier, and changes the microbiome balance. The skin takes 30–90 minutes to rebalance.' },
@@ -98,6 +106,11 @@ const TALLOW_CLEANSING = [
 ];
 
 export default function CleansingGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const CLEANSER_TYPES = useMemo(() => buildCleanserTypes(Colors), [Colors]);
+  const DOUBLE_CLEANSE = useMemo(() => buildDoubleCleanse(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedType, setExpandedType] = useState<number | null>(null);
@@ -236,7 +249,9 @@ export default function CleansingGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -285,4 +300,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

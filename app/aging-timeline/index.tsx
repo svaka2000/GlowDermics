@@ -1,20 +1,25 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, Pressable, SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  primary: '#C4622D', bg: '#0A0A0F', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', gold: '#D4A96A', card: '#13131A',
-  cardAlt: '#1A1A24', border: '#2A2A3A', green: '#4ADE80',
-  red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    primary: c.primary, bg: c.bg, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, gold: c.gold, card: c.bgCard,
+    cardAlt: c.bgElevated, border: c.border, green: c.scoreGood,
+    red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Decades', 'Science', 'Accelerators', 'Slow It', 'Tallow Age'];
 
-const DECADES = [
+function buildDecades(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     age: '20s',
     color: Colors.green,
@@ -65,7 +70,8 @@ const DECADES = [
     musts: ['Gentle cleansing only', 'Heavy barrier creams', 'SPF daily (still!)', 'Anti-inflammatory diet'],
     whatHappens: 'Decades of accumulated UV damage, oxidative stress, and lifestyle choices manifest fully. The skin is thin, fragile, and slow to heal. Sebaceous gland activity is very low. Consistent, gentle, moisture-focused care is essential.',
   },
-];
+  ];
+}
 
 const SCIENCE = [
   {
@@ -105,7 +111,8 @@ const SCIENCE = [
   },
 ];
 
-const ACCELERATORS = [
+function buildAccelerators(Colors: ReturnType<typeof shimColors>) {
+  return [
   { factor: 'UV Radiation', impact: 'Critical', icon: 'sunny-outline', color: Colors.red,
     detail: 'Accounts for ~80–90% of visible skin aging (photoaging). UV destroys collagen via MMP enzymes, crosslinks elastin, causes DNA mutations, and creates free radicals that oxidise cellular components.' },
   { factor: 'Smoking', impact: 'Severe', icon: 'flame-outline', color: Colors.red,
@@ -120,9 +127,11 @@ const ACCELERATORS = [
     detail: 'Particulate matter (PM2.5) penetrates pores, generating oxidative stress and inflammation. Urban pollution is associated with more pronounced nasolabial folds and age spots.' },
   { factor: 'Alcohol', impact: 'Moderate', icon: 'wine-outline', color: Colors.gold,
     detail: 'Dehydrates skin, depletes antioxidants (especially vitamin A), and promotes systemic inflammation. Regular drinking accelerates collagen breakdown and causes redness, puffiness, and broken capillaries.' },
-];
+  ];
+}
 
-const SLOW_IT = [
+function buildSlowIt(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     category: 'Daily Non-Negotiables',
     color: Colors.green,
@@ -159,9 +168,16 @@ const SLOW_IT = [
       'Never smoke; minimise alcohol; limit pollution exposure when possible',
     ],
   },
-];
+  ];
+}
 
 export default function AgingTimeline() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const DECADES = useMemo(() => buildDecades(Colors), [Colors]);
+  const ACCELERATORS = useMemo(() => buildAccelerators(Colors), [Colors]);
+  const SLOW_IT = useMemo(() => buildSlowIt(Colors), [Colors]);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
   const [expandedDecade, setExpandedDecade] = useState<number | null>(0);
@@ -345,7 +361,9 @@ export default function AgingTimeline() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 },
   back: { width: 40, height: 40, justifyContent: 'center' },
@@ -379,4 +397,5 @@ const styles = StyleSheet.create({
   catTitle: { fontSize: 14, fontWeight: '800' },
   tableRow: { flexDirection: 'row', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: Colors.border },
   tableCell: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-});
+  });
+}

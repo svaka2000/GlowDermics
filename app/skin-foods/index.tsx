@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Image, Dimensions, Animated, Easing,
@@ -6,17 +6,22 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { getFoodImage } from '../../src/services/imageSearch';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Skin Nutrients', 'Top Foods', 'Anti-Inflammatory', 'Avoid', 'Tallow Diet'];
 
-const SKIN_NUTRIENTS = [
+function buildSkinNutrients(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     nutrient: 'Vitamin A (Retinol)',
     role: 'Essential for epidermal cell differentiation and turnover. Deficiency causes hyperkeratosis (thick, scaly skin). Regulates sebaceous gland function. Stimulates collagen gene expression.',
@@ -89,7 +94,8 @@ const SKIN_NUTRIENTS = [
     icon: '🌾',
     color: Colors.teal,
   },
-];
+  ];
+}
 
 const TOP_FOODS = [
   { food: 'Wild-caught fatty fish', why: 'Omega-3 EPA/DHA (anti-inflammatory), zinc, vitamin D, astaxanthin (antioxidant 6000× more potent than vitamin C). Salmon 3× weekly measurably reduces inflammatory skin markers in studies.', emoji: '🐟', rating: 5 },
@@ -104,11 +110,13 @@ const TOP_FOODS = [
   { food: 'Dark chocolate (80%+)', why: 'Flavanols improve blood flow to skin, increase skin hydration and density. Studies show daily consumption of high-flavanol chocolate improves photoprotection (about half an SPF factor of protection). Antioxidant capacity is high.', emoji: '🍫', rating: 3 },
 ];
 
-const ANTI_INFLAMMATORY = [
-  { category: 'Reduce', foods: ['Sugar — glycates collagen, drives sebum production', 'Vegetable oils (soybean, canola, corn) — high omega-6 drives inflammation', 'Refined carbohydrates — spike insulin → androgen → sebum → acne', 'Alcohol — diuretic, inflammatory, depletes zinc', 'Dairy (for acne-prone) — IGF-1 and whey stimulate sebaceous glands'], color: Colors.red, icon: '↓' },
-  { category: 'Increase', foods: ['Fatty fish 3× weekly — EPA reduces prostaglandin E2 (inflammatory)', 'Turmeric + black pepper — curcumin reduces NF-κB inflammatory pathway', 'Green tea — EGCG reduces sebum production and UV-induced inflammation', 'Berries — anthocyanins reduce oxidative stress in skin', 'Cruciferous vegetables — sulforaphane activates Nrf2 antioxidant response'], color: Colors.green, icon: '↑' },
-  { category: 'Balance', foods: ['Omega-6:Omega-3 ratio — aim for 4:1 or lower (typical Western diet is 20:1)', 'Linoleic acid (sunflower seed, hemp) — essential for ceramide synthesis', 'Saturated fat balance — grass-fed sources preferred for better fatty acid profile', 'Iron — too little and too much both cause skin issues'], color: Colors.gold, icon: '⇌' },
-];
+function buildAntiInflammatory(Colors: ReturnType<typeof shimColors>) {
+  return [
+    { category: 'Reduce', foods: ['Sugar — glycates collagen, drives sebum production', 'Vegetable oils (soybean, canola, corn) — high omega-6 drives inflammation', 'Refined carbohydrates — spike insulin → androgen → sebum → acne', 'Alcohol — diuretic, inflammatory, depletes zinc', 'Dairy (for acne-prone) — IGF-1 and whey stimulate sebaceous glands'], color: Colors.red, icon: '↓' },
+    { category: 'Increase', foods: ['Fatty fish 3× weekly — EPA reduces prostaglandin E2 (inflammatory)', 'Turmeric + black pepper — curcumin reduces NF-κB inflammatory pathway', 'Green tea — EGCG reduces sebum production and UV-induced inflammation', 'Berries — anthocyanins reduce oxidative stress in skin', 'Cruciferous vegetables — sulforaphane activates Nrf2 antioxidant response'], color: Colors.green, icon: '↑' },
+    { category: 'Balance', foods: ['Omega-6:Omega-3 ratio — aim for 4:1 or lower (typical Western diet is 20:1)', 'Linoleic acid (sunflower seed, hemp) — essential for ceramide synthesis', 'Saturated fat balance — grass-fed sources preferred for better fatty acid profile', 'Iron — too little and too much both cause skin issues'], color: Colors.gold, icon: '⇌' },
+  ];
+}
 
 const AVOID = [
   { food: 'High glycaemic foods', impact: 'Insulin spikes → IGF-1 increase → androgen stimulation → sebum overproduction → acne. Studies consistently show low-glycaemic diets reduce acne lesion counts significantly. Impact is strongest for comedonal and inflammatory acne.', severity: 'high', emoji: '🍞' },
@@ -128,6 +136,11 @@ const TALLOW_DIET = [
 ];
 
 export default function SkinFoodsScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const SKIN_NUTRIENTS = useMemo(() => buildSkinNutrients(Colors), [Colors]);
+  const ANTI_INFLAMMATORY = useMemo(() => buildAntiInflammatory(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedNutrient, setExpandedNutrient] = useState<number | null>(null);
   const [expandedFood, setExpandedFood] = useState<number | null>(null);
@@ -293,7 +306,9 @@ export default function SkinFoodsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -343,4 +358,5 @@ const styles = StyleSheet.create({
   tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}
