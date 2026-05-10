@@ -4,6 +4,27 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-09 — Aura + ScanReel + Full-App Dark Mode (Pass 33–38)
+
+Six more iterations rounding out the overnight session.
+
+### 🎨 SkinAura procedural art (Pass 34) — `src/components/ui/SkinAura.tsx`
+Watercolor-like aura unique to each user. 5 overlapping SVG ellipses with radial gradients, deterministically generated from `persona+element+glow+totalScans` seed. White-blend grows with glow score so high-scoring auras get more luminous bleed. BreathingScrim adds a 1800-2800ms opacity loop. Hero element above the SkinIdentityCard at 140px.
+
+### 🌙 Results + new screens dark mode (Pass 35, 37) — `app/results/[id].tsx`, `app/streak/index.tsx`, `app/timeline/index.tsx`, `app/daily-challenges/index.tsx`
+171 more Colors refs migrated. Every screen in the overnight build that registers in `app/_layout.tsx` is now dark-mode aware. Helper components (Stat, CalendarCell, MilestoneRow, ChallengeHero, ActivityCell, BadgeTile, CelebrationOverlay) each call useColors() and useMemo(makeStyles).
+
+### 📷 ScanReel home widget (Pass 36) — `src/components/ui/ScanReel.tsx`
+Instagram-style horizontal carousel of recent scan thumbnails. 68px circular avatars with score-tinted progress rings (green/gold/red bands), floating score chip, day-of-week label. Leading "+ NEW" card routes to /scan. Staggered fade+spring entrance.
+
+### 🔄 Refresh-on-focus fix (Pass 38) — `src/components/ui/ScanReel.tsx`, `src/components/ui/GlowPulse.tsx`
+Both widgets switched from useEffect → useFocusEffect so they re-load when home regains focus. Fixed stale-data issue after a scan completes.
+
+### 📚 Docs (Pass 33, 39) — `CHANGELOG.md`, progress memory
+Comprehensive changelog entries + progress memory updates for cold-start agents.
+
+---
+
 ## 2026-05-09 — GlowPulse + CameraGuide + Tab Dark-Mode Finale (Pass 26–32)
 
 Seven more iterations. Highlights below.
