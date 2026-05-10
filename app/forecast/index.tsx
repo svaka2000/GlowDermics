@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Animated, Easing,
 } from 'react-native';
@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const groq = new Groq({
@@ -29,14 +30,16 @@ type ForecastResult = {
   tallowNote: string;
 };
 
-function getScoreColor(score: number): string {
-  if (score >= 80) return Colors.scoreExcellent;
-  if (score >= 65) return Colors.scoreGood;
-  if (score >= 50) return Colors.scoreFair;
-  return Colors.scorePoor;
+function getScoreColor(score: number, c: Palette): string {
+  if (score >= 80) return c.scoreExcellent;
+  if (score >= 65) return c.scoreGood;
+  if (score >= 50) return c.scoreFair;
+  return c.scorePoor;
 }
 
 export default function Forecast() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ForecastResult | null>(null);
   const [error, setError] = useState('');
@@ -154,7 +157,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Forecast</Text>
@@ -201,8 +204,8 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               ))}
             </View>
             <Pressable style={styles.generateBtn} onPress={generate}>
-              <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.generateBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-                <Ionicons name="sparkles-outline" size={18} color={Colors.white} />
+              <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.generateBtnGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <Ionicons name="sparkles-outline" size={18} color={colors.white} />
                 <Text style={styles.generateBtnText}>Generate My Forecast</Text>
               </LinearGradient>
             </Pressable>
@@ -211,7 +214,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
         {loading && (
           <View style={styles.loadingCard}>
-            <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 16 }} />
+            <ActivityIndicator color={colors.primary} size="large" style={{ marginBottom: 16 }} />
             <Text style={styles.loadingTitle}>Analyzing your skin data…</Text>
             <Text style={styles.loadingSub}>Our AI is modeling your skin trajectory based on scans, habits, and lifestyle.</Text>
           </View>
@@ -243,13 +246,13 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                   return (
                     <View key={item.label} style={styles.timelineItem}>
                       <View style={styles.timelineConnector}>
-                        {i > 0 && <View style={[styles.connectorLine, { backgroundColor: getScoreColor(item.score) + '40' }]} />}
-                        <View style={[styles.timelineDot, { backgroundColor: getScoreColor(item.score) }]} />
+                        {i > 0 && <View style={[styles.connectorLine, { backgroundColor: getScoreColor(item.score, colors) + '40' }]} />}
+                        <View style={[styles.timelineDot, { backgroundColor: getScoreColor(item.score, colors) }]} />
                       </View>
-                      <View style={[styles.scoreCircle, { borderColor: getScoreColor(item.score) + '50' }]}>
-                        <Text style={[styles.scoreCircleNum, { color: getScoreColor(item.score) }]}>{item.score}</Text>
+                      <View style={[styles.scoreCircle, { borderColor: getScoreColor(item.score, colors) + '50' }]}>
+                        <Text style={[styles.scoreCircleNum, { color: getScoreColor(item.score, colors) }]}>{item.score}</Text>
                         {i > 0 && (
-                          <Text style={[styles.scoreDiff, { color: diff >= 0 ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                          <Text style={[styles.scoreDiff, { color: diff >= 0 ? colors.scoreExcellent : colors.scorePoor }]}>
                             {diff >= 0 ? '+' : ''}{diff}
                           </Text>
                         )}
@@ -272,10 +275,10 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 <Ionicons
                   name={result.trajectory === 'improving' ? 'trending-up' : result.trajectory === 'declining' ? 'trending-down' : 'remove'}
                   size={14}
-                  color={result.trajectory === 'improving' ? Colors.scoreExcellent : result.trajectory === 'declining' ? Colors.scorePoor : Colors.textMuted}
+                  color={result.trajectory === 'improving' ? colors.scoreExcellent : result.trajectory === 'declining' ? colors.scorePoor : colors.textMuted}
                 />
                 <Text style={[styles.trajectoryText, {
-                  color: result.trajectory === 'improving' ? Colors.scoreExcellent : result.trajectory === 'declining' ? Colors.scorePoor : Colors.textMuted,
+                  color: result.trajectory === 'improving' ? colors.scoreExcellent : result.trajectory === 'declining' ? colors.scorePoor : colors.textMuted,
                 }]}>
                   {result.trajectory === 'improving' ? 'Improving trajectory' : result.trajectory === 'declining' ? 'Declining — intervention needed' : 'Stable — room to grow'}
                 </Text>
@@ -290,7 +293,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               <Text style={styles.cardSub}>Positive factors in your current trajectory</Text>
               {result.keyDrivers.map((d, i) => (
                 <View key={i} style={styles.bulletRow}>
-                  <Ionicons name="checkmark-circle" size={16} color={Colors.scoreExcellent} />
+                  <Ionicons name="checkmark-circle" size={16} color={colors.scoreExcellent} />
                   <Text style={styles.bulletText}>{d}</Text>
                 </View>
               ))}
@@ -302,7 +305,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               <Text style={styles.cardSub}>What could hold you back</Text>
               {result.risks.map((r, i) => (
                 <View key={i} style={styles.bulletRow}>
-                  <Ionicons name="alert-circle-outline" size={16} color={Colors.scoreFair} />
+                  <Ionicons name="alert-circle-outline" size={16} color={colors.scoreFair} />
                   <Text style={styles.bulletText}>{r}</Text>
                 </View>
               ))}
@@ -323,7 +326,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                         : 'rgba(250,243,224,0.08)',
                     }]}>
                       <Text style={[styles.impactText, {
-                        color: a.impact === 'high' ? Colors.scoreExcellent : a.impact === 'medium' ? Colors.gold : Colors.textMuted,
+                        color: a.impact === 'high' ? colors.scoreExcellent : a.impact === 'medium' ? colors.gold : colors.textMuted,
                       }]}>
                         {a.impact.toUpperCase()}
                       </Text>
@@ -345,12 +348,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 <Text style={styles.tallowTitle}>TallowDermics Fit</Text>
                 <Text style={styles.tallowText}>{result.tallowNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
+              <Ionicons name="chevron-forward" size={16} color={colors.primary} />
             </Pressable>
 
             {/* Regenerate */}
             <Pressable style={styles.regenBtn} onPress={generate}>
-              <Ionicons name="refresh-outline" size={16} color={Colors.textMuted} />
+              <Ionicons name="refresh-outline" size={16} color={colors.textMuted} />
               <Text style={styles.regenText}>Regenerate forecast</Text>
             </Pressable>
           </>
@@ -362,27 +365,28 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   emptyCard: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyEmoji: { fontSize: 48 },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
-  emptySub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
-  scanBtn: { backgroundColor: Colors.primary, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 14 },
-  scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary },
+  emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
+  scanBtn: { backgroundColor: c.primary, borderRadius: 14, paddingHorizontal: 24, paddingVertical: 14 },
+  scanBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   introCard: {
     borderRadius: 22, overflow: 'hidden',
@@ -390,31 +394,31 @@ const styles = StyleSheet.create({
     padding: 24, gap: 16, marginBottom: 16,
   },
   introHero: { fontSize: 44, textAlign: 'center' },
-  introTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  introDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22, textAlign: 'center' },
+  introTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  introDesc: { fontSize: 14, color: c.textSecondary, lineHeight: 22, textAlign: 'center' },
   introFactoids: { gap: 10 },
   introFactoid: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   introFactoidIcon: { fontSize: 18, width: 28, textAlign: 'center' },
-  introFactoidText: { fontSize: 14, color: Colors.textSecondary },
+  introFactoidText: { fontSize: 14, color: c.textSecondary },
   generateBtn: { borderRadius: 16, overflow: 'hidden' },
   generateBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
-  generateBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  generateBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
 
   loadingCard: { alignItems: 'center', paddingVertical: 60, gap: 12 },
-  loadingTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  loadingSub: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
+  loadingTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  loadingSub: { fontSize: 13, color: c.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
 
   errorCard: { alignItems: 'center', padding: 24, gap: 14 },
-  errorText: { fontSize: 14, color: Colors.scorePoor, textAlign: 'center' },
-  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: Colors.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
-  retryText: { fontSize: 14, color: Colors.primary, fontWeight: '600' },
+  errorText: { fontSize: 14, color: c.scorePoor, textAlign: 'center' },
+  retryBtn: { borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 10 },
+  retryText: { fontSize: 14, color: c.primary, fontWeight: '600' },
 
   timelineCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border,
     padding: 18, marginBottom: 14, gap: 16,
   },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 11, color: Colors.textMuted, marginTop: -8, marginBottom: 4 },
+  cardTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  cardSub: { fontSize: 11, color: c.textMuted, marginTop: -8, marginBottom: 4 },
 
   scoreTimeline: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 },
   timelineItem: { alignItems: 'center', gap: 6, flex: 1 },
@@ -424,34 +428,34 @@ const styles = StyleSheet.create({
   scoreCircle: {
     width: 56, height: 56, borderRadius: 28,
     borderWidth: 2, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
   },
   scoreCircleNum: { fontSize: 16, fontWeight: '800' },
   scoreDiff: { fontSize: 9, fontWeight: '700', marginTop: -2 },
-  timelineLabel: { fontSize: 10, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
-  timelineSub: { fontSize: 9, color: Colors.textMuted, textAlign: 'center' },
+  timelineLabel: { fontSize: 10, fontWeight: '700', color: c.textPrimary, textAlign: 'center' },
+  timelineSub: { fontSize: 9, color: c.textMuted, textAlign: 'center' },
 
   trajectoryBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 12, padding: 10 },
   trajectoryText: { fontSize: 13, fontWeight: '600' },
-  summaryText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21 },
+  summaryText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border,
     padding: 18, marginBottom: 14, gap: 12,
   },
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  bulletText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 20, flex: 1 },
+  bulletText: { fontSize: 14, color: c.textSecondary, lineHeight: 20, flex: 1 },
 
   actionCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12,
-    backgroundColor: Colors.bgElevated, borderRadius: 12, padding: 12,
+    backgroundColor: c.bgElevated, borderRadius: 12, padding: 12,
   },
   actionLeft: { flex: 1, gap: 6 },
   impactBadge: { alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   impactText: { fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  actionText: { fontSize: 13, color: Colors.textPrimary, lineHeight: 19 },
-  timeframePill: { backgroundColor: Colors.bgCard, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: Colors.border },
-  timeframeText: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
+  actionText: { fontSize: 13, color: c.textPrimary, lineHeight: 19 },
+  timeframePill: { backgroundColor: c.bgCard, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: c.border },
+  timeframeText: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
 
   tallowCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -460,12 +464,13 @@ const styles = StyleSheet.create({
     padding: 16, marginBottom: 14,
   },
   tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   regenBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     paddingVertical: 14,
   },
-  regenText: { fontSize: 13, color: Colors.textMuted },
-});
+  regenText: { fontSize: 13, color: c.textMuted },
+  });
+}
