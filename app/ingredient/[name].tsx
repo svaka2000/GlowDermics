@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import Groq from 'groq-sdk';
 import { searchBeautyProducts, ProductResult, getSkincareImage } from '../../src/services/imageSearch';
 
@@ -34,21 +35,29 @@ type IngredientProfile = {
   tallowNote?: string;
 };
 
-const SAFETY_CONFIG = {
-  safe: { color: Colors.scoreExcellent, label: 'Safe', icon: 'shield-checkmark-outline' as const },
-  generally_safe: { color: Colors.scoreGood, label: 'Generally Safe', icon: 'checkmark-circle-outline' as const },
-  caution: { color: Colors.scoreFair, label: 'Use with Caution', icon: 'alert-circle-outline' as const },
-  avoid: { color: Colors.scorePoor, label: 'Avoid', icon: 'close-circle-outline' as const },
-};
+function buildSafetyConfig(c: Palette) {
+  return {
+    safe: { color: c.scoreExcellent, label: 'Safe', icon: 'shield-checkmark-outline' as const },
+    generally_safe: { color: c.scoreGood, label: 'Generally Safe', icon: 'checkmark-circle-outline' as const },
+    caution: { color: c.scoreFair, label: 'Use with Caution', icon: 'alert-circle-outline' as const },
+    avoid: { color: c.scorePoor, label: 'Avoid', icon: 'close-circle-outline' as const },
+  };
+}
 
-const RESEARCH_CONFIG = {
-  strong: { color: Colors.scoreExcellent, label: 'Strong Evidence' },
-  moderate: { color: Colors.scoreGood, label: 'Moderate Evidence' },
-  limited: { color: Colors.scoreFair, label: 'Limited Evidence' },
-  theoretical: { color: Colors.textMuted, label: 'Theoretical' },
-};
+function buildResearchConfig(c: Palette) {
+  return {
+    strong: { color: c.scoreExcellent, label: 'Strong Evidence' },
+    moderate: { color: c.scoreGood, label: 'Moderate Evidence' },
+    limited: { color: c.scoreFair, label: 'Limited Evidence' },
+    theoretical: { color: c.textMuted, label: 'Theoretical' },
+  };
+}
 
 export default function IngredientDecoder() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const SAFETY_CONFIG = useMemo(() => buildSafetyConfig(colors), [colors]);
+  const RESEARCH_CONFIG = useMemo(() => buildResearchConfig(colors), [colors]);
   const { name } = useLocalSearchParams<{ name: string }>();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<IngredientProfile | null>(null);
@@ -132,9 +141,9 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   const researchConfig = profile ? RESEARCH_CONFIG[profile.researchStrength] : null;
 
   const VERDICT_CONFIG = {
-    good: { color: Colors.scoreExcellent, label: '✓ Good' },
-    neutral: { color: Colors.textMuted, label: '~ Neutral' },
-    bad: { color: Colors.scorePoor, label: '✗ Avoid' },
+    good: { color: colors.scoreExcellent, label: '✓ Good' },
+    neutral: { color: colors.textMuted, label: '~ Neutral' },
+    bad: { color: colors.scorePoor, label: '✗ Avoid' },
   };
 
   if (loading) {
@@ -142,11 +151,11 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
       <View style={styles.root}>
         <SafeAreaView>
           <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={Colors.primary} size="large" />
+          <ActivityIndicator color={colors.primary} size="large" />
           <Text style={styles.loadingTitle}>Decoding ingredient...</Text>
           <Text style={styles.loadingSub}>{name ? decodeURIComponent(name) : ''}</Text>
         </View>
@@ -159,7 +168,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
           <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
         <View style={styles.loadingWrap}>
@@ -179,7 +188,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Ingredient Decoder</Text>
           <View style={{ width: 36 }} />
@@ -239,7 +248,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
           <Text style={styles.cardTitle}>Benefits</Text>
           {profile.benefits.map((b, i) => (
             <View key={i} style={styles.bulletRow}>
-              <View style={[styles.bullet, { backgroundColor: Colors.scoreExcellent }]} />
+              <View style={[styles.bullet, { backgroundColor: colors.scoreExcellent }]} />
               <Text style={styles.bulletText}>{b}</Text>
             </View>
           ))}
@@ -251,7 +260,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
             <Text style={styles.cardTitle}>Watch Out For</Text>
             {profile.concerns.map((c, i) => (
               <View key={i} style={styles.bulletRow}>
-                <View style={[styles.bullet, { backgroundColor: Colors.scoreFair }]} />
+                <View style={[styles.bullet, { backgroundColor: colors.scoreFair }]} />
                 <Text style={styles.bulletText}>{c}</Text>
               </View>
             ))}
@@ -270,7 +279,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
             <Text style={styles.cardTitle}>Pairs With</Text>
             {profile.pairsWith.map((p, i) => (
               <View key={i} style={styles.pairRow}>
-                <Ionicons name="add-circle-outline" size={14} color={Colors.scoreExcellent} />
+                <Ionicons name="add-circle-outline" size={14} color={colors.scoreExcellent} />
                 <Text style={styles.pairText}>{p}</Text>
               </View>
             ))}
@@ -280,7 +289,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
               <Text style={styles.cardTitle}>Conflicts With</Text>
               {profile.conflictsWith.map((c, i) => (
                 <View key={i} style={styles.pairRow}>
-                  <Ionicons name="remove-circle-outline" size={14} color={Colors.scorePoor} />
+                  <Ionicons name="remove-circle-outline" size={14} color={colors.scorePoor} />
                   <Text style={styles.pairText}>{c}</Text>
                 </View>
               ))}
@@ -319,7 +328,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
                     <Image source={{ uri: p.imageUrl }} style={styles.productImg} resizeMode="contain" />
                   ) : (
                     <View style={[styles.productImg, styles.productImgPlaceholder]}>
-                      <Ionicons name="cube-outline" size={28} color={Colors.textMuted} />
+                      <Ionicons name="cube-outline" size={28} color={colors.textMuted} />
                     </View>
                   )}
                   <Text style={styles.productName} numberOfLines={2}>{p.name}</Text>
@@ -331,9 +340,9 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         )}
 
         <Pressable style={styles.scanCta} onPress={() => router.push('/scanner')}>
-          <Ionicons name="flask-outline" size={18} color={Colors.primary} />
+          <Ionicons name="flask-outline" size={18} color={colors.primary} />
           <Text style={styles.scanCtaText}>Scan a product to check if it contains this</Text>
-          <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+          <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
         </Pressable>
 
         <View style={{ height: 100 }} />
@@ -342,78 +351,80 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
   scroll: { paddingHorizontal: 16 },
 
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  loadingTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  loadingSub: { fontSize: 13, color: Colors.textMuted },
-  retryBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 12, marginTop: 8 },
-  retryBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  loadingTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  loadingSub: { fontSize: 13, color: c.textMuted },
+  retryBtn: { backgroundColor: c.primary, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 12, marginTop: 8 },
+  retryBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   heroCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     padding: 20, marginBottom: 14, gap: 10,
   },
   heroTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
-  categoryBadge: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.textMuted, marginBottom: 6 },
-  ingredientName: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, lineHeight: 30 },
-  iupacName: { fontSize: 12, color: Colors.textMuted, marginTop: 4, fontStyle: 'italic' },
+  categoryBadge: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.textMuted, marginBottom: 6 },
+  ingredientName: { fontSize: 24, fontWeight: '800', color: c.textPrimary, lineHeight: 30 },
+  iupacName: { fontSize: 12, color: c.textMuted, marginTop: 4, fontStyle: 'italic' },
   safetyBadge: { flexDirection: 'column', alignItems: 'center', gap: 4, borderRadius: 12, borderWidth: 1, padding: 10, minWidth: 72 },
   safetyText: { fontSize: 10, fontWeight: '700', textAlign: 'center', lineHeight: 14 },
-  functionText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21 },
+  functionText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   researchBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
   researchText: { fontSize: 11, fontWeight: '600' },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 12 },
-  cardTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
-  bodyText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, marginBottom: 12 },
+  cardTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+  bodyText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
   skinTypeGrid: { gap: 8 },
   skinTypeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  skinTypeLabel: { fontSize: 12, color: Colors.textMuted, fontWeight: '600', width: 70 },
+  skinTypeLabel: { fontSize: 12, color: c.textMuted, fontWeight: '600', width: 70 },
   skinTypeVerdict: { fontSize: 12, fontWeight: '700', width: 70 },
-  skinTypeNote: { fontSize: 12, color: Colors.textSecondary, flex: 1, lineHeight: 17 },
+  skinTypeNote: { fontSize: 12, color: c.textSecondary, flex: 1, lineHeight: 17 },
 
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 8 },
   bullet: { width: 6, height: 6, borderRadius: 3, marginTop: 7 },
-  bulletText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19, flex: 1 },
+  bulletText: { fontSize: 13, color: c.textSecondary, lineHeight: 19, flex: 1 },
 
-  concentrationText: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
+  concentrationText: { fontSize: 14, color: c.textPrimary, fontWeight: '600' },
 
   halfRow: { flexDirection: 'row', gap: 10, marginBottom: 0 },
   pairRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  pairText: { fontSize: 12, color: Colors.textSecondary, flex: 1 },
+  pairText: { fontSize: 12, color: c.textSecondary, flex: 1 },
 
   tdCard: {
     borderRadius: 16, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
     padding: 18, marginBottom: 12, gap: 8,
   },
-  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
-  tdText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-  tdCta: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
+  tdText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  tdCta: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   scanCta: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 8,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 16, marginBottom: 8,
   },
-  scanCtaText: { flex: 1, fontSize: 13, color: Colors.textSecondary },
+  scanCtaText: { flex: 1, fontSize: 13, color: c.textSecondary },
   productsSection: { marginBottom: 14 },
-  productsSectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
-  productsSectionSub: { fontSize: 11, color: Colors.textMuted, marginBottom: 10 },
+  productsSectionTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 2 },
+  productsSectionSub: { fontSize: 11, color: c.textMuted, marginBottom: 10 },
   productCard: {
-    width: 120, backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', padding: 8,
+    width: 120, backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, overflow: 'hidden', padding: 8,
   },
   productImg: { width: '100%', height: 80, marginBottom: 6, borderRadius: 8 },
-  productImgPlaceholder: { backgroundColor: Colors.bgElevated, alignItems: 'center', justifyContent: 'center' },
-  productName: { fontSize: 11, fontWeight: '600', color: Colors.textPrimary, lineHeight: 15 },
-  productBrand: { fontSize: 10, color: Colors.textMuted, marginTop: 2 },
-});
+  productImgPlaceholder: { backgroundColor: c.bgElevated, alignItems: 'center', justifyContent: 'center' },
+  productName: { fontSize: 11, fontWeight: '600', color: c.textPrimary, lineHeight: 15 },
+  productBrand: { fontSize: 10, color: c.textMuted, marginTop: 2 },
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ScrollView,
   ActivityIndicator, Alert, TextInput, KeyboardAvoidingView, Platform, Animated, Easing,
@@ -9,13 +9,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as FileSystem from 'expo-file-system';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { scanIngredients } from '../../src/services/ingredientScanner';
 import { IngredientReport } from '../../src/types/ingredients';
 
 type Mode = 'choose' | 'analyzing' | 'results' | 'manual';
 
 export default function Scanner() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [mode, setMode] = useState<Mode>('choose');
   const [report, setReport] = useState<IngredientReport | null>(null);
   const [manualText, setManualText] = useState('');
@@ -83,7 +86,7 @@ export default function Scanner() {
     return (
       <View style={styles.root}>
         <View style={styles.centerWrap}>
-          <ActivityIndicator color={Colors.primary} size="large" style={{ marginBottom: 20 }} />
+          <ActivityIndicator color={colors.primary} size="large" style={{ marginBottom: 20 }} />
           <Text style={styles.analyzingTitle}>Scanning ingredients…</Text>
           <Text style={styles.analyzingSub}>Checking for irritants, toxins, beneficial actives, and compatibility with your skin type.</Text>
         </View>
@@ -101,7 +104,7 @@ export default function Scanner() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable onPress={() => setMode('choose')} style={styles.backBtn}>
-              <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Type Ingredients</Text>
             <View style={{ width: 40 }} />
@@ -116,7 +119,7 @@ export default function Scanner() {
               onChangeText={setManualText}
               multiline
               placeholder="Aqua, Glycerin, Niacinamide, Retinol..."
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               textAlignVertical="top"
             />
             <Text style={styles.manualHint}>Copy from the brand's website or type from the back of the product.</Text>
@@ -128,10 +131,10 @@ export default function Scanner() {
               disabled={!manualText.trim()}
             >
               <LinearGradient
-                colors={manualText.trim() ? [Colors.primaryLight, Colors.primary] : ['#333', '#222']}
+                colors={manualText.trim() ? [colors.primaryLight, colors.primary] : ['#333', '#222']}
                 style={styles.mainBtnGrad}
               >
-                <Ionicons name="flask-outline" size={20} color={Colors.white} />
+                <Ionicons name="flask-outline" size={20} color={colors.white} />
                 <Text style={styles.mainBtnText}>Analyze Ingredients</Text>
               </LinearGradient>
             </Pressable>
@@ -146,7 +149,7 @@ export default function Scanner() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Ingredient Scanner</Text>
           <View style={{ width: 40 }} />
@@ -157,8 +160,8 @@ export default function Scanner() {
         <View style={styles.hero}>
           <LinearGradient colors={['rgba(196,98,45,0.15)', 'transparent']} style={styles.heroGlow} />
           <View style={styles.heroIconWrap}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.heroIconGrad}>
-              <Ionicons name="flask" size={38} color={Colors.white} />
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.heroIconGrad}>
+              <Ionicons name="flask" size={38} color={colors.white} />
             </LinearGradient>
           </View>
           <Text style={styles.heroTitle}>Know What's In Your Products</Text>
@@ -175,7 +178,7 @@ export default function Scanner() {
             { icon: 'leaf-outline', text: 'Natural vs synthetic breakdown' },
           ].map(({ icon, text }) => (
             <View key={text} style={styles.howRow}>
-              <Ionicons name={icon as any} size={16} color={Colors.primary} />
+              <Ionicons name={icon as any} size={16} color={colors.primary} />
               <Text style={styles.howText}>{text}</Text>
             </View>
           ))}
@@ -183,17 +186,17 @@ export default function Scanner() {
 
         <View style={styles.btnGroup}>
           <Pressable style={styles.mainBtn} onPress={handleCamera}>
-            <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.mainBtnGrad}>
-              <Ionicons name="camera" size={22} color={Colors.white} />
+            <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.mainBtnGrad}>
+              <Ionicons name="camera" size={22} color={colors.white} />
               <Text style={styles.mainBtnText}>Scan Product Label</Text>
             </LinearGradient>
           </Pressable>
           <Pressable style={styles.secondaryBtn} onPress={handlePickPhoto}>
-            <Ionicons name="images-outline" size={20} color={Colors.primary} />
+            <Ionicons name="images-outline" size={20} color={colors.primary} />
             <Text style={styles.secondaryBtnText}>Upload Photo</Text>
           </Pressable>
           <Pressable style={styles.secondaryBtn} onPress={() => setMode('manual')}>
-            <Ionicons name="create-outline" size={20} color={Colors.primary} />
+            <Ionicons name="create-outline" size={20} color={colors.primary} />
             <Text style={styles.secondaryBtnText}>Type Ingredients Manually</Text>
           </Pressable>
         </View>
@@ -203,14 +206,16 @@ export default function Scanner() {
 }
 
 function IngredientResults({ report, onReset }: { report: IngredientReport; onReset: () => void }) {
-  const safetyColor = report.safetyScore >= 75 ? Colors.scoreExcellent : report.safetyScore >= 50 ? Colors.scoreFair : Colors.scorePoor;
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const safetyColor = report.safetyScore >= 75 ? colors.scoreExcellent : report.safetyScore >= 50 ? colors.scoreFair : colors.scorePoor;
 
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable onPress={onReset} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Ingredient Report</Text>
           <View style={{ width: 40 }} />
@@ -220,7 +225,7 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
 
         {/* Safety score */}
         <View style={styles.safetyCard}>
-          <LinearGradient colors={[Colors.bgCard, Colors.bgElevated]} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={[colors.bgCard, colors.bgElevated]} style={StyleSheet.absoluteFill} />
           <View style={styles.safetyTop}>
             <View>
               <Text style={styles.safetyLabel}>Safety Score</Text>
@@ -233,17 +238,17 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
           <Text style={styles.safetySummary}>{report.summary}</Text>
           <View style={styles.naturalRow}>
             <View style={styles.naturalStat}>
-              <Text style={[styles.naturalNum, { color: Colors.scoreExcellent }]}>{report.naturalPercent}%</Text>
+              <Text style={[styles.naturalNum, { color: colors.scoreExcellent }]}>{report.naturalPercent}%</Text>
               <Text style={styles.naturalLabel}>Natural</Text>
             </View>
             <View style={styles.naturalDivider} />
             <View style={styles.naturalStat}>
-              <Text style={[styles.naturalNum, { color: Colors.textSecondary }]}>{100 - report.naturalPercent}%</Text>
+              <Text style={[styles.naturalNum, { color: colors.textSecondary }]}>{100 - report.naturalPercent}%</Text>
               <Text style={styles.naturalLabel}>Synthetic</Text>
             </View>
             <View style={styles.naturalDivider} />
             <View style={styles.naturalStat}>
-              <Text style={[styles.naturalNum, { color: Colors.primary }]}>{report.totalIngredients}</Text>
+              <Text style={[styles.naturalNum, { color: colors.primary }]}>{report.totalIngredients}</Text>
               <Text style={styles.naturalLabel}>Ingredients</Text>
             </View>
           </View>
@@ -252,15 +257,15 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
         {/* Flagged ingredients */}
         {report.flagged.length > 0 && (
           <View style={styles.resultSection}>
-            <Text style={[styles.resultSectionTitle, { color: Colors.scorePoor }]}>
+            <Text style={[styles.resultSectionTitle, { color: colors.scorePoor }]}>
               ⚠ Flagged ({report.flagged.length})
             </Text>
             {report.flagged.map((ing, i) => (
               <View key={i} style={[styles.ingredientCard, styles.ingredientCardDanger]}>
                 <View style={styles.ingTop}>
                   <Text style={styles.ingName}>{ing.name}</Text>
-                  <View style={[styles.ingBadge, { backgroundColor: ing.severity === 'high' ? Colors.scorePoor + '22' : Colors.scoreFair + '22' }]}>
-                    <Text style={[styles.ingBadgeText, { color: ing.severity === 'high' ? Colors.scorePoor : Colors.scoreFair }]}>
+                  <View style={[styles.ingBadge, { backgroundColor: ing.severity === 'high' ? colors.scorePoor + '22' : colors.scoreFair + '22' }]}>
+                    <Text style={[styles.ingBadgeText, { color: ing.severity === 'high' ? colors.scorePoor : colors.scoreFair }]}>
                       {ing.severity?.toUpperCase()}
                     </Text>
                   </View>
@@ -275,7 +280,7 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
         {/* Beneficial actives */}
         {report.beneficial.length > 0 && (
           <View style={styles.resultSection}>
-            <Text style={[styles.resultSectionTitle, { color: Colors.scoreExcellent }]}>
+            <Text style={[styles.resultSectionTitle, { color: colors.scoreExcellent }]}>
               ✓ Beneficial Actives ({report.beneficial.length})
             </Text>
             {report.beneficial.map((ing, i) => (
@@ -294,8 +299,8 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
             {report.skinCompatibility.map((compat, i) => (
               <View key={i} style={[styles.compatRow, i < report.skinCompatibility.length - 1 && styles.compatBorder]}>
                 <Text style={styles.compatSkinType}>{compat.skinType}</Text>
-                <View style={[styles.compatBadge, { backgroundColor: compat.compatible ? Colors.scoreExcellent + '22' : Colors.scorePoor + '22' }]}>
-                  <Text style={[styles.compatBadgeText, { color: compat.compatible ? Colors.scoreExcellent : Colors.scorePoor }]}>
+                <View style={[styles.compatBadge, { backgroundColor: compat.compatible ? colors.scoreExcellent + '22' : colors.scorePoor + '22' }]}>
+                  <Text style={[styles.compatBadgeText, { color: compat.compatible ? colors.scoreExcellent : colors.scorePoor }]}>
                     {compat.compatible ? 'Compatible' : 'Caution'}
                   </Text>
                 </View>
@@ -321,71 +326,73 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   centerWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
-  analyzingTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center', marginBottom: 10 },
-  analyzingSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
+  analyzingTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, textAlign: 'center', marginBottom: 10 },
+  analyzingSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
   hero: { alignItems: 'center', paddingVertical: 32, position: 'relative' },
   heroGlow: { position: 'absolute', top: 0, left: '5%', right: '5%', height: 100, borderRadius: 50 },
   heroIconWrap: { borderRadius: 26, overflow: 'hidden', marginBottom: 20 },
   heroIconGrad: { width: 84, height: 84, alignItems: 'center', justifyContent: 'center', borderRadius: 26 },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center', marginBottom: 10 },
-  heroSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 320 },
-  howCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 24, gap: 12 },
-  howTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
+  heroTitle: { fontSize: 24, fontWeight: '800', color: c.textPrimary, textAlign: 'center', marginBottom: 10 },
+  heroSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 320 },
+  howCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 24, gap: 12 },
+  howTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
   howRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  howText: { fontSize: 14, color: Colors.textSecondary },
+  howText: { fontSize: 14, color: c.textSecondary },
   btnGroup: { gap: 12 },
   mainBtn: { borderRadius: 18, overflow: 'hidden' },
   mainBtnDisabled: { opacity: 0.5 },
   mainBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20 },
-  mainBtnText: { fontSize: 17, fontWeight: '700', color: Colors.white },
-  secondaryBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 18, borderWidth: 1.5, borderColor: Colors.borderStrong, backgroundColor: 'rgba(196,98,45,0.05)' },
-  secondaryBtnText: { fontSize: 15, fontWeight: '600', color: Colors.primary },
+  mainBtnText: { fontSize: 17, fontWeight: '700', color: c.white },
+  secondaryBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 18, borderWidth: 1.5, borderColor: c.borderStrong, backgroundColor: 'rgba(196,98,45,0.05)' },
+  secondaryBtnText: { fontSize: 15, fontWeight: '600', color: c.primary },
   manualContent: { padding: 24, flexGrow: 1 },
-  manualLabel: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary, marginBottom: 12 },
-  manualInput: { backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border, borderRadius: 14, padding: 16, fontSize: 14, color: Colors.textPrimary, minHeight: 200 },
-  manualHint: { fontSize: 12, color: Colors.textMuted, marginTop: 10, lineHeight: 18 },
+  manualLabel: { fontSize: 15, fontWeight: '600', color: c.textPrimary, marginBottom: 12 },
+  manualInput: { backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border, borderRadius: 14, padding: 16, fontSize: 14, color: c.textPrimary, minHeight: 200 },
+  manualHint: { fontSize: 12, color: c.textMuted, marginTop: 10, lineHeight: 18 },
   manualFooter: { padding: 20 },
   resultsScroll: { paddingHorizontal: 16, paddingBottom: 40, paddingTop: 8 },
-  safetyCard: { borderRadius: 20, borderWidth: 1, borderColor: Colors.border, padding: 20, marginBottom: 16, overflow: 'hidden' },
+  safetyCard: { borderRadius: 20, borderWidth: 1, borderColor: c.border, padding: 20, marginBottom: 16, overflow: 'hidden' },
   safetyTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
-  safetyLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1, color: Colors.textMuted, marginBottom: 4 },
+  safetyLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1, color: c.textMuted, marginBottom: 4 },
   safetyScore: { fontSize: 52, fontWeight: '900', lineHeight: 58 },
-  safetyOut: { fontSize: 20, fontWeight: '400', color: Colors.textMuted },
+  safetyOut: { fontSize: 20, fontWeight: '400', color: c.textMuted },
   safetyBadge: { borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8 },
   safetyBadgeText: { fontSize: 13, fontWeight: '800' },
-  safetySummary: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21, marginBottom: 16 },
+  safetySummary: { fontSize: 14, color: c.textSecondary, lineHeight: 21, marginBottom: 16 },
   naturalRow: { flexDirection: 'row', alignItems: 'center' },
   naturalStat: { flex: 1, alignItems: 'center' },
   naturalNum: { fontSize: 20, fontWeight: '800' },
-  naturalLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5, marginTop: 2 },
-  naturalDivider: { width: 1, height: 32, backgroundColor: Colors.border },
+  naturalLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5, marginTop: 2 },
+  naturalDivider: { width: 1, height: 32, backgroundColor: c.border },
   resultSection: { marginBottom: 16 },
-  resultSectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
+  resultSectionTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
   ingredientCard: { borderRadius: 14, borderWidth: 1, padding: 14, marginBottom: 8 },
   ingredientCardDanger: { backgroundColor: 'rgba(248,113,113,0.06)', borderColor: 'rgba(248,113,113,0.2)' },
   ingredientCardGood: { backgroundColor: 'rgba(74,222,128,0.06)', borderColor: 'rgba(74,222,128,0.2)' },
   ingTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  ingName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  ingName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, flex: 1 },
   ingBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, marginLeft: 8 },
   ingBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
-  ingReason: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-  ingMeta: { fontSize: 11, color: Colors.textMuted, marginTop: 4 },
-  compatCard: { backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 16 },
+  ingReason: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  ingMeta: { fontSize: 11, color: c.textMuted, marginTop: 4 },
+  compatCard: { backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, paddingHorizontal: 16 },
   compatRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12 },
-  compatBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  compatSkinType: { fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
+  compatBorder: { borderBottomWidth: 1, borderBottomColor: c.border },
+  compatSkinType: { fontSize: 14, color: c.textPrimary, fontWeight: '500' },
   compatBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   compatBadgeText: { fontSize: 11, fontWeight: '700' },
-  tdCompareCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.borderStrong, padding: 18, marginBottom: 16 },
-  tdCompareEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 8 },
-  tdCompareText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21 },
+  tdCompareCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.borderStrong, padding: 18, marginBottom: 16 },
+  tdCompareEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 8 },
+  tdCompareText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   scanAgainBtn: { alignItems: 'center', paddingVertical: 16 },
-  scanAgainText: { fontSize: 15, fontWeight: '600', color: Colors.primary },
-});
+  scanAgainText: { fontSize: 15, fontWeight: '600', color: c.primary },
+  });
+}

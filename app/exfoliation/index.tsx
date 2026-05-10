@@ -1,20 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, purple: c.darkCircles, teal: '#2DD4BF',
+  };
+}
 
 const TABS = ['Types', 'AHA', 'BHA', 'PHA', 'Frequency', 'Recovery'];
 
-const EXFOL_TYPES = [
+function buildExfolTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     name: 'AHA (Alpha-Hydroxy Acids)',
     subtitle: 'Water-soluble · Surface exfoliation · Brightening',
@@ -65,7 +70,8 @@ const EXFOL_TYPES = [
     examples: 'Papain enzyme masks, bromelain serums, pumpkin enzyme masks',
     caution: 'Latex allergy = potential cross-reactivity with papain. Enzyme activity requires specific temperature and pH — check formulation quality.',
   },
-];
+  ];
+}
 
 const AHA_DETAIL = [
   { acid: 'Glycolic Acid', size: 'smallest (76 Da)', penetration: 'Deepest of all AHAs', effective: '5–10%', bestFor: 'Anti-aging, texture, established hyperpigmentation', risk: 'Highest irritation potential. Not for sensitive or rosacea-prone skin.' },
@@ -88,14 +94,16 @@ const PHA_DETAIL = [
   { item: 'Compatible with compromised barrier', detail: 'PHAs are the only exfoliant class generally considered safe during barrier repair phases. They work on the surface without further disrupting the barrier lipid structure. Can be used during active barrier repair when AHAs and BHAs must be paused.' },
 ];
 
-const FREQUENCY_GUIDE = [
-  { skin: 'Sensitive / Rosacea', rec: 'PHA 1× weekly or enzymatic 2× weekly. No AHA or BHA until skin is stable.', color: Colors.teal },
-  { skin: 'Dry / Dehydrated', rec: 'Lactic acid (AHA) 2× weekly PM. Or PHA 3× weekly. No BHA (too drying).', color: Colors.blue },
-  { skin: 'Normal', rec: 'AHA or BHA 2–3× weekly PM. Can rotate: AHA Mon/Thu, BHA Wed/Sat.', color: Colors.green },
-  { skin: 'Oily / Congested', rec: 'BHA 2% daily (build up to this over 4–6 weeks). AHA 1× weekly for surface texture.', color: Colors.primary },
-  { skin: 'Acne-Prone', rec: 'BHA 2% daily. Avoid AHA on active acne — can spread bacteria. Add AHA 1× weekly once stable.', color: Colors.red },
-  { skin: 'Beginner', rec: 'Start with 1× weekly PHA or lactic acid. Add a second session after 2 weeks if no reaction. Build slowly over 2 months.', color: Colors.gold },
-];
+function buildFrequencyGuide(Colors: ReturnType<typeof shimColors>) {
+  return [
+    { skin: 'Sensitive / Rosacea', rec: 'PHA 1× weekly or enzymatic 2× weekly. No AHA or BHA until skin is stable.', color: Colors.teal },
+    { skin: 'Dry / Dehydrated', rec: 'Lactic acid (AHA) 2× weekly PM. Or PHA 3× weekly. No BHA (too drying).', color: Colors.blue },
+    { skin: 'Normal', rec: 'AHA or BHA 2–3× weekly PM. Can rotate: AHA Mon/Thu, BHA Wed/Sat.', color: Colors.green },
+    { skin: 'Oily / Congested', rec: 'BHA 2% daily (build up to this over 4–6 weeks). AHA 1× weekly for surface texture.', color: Colors.primary },
+    { skin: 'Acne-Prone', rec: 'BHA 2% daily. Avoid AHA on active acne — can spread bacteria. Add AHA 1× weekly once stable.', color: Colors.red },
+    { skin: 'Beginner', rec: 'Start with 1× weekly PHA or lactic acid. Add a second session after 2 weeks if no reaction. Build slowly over 2 months.', color: Colors.gold },
+  ];
+}
 
 const RECOVERY_TIPS = [
   { tip: 'Signs of over-exfoliation', detail: 'Persistent redness that doesn\'t fade. Burning or stinging from products that didn\'t used to sting. Texture that feels raw or papery. Sudden breakouts from products previously tolerated. Tightness after washing. If 3+ of these: stop all exfoliants immediately.', icon: '⚠️' },
@@ -106,6 +114,11 @@ const RECOVERY_TIPS = [
 ];
 
 export default function ExfoliationScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const EXFOL_TYPES = useMemo(() => buildExfolTypes(Colors), [Colors]);
+  const FREQUENCY_GUIDE = useMemo(() => buildFrequencyGuide(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedType, setExpandedType] = useState<number | null>(null);
   const [expandedRecovery, setExpandedRecovery] = useState<number | null>(null);
@@ -263,7 +276,9 @@ export default function ExfoliationScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
@@ -310,4 +325,5 @@ const styles = StyleSheet.create({
   noteCard: { backgroundColor: Colors.cardAlt, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginTop: 4 },
   noteTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   noteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-});
+  });
+}
