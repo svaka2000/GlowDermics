@@ -625,6 +625,11 @@ export default function Home() {
               <Ionicons name="trending-up-outline" size={22} color={colors.scoreGood} />
               <Text style={[styles.quickLabel, { color: colors.scoreGood }]}>7-Day{'\n'}Forecast</Text>
             </Pressable>
+            <Pressable style={styles.quickCard} onPress={() => router.push('/achievements' as any)}>
+              <LinearGradient colors={['rgba(212,169,106,0.20)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <Ionicons name="medal-outline" size={22} color={colors.gold} />
+              <Text style={[styles.quickLabel, { color: colors.gold }]}>Achiev{'\n'}ements</Text>
+            </Pressable>
           </View>
         </View>
         </Animated.View>
