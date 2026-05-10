@@ -1,27 +1,31 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  yellow: '#FBBF24',
-  orange: '#FB923C',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    yellow: c.scoreFair,
+    orange: '#FB923C',
+  };
+}
 
 const TABS = [
   { id: 'basics', label: 'Basics', icon: '☀️' },
@@ -58,7 +62,8 @@ const BASICS = [
   },
 ];
 
-const SPF_TYPES = [
+function buildSpfTypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     type: 'Chemical (Organic) Filters',
     icon: '⚗️',
@@ -81,7 +86,8 @@ const SPF_TYPES = [
     forSkinTypes: 'Sensitive, rosacea, eczema, and deeper skin tones who find transparent mineral formulas. Excellent for daily use.',
     tallowNote: 'Mineral SPF is the ideal companion to tallow. Zinc oxide is anti-inflammatory — it amplifies tallow\'s barrier-repair, redness-reducing properties. Apply tallow → wait 60s → mineral SPF on top.',
   },
-];
+  ];
+}
 
 const APPLICATION_STEPS = [
   {
@@ -151,6 +157,10 @@ const TALLOW_SPF = [
 ];
 
 export default function SPFGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const SPF_TYPES = useMemo(() => buildSpfTypes(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('basics');
   const [expandedType, setExpandedType] = useState<string | null>(null);
   const [expandedMyth, setExpandedMyth] = useState<number | null>(null);
@@ -283,7 +293,9 @@ export default function SPFGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -380,4 +392,5 @@ const styles = StyleSheet.create({
   },
   tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

@@ -1,27 +1,31 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  pink: '#F472B6',
-  rose: '#FDA4AF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg,
+    card: c.bgCard,
+    cardAlt: c.bgElevated,
+    border: c.border,
+    primary: c.primary,
+    gold: c.gold,
+    textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary,
+    textMuted: c.textMuted,
+    green: c.scoreGood,
+    red: c.scorePoor,
+    blue: c.hydration,
+    pink: '#F472B6',
+    rose: '#FDA4AF',
+  };
+}
 
 const TABS = [
   { id: 'types', label: 'Types & Signs', icon: '🔍' },
@@ -31,7 +35,8 @@ const TABS = [
   { id: 'tallow', label: 'Tallow Approach', icon: '🌿' },
 ];
 
-const SUBTYPES = [
+function buildSubtypes(Colors: ReturnType<typeof shimColors>) {
+  return [
   {
     type: 'ETR (Erythematotelangiectatic)',
     number: '1',
@@ -60,7 +65,8 @@ const SUBTYPES = [
     signs: ['Red, irritated eyes', 'Frequent styes', 'Sensation of grit in the eyes', 'Light sensitivity', 'Watery or dry eyes'],
     notes: 'Often coexists with other subtypes. Requires ophthalmologist involvement. Lid hygiene and omega-3 supplementation are the main lifestyle interventions.',
   },
-];
+  ];
+}
 
 const TRIGGERS = [
   { trigger: 'Heat and hot drinks', icon: '🔥', detail: 'Heat dilates blood vessels. Hot showers, saunas, hot drinks, exercise-induced flushing — all cause vasodilation that worsens ETR rosacea. Switch to lukewarm water, room temperature drinks.' },
@@ -115,6 +121,10 @@ const ROUTINE = {
 };
 
 export default function RosaceaGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(palette), [palette]);
+  const SUBTYPES = useMemo(() => buildSubtypes(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState('types');
   const [expandedType, setExpandedType] = useState<string | null>(null);
   const [expandedTrigger, setExpandedTrigger] = useState<number | null>(null);
@@ -296,7 +306,9 @@ export default function RosaceaGuideScreen() {
 
 const orange = '#FB923C';
 
-const styles = StyleSheet.create({
+function makeStyles(c: Palette) {
+  const Colors = shimColors(c);
+  return StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -389,4 +401,5 @@ const styles = StyleSheet.create({
   },
   tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
   tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  });
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, Alert,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const BLACKLIST_KEY = 'gd_ingredient_blacklist';
@@ -63,6 +64,8 @@ function generateId() {
 }
 
 export default function Blacklist() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [entries, setEntries] = useState<BlacklistEntry[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [ingredientInput, setIngredientInput] = useState('');
@@ -140,14 +143,14 @@ export default function Blacklist() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Ingredient Blacklist</Text>
             <Text style={styles.headerSub}>Your personal avoid list</Text>
           </View>
           <Pressable style={styles.backBtn} onPress={() => { setCheckMode(!checkMode); setCheckResults(null); }}>
-            <Ionicons name={checkMode ? 'list-outline' : 'search-outline'} size={20} color={Colors.primary} />
+            <Ionicons name={checkMode ? 'list-outline' : 'search-outline'} size={20} color={colors.primary} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -166,10 +169,10 @@ export default function Blacklist() {
               value={checkInput}
               onChangeText={v => { setCheckInput(v); setCheckResults(null); }}
               placeholder="Paste ingredients here..."
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
             />
             <Pressable style={[styles.checkBtn, !checkInput.trim() && { opacity: 0.5 }]} onPress={runCheck} disabled={!checkInput.trim()}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
               <Text style={styles.checkBtnText}>Check Against My List</Text>
             </Pressable>
 
@@ -185,9 +188,9 @@ export default function Blacklist() {
                   </>
                 ) : (
                   <>
-                    <Ionicons name="warning" size={24} color={Colors.scorePoor} />
+                    <Ionicons name="warning" size={24} color={colors.scorePoor} />
                     <View style={{ flex: 1 }}>
-                      <Text style={[styles.resultTitle, { color: Colors.scorePoor }]}>{checkResults.found.length} Warning{checkResults.found.length > 1 ? 's' : ''}</Text>
+                      <Text style={[styles.resultTitle, { color: colors.scorePoor }]}>{checkResults.found.length} Warning{checkResults.found.length > 1 ? 's' : ''}</Text>
                       {checkResults.found.map(f => (
                         <Text key={f} style={styles.resultFound}>• {f}</Text>
                       ))}
@@ -207,7 +210,7 @@ export default function Blacklist() {
               <Text style={styles.statLabel}>Ingredients avoided</Text>
             </View>
             <Pressable style={[styles.statCard, styles.addCard]} onPress={() => setShowAdd(true)}>
-              <Ionicons name="add-circle" size={24} color={Colors.primary} />
+              <Ionicons name="add-circle" size={24} color={colors.primary} />
               <Text style={styles.addCardText}>Add ingredient</Text>
             </Pressable>
           </View>
@@ -222,7 +225,7 @@ export default function Blacklist() {
               value={ingredientInput}
               onChangeText={setIngredientInput}
               placeholder="Ingredient name (e.g. Fragrance)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               autoFocus
             />
             <TextInput
@@ -230,14 +233,14 @@ export default function Blacklist() {
               value={reasonInput}
               onChangeText={setReasonInput}
               placeholder="Why you avoid it (optional)"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
             />
             <View style={styles.formActions}>
               <Pressable style={styles.cancelBtn} onPress={() => { setShowAdd(false); setIngredientInput(''); setReasonInput(''); }}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </Pressable>
               <Pressable style={[styles.saveBtn, !ingredientInput.trim() && { opacity: 0.5 }]} onPress={addEntry} disabled={!ingredientInput.trim()}>
-                <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
                 <Text style={styles.saveBtnText}>Add</Text>
               </Pressable>
             </View>
@@ -256,7 +259,7 @@ export default function Blacklist() {
                   <Text style={styles.entryReason}>{entry.reason}</Text>
                 </View>
                 <Pressable onPress={() => deleteEntry(entry.id)} style={styles.deleteBtn}>
-                  <Ionicons name="close-circle-outline" size={20} color={Colors.textMuted} />
+                  <Ionicons name="close-circle-outline" size={20} color={colors.textMuted} />
                 </Pressable>
               </View>
             ))}
@@ -275,12 +278,12 @@ export default function Blacklist() {
                 onPress={() => !alreadyAdded(s.name) && addSuggestion(s)}
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.suggName, alreadyAdded(s.name) && { color: Colors.textMuted }]}>{s.name}</Text>
+                  <Text style={[styles.suggName, alreadyAdded(s.name) && { color: colors.textMuted }]}>{s.name}</Text>
                   <Text style={styles.suggReason}>{s.reason}</Text>
                 </View>
                 {alreadyAdded(s.name)
                   ? <Ionicons name="checkmark-circle" size={20} color="#4ADE80" />
-                  : <Ionicons name="add-circle-outline" size={20} color={Colors.primary} />
+                  : <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
                 }
               </Pressable>
             ))}
@@ -298,12 +301,12 @@ export default function Blacklist() {
                 onPress={() => !alreadyAdded(s.name) && addSuggestion(s)}
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.suggName, alreadyAdded(s.name) && { color: Colors.textMuted }]}>{s.name}</Text>
+                  <Text style={[styles.suggName, alreadyAdded(s.name) && { color: colors.textMuted }]}>{s.name}</Text>
                   <Text style={styles.suggReason}>{s.reason}</Text>
                 </View>
                 {alreadyAdded(s.name)
                   ? <Ionicons name="checkmark-circle" size={20} color="#4ADE80" />
-                  : <Ionicons name="add-circle-outline" size={20} color={Colors.primary} />
+                  : <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
                 }
               </Pressable>
             ))}
@@ -322,12 +325,12 @@ export default function Blacklist() {
         {/* CTA to scanner */}
         <Pressable style={styles.scanCta} onPress={() => router.push('/scanner')}>
           <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
-          <Ionicons name="flask-outline" size={20} color={Colors.primary} />
+          <Ionicons name="flask-outline" size={20} color={colors.primary} />
           <View style={{ flex: 1 }}>
             <Text style={styles.scanCtaTitle}>Scan a Product Label</Text>
             <Text style={styles.scanCtaSub}>Full ingredient analysis + your personal blacklist</Text>
           </View>
-          <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+          <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
         </Pressable>
 
         <View style={{ height: 100 }} />
@@ -336,71 +339,73 @@ export default function Blacklist() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  checkCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  checkTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  checkSub: { fontSize: 12, color: Colors.textMuted, marginTop: -6 },
+  checkCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  checkTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  checkSub: { fontSize: 12, color: c.textMuted, marginTop: -6 },
   checkInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    padding: 12, fontSize: 13, color: Colors.textPrimary, minHeight: 100, textAlignVertical: 'top',
+    backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    padding: 12, fontSize: 13, color: c.textPrimary, minHeight: 100, textAlignVertical: 'top',
   },
   checkBtn: { height: 48, borderRadius: 12, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  checkBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  checkBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
   resultCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 12, borderWidth: 1, padding: 12 },
   resultTitle: { fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  resultNote: { fontSize: 12, color: Colors.textSecondary },
-  resultFound: { fontSize: 12, color: Colors.scorePoor, fontWeight: '600', marginTop: 2 },
+  resultNote: { fontSize: 12, color: c.textSecondary },
+  resultFound: { fontSize: 12, color: c.scorePoor, fontWeight: '600', marginTop: 2 },
 
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
-  statCard: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 16, alignItems: 'center', gap: 4 },
-  statNum: { fontSize: 28, fontWeight: '900', color: Colors.textPrimary },
-  statLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 16, alignItems: 'center', gap: 4 },
+  statNum: { fontSize: 28, fontWeight: '900', color: c.textPrimary },
+  statLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
   addCard: { borderColor: 'rgba(196,98,45,0.3)', backgroundColor: 'rgba(196,98,45,0.06)' },
-  addCardText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  addCardText: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
-  addForm: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  addFormTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  addForm: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  addFormTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   formInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 14, paddingVertical: 12, fontSize: 14, color: Colors.textPrimary,
+    backgroundColor: c.bgElevated, borderRadius: 12, borderWidth: 1, borderColor: c.border,
+    paddingHorizontal: 14, paddingVertical: 12, fontSize: 14, color: c.textPrimary,
   },
   formActions: { flexDirection: 'row', gap: 10, marginTop: 4 },
-  cancelBtn: { flex: 1, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 12, borderWidth: 1, borderColor: Colors.border },
-  cancelText: { fontSize: 14, fontWeight: '600', color: Colors.textMuted },
+  cancelBtn: { flex: 1, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 12, borderWidth: 1, borderColor: c.border },
+  cancelText: { fontSize: 14, fontWeight: '600', color: c.textMuted },
   saveBtn: { flex: 2, height: 44, borderRadius: 12, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
-  sectionSub: { fontSize: 12, color: Colors.textMuted, marginBottom: 10 },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
+  sectionSub: { fontSize: 12, color: c.textMuted, marginBottom: 10 },
 
-  entryRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, padding: 12, marginBottom: 8 },
-  entryDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.scorePoor },
-  entryName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  entryReason: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  entryRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.border, padding: 12, marginBottom: 8 },
+  entryDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: c.scorePoor },
+  entryName: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  entryReason: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   deleteBtn: { padding: 4 },
 
-  suggRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, padding: 12, marginBottom: 8 },
+  suggRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.border, padding: 12, marginBottom: 8 },
   suggRowAdded: { opacity: 0.6, borderColor: 'rgba(74,222,128,0.2)' },
-  suggName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
-  suggReason: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  suggName: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
+  suggReason: { fontSize: 11, color: c.textMuted, marginTop: 2 },
 
   emptyWrap: { alignItems: 'center', paddingVertical: 32, gap: 8 },
   emptyIcon: { fontSize: 40 },
-  emptyTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
-  emptySub: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
+  emptyTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+  emptySub: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
 
   scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
-  scanCtaTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  scanCtaSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
-});
+  scanCtaTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  scanCtaSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+  });
+}
