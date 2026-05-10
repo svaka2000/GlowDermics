@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration,
+    purple: c.darkCircles, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Overview', 'KP', 'Body Acne', 'Stretch Marks', 'Ingrown Hairs', 'Dry Body'];
 
@@ -84,6 +90,9 @@ const DRY_BODY = [
 ];
 
 export default function BodyCareScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedKP, setExpandedKP] = useState<number | null>(null);
   const [expandedSM, setExpandedSM] = useState<number | null>(null);
@@ -256,50 +265,52 @@ export default function BodyCareScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 8 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  whatBlock: { backgroundColor: Colors.cardAlt, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 14 },
-  whatLabel: { color: Colors.gold, fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  whatText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  sectionHeader: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 8 },
-  bulletItem: { color: Colors.textSecondary, fontSize: 13, lineHeight: 22, marginBottom: 2 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 8 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  whatBlock: { backgroundColor: c.cardAlt, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 14 },
+  whatLabel: { color: c.gold, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  whatText: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  sectionHeader: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 8 },
+  bulletItem: { color: c.textSecondary, fontSize: 13, lineHeight: 22, marginBottom: 2 },
   stepCard: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
-  stepNum: { width: 30, height: 30, borderRadius: 15, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  stepNum: { width: 30, height: 30, borderRadius: 15, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stepNumText: { color: '#fff', fontSize: 13, fontWeight: '800' },
-  stepTitle: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 4 },
-  stepDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowNote: { backgroundColor: Colors.primary + '11', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 12 },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 12, fontWeight: '700', marginBottom: 4 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  infoBlock: { borderRadius: 10, padding: 12, borderWidth: 1, backgroundColor: Colors.cardAlt, marginBottom: 14 },
+  stepTitle: { color: c.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 4 },
+  stepDetail: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  tallowNote: { backgroundColor: c.primary + '11', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: c.primary + '44', marginTop: 12 },
+  tallowNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 4 },
+  tallowNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  infoBlock: { borderRadius: 10, padding: 12, borderWidth: 1, backgroundColor: c.cardAlt, marginBottom: 14 },
   infoBlockTitle: { fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  infoBlockText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  evidenceText: { color: Colors.textMuted, fontSize: 11 },
-  bodyZoneCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  infoBlockText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  evidenceText: { color: c.textMuted, fontSize: 11 },
+  bodyZoneCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   bodyZoneHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   bodyZoneIcon: { fontSize: 20 },
-  bodyZoneArea: { color: Colors.gold, fontSize: 15, fontWeight: '700' },
-  bodyZoneNotes: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-});
+  bodyZoneArea: { color: c.gold, fontSize: 15, fontWeight: '700' },
+  bodyZoneNotes: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  });
+}

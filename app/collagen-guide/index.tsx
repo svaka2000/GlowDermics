@@ -1,16 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Collagen Science', 'Types', 'What Destroys It', 'Build It', 'Tallow & Collagen'];
 
@@ -24,12 +29,14 @@ const COLLAGEN_SCIENCE = [
   { fact: 'Sun exposure is the primary collagen destroyer', detail: 'UVA activates matrix metalloproteinases (MMPs) — specifically MMP-1 (interstitial collagenase) and MMP-3 (stromelysin). Each UV dose creates a brief MMP activation event that irreversibly degrades a small amount of collagen. Decades of daily UVA exposure accumulates this damage. SPF + antioxidants directly prevent this.', icon: '☀️' },
 ];
 
-const COLLAGEN_TYPES = [
+function buildCollagenTypes(Colors: ShimColors) {
+  return [
   { type: 'Type I', location: 'Skin dermis, tendons, bone, scar tissue', proportion: '~80% of skin collagen', function: 'Tensile strength and structural integrity. The primary aging-related collagen — loss of type I creates wrinkles and skin laxity.', stimulate: 'Retinoids, vitamin C, laser, microneedling', color: Colors.gold },
   { type: 'Type III', location: 'Skin dermis (especially foetal and young skin), blood vessels, hollow organs', proportion: '~15% of skin collagen, higher in youth', function: '"Young" collagen — more elastic and flexible than type I. Provides skin\'s youthful bounce. Declines faster with age than type I.', stimulate: 'Retinoids (more effectively than type I), vitamin C, growth factors', color: Colors.blue },
   { type: 'Type IV', location: 'Basement membrane (between epidermis and dermis)', proportion: 'Structural component, not fibrous', function: 'Network-forming collagen that anchors epidermis to dermis. Critical for skin barrier integrity and wound healing speed.', stimulate: 'Matrixyl 3000 (palmitoyl tetrapeptide-7), vitamin C', color: Colors.teal },
   { type: 'Type VII', location: 'Anchoring fibrils at dermal-epidermal junction', proportion: 'Small but critical quantity', function: 'Binds type I collagen to the basement membrane. Loss of type VII collagen is implicated in blistering conditions (epidermolysis bullosa).', stimulate: 'Limited topical options. Vitamin C supports baseline production.', color: Colors.green },
-];
+  ];
+}
 
 const DESTROYERS = [
   { destroyer: 'UV radiation (UVA)', mechanism: 'Activates MMP-1 (collagenase) and MMP-3 with each UV exposure. These enzymes cleave collagen fibres irreversibly. Cumulative UV is the single largest extrinsic collagen destroyer.', prevention: 'SPF + topical antioxidants (vitamin C, E, ferulic). This is the non-negotiable intervention.', severity: 'critical', icon: '☀️' },
@@ -69,6 +76,10 @@ const TALLOW_COLLAGEN = [
 ];
 
 export default function CollagenGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const COLLAGEN_TYPES = useMemo(() => buildCollagenTypes(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedType, setExpandedType] = useState<number | null>(null);
@@ -222,50 +233,52 @@ export default function CollagenGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  proportionText: { color: Colors.textMuted, fontSize: 12, marginTop: 2 },
-  stimBlock: { marginTop: 10, backgroundColor: Colors.green + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.green + '33' },
-  stimLabel: { color: Colors.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  stimText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  proportionText: { color: c.textMuted, fontSize: 12, marginTop: 2 },
+  stimBlock: { marginTop: 10, backgroundColor: c.green + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.green + '33' },
+  stimLabel: { color: c.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  stimText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
   severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   severityText: { fontSize: 10, fontWeight: '700' },
-  preventBlock: { marginTop: 10, backgroundColor: Colors.teal + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.teal + '33' },
-  preventLabel: { color: Colors.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  preventText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  catLabel: { color: Colors.gold, fontSize: 15, fontWeight: '800', marginBottom: 10 },
-  buildCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  preventBlock: { marginTop: 10, backgroundColor: c.teal + '0D', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.teal + '33' },
+  preventLabel: { color: c.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  preventText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  catLabel: { color: c.gold, fontSize: 15, fontWeight: '800', marginBottom: 10 },
+  buildCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   buildHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8 },
-  buildName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', flex: 1 },
+  buildName: { color: c.textPrimary, fontSize: 13, fontWeight: '700', flex: 1 },
   strengthBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, flexShrink: 0 },
   strengthText: { fontSize: 10, fontWeight: '700' },
-  buildWhy: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  buildWhy: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

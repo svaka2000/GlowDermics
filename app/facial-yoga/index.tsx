@@ -1,24 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  purple: '#6B85A8',
-  pink: '#F472B6',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, purple: c.darkCircles, pink: '#F472B6',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 interface Exercise {
   id: string;
@@ -32,7 +29,8 @@ interface Exercise {
   emoji: string;
 }
 
-const ROUTINES = [
+function buildRoutines(Colors: ShimColors) {
+  return [
   {
     id: 'morning',
     name: 'Morning Lift',
@@ -250,9 +248,14 @@ const ROUTINES = [
       },
     ] as Exercise[],
   },
-];
+  ];
+}
 
 export default function FacialYogaScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const ROUTINES = useMemo(() => buildRoutines(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [selectedRoutine, setSelectedRoutine] = useState(ROUTINES[0]);
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExIdx, setCurrentExIdx] = useState(0);
@@ -459,100 +462,102 @@ export default function FacialYogaScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
   intro: {
-    color: Colors.textSecondary, fontSize: 13, lineHeight: 20,
-    backgroundColor: Colors.card, borderRadius: 12, padding: 12,
-    borderWidth: 1, borderColor: Colors.border, marginBottom: 16,
+    color: c.textSecondary, fontSize: 13, lineHeight: 20,
+    backgroundColor: c.card, borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: c.border, marginBottom: 16,
   },
   routineCard: {
-    backgroundColor: Colors.card, borderRadius: 16, padding: 14,
-    borderWidth: 1, borderColor: Colors.border, marginBottom: 12,
+    backgroundColor: c.card, borderRadius: 16, padding: 14,
+    borderWidth: 1, borderColor: c.border, marginBottom: 12,
   },
   routineHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 },
   routineIcon: { fontSize: 24 },
   routineName: { fontSize: 16, fontWeight: '700', marginBottom: 2 },
-  routineMeta: { color: Colors.textMuted, fontSize: 12 },
+  routineMeta: { color: c.textMuted, fontSize: 12 },
   selectedBadge: {
     fontSize: 9, fontWeight: '700', borderWidth: 1,
     paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8,
   },
-  routineDesc: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 10 },
-  exerciseList: { borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 10 },
+  routineDesc: { color: c.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 10 },
+  exerciseList: { borderTopWidth: 1, borderTopColor: c.border, paddingTop: 10 },
   exRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     paddingVertical: 8,
   },
   exEmoji: { fontSize: 16 },
-  exName: { flex: 1, color: Colors.textSecondary, fontSize: 13 },
-  exDuration: { color: Colors.textMuted, fontSize: 12 },
-  exArrow: { color: Colors.textMuted, fontSize: 16 },
+  exName: { flex: 1, color: c.textSecondary, fontSize: 13 },
+  exDuration: { color: c.textMuted, fontSize: 12 },
+  exArrow: { color: c.textMuted, fontSize: 16 },
   startBtn: {
     borderRadius: 14, paddingVertical: 15, alignItems: 'center', marginTop: 4,
   },
   startBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   // Session
   sessionContent: { padding: 16, alignItems: 'center' },
-  sessionRoutine: { color: Colors.textSecondary, fontSize: 14, marginBottom: 4 },
-  sessionProgress: { color: Colors.textMuted, fontSize: 12, marginBottom: 20 },
+  sessionRoutine: { color: c.textSecondary, fontSize: 14, marginBottom: 4 },
+  sessionProgress: { color: c.textMuted, fontSize: 12, marginBottom: 20 },
   exerciseCircle: {
     width: 180, height: 180, borderRadius: 90,
-    borderWidth: 4, backgroundColor: Colors.card,
+    borderWidth: 4, backgroundColor: c.card,
     alignItems: 'center', justifyContent: 'center', marginBottom: 16,
   },
   exerciseEmoji: { fontSize: 48, marginBottom: 4 },
-  exerciseTimer: { color: Colors.textPrimary, fontSize: 28, fontWeight: '900' },
+  exerciseTimer: { color: c.textPrimary, fontSize: 28, fontWeight: '900' },
   exerciseName: { fontSize: 20, fontWeight: '800', marginBottom: 4, textAlign: 'center' },
-  exerciseTarget: { color: Colors.textMuted, fontSize: 12, marginBottom: 16 },
+  exerciseTarget: { color: c.textMuted, fontSize: 12, marginBottom: 16 },
   howToLive: { alignSelf: 'stretch', gap: 6, marginBottom: 16 },
-  howToLiveStep: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, paddingHorizontal: 8 },
+  howToLiveStep: { color: c.textSecondary, fontSize: 13, lineHeight: 20, paddingHorizontal: 8 },
   progressDots: { flexDirection: 'row', gap: 8, marginBottom: 20 },
-  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.border },
-  stopBtn: { color: Colors.textMuted, fontSize: 14, paddingVertical: 10 },
+  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: c.border },
+  stopBtn: { color: c.textMuted, fontSize: 14, paddingVertical: 10 },
   completeBlock: { alignItems: 'center', paddingTop: 60 },
   completeEmoji: { fontSize: 60, marginBottom: 16 },
-  completeTitle: { color: Colors.textPrimary, fontSize: 24, fontWeight: '900', marginBottom: 10 },
+  completeTitle: { color: c.textPrimary, fontSize: 24, fontWeight: '900', marginBottom: 10 },
   completeSub: {
-    color: Colors.textSecondary, fontSize: 14, lineHeight: 22,
+    color: c.textSecondary, fontSize: 14, lineHeight: 22,
     textAlign: 'center', paddingHorizontal: 20, marginBottom: 30,
   },
   doneBtn: {
-    backgroundColor: Colors.primary, borderRadius: 14,
+    backgroundColor: c.primary, borderRadius: 14,
     paddingVertical: 14, paddingHorizontal: 32,
   },
   doneBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   // Detail
   detailEmoji: { fontSize: 52, textAlign: 'center', marginBottom: 10 },
-  detailName: { color: Colors.textPrimary, fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 6 },
-  detailTarget: { color: Colors.textSecondary, fontSize: 13, textAlign: 'center', marginBottom: 10 },
-  detailDesc: { color: Colors.textSecondary, fontSize: 14, lineHeight: 22, marginBottom: 14 },
+  detailName: { color: c.textPrimary, fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 6 },
+  detailTarget: { color: c.textSecondary, fontSize: 13, textAlign: 'center', marginBottom: 10 },
+  detailDesc: { color: c.textSecondary, fontSize: 14, lineHeight: 22, marginBottom: 14 },
   benefitCard: {
-    backgroundColor: Colors.primary + '15', borderRadius: 12, padding: 12,
-    borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14,
+    backgroundColor: c.primary + '15', borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14,
   },
-  benefitLabel: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  benefitText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  howToTitle: { color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 10 },
+  benefitLabel: { color: c.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  benefitText: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  howToTitle: { color: c.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 10 },
   howToStep: {
     flexDirection: 'row', gap: 10, marginBottom: 8,
   },
   howToNum: {
-    color: Colors.primary, fontSize: 13, fontWeight: '700',
+    color: c.primary, fontSize: 13, fontWeight: '700',
     width: 18, paddingTop: 1,
   },
-  howToText: { flex: 1, color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
+  howToText: { flex: 1, color: c.textSecondary, fontSize: 13, lineHeight: 21 },
   duration: {
-    color: Colors.textMuted, fontSize: 13, textAlign: 'center',
+    color: c.textMuted, fontSize: 13, textAlign: 'center',
     marginTop: 16, paddingBottom: 40,
   },
-});
+  });
+}
