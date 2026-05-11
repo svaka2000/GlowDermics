@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, Pressable, ScrollView,
-  Dimensions, TextInput, KeyboardAvoidingView, Platform,
+  Dimensions, useWindowDimensions, TextInput, KeyboardAvoidingView, Platform,
   StatusBar as RNStatusBar, NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { router } from 'expo-router';
@@ -26,8 +26,15 @@ import { Auth } from '../../src/services/auth';
 import { UserProfile, RegionalFinding } from '../../src/types';
 import { RegionalSkinMap, BiomarkerCloud, SkinAgeBadge } from '../../src/components/ui';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+// Fallback for non-component contexts (worklets). The component overrides with useWindowDimensions.
+const { width: SCREEN_W_FALLBACK, height: SCREEN_H } = Dimensions.get('window');
 const TOTAL_PAGES = 5;
+
+// On web, clamp to a phone-shaped width so the layout doesn't blow up in wide browser viewports.
+function getEffectiveScreenW(rawWidth: number): number {
+  if (Platform.OS === 'web') return Math.min(rawWidth, 480);
+  return rawWidth;
+}
 
 // Sample regional findings used on the Regional preview page.
 const SAMPLE_FINDINGS: RegionalFinding[] = [
@@ -64,6 +71,11 @@ const DIMENSIONS = [
 
 export default function Onboarding() {
   const isInvalidName = (s: string) => /[^a-zA-Z0-9 '\-.]/.test(s.trim());
+
+  const winDims = useWindowDimensions();
+  const SCREEN_W = getEffectiveScreenW(winDims.width);
+  const screenWSV = useSharedValue(SCREEN_W);
+  useEffect(() => { screenWSV.value = SCREEN_W; }, [SCREEN_W]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -151,7 +163,10 @@ export default function Onboarding() {
       />
 
       {/* Ambient terracotta glow at top */}
-      <Animated.View style={[styles.ambientGlow, glowStyle]} pointerEvents="none">
+      <Animated.View
+        style={[styles.ambientGlow, { left: SCREEN_W / 2 - 220 }, glowStyle]}
+        pointerEvents="none"
+      >
         <LinearGradient
           colors={['rgba(196,98,45,0.55)', 'rgba(196,98,45,0)']}
           style={{ flex: 1, borderRadius: 200 }}
@@ -197,6 +212,7 @@ export default function Onboarding() {
           >
             <PageWelcome
               isActive={page === 0}
+              screenW={SCREEN_W}
               name={name}
               setName={v => {
                 setName(v);
@@ -204,10 +220,10 @@ export default function Onboarding() {
               }}
               nameError={nameError}
             />
-            <PageSixteenDimensions isActive={page === 1} />
-            <PageRegionalMap isActive={page === 2} />
-            <PageCoachAndAge isActive={page === 3} />
-            <PageFirstScan isActive={page === 4} name={name} onScan={() => finish('scan')} onLater={() => finish('tabs')} />
+            <PageSixteenDimensions isActive={page === 1} screenW={SCREEN_W} />
+            <PageRegionalMap isActive={page === 2} screenW={SCREEN_W} />
+            <PageCoachAndAge isActive={page === 3} screenW={SCREEN_W} />
+            <PageFirstScan isActive={page === 4} screenW={SCREEN_W} name={name} onScan={() => finish('scan')} onLater={() => finish('tabs')} />
           </ScrollView>
 
           {/* Footer — back / continue */}
@@ -223,7 +239,7 @@ export default function Onboarding() {
 
             <View style={styles.dotRow}>
               {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
-                <Dot key={i} index={i} scrollX={scrollX} />
+                <Dot key={i} index={i} scrollX={scrollX} screenWSV={screenWSV} />
               ))}
             </View>
 
@@ -255,10 +271,15 @@ export default function Onboarding() {
 
 /* ---------- Pagination dots ---------- */
 
-function Dot({ index, scrollX }: { index: number; scrollX: ReturnType<typeof useSharedValue<number>> }) {
+function Dot({ index, scrollX, screenWSV }: {
+  index: number;
+  scrollX: ReturnType<typeof useSharedValue<number>>;
+  screenWSV: ReturnType<typeof useSharedValue<number>>;
+}) {
   const style = useAnimatedStyle(() => {
-    const distance = Math.abs(scrollX.value - index * SCREEN_W);
-    const t = Math.max(0, 1 - distance / SCREEN_W);
+    const w = screenWSV.value || 1;
+    const distance = Math.abs(scrollX.value - index * w);
+    const t = Math.max(0, 1 - distance / w);
     return {
       width: interpolate(t, [0, 1], [6, 22]),
       opacity: interpolate(t, [0, 1], [0.35, 1]),
@@ -271,11 +292,13 @@ function Dot({ index, scrollX }: { index: number; scrollX: ReturnType<typeof use
 
 function PageWelcome({
   isActive,
+  screenW,
   name,
   setName,
   nameError,
 }: {
   isActive: boolean;
+  screenW: number;
   name: string;
   setName: (s: string) => void;
   nameError: string;
@@ -314,7 +337,7 @@ function PageWelcome({
   }));
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { width: screenW }]}>
       <View style={styles.pageContent}>
         <Animated.View style={[styles.welcomeLogo, logoStyle]}>
           <LinearGradient
@@ -356,7 +379,7 @@ function PageWelcome({
 
 /* ---------- Page 2: 16 Dimensions ---------- */
 
-function PageSixteenDimensions({ isActive }: { isActive: boolean }) {
+function PageSixteenDimensions({ isActive, screenW }: { isActive: boolean; screenW: number }) {
   const headOpacity = useSharedValue(0);
   const headY = useSharedValue(20);
   const tileOpacities = DIMENSIONS.map(() => useSharedValue(0));
@@ -380,7 +403,7 @@ function PageSixteenDimensions({ isActive }: { isActive: boolean }) {
   }));
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { width: screenW }]}>
       <View style={styles.pageContent}>
         <Animated.View style={headStyle}>
           <Text style={styles.eyebrow}>HOW IT WORKS</Text>
@@ -435,7 +458,7 @@ function DimensionTile({
 
 /* ---------- Page 3: Regional Map preview ---------- */
 
-function PageRegionalMap({ isActive }: { isActive: boolean }) {
+function PageRegionalMap({ isActive, screenW }: { isActive: boolean; screenW: number }) {
   const headOpacity = useSharedValue(0);
   const headY = useSharedValue(20);
   const mapOpacity = useSharedValue(0);
@@ -459,7 +482,7 @@ function PageRegionalMap({ isActive }: { isActive: boolean }) {
   }));
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { width: screenW }]}>
       <View style={styles.pageContent}>
         <Animated.View style={headStyle}>
           <Text style={styles.eyebrow}>SEE WHERE TO FOCUS</Text>
@@ -471,7 +494,7 @@ function PageRegionalMap({ isActive }: { isActive: boolean }) {
         </Animated.View>
 
         <Animated.View style={[styles.mapWrap, mapStyle]}>
-          <RegionalSkinMap findings={SAMPLE_FINDINGS} width={Math.min(SCREEN_W - 80, 280)} />
+          <RegionalSkinMap findings={SAMPLE_FINDINGS} width={Math.min(screenW - 80, 280)} />
         </Animated.View>
       </View>
     </View>
@@ -480,7 +503,7 @@ function PageRegionalMap({ isActive }: { isActive: boolean }) {
 
 /* ---------- Page 4: AI Coach + Skin Age ---------- */
 
-function PageCoachAndAge({ isActive }: { isActive: boolean }) {
+function PageCoachAndAge({ isActive, screenW }: { isActive: boolean; screenW: number }) {
   const headOpacity = useSharedValue(0);
   const headY = useSharedValue(20);
   const ageOpacity = useSharedValue(0);
@@ -510,7 +533,7 @@ function PageCoachAndAge({ isActive }: { isActive: boolean }) {
   const cloudStyle = useAnimatedStyle(() => ({ opacity: cloudOpacity.value }));
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { width: screenW }]}>
       <View style={styles.pageContent}>
         <Animated.View style={headStyle}>
           <Text style={styles.eyebrow}>BEYOND SCORES</Text>
@@ -551,11 +574,13 @@ function PageCoachAndAge({ isActive }: { isActive: boolean }) {
 
 function PageFirstScan({
   isActive,
+  screenW,
   name,
   onScan,
   onLater,
 }: {
   isActive: boolean;
+  screenW: number;
   name: string;
   onScan: () => void;
   onLater: () => void;
@@ -610,7 +635,7 @@ function PageFirstScan({
   const greeting = name.trim() ? `Ready, ${name.trim()}?` : 'Ready?';
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { width: screenW }]}>
       <View style={[styles.pageContent, { alignItems: 'center', justifyContent: 'center' }]}>
         <View style={styles.scanIconWrap}>
           <Animated.View style={[styles.scanHalo, haloStyle]} pointerEvents="none" />
@@ -665,7 +690,7 @@ const styles = StyleSheet.create({
   ambientGlow: {
     position: 'absolute',
     top: -180,
-    left: SCREEN_W / 2 - 220,
+    left: SCREEN_W_FALLBACK / 2 - 220,
     width: 440,
     height: 440,
     borderRadius: 220,
@@ -699,7 +724,7 @@ const styles = StyleSheet.create({
   },
 
   scroll: { flex: 1 },
-  page: { width: SCREEN_W, flex: 1 },
+  page: { width: SCREEN_W_FALLBACK, flex: 1 },
   pageContent: { flex: 1, paddingHorizontal: 28, paddingTop: 24, paddingBottom: 12 },
 
   eyebrow: {
