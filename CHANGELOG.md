@@ -4,6 +4,33 @@ All notable changes are listed here in reverse chronological order.
 
 ---
 
+## 2026-05-16 — Affiliate Infra + Onboarding/Face-Map Fixes + Dark-Mode Sweep (Pass 69–82)
+
+A large multi-session block. Highlights:
+
+### 💸 Affiliate link infrastructure (`3cd84c8`)
+Config-driven, FTC-compliant affiliate system executed from `AFFILIATE_PLAYBOOK.md`.
+- `src/data/affiliateCatalog.ts` — canonical `productKey` → link table (embedded fallback; real tracking tags stay server-side, never bundled)
+- `src/services/affiliateLinks.ts` — live CDN table fetch + AsyncStorage cache + embedded fallback, never blocks UI; `initLinkTable()` runs at app startup
+- `src/services/affiliate.ts` — `openProduct()` logs the click then opens via `Linking.openURL` (system browser, NOT expo-web-browser) so the affiliate cookie survives checkout; non-identifying user bucket for SubID analytics
+- `src/components/ui/OutboundLink.tsx` + `AffiliateDisclosure.tsx` — the single "Buy on X" button + FTC disclosure (first-party wording for TallowDermics)
+- Reference integration wired into `app/dupes`. Server side in `infra/`: Cloudflare Worker (per-network SubID: Amazon `ascsubtag` / Impact `subId1` / Rakuten `u1` / CJ `sid` / Awin `clickref` / Skimlinks `xcust`), R2 link-table template, 30-min deploy runbook.
+
+### 🛠️ Onboarding pager + RegionalSkinMap (`abd3b9d`, `00f111b`, `e47b57e`)
+- Onboarding horizontal pager was overflowing on web (stale `useWindowDimensions` → 5×480px clipped). Now measures the real ScrollView width via `onLayout`; verified live.
+- `RegionalSkinMap` rebuilt: old oversized opaque ellipses spilled outside the face; now an SVG `ClipPath` contains all severity zones, soft per-severity `RadialGradient`s, subtle pulse. Delegated to a design agent, verified in preview.
+
+### 🏠 Home hero stat-pill QA fix (`95cfd85`)
+4-across glass stat cards clipped at ~373px ("Concerns"→"oncern"). Fixed via tighter padding/gap + `numberOfLines={1}`/`adjustsFontSizeToFit`. Caught & fixed by the autonomous screenshot→critique→fix QA loop.
+
+### 🌙 Dark-mode marathon (Pass 69–82) — ~28 screens
+pregnancy-skin/label-guide/barrier-quiz/skin-iq (Pass 69), skin-foods/cleansing-guide/aging-timeline/sleep-log, skin-journal/photodamage/goals/diy-recipes, diet/antioxidants/weekly-digest/tallow-science, microbiome/vitamin-c/routine-builder/eczema-guide, budget/acne-diary/stress-log/seasonal/report, dehydrated-skin/acne-types/active-rotation/challenge, learn/facial-yoga/body-care/collagen-guide, journal/skin-detox/peptides/hyaluronic-acid, barrier-repair, skin-story/product-deck/gua-sha/baumann-test, hydration/hormonal-log/efa-guide/face-mapping, sleep-skin/gut-skin/exercise-skin/face-food. Established patterns: `shimColors(c: Palette)` for inline-Colors screens; `buildXxx(c|Colors)` factories for module-level color maps (PHASES/OMEGA3/OMEGA6/ZONES/SLEEP_STAGES/EXERCISE_TYPES/FOOD_GROUPS/etc.); module helper fns take the array as a param.
+
+### 🤖 Decision Autonomy Rule (memory)
+Standing directive saved: never ask the user task-ordering questions — decide and execute everything.
+
+---
+
 ## 2026-05-09 — Content-Guide Dark-Mode Sweep (Pass 65–68)
 
 Four more iterations. 16 content-guide screens migrated to the dark palette via the established `shimColors(palette)` + `buildXxx(c)` factory pattern. ~692 Colors refs total.

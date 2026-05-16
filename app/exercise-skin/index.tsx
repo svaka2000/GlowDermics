@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Benefits', 'Exercise Types', 'Pre & Post', 'Skin During Exercise', 'Tallow Protocol'];
 
@@ -23,13 +28,15 @@ const EXERCISE_BENEFITS = [
   { benefit: 'Sweat: natural skin cleansing', detail: 'Eccrine sweat contains antimicrobial peptides (dermcidin) that selectively inhibit pathogenic bacteria. The act of sweating flushes follicle contents. Dermal interstitial pressure during intense exercise also helps mobilise waste products from skin tissue. The catch: sweat must be rinsed off promptly to prevent follicle re-clogging.', icon: '💧' },
 ];
 
-const EXERCISE_TYPES = [
+function buildExerciseTypes(Colors: ShimColors) {
+  return [
   { type: 'Resistance Training', skinEffect: 'Highest GH secretion = strongest collagen-stimulating effect. Compound movements (squat, deadlift, bench) produce more GH than isolated exercises. 3–4× weekly. Best skin anti-aging workout type by GH criteria.', skinRisks: 'Friction from equipment on face. Gym hygiene contact points. Sweating in tight athletic wear.', icon: '🏋️', color: Colors.primary },
   { type: 'HIIT (High-Intensity Intervals)', skinEffect: 'Second strongest GH secretion. Also produces the "afterburn" (EPOC) that extends metabolic elevation for hours — including extended skin blood flow benefit. Anti-inflammatory over time despite acute inflammation during sessions.', skinRisks: 'Most intense sweating — shower promptly. High cortisol spike during session (normalises in 30–60 min).', icon: '⚡', color: Colors.gold },
   { type: 'Steady-State Cardio (running, cycling, swimming)', skinEffect: 'Lower GH but highest vasodilation and blood flow. Best for consistent dermal oxygenation. Most cortisol-reducing effect over time (chronic adaptation). Swimming: cold water activates vasoconstriction-dilation cycles beneficial for circulation.', skinRisks: 'Running: UV exposure in outdoor runs. Swimming: chlorine is alkaline (disrupts acid mantle), dehydrating, and potentially irritating for eczema and sensitive skin.', icon: '🏃', color: Colors.blue },
   { type: 'Yoga and Mindfulness Movement', skinEffect: 'Lowest GH but highest cortisol-reducing effect. The parasympathetic nervous system activation during yoga measurably reduces inflammatory cytokines. Best for stress-related skin conditions: acne from cortisol, rosacea flares, eczema from nervous system dysregulation.', skinRisks: 'Floor mat contact: bacterial transfer. Hot yoga: extreme sweating + high temperature + compromised barrier in heat.', icon: '🧘', color: Colors.teal },
   { type: 'Cold Water Swimming / Cold Exposure', skinEffect: 'Activates the Nrf2 antioxidant pathway. Produces noradrenaline (anti-inflammatory neurotransmitter). Vascular training from cold-induced vasoconstriction improves capillary tone. Improves the skin\'s ability to regulate temperature.', skinRisks: 'Extreme TEWL in cold air + cold water combination. Require immediate moisturisation post-swim. Not for rosacea-prone (cold triggers flushing in some).', icon: '🏊', color: Colors.blue },
-];
+  ];
+}
 
 const PRE_POST = {
   pre: [
@@ -59,6 +66,10 @@ const TALLOW_PROTOCOL = [
 ];
 
 export default function ExerciseSkinScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const EXERCISE_TYPES = useMemo(() => buildExerciseTypes(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedBenefit, setExpandedBenefit] = useState<number | null>(null);
   const [expandedType, setExpandedType] = useState<number | null>(null);
@@ -183,43 +194,45 @@ export default function ExerciseSkinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
   effectBlock: { marginBottom: 10 },
-  effectLabel: { color: Colors.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  riskBlock: { backgroundColor: Colors.red + '0A', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.red + '33' },
-  riskLabel: { color: Colors.red, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  riskText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  phaseCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 12 },
-  phaseTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 10 },
+  effectLabel: { color: c.green, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  riskBlock: { backgroundColor: c.red + '0A', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.red + '33' },
+  riskLabel: { color: c.red, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  riskText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  phaseCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 12 },
+  phaseTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 10 },
   actionRow: { flexDirection: 'row', gap: 8, marginBottom: 6, alignItems: 'flex-start' },
   actionBullet: { fontSize: 14, fontWeight: '700', marginTop: 1 },
-  actionText: { flex: 1, color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  actionText: { flex: 1, color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}
