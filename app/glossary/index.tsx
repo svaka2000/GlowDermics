@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Term = {
   term: string;
@@ -57,6 +58,8 @@ const TERMS: Term[] = [
 const CATEGORIES = ['All', 'Biology', 'Ingredient', 'Chemistry', 'Function', 'Rating', 'Process'];
 
 export default function Glossary() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [expandedTerm, setExpandedTerm] = useState<string | null>(null);
@@ -70,9 +73,9 @@ export default function Glossary() {
 
   const CATEGORY_COLORS: Record<string, string> = {
     Biology: '#4ADE80',
-    Ingredient: Colors.primary,
+    Ingredient: colors.primary,
     Chemistry: '#6B85A8',
-    Function: Colors.gold,
+    Function: colors.gold,
     Rating: '#60A5FA',
     Process: '#F97316',
   };
@@ -82,7 +85,7 @@ export default function Glossary() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Glossary</Text>
@@ -93,17 +96,17 @@ export default function Glossary() {
 
         {/* Search */}
         <View style={styles.searchWrap}>
-          <Ionicons name="search-outline" size={16} color={Colors.textMuted} style={styles.searchIcon} />
+          <Ionicons name="search-outline" size={16} color={colors.textMuted} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search terms..."
-            placeholderTextColor={Colors.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={search}
             onChangeText={setSearch}
           />
           {search.length > 0 && (
             <Pressable onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
+              <Ionicons name="close-circle" size={16} color={colors.textMuted} />
             </Pressable>
           )}
         </View>
@@ -119,15 +122,15 @@ export default function Glossary() {
                 style={[
                   styles.filterChip,
                   selectedCategory === cat && {
-                    backgroundColor: `${CATEGORY_COLORS[cat] || Colors.primary}20`,
-                    borderColor: CATEGORY_COLORS[cat] || Colors.primary,
+                    backgroundColor: `${CATEGORY_COLORS[cat] || colors.primary}20`,
+                    borderColor: CATEGORY_COLORS[cat] || colors.primary,
                   },
                 ]}
                 onPress={() => setSelectedCategory(cat)}
               >
                 <Text style={[
                   styles.filterChipText,
-                  selectedCategory === cat && { color: CATEGORY_COLORS[cat] || Colors.primary },
+                  selectedCategory === cat && { color: CATEGORY_COLORS[cat] || colors.primary },
                 ]}>
                   {cat}
                 </Text>
@@ -139,7 +142,7 @@ export default function Glossary() {
         <Text style={styles.resultCount}>{filtered.length} term{filtered.length !== 1 ? 's' : ''}</Text>
 
         {filtered.map((term) => {
-          const color = CATEGORY_COLORS[term.category] || Colors.textMuted;
+          const color = CATEGORY_COLORS[term.category] || colors.textMuted;
           const isExpanded = expandedTerm === term.term;
           return (
             <Pressable
@@ -158,7 +161,7 @@ export default function Glossary() {
                 <Ionicons
                   name={isExpanded ? 'chevron-up' : 'chevron-down'}
                   size={14}
-                  color={Colors.textMuted}
+                  color={colors.textMuted}
                   style={{ marginLeft: 6 }}
                 />
               </View>
@@ -190,54 +193,56 @@ export default function Glossary() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 10,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     marginHorizontal: 16, marginBottom: 10,
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 12, height: 44,
   },
   searchIcon: {},
-  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
+  searchInput: { flex: 1, fontSize: 14, color: c.textPrimary },
   scroll: { paddingHorizontal: 16 },
 
   filterScroll: { marginBottom: 4, marginHorizontal: -4 },
   filterRow: { flexDirection: 'row', gap: 6, paddingHorizontal: 4, paddingBottom: 4 },
   filterChip: {
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  filterChipText: { fontSize: 12, fontWeight: '700', color: Colors.textMuted },
+  filterChipText: { fontSize: 12, fontWeight: '700', color: c.textMuted },
 
-  resultCount: { fontSize: 11, color: Colors.textMuted, marginBottom: 8, marginTop: 4 },
+  resultCount: { fontSize: 11, color: c.textMuted, marginBottom: 8, marginTop: 4 },
 
   termCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 12, gap: 8, marginBottom: 8,
   },
   termHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  termName: { fontSize: 14, fontWeight: '800', color: Colors.textPrimary, flex: 1 },
-  termAlso: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
+  termName: { fontSize: 14, fontWeight: '800', color: c.textPrimary, flex: 1 },
+  termAlso: { fontSize: 11, color: c.textMuted, marginTop: 1 },
   categoryBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   categoryBadgeText: { fontSize: 10, fontWeight: '800' },
   termBody: { gap: 8 },
-  termDefinition: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  termDefinition: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   termExample: { borderLeftWidth: 3, paddingLeft: 10, gap: 2 },
-  termExampleLabel: { fontSize: 9, fontWeight: '800', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
-  termExampleText: { fontSize: 12, color: Colors.textMuted, lineHeight: 18, fontStyle: 'italic' },
+  termExampleLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  termExampleText: { fontSize: 12, color: c.textMuted, lineHeight: 18, fontStyle: 'italic' },
 
   noResults: { alignItems: 'center', padding: 30 },
-  noResultsText: { fontSize: 14, color: Colors.textMuted },
-});
+  noResultsText: { fontSize: 14, color: c.textMuted },
+  });
+}

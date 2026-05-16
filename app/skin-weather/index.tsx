@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Share,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 type WeatherStat = {
@@ -37,7 +38,7 @@ function getWeatherReport(data: {
   water: number;
   routine: boolean;
   stressLevel: number;
-}): WeatherReport {
+}, c: Palette): WeatherReport {
   const { hydration, clarity, texture, stress, water, routine, stressLevel } = data;
   const overall = Math.round((hydration + clarity + texture) / 3);
 
@@ -66,14 +67,14 @@ function getWeatherReport(data: {
   } else if (hydration >= 75 && clarity >= 75 && stressLevel <= 2 && water >= 6) {
     condition = 'Golden Hour';
     conditionIcon = '🌟';
-    gradientColors = [Colors.primaryDark, '#D4A96A'];
+    gradientColors = [c.primaryDark, '#D4A96A'];
     headline = 'Peak skin conditions today';
     summary = 'You\'re hydrated, calm, and consistent. Your skin is glowing and primed to absorb everything you give it.';
     skinAdvice = 'Perfect day to take a skin scan — your scores will be at their best right now.';
   } else if (hydration >= 65 && routine) {
     condition = 'Partly Sunny';
     conditionIcon = '🌤️';
-    gradientColors = [Colors.primaryDark, Colors.primary];
+    gradientColors = [c.primaryDark, c.primary];
     headline = 'Good skin day incoming';
     summary = 'Solid hydration and routine consistency. Keep it up — you\'re building positive momentum.';
     skinAdvice = 'Stay on top of water intake and don\'t skip the evening routine tonight.';
@@ -94,7 +95,7 @@ function getWeatherReport(data: {
   } else {
     condition = 'Mild & Steady';
     conditionIcon = '🌤️';
-    gradientColors = [Colors.primaryDark, Colors.primary];
+    gradientColors = [c.primaryDark, c.primary];
     headline = 'Stable skin day';
     summary = 'Conditions are normal. Maintain your routine and stay hydrated to keep things trending positive.';
     skinAdvice = 'Consistency is king. Log your routine and water intake today.';
@@ -163,9 +164,14 @@ function getWeatherReport(data: {
   return { condition, conditionIcon, headline, summary, stats, forecast, skinAdvice, gradientColors };
 }
 
-const STAT_COLORS: Record<string, string> = { good: '#4ADE80', medium: Colors.gold, low: Colors.scorePoor, high: '#4ADE80' };
+function buildStatColors(c: Palette): Record<string, string> {
+  return { good: '#4ADE80', medium: c.gold, low: c.scorePoor, high: '#4ADE80' };
+}
 
 export default function SkinWeather() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const STAT_COLORS = useMemo(() => buildStatColors(colors), [colors]);
   const [report, setReport] = useState<WeatherReport | null>(null);
   const [date, setDate] = useState('');
 
@@ -204,7 +210,7 @@ export default function SkinWeather() {
       stressLevel,
     };
 
-    setReport(getWeatherReport(data));
+    setReport(getWeatherReport(data, colors));
     setDate(new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
   };
 
@@ -233,14 +239,14 @@ export default function SkinWeather() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Skin Weather</Text>
             <Text style={styles.headerSub}>Daily conditions report</Text>
           </View>
           <Pressable style={styles.backBtn} onPress={handleShare}>
-            <Ionicons name="share-outline" size={20} color={Colors.primary} />
+            <Ionicons name="share-outline" size={20} color={colors.primary} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -273,7 +279,7 @@ export default function SkinWeather() {
         {/* Skin advice */}
         <View style={styles.adviceCard}>
           <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
-          <Ionicons name="bulb-outline" size={20} color={Colors.gold} />
+          <Ionicons name="bulb-outline" size={20} color={colors.gold} />
           <View style={{ flex: 1 }}>
             <Text style={styles.adviceLabel}>TODAY'S SKIN ADVICE</Text>
             <Text style={styles.adviceText}>{report.skinAdvice}</Text>
@@ -295,21 +301,21 @@ export default function SkinWeather() {
         {/* Quick actions */}
         <View style={styles.actionsRow}>
           <Pressable style={styles.actionBtn} onPress={() => router.push('/checkin')}>
-            <Ionicons name="checkmark-circle-outline" size={20} color={Colors.primary} />
+            <Ionicons name="checkmark-circle-outline" size={20} color={colors.primary} />
             <Text style={styles.actionBtnText}>Daily Check-In</Text>
           </Pressable>
           <Pressable style={styles.actionBtn} onPress={() => router.push('/scan')}>
-            <Ionicons name="camera-outline" size={20} color={Colors.primary} />
+            <Ionicons name="camera-outline" size={20} color={colors.primary} />
             <Text style={styles.actionBtnText}>Scan Skin</Text>
           </Pressable>
           <Pressable style={styles.actionBtn} onPress={() => router.push('/stress-log')}>
-            <Ionicons name="stats-chart-outline" size={20} color={Colors.primary} />
+            <Ionicons name="stats-chart-outline" size={20} color={colors.primary} />
             <Text style={styles.actionBtnText}>Log Stress</Text>
           </Pressable>
         </View>
 
         <Pressable style={styles.refreshBtn} onPress={generateReport}>
-          <Ionicons name="refresh-outline" size={16} color={Colors.textMuted} />
+          <Ionicons name="refresh-outline" size={16} color={colors.textMuted} />
           <Text style={styles.refreshText}>Refresh report</Text>
         </Pressable>
 
@@ -319,47 +325,49 @@ export default function SkinWeather() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   mainCard: { borderRadius: 24, overflow: 'hidden', padding: 28, gap: 8, marginBottom: 14, alignItems: 'center' },
   dateLabel: { fontSize: 10, fontWeight: '700', color: 'rgba(255,255,255,0.6)', letterSpacing: 1, textTransform: 'uppercase' },
   conditionEmoji: { fontSize: 64, marginVertical: 8 },
-  condition: { fontSize: 26, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  condition: { fontSize: 26, fontWeight: '900', color: c.white, textAlign: 'center' },
   headline: { fontSize: 14, fontWeight: '600', color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginTop: 4 },
   summary: { fontSize: 13, color: 'rgba(255,255,255,0.8)', textAlign: 'center', lineHeight: 22, marginTop: 4 },
 
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
-  statBlock: { width: '31%', backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 3 },
+  statBlock: { width: '31%', backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 12, alignItems: 'center', gap: 3 },
   statIcon: { fontSize: 20 },
   statValue: { fontSize: 18, fontWeight: '800' },
   statUnit: { fontSize: 11, fontWeight: '600' },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   adviceCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
-  adviceLabel: { fontSize: 9, fontWeight: '800', color: Colors.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
-  adviceText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  adviceLabel: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
+  adviceText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 0, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 0, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
   forecastRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10 },
-  forecastBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  forecastLabel: { fontSize: 12, fontWeight: '700', color: Colors.textMuted, width: 70 },
+  forecastBorder: { borderBottomWidth: 1, borderBottomColor: c.border },
+  forecastLabel: { fontSize: 12, fontWeight: '700', color: c.textMuted, width: 70 },
   forecastIcon: { fontSize: 16, width: 80 },
-  forecastTip: { flex: 1, fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  forecastTip: { flex: 1, fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   actionsRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  actionBtn: { flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 12, alignItems: 'center', gap: 6 },
-  actionBtnText: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, textAlign: 'center' },
+  actionBtn: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 12, alignItems: 'center', gap: 6 },
+  actionBtnText: { fontSize: 10, fontWeight: '700', color: c.textMuted, textAlign: 'center' },
 
   refreshBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10 },
-  refreshText: { fontSize: 12, color: Colors.textMuted },
-});
+  refreshText: { fontSize: 12, color: c.textMuted },
+  });
+}

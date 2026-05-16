@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const POPULAR_INGREDIENTS = [
   { name: 'Retinol', category: 'Active', emoji: '⚡' },
@@ -29,6 +30,8 @@ const POPULAR_INGREDIENTS = [
 ];
 
 export default function IngredientSearch() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [search, setSearch] = useState('');
 
   const handleSearch = () => {
@@ -48,7 +51,7 @@ export default function IngredientSearch() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Ingredient Decoder</Text>
@@ -62,11 +65,11 @@ export default function IngredientSearch() {
 
         {/* Search + submit */}
         <View style={styles.searchWrap}>
-          <Ionicons name="search-outline" size={18} color={Colors.textMuted} />
+          <Ionicons name="search-outline" size={18} color={colors.textMuted} />
           <TextInput
             style={styles.searchInput}
             placeholder="Type any ingredient name..."
-            placeholderTextColor={Colors.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={search}
             onChangeText={setSearch}
             returnKeyType="search"
@@ -94,7 +97,7 @@ export default function IngredientSearch() {
                 <Text style={styles.ingredientName}>{ingredient.name}</Text>
                 <Text style={styles.ingredientCategory}>{ingredient.category}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
             </Pressable>
           ))}
         </View>
@@ -105,34 +108,36 @@ export default function IngredientSearch() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.borderStrong,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.borderStrong,
     paddingHorizontal: 14, paddingVertical: 12, marginBottom: 20,
   },
-  searchInput: { flex: 1, fontSize: 15, color: Colors.textPrimary },
-  searchBtn: { backgroundColor: Colors.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
-  searchBtnText: { fontSize: 13, fontWeight: '700', color: Colors.white },
+  searchInput: { flex: 1, fontSize: 15, color: c.textPrimary },
+  searchBtn: { backgroundColor: c.primary, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
+  searchBtnText: { fontSize: 13, fontWeight: '700', color: c.white },
 
-  popularLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.5, marginBottom: 12, textTransform: 'uppercase' },
+  popularLabel: { fontSize: 13, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, marginBottom: 12, textTransform: 'uppercase' },
 
   ingredientList: { gap: 8 },
   ingredientCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 14,
   },
   ingredientEmoji: { fontSize: 22, width: 30, textAlign: 'center' },
   ingredientInfo: { flex: 1 },
-  ingredientName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  ingredientCategory: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-});
+  ingredientName: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  ingredientCategory: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  });
+}

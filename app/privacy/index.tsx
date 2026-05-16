@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const SECTIONS = [
   {
@@ -84,12 +86,14 @@ TallowDermics (tallowdermics.com) — Referenced brand within the app. Visiting 
 ];
 
 export default function Privacy() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   return (
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Privacy Policy</Text>
           <View style={{ width: 36 }} />
@@ -130,28 +134,30 @@ export default function Privacy() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
 
   scroll: { paddingHorizontal: 20 },
 
-  heroCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 24, alignItems: 'center', gap: 8, marginBottom: 16 },
+  heroCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 24, alignItems: 'center', gap: 8, marginBottom: 16 },
   heroEmoji: { fontSize: 40 },
-  heroTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  heroSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 22 },
-  heroDate: { fontSize: 11, color: Colors.textMuted, marginTop: 4 },
+  heroTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary },
+  heroSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
+  heroDate: { fontSize: 11, color: c.textMuted, marginTop: 4 },
 
   highlightCard: { backgroundColor: 'rgba(74,222,128,0.07)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)', padding: 16, gap: 8, marginBottom: 20 },
   highlightTitle: { fontSize: 14, fontWeight: '700', color: '#4ADE80', marginBottom: 4 },
-  highlightPoint: { fontSize: 13, color: Colors.textSecondary, lineHeight: 22 },
+  highlightPoint: { fontSize: 13, color: c.textSecondary, lineHeight: 22 },
 
   section: { marginBottom: 22 },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
-  sectionBody: { fontSize: 13, color: Colors.textSecondary, lineHeight: 22 },
-});
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, marginBottom: 8 },
+  sectionBody: { fontSize: 13, color: c.textSecondary, lineHeight: 22 },
+  });
+}

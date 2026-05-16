@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,13 +20,15 @@ interface Achievement {
   category: 'scanning' | 'routine' | 'learning' | 'tracking' | 'lifestyle';
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  scanning: Colors.primary,
-  routine: '#6B85A8',
-  learning: '#60A5FA',
-  tracking: '#4ADE80',
-  lifestyle: '#F59E0B',
-};
+function buildCategoryColors(c: Palette): Record<string, string> {
+  return {
+    scanning: c.primary,
+    routine: '#6B85A8',
+    learning: '#60A5FA',
+    tracking: '#4ADE80',
+    lifestyle: '#F59E0B',
+  };
+}
 
 const CATEGORY_LABELS: Record<string, string> = {
   scanning: 'Scanning',
@@ -242,6 +245,9 @@ async function computeAchievements(): Promise<Achievement[]> {
 }
 
 export default function Milestones() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const CATEGORY_COLORS = useMemo(() => buildCategoryColors(colors), [colors]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
@@ -275,7 +281,7 @@ export default function Milestones() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Milestones</Text>
@@ -353,7 +359,7 @@ export default function Milestones() {
               <Text style={[styles.achievementDesc, !a.unlocked && styles.lockedDesc]}>{a.description}</Text>
               {!a.unlocked && (
                 <View style={styles.lockedTag}>
-                  <Ionicons name="lock-closed" size={9} color={Colors.textMuted} />
+                  <Ionicons name="lock-closed" size={9} color={colors.textMuted} />
                   <Text style={styles.lockedTagText}>Locked</Text>
                 </View>
               )}
@@ -370,7 +376,7 @@ export default function Milestones() {
 
         {/* Motivational footer */}
         <View style={styles.footerCard}>
-          <Ionicons name="sparkles-outline" size={16} color={Colors.gold} />
+          <Ionicons name="sparkles-outline" size={16} color={colors.gold} />
           <Text style={styles.footerText}>
             {unlocked === 0
               ? 'Start your skin journey to unlock your first milestone!'
@@ -389,19 +395,20 @@ export default function Milestones() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   progressCard: {
@@ -410,34 +417,34 @@ const styles = StyleSheet.create({
     padding: 20, marginBottom: 16,
   },
   progressTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  progressNum: { fontSize: 38, fontWeight: '800', color: Colors.textPrimary },
-  progressTotal: { fontSize: 20, fontWeight: '500', color: Colors.textMuted },
-  progressLabel: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
+  progressNum: { fontSize: 38, fontWeight: '800', color: c.textPrimary },
+  progressTotal: { fontSize: 20, fontWeight: '500', color: c.textMuted },
+  progressLabel: { fontSize: 13, color: c.textSecondary, marginTop: 2 },
   trophyCircle: {
     width: 56, height: 56, borderRadius: 28,
     backgroundColor: 'rgba(196,98,45,0.12)',
     alignItems: 'center', justifyContent: 'center',
   },
   trophyEmoji: { fontSize: 26 },
-  progressBarTrack: { height: 6, backgroundColor: Colors.bgElevated, borderRadius: 3, marginBottom: 6 },
-  progressBarFill: { height: '100%', backgroundColor: Colors.primary, borderRadius: 3 },
-  progressPct: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
+  progressBarTrack: { height: 6, backgroundColor: c.bgElevated, borderRadius: 3, marginBottom: 6 },
+  progressBarFill: { height: '100%', backgroundColor: c.primary, borderRadius: 3 },
+  progressPct: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
 
   catScroll: { marginBottom: 16 },
   catScrollContent: { gap: 8, paddingRight: 16 },
   catChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  catChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
-  catChipText: { fontSize: 11, fontWeight: '600', color: Colors.textMuted },
-  catChipTextActive: { color: Colors.primary },
+  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  catChipText: { fontSize: 11, fontWeight: '600', color: c.textMuted },
+  catChipTextActive: { color: c.primary },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
   achievementCard: {
     width: '48%', borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.borderStrong,
-    backgroundColor: Colors.bgCard, padding: 16, gap: 6,
+    borderWidth: 1, borderColor: c.borderStrong,
+    backgroundColor: c.bgCard, padding: 16, gap: 6,
   },
   achievementLocked: { opacity: 0.5 },
   achievementTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 },
@@ -447,12 +454,12 @@ const styles = StyleSheet.create({
     width: 20, height: 20, borderRadius: 10,
     alignItems: 'center', justifyContent: 'center',
   },
-  achievementTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, lineHeight: 18 },
-  achievementDesc: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
-  lockedText: { color: Colors.textMuted },
-  lockedDesc: { color: Colors.textMuted },
+  achievementTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, lineHeight: 18 },
+  achievementDesc: { fontSize: 11, color: c.textSecondary, lineHeight: 16 },
+  lockedText: { color: c.textMuted },
+  lockedDesc: { color: c.textMuted },
   lockedTag: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  lockedTagText: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', letterSpacing: 0.5 },
+  lockedTagText: { fontSize: 9, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5 },
   categoryTag: { alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, marginTop: 4 },
   categoryTagText: { fontSize: 8, fontWeight: '800', letterSpacing: 1 },
 
@@ -462,5 +469,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)',
     padding: 16,
   },
-  footerText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
-});
+  footerText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  });
+}
