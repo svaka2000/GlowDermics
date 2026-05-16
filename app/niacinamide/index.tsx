@@ -1,16 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', purple: '#6B85A8', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration,
+    purple: c.darkCircles, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Science', 'Benefits', 'How to Use', 'Combinations', 'Tallow Stack'];
 
@@ -42,14 +48,16 @@ const HOW_TO_USE = [
   { step: 6, title: 'Duration: 4–8 weeks to see results', detail: 'Ceramide synthesis improvements begin within 2 weeks but are clinically significant at 4–8 weeks. Brightening effects (melanosome transfer inhibition) show measurable results at 8–12 weeks. Commit to a consistent period before evaluating efficacy.' },
 ];
 
-const COMBINATIONS = [
+function buildCombinations(Colors: ShimColors) {
+  return [
   { combo: 'Niacinamide + Retinol', verdict: 'Excellent', detail: 'These two ingredients are often called the "power couple." Retinol increases cell turnover (can cause dryness, irritation). Niacinamide repairs the barrier that retinol disrupts. Used together, niacinamide significantly reduces retinol irritation while adding complementary brightening and barrier benefits. Apply retinol first on dry skin, then niacinamide serum over.', color: Colors.green },
   { combo: 'Niacinamide + Vitamin C', verdict: 'Compatible', detail: 'Old myth: they react to form a yellow niacin compound. Modern research: this reaction is negligible at normal skincare temperatures and concentrations. They are compatible and actually complementary — vitamin C inhibits melanin production while niacinamide inhibits melanosome transfer. Two-pathway pigmentation approach.', color: Colors.teal },
   { combo: 'Niacinamide + AHA/BHA', verdict: 'Excellent', detail: 'Chemical exfoliants cause post-exfoliation sensitivity by temporarily disrupting the barrier. Niacinamide immediately after (or on alternating days) rebuilds the ceramide layer. The combination: exfoliate with acid → follow with niacinamide → barrier repaired quickly. Apply niacinamide 30+ minutes after AHA for best results.', color: Colors.green },
   { combo: 'Niacinamide + SPF', verdict: 'Excellent', detail: 'Niacinamide under SPF provides dual photo-protection: SPF blocks UV; niacinamide (via NAD+ pathway) assists with DNA repair of UV-induced damage that gets through. Daily niacinamide in an SPF-wearing routine measurably reduces UV-induced photoaging.', color: Colors.green },
   { combo: 'Niacinamide + Hyaluronic Acid', verdict: 'Excellent', detail: 'HA provides immediate surface hydration (hygroscopic water-binding). Niacinamide builds long-term barrier infrastructure (ceramide synthesis). Short-term and long-term hydration simultaneously. These are the two complementary hydration mechanisms, addressed by each ingredient.', color: Colors.green },
   { combo: 'Niacinamide + BHA (Salicylic Acid)', verdict: 'Excellent', detail: 'BHA clears pore blockages. Niacinamide reduces sebum production. Both address oily/acne-prone skin through different mechanisms. Apply BHA first on dry skin (pH needs to be low for penetration), wait 20–30 minutes, then niacinamide. The combination is particularly effective for oily, congested skin.', color: Colors.green },
-];
+  ];
+}
 
 const TALLOW_STACK = [
   { title: 'Niacinamide before tallow: the correct order', body: 'Niacinamide is water-soluble — it must contact the aqueous phase of skin before any occlusive is applied. Apply niacinamide serum on clean skin, allow 60–90 seconds, then apply tallow. Applying tallow first would block niacinamide penetration.' },
@@ -60,6 +68,10 @@ const TALLOW_STACK = [
 ];
 
 export default function NiacinamideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const COMBINATIONS = useMemo(() => buildCombinations(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedBenefit, setExpandedBenefit] = useState<number | null>(null);
@@ -196,43 +208,45 @@ export default function NiacinamideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 10 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
   evidenceBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   evidenceText: { fontSize: 10, fontWeight: '700' },
   verdictBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   verdictText: { fontSize: 10, fontWeight: '700' },
   stepCard: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
-  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  stepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-  stepTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  stepDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

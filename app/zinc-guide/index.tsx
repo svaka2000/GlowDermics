@@ -1,16 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['Why Zinc', 'Forms', 'For Acne', 'Topical Zinc', 'Tallow + Zinc'];
 
@@ -23,14 +28,16 @@ const ZINC_FACTS = [
   { fact: 'Zinc is naturally anti-inflammatory and anti-microbial', detail: 'Zinc directly inhibits the NF-κB inflammatory pathway, reducing production of pro-inflammatory cytokines (IL-1β, IL-6, TNF-α). Topically, zinc inhibits Propionibacterium acnes (C. acnes) and Malassezia. Zinc pyrithione (ZPT) is one of the most effective antifungal ingredients for dandruff and Malassezia folliculitis.', icon: '🛡️' },
 ];
 
-const ZINC_FORMS = [
+function buildZincForms(Colors: ShimColors) {
+  return [
   { form: 'Zinc Gluconate', bioavailability: 'moderate', dose: '30–50mg elemental zinc', notes: 'Most commonly studied in acne clinical trials. Relatively gentle on digestive system. In the Dreno study, 30mg zinc gluconate showed comparable efficacy to 100mg doxycycline for acne (inflammatory lesion reduction) — a landmark comparison.', color: Colors.blue },
   { form: 'Zinc Bisglycinate', bioavailability: 'high', dose: '25–40mg elemental zinc', notes: 'Chelated form with glycine — significantly improves absorption compared to gluconate or sulfate. Less gastrointestinal irritation than other forms. Preferred form for maximising tissue zinc levels with minimum side effects.', color: Colors.green },
   { form: 'Zinc Picolinate', bioavailability: 'high', dose: '25–30mg elemental zinc', notes: 'Picolinic acid chelate enhances intestinal absorption. Well-studied clinically. Some practitioners prefer this form for dermatological applications specifically.', color: Colors.teal },
   { form: 'Zinc Sulfate', bioavailability: 'low-moderate', dose: '200mg zinc sulfate (≈45mg elemental)', notes: 'The cheapest and most studied form historically. Significant gastrointestinal irritation at therapeutic doses (nausea, stomach upset). Often causes compliance issues. Take with food.', color: Colors.gold },
   { form: 'Zinc Acetate', bioavailability: 'moderate', dose: 'Typically used in topical lozenges', notes: 'More commonly found in topical preparations (lozenges, zinc acetate solution for acne). Topical use for acne: 5.1% zinc acetate solution reduces inflammatory lesions. Used in some prescription topical antibiotic + zinc acetate combination products.', color: Colors.primary },
   { form: 'Zinc Pyrithione (topical only)', bioavailability: 'N/A (topical)', dose: '1–2% in cosmetics', notes: 'Antifungal and antibacterial compound found in anti-dandruff shampoos, Malassezia folliculitis treatments, and seborrheic dermatitis products. Not taken orally. Leave-on or rinse-off application.', color: Colors.blue },
-];
+  ];
+}
 
 const ZINC_ACNE = [
   { point: 'Clinical evidence: zinc vs antibiotics for acne', detail: 'A landmark randomised controlled trial (Dreno 2001) compared 30mg zinc gluconate vs 100mg doxycycline in 332 acne patients over 12 weeks. Results: doxycycline produced 63% reduction in inflammatory lesions vs 31% for zinc. However, zinc produced no antibiotic resistance, no dysbiosis, and no side effects — making it a meaningful option for mild-moderate acne and for those who cannot use antibiotics.' },
@@ -56,6 +63,10 @@ const TALLOW_ZINC = [
 ];
 
 export default function ZincGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const ZINC_FORMS = useMemo(() => buildZincForms(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedForm, setExpandedForm] = useState<number | null>(null);
@@ -184,40 +195,42 @@ export default function ZincGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  tapHint: { color: Colors.textMuted, fontSize: 11, marginTop: 4 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  tapHint: { color: c.textMuted, fontSize: 11, marginTop: 4 },
   metaRow: { flexDirection: 'row', gap: 6, marginBottom: 4 },
   bioBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1 },
   bioText: { fontSize: 10, fontWeight: '700' },
-  doseText: { color: Colors.textMuted, fontSize: 12 },
-  bestForText: { color: Colors.textMuted, fontSize: 11, marginTop: 2 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  doseText: { color: c.textMuted, fontSize: 12 },
+  bestForText: { color: c.textMuted, fontSize: 11, marginTop: 2 },
+  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}

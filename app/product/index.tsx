@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const INGREDIENTS = [
   {
@@ -83,6 +84,8 @@ const COMPARISON = [
 ];
 
 export default function ProductShowcase() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [expanded, setExpanded] = useState<number | null>(0);
 
   return (
@@ -90,7 +93,7 @@ export default function ProductShowcase() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>The Formula</Text>
           <View style={{ width: 40 }} />
@@ -134,7 +137,7 @@ export default function ProductShowcase() {
                   </View>
                   <Ionicons
                     name={isOpen ? 'chevron-up' : 'chevron-down'}
-                    size={18} color={Colors.textMuted}
+                    size={18} color={colors.textMuted}
                   />
                 </View>
 
@@ -176,7 +179,7 @@ export default function ProductShowcase() {
             <View style={styles.compHeader}>
               <Text style={[styles.compCell, styles.compLabelCell]} />
               <View style={styles.compTDCol}>
-                <LinearGradient colors={[Colors.primary, Colors.primaryDark]} style={styles.compTDHeader}>
+                <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.compTDHeader}>
                   <Text style={styles.compTDHeaderText}>TallowDermics</Text>
                 </LinearGradient>
               </View>
@@ -204,8 +207,8 @@ export default function ProductShowcase() {
 
         {/* CTA */}
         <Pressable style={styles.ctaBtn} onPress={() => router.push('/(tabs)/coach')}>
-          <LinearGradient colors={[Colors.primaryLight, Colors.primary]} style={styles.ctaGrad}>
-            <Ionicons name="chatbubble-ellipses-outline" size={20} color={Colors.white} />
+          <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.ctaGrad}>
+            <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.white} />
             <Text style={styles.ctaText}>Ask Derm about these ingredients →</Text>
           </LinearGradient>
         </Pressable>
@@ -216,66 +219,68 @@ export default function ProductShowcase() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingBottom: 40 },
 
   hero: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 32, position: 'relative' },
   heroGlow: { position: 'absolute', top: -20, left: 0, right: 0, height: 200 },
-  heroEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2.5, color: Colors.primary, marginBottom: 12 },
-  heroTitle: { fontSize: 34, fontWeight: '900', color: Colors.textPrimary, lineHeight: 40, marginBottom: 14, letterSpacing: -0.5 },
-  heroSub: { fontSize: 15, color: Colors.textSecondary, lineHeight: 24, marginBottom: 20, maxWidth: 320 },
+  heroEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2.5, color: c.primary, marginBottom: 12 },
+  heroTitle: { fontSize: 34, fontWeight: '900', color: c.textPrimary, lineHeight: 40, marginBottom: 14, letterSpacing: -0.5 },
+  heroSub: { fontSize: 15, color: c.textSecondary, lineHeight: 24, marginBottom: 20, maxWidth: 320 },
   heroBadges: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   heroBadge: { backgroundColor: 'rgba(74,222,128,0.1)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(74,222,128,0.2)' },
-  heroBadgeText: { fontSize: 12, color: Colors.scoreExcellent, fontWeight: '600' },
+  heroBadgeText: { fontSize: 12, color: c.scoreExcellent, fontWeight: '600' },
 
   section: { paddingHorizontal: 16, marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, marginBottom: 14 },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, marginBottom: 14 },
 
-  ingCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, marginBottom: 10 },
+  ingCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 10 },
   ingHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
   ingLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
-  ingNumber: { fontSize: 11, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1 },
+  ingNumber: { fontSize: 11, fontWeight: '800', color: c.textMuted, letterSpacing: 1 },
   ingEmoji: { fontSize: 22 },
-  ingName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  ingTagline: { fontSize: 12, color: Colors.textMuted, marginTop: 1 },
+  ingName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  ingTagline: { fontSize: 12, color: c.textMuted, marginTop: 1 },
   ingTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   ingTag: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 4 },
   ingTagText: { fontSize: 9, fontWeight: '800', letterSpacing: 1 },
   ingExpand: { marginTop: 16 },
   ingDivider: { height: 1, marginBottom: 14 },
-  ingScienceLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted, marginBottom: 6 },
-  ingScience: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22, marginBottom: 14 },
-  ingWhyLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: Colors.textMuted, marginBottom: 6 },
-  ingWhy: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22, marginBottom: 14 },
+  ingScienceLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted, marginBottom: 6 },
+  ingScience: { fontSize: 14, color: c.textSecondary, lineHeight: 22, marginBottom: 14 },
+  ingWhyLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.textMuted, marginBottom: 6 },
+  ingWhy: { fontSize: 14, color: c.textSecondary, lineHeight: 22, marginBottom: 14 },
   ingFacts: { gap: 8 },
   ingFactRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   ingFactDot: { width: 6, height: 6, borderRadius: 3, flexShrink: 0 },
-  ingFactText: { fontSize: 13, color: Colors.textSecondary },
+  ingFactText: { fontSize: 13, color: c.textSecondary },
 
-  compTable: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
-  compHeader: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border },
+  compTable: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, overflow: 'hidden' },
+  compHeader: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: c.border },
   compCell: { flex: 1, padding: 10, textAlign: 'center' },
   compLabelCell: { flex: 1.2, textAlign: 'left' },
   compTDCol: { flex: 1, overflow: 'hidden' },
   compTDHeader: { padding: 10, alignItems: 'center' },
-  compTDHeaderText: { fontSize: 11, fontWeight: '700', color: Colors.white },
-  compTypicalHeader: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textAlignVertical: 'center', lineHeight: 38 },
+  compTDHeaderText: { fontSize: 11, fontWeight: '700', color: c.white },
+  compTypicalHeader: { fontSize: 11, fontWeight: '700', color: c.textMuted, textAlignVertical: 'center', lineHeight: 38 },
   compRow: { flexDirection: 'row' },
   compRowAlt: { backgroundColor: 'rgba(250,243,224,0.03)' },
-  compLabel: { fontSize: 12, color: Colors.textMuted, textAlign: 'left', paddingLeft: 14 },
-  compTDCell: { fontSize: 12, fontWeight: '700', color: Colors.scoreExcellent, textAlign: 'center', padding: 10 },
-  compTypicalCell: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', padding: 10 },
+  compLabel: { fontSize: 12, color: c.textMuted, textAlign: 'left', paddingLeft: 14 },
+  compTDCell: { fontSize: 12, fontWeight: '700', color: c.scoreExcellent, textAlign: 'center', padding: 10 },
+  compTypicalCell: { fontSize: 12, color: c.textMuted, textAlign: 'center', padding: 10 },
 
-  philosophyCard: { marginHorizontal: 16, borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: Colors.borderStrong, padding: 22, marginBottom: 16 },
-  philosophyEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary, marginBottom: 12 },
-  philosophyText: { fontSize: 16, color: Colors.textPrimary, lineHeight: 26, fontStyle: 'italic', marginBottom: 12 },
-  philosophyAttrib: { fontSize: 12, color: Colors.textMuted },
+  philosophyCard: { marginHorizontal: 16, borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: c.borderStrong, padding: 22, marginBottom: 16 },
+  philosophyEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 12 },
+  philosophyText: { fontSize: 16, color: c.textPrimary, lineHeight: 26, fontStyle: 'italic', marginBottom: 12 },
+  philosophyAttrib: { fontSize: 12, color: c.textMuted },
 
   ctaBtn: { marginHorizontal: 16, borderRadius: 18, overflow: 'hidden' },
   ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20 },
-  ctaText: { fontSize: 15, fontWeight: '700', color: Colors.white },
-});
+  ctaText: { fontSize: 15, fontWeight: '700', color: c.white },
+  });
+}

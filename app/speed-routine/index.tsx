@@ -1,27 +1,24 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  orange: '#FB923C',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, orange: '#FB923C',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
-const ROUTINES = [
+function buildRoutines(Colors: ShimColors) {
+  return [
   {
     id: '2min',
     label: '2-Minute',
@@ -86,7 +83,8 @@ const ROUTINES = [
     ],
     note: 'This is the complete, sustainable routine. Every minute is doing work. Nothing redundant.',
   },
-];
+  ];
+}
 
 const EMERGENCY_TIPS = [
   {
@@ -116,6 +114,10 @@ const EMERGENCY_TIPS = [
 ];
 
 export default function SpeedRoutineScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const ROUTINES = useMemo(() => buildRoutines(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [selected, setSelected] = useState('5min');
   const [time, setTime] = useState<'am' | 'pm'>('am');
   const [showEmergency, setShowEmergency] = useState(false);
@@ -220,51 +222,52 @@ export default function SpeedRoutineScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
   intro: {
     paddingHorizontal: 16, paddingBottom: 10,
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
+    borderBottomWidth: 1, borderBottomColor: c.border,
   },
-  introText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  introText: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   routineSelector: {
     flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 10, gap: 8,
   },
   routineBtn: {
     flex: 1, alignItems: 'center', paddingVertical: 10,
-    backgroundColor: Colors.card, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, gap: 2,
+    backgroundColor: c.card, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, gap: 2,
   },
   routineIcon: { fontSize: 18 },
-  routineLabel: { color: Colors.textSecondary, fontSize: 12, fontWeight: '700' },
-  routineTime: { color: Colors.textMuted, fontSize: 10 },
+  routineLabel: { color: c.textSecondary, fontSize: 12, fontWeight: '700' },
+  routineTime: { color: c.textMuted, fontSize: 10 },
   timeTab: { flexDirection: 'row', paddingHorizontal: 16, paddingBottom: 10, gap: 8 },
   timeBtn: {
     flex: 1, paddingVertical: 10, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, alignItems: 'center',
+    borderWidth: 1, borderColor: c.border, alignItems: 'center',
   },
-  timeBtnText: { color: Colors.textSecondary, fontSize: 13, fontWeight: '600' },
+  timeBtnText: { color: c.textSecondary, fontSize: 13, fontWeight: '600' },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
   routineHeader: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.card, borderRadius: 14, padding: 14,
+    backgroundColor: c.card, borderRadius: 14, padding: 14,
     borderWidth: 1, marginBottom: 14,
   },
   routineHeaderIcon: { fontSize: 28 },
   routineHeaderTitle: { fontSize: 16, fontWeight: '800', marginBottom: 2 },
-  routineHeaderSub: { color: Colors.textMuted, fontSize: 12 },
+  routineHeaderSub: { color: c.textMuted, fontSize: 12 },
   stepCard: {
     flexDirection: 'row', gap: 12,
-    backgroundColor: Colors.card, borderRadius: 14, padding: 14,
-    borderWidth: 1, borderColor: Colors.border, marginBottom: 8,
+    backgroundColor: c.card, borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: c.border, marginBottom: 8,
   },
   stepNum: {
     width: 28, height: 28, borderRadius: 14,
@@ -272,27 +275,28 @@ const styles = StyleSheet.create({
   },
   stepNumText: { fontSize: 13, fontWeight: '700' },
   stepTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 4 },
-  stepName: { flex: 1, color: Colors.textPrimary, fontSize: 13, fontWeight: '700' },
+  stepName: { flex: 1, color: c.textPrimary, fontSize: 13, fontWeight: '700' },
   stepTime: {
-    color: Colors.gold, fontSize: 11, fontWeight: '700',
-    backgroundColor: Colors.gold + '22', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8,
+    color: c.gold, fontSize: 11, fontWeight: '700',
+    backgroundColor: c.gold + '22', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8,
   },
-  stepWhy: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
+  stepWhy: { color: c.textSecondary, fontSize: 12, lineHeight: 19 },
   noteCard: {
-    backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14,
-    borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 6, marginBottom: 14,
+    backgroundColor: c.primary + '15', borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: c.primary + '44', marginTop: 6, marginBottom: 14,
   },
-  noteTitle: { color: Colors.primary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  noteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  noteTitle: { color: c.primary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  noteText: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   emergencyToggle: {
     alignItems: 'center', paddingVertical: 12,
-    borderTopWidth: 1, borderTopColor: Colors.border, marginBottom: 10,
+    borderTopWidth: 1, borderTopColor: c.border, marginBottom: 10,
   },
-  emergencyToggleText: { color: Colors.textSecondary, fontSize: 13, fontWeight: '600' },
+  emergencyToggleText: { color: c.textSecondary, fontSize: 13, fontWeight: '600' },
   emergencyCard: {
-    backgroundColor: Colors.card, borderRadius: 12, padding: 12,
-    borderWidth: 1, borderColor: Colors.border, marginBottom: 8,
+    backgroundColor: c.card, borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: c.border, marginBottom: 8,
   },
-  emergencySituation: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  emergencyFix: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-});
+  emergencySituation: { color: c.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  emergencyFix: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  });
+}
