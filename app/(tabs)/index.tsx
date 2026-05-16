@@ -258,27 +258,27 @@ export default function Home() {
           }}>
             <View style={styles.statsRow}>
               <Pressable style={styles.heroStatPress} onPress={() => router.push('/streak')}>
-                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
-                  <Text style={styles.heroStatNum}>{streak}</Text>
-                  <Text style={styles.heroStatLabel}>🔥 Streak</Text>
+                <Card variant="glass" blur={28} radius={16} padding={9} style={styles.heroStatCard}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatNum}>{streak}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatLabel}>🔥 Streak</Text>
                 </Card>
               </Pressable>
               <Pressable style={styles.heroStatPress} onPress={() => latest ? router.push(`/results/${latest.id}`) : router.push('/scan')}>
-                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
-                  <Text style={styles.heroStatNum}>{latest ? latest.scores.overall : '—'}</Text>
-                  <Text style={styles.heroStatLabel}>Score</Text>
+                <Card variant="glass" blur={28} radius={16} padding={9} style={styles.heroStatCard}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatNum}>{latest ? latest.scores.overall : '—'}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatLabel}>Score</Text>
                 </Card>
               </Pressable>
               <Pressable style={styles.heroStatPress} onPress={() => router.push('/habits')}>
-                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
-                  <Text style={styles.heroStatNum}>{habitScore > 0 ? `${habitScore}%` : '—'}</Text>
-                  <Text style={styles.heroStatLabel}>Habits</Text>
+                <Card variant="glass" blur={28} radius={16} padding={9} style={styles.heroStatCard}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatNum}>{habitScore > 0 ? `${habitScore}%` : '—'}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatLabel}>Habits</Text>
                 </Card>
               </Pressable>
               <Pressable style={styles.heroStatPress} onPress={() => router.push('/journal')}>
-                <Card variant="glass" blur={28} radius={16} padding={14} style={styles.heroStatCard}>
-                  <Text style={styles.heroStatNum}>{profile?.primaryConcerns?.length || 0}</Text>
-                  <Text style={styles.heroStatLabel}>Concerns</Text>
+                <Card variant="glass" blur={28} radius={16} padding={9} style={styles.heroStatCard}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatNum}>{profile?.primaryConcerns?.length || 0}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={styles.heroStatLabel}>Concerns</Text>
                 </Card>
               </Pressable>
             </View>
@@ -838,9 +838,9 @@ function makeStyles(c: Palette) {
     fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.5,
     textShadowColor: 'rgba(0,0,0,0.20)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3,
   },
-  heroStatLabel: { fontSize: 10, color: 'rgba(255,255,255,0.86)', fontWeight: '700', textAlign: 'center', letterSpacing: 0.3 },
+  heroStatLabel: { fontSize: 9, color: 'rgba(255,255,255,0.86)', fontWeight: '700', textAlign: 'center', letterSpacing: 0 },
 
-  statsRow: { flexDirection: 'row', gap: 10 },
+  statsRow: { flexDirection: 'row', gap: 6 },
 
   scanCard: {
     borderRadius: 22, overflow: 'hidden', marginBottom: 24,
