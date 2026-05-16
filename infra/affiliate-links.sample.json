@@ -1,0 +1,38 @@
+{
+  "_comment": "Live link table — upload to R2 at https://r2.glowdermics.com/affiliate-links.json. The Worker reads this; the app only ships the embedded fallback. Put your REAL affiliate URLs (with tracking tags) here, NOT in the app bundle. Edit + re-upload to hot-swap merchants with zero app rebuild.",
+  "cerave-moisturizing-cream": {
+    "url": "https://www.amazon.com/dp/B00TTD9BRC?tag=YOUR-AMAZON-TAG-20",
+    "network": "amazon",
+    "enabled": true
+  },
+  "cerave-foaming-cleanser": {
+    "url": "https://www.amazon.com/dp/B01N1LL62W?tag=YOUR-AMAZON-TAG-20",
+    "network": "amazon",
+    "enabled": true
+  },
+  "larocheposay-cicaplast-b5": {
+    "url": "https://www.amazon.com/dp/B01MYUbXXX?tag=YOUR-AMAZON-TAG-20",
+    "network": "amazon",
+    "enabled": true
+  },
+  "theordinary-niacinamide": {
+    "url": "https://go.skimresources.com/?id=YOURID&url=https%3A%2F%2Ftheordinary.com%2Fen-us%2Fniacinamide-10-zinc-1-serum-100436.html",
+    "network": "skimlinks",
+    "enabled": true
+  },
+  "paulaschoice-2bha": {
+    "url": "https://go.skimresources.com/?id=YOURID&url=https%3A%2F%2Fwww.paulaschoice.com%2Fskin-perfecting-2pct-bha-liquid-exfoliant%2F201.html",
+    "network": "skimlinks",
+    "enabled": true
+  },
+  "eltamd-uv-clear-spf46": {
+    "url": "https://www.amazon.com/dp/B002MSN3QQ?tag=YOUR-AMAZON-TAG-20",
+    "network": "amazon",
+    "enabled": true
+  },
+  "tallowdermics-signature-balm": {
+    "url": "https://tallowdermics.com/products/signature-balm",
+    "network": "direct",
+    "enabled": true
+  }
+}

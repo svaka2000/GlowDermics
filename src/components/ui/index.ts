@@ -39,3 +39,5 @@ export { StreakSaver } from './StreakSaver';
 export { HabitMatrix } from './HabitMatrix';
 export type { HabitDay } from './HabitMatrix';
 export { DailyAffirmation } from './DailyAffirmation';
+export { OutboundLink } from './OutboundLink';
+export { AffiliateDisclosure } from './AffiliateDisclosure';

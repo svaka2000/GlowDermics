@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
 import { findDupes, DupeResult } from '../../src/services/dupeFinder';
+import { OutboundLink, AffiliateDisclosure } from '../../src/components/ui';
 
 const POPULAR = [
   { name: 'Drunk Elephant Protini', brand: 'Drunk Elephant' },
@@ -166,6 +167,9 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
 
       <ScrollView contentContainerStyle={styles.resultsScroll}>
 
+        {/* FTC affiliate disclosure — adjacent to shoppable recommendations */}
+        <AffiliateDisclosure />
+
         {/* Original product */}
         <View style={styles.originalCard}>
           <Text style={styles.originalEyebrow}>YOU SEARCHED</Text>
@@ -238,6 +242,16 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
             <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdNoteEyebrow}>TALLOWDERMICS PERSPECTIVE</Text>
             <Text style={styles.tdNoteText}>{result.tallowDermicsNote}</Text>
+            <View style={{ marginTop: 12 }}>
+              <OutboundLink
+                productKey="tallowdermics-signature-balm"
+                context="dupes"
+                label="Shop the TallowDermics Balm"
+              />
+              <View style={{ marginTop: 8 }}>
+                <AffiliateDisclosure inline firstParty />
+              </View>
+            </View>
           </View>
         )}
 

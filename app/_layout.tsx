@@ -6,8 +6,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PhoneFrame } from '../src/components/PhoneFrame';
 import { useEffect } from 'react';
 import { ThemeProvider, useTheme } from '../src/state/theme';
+import { initLinkTable } from '../src/services/affiliateLinks';
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Hydrate the affiliate link table from cache + kick a background refresh
+    // so "Buy" links are hot-swappable without an app rebuild. Never blocks UI.
+    void initLinkTable();
+  }, []);
+
   useEffect(() => {
     // Suppress unhandled promise rejections from showing as red toasts in Expo Go.
     // Each async handler already shows an Alert on actual errors — this just prevents
