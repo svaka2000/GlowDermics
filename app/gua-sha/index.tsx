@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Technique = {
   id: string;
@@ -24,14 +25,15 @@ type Technique = {
   }[];
 };
 
-const TECHNIQUES: Technique[] = [
+function buildTechniques(c: Palette): Technique[] {
+  return [
   {
     id: 'morning-lift',
     name: 'Morning Lift',
     emoji: '🌅',
     duration: '8 min',
     benefit: 'Depuffs and stimulates lymphatic drainage',
-    color: Colors.gold,
+    color: c.gold,
     steps: [
       {
         title: 'Neck & Decolletage',
@@ -142,7 +144,7 @@ const TECHNIQUES: Technique[] = [
     emoji: '✨',
     duration: '6 min',
     benefit: 'Increases circulation for an instant radiance boost',
-    color: Colors.primary,
+    color: c.primary,
     steps: [
       {
         title: 'Prep: Apply Tallow',
@@ -181,9 +183,13 @@ const TECHNIQUES: Technique[] = [
       },
     ],
   },
-];
+  ];
+}
 
 export default function GuaShaGuide() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const TECHNIQUES = useMemo(() => buildTechniques(colors), [colors]);
   const [selectedTechnique, setSelectedTechnique] = useState<Technique | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -202,7 +208,7 @@ export default function GuaShaGuide() {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
 
-  const startStep = (step: typeof TECHNIQUES[0]['steps'][0]) => {
+  const startStep = (step: Technique['steps'][0]) => {
     if (timerRef.current) clearInterval(timerRef.current);
     setSecondsLeft(step.duration);
     progressAnim.setValue(0);
@@ -302,7 +308,7 @@ export default function GuaShaGuide() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={backToList}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View style={{ flex: 1 }}>
               <Text style={styles.headerTitle}>{selectedTechnique.name}</Text>
@@ -338,7 +344,7 @@ export default function GuaShaGuide() {
             </Text>
             <View style={styles.timerBtns}>
               <Pressable style={[styles.timerBtn, { backgroundColor: selectedTechnique.color }]} onPress={pauseResume}>
-                <Ionicons name={isRunning ? 'pause' : 'play'} size={20} color={Colors.white} />
+                <Ionicons name={isRunning ? 'pause' : 'play'} size={20} color={colors.white} />
                 <Text style={styles.timerBtnText}>{isRunning ? 'Pause' : secondsLeft === step.duration ? 'Start' : 'Resume'}</Text>
               </Pressable>
               <Pressable style={styles.timerSkipBtn} onPress={nextStep}>
@@ -380,14 +386,14 @@ export default function GuaShaGuide() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={backToList}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>{selectedTechnique.name}</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
         <View style={styles.completedRoot}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary, colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.completedEmoji}>{selectedTechnique.emoji}</Text>
           <Text style={styles.completedTitle}>Ritual Complete!</Text>
           <Text style={styles.completedBenefit}>{selectedTechnique.benefit}</Text>
@@ -408,7 +414,7 @@ export default function GuaShaGuide() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Gua Sha Guide</Text>
@@ -422,7 +428,7 @@ export default function GuaShaGuide() {
 
         {/* Hero */}
         <View style={styles.heroCard}>
-          <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.heroEmoji}>🪨</Text>
           <Text style={styles.heroTitle}>Gua Sha</Text>
           <Text style={styles.heroSub}>Sculpt · Drain · Glow</Text>
@@ -471,28 +477,29 @@ export default function GuaShaGuide() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   stepProgress: { flexDirection: 'row', gap: 4, justifyContent: 'center', marginTop: 4 },
-  stepDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.border },
-  progressBarBg: { height: 3, backgroundColor: Colors.border, marginHorizontal: 0 },
+  stepDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: c.border },
+  progressBarBg: { height: 3, backgroundColor: c.border, marginHorizontal: 0 },
   progressBarFill: { height: '100%', borderRadius: 2 },
   scroll: { paddingHorizontal: 16 },
 
   stepHeader: { marginBottom: 16, gap: 4 },
-  stepCounter: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
-  stepTitle: { fontSize: 24, fontWeight: '900', color: Colors.textPrimary },
+  stepCounter: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
+  stepTitle: { fontSize: 24, fontWeight: '900', color: c.textPrimary },
 
   timerCard: {
     borderRadius: 20, overflow: 'hidden', borderWidth: 2,
@@ -504,47 +511,47 @@ const styles = StyleSheet.create({
     flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, height: 50, borderRadius: 14,
   },
-  timerBtnText: { fontSize: 16, fontWeight: '800', color: Colors.white },
+  timerBtnText: { fontSize: 16, fontWeight: '800', color: c.white },
   timerSkipBtn: {
     flex: 1, height: 50, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgCard,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
     alignItems: 'center', justifyContent: 'center',
   },
-  timerSkipText: { fontSize: 14, fontWeight: '700', color: Colors.textMuted },
+  timerSkipText: { fontSize: 14, fontWeight: '700', color: c.textMuted },
 
   instructionCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 8, marginBottom: 10,
   },
-  instructionTitle: { fontSize: 11, fontWeight: '800', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
-  instructionText: { fontSize: 15, color: Colors.textPrimary, lineHeight: 24 },
+  instructionTitle: { fontSize: 11, fontWeight: '800', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
+  instructionText: { fontSize: 15, color: c.textPrimary, lineHeight: 24 },
 
   detailRow: { marginBottom: 10 },
   detailCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 12, borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 14, paddingVertical: 10, gap: 2,
   },
-  detailLabel: { fontSize: 9, fontWeight: '800', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
-  detailValue: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
+  detailLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 1 },
+  detailValue: { fontSize: 13, fontWeight: '700', color: c.textSecondary },
 
   tipCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 10,
-    backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14,
   },
   tipIconBadge: { width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   completedRoot: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 },
   completedEmoji: { fontSize: 64 },
-  completedTitle: { fontSize: 28, fontWeight: '900', color: Colors.white },
+  completedTitle: { fontSize: 28, fontWeight: '900', color: c.white },
   completedBenefit: { fontSize: 16, color: 'rgba(255,255,255,0.8)', fontWeight: '700' },
   completedNote: { fontSize: 14, color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 22 },
   completedBtn: {
     backgroundColor: 'rgba(255,255,255,0.15)', paddingHorizontal: 24, paddingVertical: 14,
     borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
   },
-  completedBtnText: { fontSize: 16, fontWeight: '700', color: Colors.white },
+  completedBtnText: { fontSize: 16, fontWeight: '700', color: c.white },
   completedScanBtn: { paddingVertical: 10 },
   completedScanBtnText: { fontSize: 14, color: 'rgba(255,255,255,0.7)', textDecorationLine: 'underline' },
 
@@ -553,30 +560,31 @@ const styles = StyleSheet.create({
     alignItems: 'center', marginBottom: 20,
   },
   heroEmoji: { fontSize: 48 },
-  heroTitle: { fontSize: 32, fontWeight: '900', color: Colors.white },
+  heroTitle: { fontSize: 32, fontWeight: '900', color: c.white },
   heroSub: { fontSize: 14, color: 'rgba(255,255,255,0.7)', fontWeight: '600', letterSpacing: 2 },
   heroDesc: { fontSize: 13, color: 'rgba(255,255,255,0.75)', textAlign: 'center', lineHeight: 20, marginTop: 8 },
 
   sectionLabel: {
-    fontSize: 10, fontWeight: '800', color: Colors.textMuted,
+    fontSize: 10, fontWeight: '800', color: c.textMuted,
     letterSpacing: 1.5, marginBottom: 10, marginTop: 4,
   },
   techniqueCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 8, marginBottom: 10,
   },
   techniqueTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   techniqueEmoji: { fontSize: 28 },
   techniqueName: { fontSize: 18, fontWeight: '800' },
-  techniqueDuration: { fontSize: 12, color: Colors.textMuted, marginTop: 1 },
-  techniqueBenefit: { fontSize: 13, color: Colors.textSecondary },
+  techniqueDuration: { fontSize: 12, color: c.textMuted, marginTop: 1 },
+  techniqueBenefit: { fontSize: 13, color: c.textSecondary },
 
   prepCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  prepTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  prepTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   prepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   prepIcon: { fontSize: 16, width: 24, textAlign: 'center' },
-  prepText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  prepText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

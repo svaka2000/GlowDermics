@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   ActivityIndicator, Animated, Easing,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -37,13 +38,18 @@ type ProductDeck = {
 };
 
 const BUDGETS = ['Budget ($0-30/mo)', 'Mid-range ($30-80/mo)', 'Premium ($80+/mo)'];
-const PRIORITY_COLORS: Record<string, string> = {
-  essential: Colors.primary,
-  recommended: Colors.gold,
-  optional: Colors.textMuted,
-};
+function buildPriorityColors(c: Palette): Record<string, string> {
+  return {
+    essential: c.primary,
+    recommended: c.gold,
+    optional: c.textMuted,
+  };
+}
 
 export default function ProductDeck() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const PRIORITY_COLORS = useMemo(() => buildPriorityColors(colors), [colors]);
   const [deck, setDeck] = useState<ProductDeck | null>(null);
   const [loading, setLoading] = useState(false);
   const [budget, setBudget] = useState('');
@@ -166,7 +172,7 @@ Return ONLY valid JSON (no markdown):
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>My Product Deck</Text>
@@ -174,7 +180,7 @@ Return ONLY valid JSON (no markdown):
           </View>
           {deck && (
             <Pressable style={styles.backBtn} onPress={() => { AsyncStorage.removeItem(CACHE_KEY); setDeck(null); }}>
-              <Ionicons name="refresh-outline" size={20} color={Colors.primary} />
+              <Ionicons name="refresh-outline" size={20} color={colors.primary} />
             </Pressable>
           )}
           {!deck && <View style={{ width: 36 }} />}
@@ -204,9 +210,9 @@ Return ONLY valid JSON (no markdown):
               onPress={generate}
               disabled={!budget || loading}
             >
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
-              {loading ? <ActivityIndicator color={Colors.white} /> : (
-                <><Ionicons name="sparkles-outline" size={18} color={Colors.white} /><Text style={styles.generateBtnText}>Build My Deck</Text></>
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
+              {loading ? <ActivityIndicator color={colors.white} /> : (
+                <><Ionicons name="sparkles-outline" size={18} color={colors.white} /><Text style={styles.generateBtnText}>Build My Deck</Text></>
               )}
             </Pressable>
           </View>
@@ -254,7 +260,7 @@ Return ONLY valid JSON (no markdown):
                       )}
                       <View style={styles.productTop}>
                         <View style={[styles.productIcon, product.isTallowDermics && { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: 'rgba(196,98,45,0.3)' }]}>
-                          <Ionicons name={getIcon(product.category) as any} size={18} color={product.isTallowDermics ? Colors.primary : Colors.textMuted} />
+                          <Ionicons name={getIcon(product.category) as any} size={18} color={product.isTallowDermics ? colors.primary : colors.textMuted} />
                         </View>
                         <View style={{ flex: 1 }}>
                           <View style={styles.productNameRow}>
@@ -300,7 +306,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Tallow cornerstone */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>Why TallowDermics is the Cornerstone</Text>
@@ -317,61 +323,63 @@ Return ONLY valid JSON (no markdown):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  setupCard: { backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 18, gap: 12, marginBottom: 14 },
-  setupTitle: { fontSize: 18, fontWeight: '800', color: Colors.textPrimary },
-  setupSub: { fontSize: 13, color: Colors.textMuted },
+  setupCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, gap: 12, marginBottom: 14 },
+  setupTitle: { fontSize: 18, fontWeight: '800', color: c.textPrimary },
+  setupSub: { fontSize: 13, color: c.textMuted },
   budgetRow: { gap: 8 },
-  budgetChip: { paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated },
-  budgetChipActive: { borderColor: Colors.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
-  budgetText: { fontSize: 14, color: Colors.textMuted, fontWeight: '500' },
-  budgetTextActive: { color: Colors.primary, fontWeight: '700' },
+  budgetChip: { paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
+  budgetChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  budgetText: { fontSize: 14, color: c.textMuted, fontWeight: '500' },
+  budgetTextActive: { color: c.primary, fontWeight: '700' },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 52, borderRadius: 14, overflow: 'hidden' },
-  generateBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  generateBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   summaryCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 12, marginBottom: 20 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-around' },
   summaryItem: { alignItems: 'center', gap: 3 },
-  summaryNum: { fontSize: 22, fontWeight: '800', color: Colors.primary },
-  summaryLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600' },
-  summaryPhilosophy: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  summaryNum: { fontSize: 22, fontWeight: '800', color: c.primary },
+  summaryLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
+  summaryPhilosophy: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   section: { marginBottom: 20 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   priorityDot: { width: 8, height: 8, borderRadius: 4 },
   sectionTitle: { fontSize: 13, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
 
-  productCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 14, gap: 8, marginBottom: 10, overflow: 'hidden' },
+  productCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 14, gap: 8, marginBottom: 10, overflow: 'hidden' },
   productCardTD: { borderColor: 'rgba(196,98,45,0.35)' },
   productTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  productIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
+  productIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border, alignItems: 'center', justifyContent: 'center' },
   productNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
-  productName: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  productName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, flex: 1 },
   tdBadge: { backgroundColor: 'rgba(196,98,45,0.15)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
-  tdBadgeText: { fontSize: 10, fontWeight: '700', color: Colors.primary },
-  productBrand: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
-  productPrice: { fontSize: 12, fontWeight: '700', color: Colors.primary },
-  productCategory: { fontSize: 10, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
-  productWhy: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tdBadgeText: { fontSize: 10, fontWeight: '700', color: c.primary },
+  productBrand: { fontSize: 11, color: c.textMuted, marginTop: 2 },
+  productPrice: { fontSize: 12, fontWeight: '700', color: c.primary },
+  productCategory: { fontSize: 10, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  productWhy: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   ingredientsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  ingredientChip: { backgroundColor: Colors.bgElevated, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 8, paddingVertical: 4 },
-  ingredientText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
-  avoidText: { fontSize: 11, color: Colors.textMuted, lineHeight: 16 },
+  ingredientChip: { backgroundColor: c.bgElevated, borderRadius: 8, borderWidth: 1, borderColor: c.border, paddingHorizontal: 8, paddingVertical: 4 },
+  ingredientText: { fontSize: 11, color: c.primary, fontWeight: '600' },
+  avoidText: { fontSize: 11, color: c.textMuted, lineHeight: 16 },
   tdBtn: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)', backgroundColor: 'rgba(196,98,45,0.08)' },
-  tdBtnText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
+  tdBtnText: { fontSize: 12, fontWeight: '700', color: c.primary },
 
   tallowCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
   tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 4 },
+  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 4 },
   tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
-});
+  });
+}
