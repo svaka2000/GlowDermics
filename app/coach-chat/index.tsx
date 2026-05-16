@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   TextInput, KeyboardAvoidingView, Platform, ActivityIndicator,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Groq from 'groq-sdk';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { PremiumGate, PremiumBanner } from '../../src/components/PremiumGate';
@@ -51,6 +52,8 @@ Key rules:
 - Avoid filler phrases like "Great question!" or "Of course!"`;
 
 export default function CoachChat() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -150,11 +153,11 @@ export default function CoachChat() {
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View style={styles.headerCenter}>
             <View style={styles.coachAvatar}>
-              <LinearGradient colors={[Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[colors.primary, colors.gold]} style={StyleSheet.absoluteFill} />
               <Text style={styles.coachAvatarText}>✨</Text>
             </View>
             <View>
@@ -163,7 +166,7 @@ export default function CoachChat() {
             </View>
           </View>
           <Pressable style={styles.clearBtn} onPress={clearChat}>
-            <Ionicons name="refresh-outline" size={18} color={Colors.textMuted} />
+            <Ionicons name="refresh-outline" size={18} color={colors.textMuted} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -190,7 +193,7 @@ export default function CoachChat() {
             >
               {msg.role === 'assistant' && (
                 <View style={styles.assistantAvatarSmall}>
-                  <LinearGradient colors={[Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={[colors.primary, colors.gold]} style={StyleSheet.absoluteFill} />
                   <Text style={{ fontSize: 10 }}>✨</Text>
                 </View>
               )}
@@ -211,11 +214,11 @@ export default function CoachChat() {
           {loading && (
             <View style={[styles.bubble, styles.assistantBubble]}>
               <View style={styles.assistantAvatarSmall}>
-                <LinearGradient colors={[Colors.primary, Colors.gold]} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={[colors.primary, colors.gold]} style={StyleSheet.absoluteFill} />
                 <Text style={{ fontSize: 10 }}>✨</Text>
               </View>
               <View style={styles.assistantBubbleContent}>
-                <ActivityIndicator size="small" color={Colors.primary} />
+                <ActivityIndicator size="small" color={colors.primary} />
               </View>
             </View>
           )}
@@ -257,7 +260,7 @@ export default function CoachChat() {
             <TextInput
               style={styles.textInput}
               placeholder="Ask anything about your skin..."
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={colors.textMuted}
               value={input}
               onChangeText={setInput}
               multiline
@@ -271,12 +274,12 @@ export default function CoachChat() {
               disabled={!input.trim() || loading}
             >
               <LinearGradient
-                colors={[Colors.primary, Colors.gold]}
+                colors={[colors.primary, colors.gold]}
                 style={StyleSheet.absoluteFill}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               />
-              <Ionicons name="send" size={16} color={Colors.white} />
+              <Ionicons name="send" size={16} color={colors.white} />
             </Pressable>
           </View>
           <Text style={styles.disclaimer}>AI advice is educational only — see a dermatologist for medical concerns.</Text>
@@ -286,17 +289,18 @@ export default function CoachChat() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12,
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
+    borderBottomWidth: 1, borderBottomColor: c.border,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   coachAvatar: {
@@ -304,12 +308,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
   },
   coachAvatarText: { fontSize: 18 },
-  headerTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  headerSub: { fontSize: 11, color: Colors.textMuted },
+  headerTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  headerSub: { fontSize: 11, color: c.textMuted },
   clearBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
 
   messagesScroll: { paddingHorizontal: 12, paddingTop: 12 },
@@ -326,44 +330,45 @@ const styles = StyleSheet.create({
 
   bubbleContent: { maxWidth: '80%', borderRadius: 16, padding: 12 },
   userBubbleContent: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderBottomRightRadius: 4,
   },
   assistantBubbleContent: {
-    backgroundColor: Colors.bgCard,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard,
+    borderWidth: 1, borderColor: c.border,
     borderBottomLeftRadius: 4,
     minWidth: 60, minHeight: 36, justifyContent: 'center',
   },
   bubbleText: { fontSize: 14, lineHeight: 21 },
-  userBubbleText: { color: Colors.white },
-  assistantBubbleText: { color: Colors.textSecondary },
+  userBubbleText: { color: c.white },
+  assistantBubbleText: { color: c.textSecondary },
 
   quickPromptsWrap: { marginVertical: 16 },
-  quickPromptsLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '700', marginBottom: 8, paddingHorizontal: 4 },
+  quickPromptsLabel: { fontSize: 11, color: c.textMuted, fontWeight: '700', marginBottom: 8, paddingHorizontal: 4 },
   quickPromptsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   quickPromptChip: {
     paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
   },
-  quickPromptText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '600' },
+  quickPromptText: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
 
   inputWrap: {
-    borderTopWidth: 1, borderTopColor: Colors.border,
-    backgroundColor: Colors.bg, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 16,
+    borderTopWidth: 1, borderTopColor: c.border,
+    backgroundColor: c.bg, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 16,
     gap: 6,
   },
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   textInput: {
     flex: 1, minHeight: 44, maxHeight: 110,
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: Colors.textPrimary,
+    fontSize: 14, color: c.textPrimary,
   },
   sendBtn: {
     width: 44, height: 44, borderRadius: 22,
     alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
   },
-  disclaimer: { fontSize: 10, color: Colors.textMuted, textAlign: 'center' },
-});
+  disclaimer: { fontSize: 10, color: c.textMuted, textAlign: 'center' },
+  });
+}

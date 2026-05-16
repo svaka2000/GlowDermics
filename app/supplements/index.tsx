@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
   ActivityIndicator,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -36,9 +37,14 @@ type SupplementGuide = {
   ts: number;
 };
 
-const PRIORITY_COLORS = { high: Colors.primary, medium: Colors.gold, low: Colors.textMuted };
+function buildPriorityColors(c: Palette) {
+  return { high: c.primary, medium: c.gold, low: c.textMuted };
+}
 
 export default function Supplements() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const PRIORITY_COLORS = useMemo(() => buildPriorityColors(colors), [colors]);
   const [guide, setGuide] = useState<SupplementGuide | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -127,7 +133,7 @@ Return ONLY valid JSON (no markdown):
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Supplement Guide</Text>
@@ -135,7 +141,7 @@ Return ONLY valid JSON (no markdown):
           </View>
           {guide && (
             <Pressable style={styles.backBtn} onPress={() => { AsyncStorage.removeItem(CACHE_KEY); setGuide(null); generate(); }}>
-              <Ionicons name="refresh-outline" size={20} color={Colors.primary} />
+              <Ionicons name="refresh-outline" size={20} color={colors.primary} />
             </Pressable>
           )}
           {!guide && <View style={{ width: 36 }} />}
@@ -147,7 +153,7 @@ Return ONLY valid JSON (no markdown):
         {loading && (
           <View style={styles.loadingCard}>
             <LinearGradient colors={['rgba(196,98,45,0.10)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
-            <ActivityIndicator color={Colors.primary} size="large" />
+            <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.loadingText}>Building your supplement guide...</Text>
           </View>
         )}
@@ -166,7 +172,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Top pick */}
             <View style={styles.topPickCard}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <View style={styles.topPickBadge}><Text style={styles.topPickBadgeText}>⭐ TOP PICK FOR YOU</Text></View>
               <Text style={styles.topPickText}>{guide.topPick}</Text>
             </View>
@@ -214,7 +220,7 @@ Return ONLY valid JSON (no markdown):
                       )}
 
                       <View style={styles.synergyRow}>
-                        <Ionicons name="git-merge-outline" size={14} color={Colors.textMuted} />
+                        <Ionicons name="git-merge-outline" size={14} color={colors.textMuted} />
                         <Text style={styles.synergyText}>{sup.synergy}</Text>
                       </View>
                     </View>
@@ -225,7 +231,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Ancestral note */}
             <Pressable style={styles.ancestralCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+              <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.ancestralEmoji}>🥩</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ancestralTitle}>The Ancestral Advantage</Text>
@@ -236,19 +242,19 @@ Return ONLY valid JSON (no markdown):
 
             {/* Caution */}
             <View style={styles.cautionCard}>
-              <Ionicons name="information-circle-outline" size={18} color={Colors.gold} />
+              <Ionicons name="information-circle-outline" size={18} color={colors.gold} />
               <Text style={styles.cautionText}>{guide.caution}</Text>
             </View>
 
             {/* Diet link */}
             <Pressable style={styles.dietLink} onPress={() => router.push('/diet')}>
               <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
-              <Ionicons name="restaurant-outline" size={18} color={Colors.primary} />
+              <Ionicons name="restaurant-outline" size={18} color={colors.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.dietLinkTitle}>See the Full Diet Guide</Text>
                 <Text style={styles.dietLinkSub}>Foods, nutrients, and meal plans for your skin type</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
             </Pressable>
           </>
         )}
@@ -259,24 +265,25 @@ Return ONLY valid JSON (no markdown):
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   loadingCard: { borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 40, alignItems: 'center', gap: 14 },
-  loadingText: { fontSize: 14, color: Colors.textSecondary },
+  loadingText: { fontSize: 14, color: c.textSecondary },
 
   introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
   introEmoji: { fontSize: 28 },
-  introTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  introSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  introTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  introSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   topPickCard: { borderRadius: 16, overflow: 'hidden', padding: 18, gap: 10, marginBottom: 20 },
   topPickBadge: { alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
@@ -286,36 +293,37 @@ const styles = StyleSheet.create({
   section: { marginBottom: 16 },
   priorityLabel: { fontSize: 13, fontWeight: '800', marginBottom: 10 },
 
-  supCard: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 14, gap: 8, marginBottom: 10 },
+  supCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 14, gap: 8, marginBottom: 10 },
   supTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   supEmoji: { fontSize: 24, width: 32, textAlign: 'center' },
-  supName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  supBestForm: { fontSize: 11, color: Colors.primary, fontWeight: '600', marginTop: 2 },
-  supDosage: { fontSize: 11, color: Colors.textMuted, fontWeight: '600' },
-  supWhat: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  supName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  supBestForm: { fontSize: 11, color: c.primary, fontWeight: '600', marginTop: 2 },
+  supDosage: { fontSize: 11, color: c.textMuted, fontWeight: '600' },
+  supWhat: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   supMetaRow: {},
   supConcernsWrap: { gap: 6 },
-  supMetaLabel: { fontSize: 9, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
+  supMetaLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
   supConcerns: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   supConcernChip: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
-  supConcernText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
+  supConcernText: { fontSize: 11, color: c.primary, fontWeight: '600' },
 
   foodSourcesRow: { gap: 4 },
-  foodSourcesText: { fontSize: 12, color: Colors.textMuted },
+  foodSourcesText: { fontSize: 12, color: c.textMuted },
 
   synergyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
-  synergyText: { flex: 1, fontSize: 11, color: Colors.textMuted, lineHeight: 17 },
+  synergyText: { flex: 1, fontSize: 11, color: c.textMuted, lineHeight: 17 },
 
   ancestralCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
   ancestralEmoji: { fontSize: 26 },
-  ancestralTitle: { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 4 },
+  ancestralTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 4 },
   ancestralText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
 
   cautionCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)', padding: 12, marginBottom: 14 },
-  cautionText: { flex: 1, fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
+  cautionText: { flex: 1, fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   dietLink: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
-  dietLinkTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  dietLinkSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
-});
+  dietLinkTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
+  dietLinkSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
+  });
+}

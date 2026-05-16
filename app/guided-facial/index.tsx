@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 type Step = {
   title: string;
@@ -27,14 +28,15 @@ type FacialType = {
   color: [string, string];
 };
 
-const FACIALS: FacialType[] = [
+function buildFacials(c: Palette): FacialType[] {
+  return [
   {
     id: 'morning',
     title: 'Morning Glow Routine',
     subtitle: 'Start your day with hydrated, protected skin',
     emoji: '☀️',
     duration: '~8 min',
-    color: [Colors.primaryDark, Colors.primary],
+    color: [c.primaryDark, c.primary],
     steps: [
       { title: 'Rinse & Wake', instruction: 'Splash your face with cool water. No cleanser needed in the morning — your skin cleaned itself overnight.', duration: 30, emoji: '💦', product: 'Cool water', tip: 'Cool water tightens pores and reduces morning puffiness.' },
       { title: 'Pat Dry', instruction: 'Gently pat skin dry with a clean towel. Never rub — this creates friction and micro-tears.', duration: 20, emoji: '🌿', product: 'Clean towel', tip: 'Use a fresh towel or paper towel to avoid bacterial transfer.' },
@@ -91,9 +93,13 @@ const FACIALS: FacialType[] = [
       { title: 'Take Inventory', instruction: 'Think about what products caused this irritation. Consider eliminating actives (retinol, acids, vitamin C) for 1-2 weeks while your barrier heals.', duration: 60, emoji: '📋', product: 'Your mind', tip: 'A healed barrier can tolerate much more than a compromised one. Give it 1-2 weeks of gentle care.' },
     ],
   },
-];
+  ];
+}
 
 export default function GuidedFacial() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const FACIALS = useMemo(() => buildFacials(colors), [colors]);
   const [selected, setSelected] = useState<FacialType | null>(null);
   const [step, setStep] = useState(-1); // -1 = intro, -2 = complete
   const [timeLeft, setTimeLeft] = useState(0);
@@ -185,7 +191,7 @@ export default function GuidedFacial() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={resetAll}>
-              <Ionicons name="home-outline" size={20} color={Colors.textPrimary} />
+              <Ionicons name="home-outline" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Complete!</Text>
             <View style={{ width: 36 }} />
@@ -208,7 +214,7 @@ export default function GuidedFacial() {
             ))}
           </View>
           <Pressable style={styles.scanBtn} onPress={() => { resetAll(); router.push('/scan'); }}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <Text style={styles.scanBtnText}>📸 Take a Scan to Track Progress</Text>
           </Pressable>
           <Pressable style={styles.againBtn} onPress={() => startFacial(selected)}>
@@ -231,7 +237,7 @@ export default function GuidedFacial() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <Pressable style={styles.backBtn} onPress={resetAll}>
-              <Ionicons name="close" size={20} color={Colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle}>Step {step + 1} of {selected.steps.length}</Text>
             <View style={{ width: 36 }} />
@@ -270,12 +276,12 @@ export default function GuidedFacial() {
           </View>
 
           <View style={styles.tipCard}>
-            <Ionicons name="bulb-outline" size={16} color={Colors.gold} />
+            <Ionicons name="bulb-outline" size={16} color={colors.gold} />
             <Text style={styles.tipText}>{currentStep.tip}</Text>
           </View>
 
           <Pressable style={styles.nextStepBtn} onPress={goNext}>
-            <LinearGradient colors={[Colors.primaryDark, Colors.primary]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
             <Text style={styles.nextStepBtnText}>
               {step < selected.steps.length - 1 ? `Next: ${selected.steps[step + 1].title} →` : 'Finish Facial ✨'}
             </Text>
@@ -293,7 +299,7 @@ export default function GuidedFacial() {
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Guided Facial</Text>
@@ -340,29 +346,30 @@ export default function GuidedFacial() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
-  progressBarOuter: { height: 3, backgroundColor: Colors.border },
-  progressBarInner: { height: 3, backgroundColor: Colors.primary },
+  progressBarOuter: { height: 3, backgroundColor: c.border },
+  progressBarInner: { height: 3, backgroundColor: c.primary },
 
   introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 16 },
   introEmoji: { fontSize: 28 },
-  introTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  introSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2, lineHeight: 18 },
+  introTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
+  introSub: { fontSize: 12, color: c.textMuted, marginTop: 2, lineHeight: 18 },
 
   facialCard: { borderRadius: 18, overflow: 'hidden', marginBottom: 12 },
   facialGradient: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   facialContent: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 20 },
   facialEmoji: { fontSize: 36 },
-  facialTitle: { fontSize: 17, fontWeight: '800', color: Colors.white },
+  facialTitle: { fontSize: 17, fontWeight: '800', color: c.white },
   facialSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
   facialMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
   facialMetaText: { fontSize: 11, color: 'rgba(255,255,255,0.7)' },
@@ -371,39 +378,40 @@ const styles = StyleSheet.create({
   // Active step
   stepCard: { borderRadius: 20, overflow: 'hidden', padding: 24, gap: 16, marginBottom: 16, alignItems: 'center', minHeight: 320, justifyContent: 'center' },
   stepEmoji: { fontSize: 56 },
-  stepTitle: { fontSize: 22, fontWeight: '900', color: Colors.white, textAlign: 'center' },
+  stepTitle: { fontSize: 22, fontWeight: '900', color: c.white, textAlign: 'center' },
   stepInstruction: { fontSize: 14, color: 'rgba(255,255,255,0.9)', lineHeight: 24, textAlign: 'center' },
   timerSection: { alignItems: 'center', gap: 12, width: '100%', marginTop: 8 },
-  timerDisplay: { fontSize: 48, fontWeight: '900', color: Colors.white },
+  timerDisplay: { fontSize: 48, fontWeight: '900', color: c.white },
   timerBarWrap: { width: '80%', height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3 },
   timerBarFill: { height: 6, backgroundColor: '#4ADE80', borderRadius: 3 },
   timerBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20, paddingHorizontal: 20, paddingVertical: 10 },
-  timerBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  timerBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
-  productCard: { backgroundColor: Colors.bgCard, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14, marginBottom: 10, gap: 4 },
-  productLabel: { fontSize: 9, fontWeight: '800', color: Colors.textMuted, letterSpacing: 1, textTransform: 'uppercase' },
-  productName: { fontSize: 15, fontWeight: '700', color: Colors.primary },
+  productCard: { backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 14, marginBottom: 10, gap: 4 },
+  productLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1, textTransform: 'uppercase' },
+  productName: { fontSize: 15, fontWeight: '700', color: c.primary },
 
   tipCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)', padding: 12, marginBottom: 16 },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   nextStepBtn: { height: 54, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
-  nextStepBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  nextStepBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   // Complete screen
   completeCard: { borderRadius: 24, overflow: 'hidden', padding: 40, alignItems: 'center', gap: 10, marginBottom: 20 },
   completeEmoji: { fontSize: 60 },
-  completeTitle: { fontSize: 28, fontWeight: '900', color: Colors.white },
+  completeTitle: { fontSize: 28, fontWeight: '900', color: c.white },
   completeSub: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
 
-  card: { backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   completeStepRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  completeStepText: { fontSize: 14, color: Colors.textSecondary },
+  completeStepText: { fontSize: 14, color: c.textSecondary },
 
   scanBtn: { height: 54, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
-  scanBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  scanBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   againBtn: { alignItems: 'center', paddingVertical: 12 },
-  againText: { fontSize: 13, color: Colors.textMuted },
-});
+  againText: { fontSize: 13, color: c.textMuted },
+  });
+}
