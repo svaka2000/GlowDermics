@@ -74,7 +74,11 @@ export function SkinSpectrum({
 }: Props) {
   const colors = useColors();
 
-  const pad = 36;
+  // pad must leave horizontal room for the side axis labels (≈46px wide at
+  // fontSize 8). With labelDist = maxR + 16, the rightmost label edge is
+  // cx + (maxR+16) + labelWidth = size + 16 - pad + labelWidth, so pad must
+  // be ≥ 16 + labelWidth (~62) or the 3/9-o'clock labels clip the SVG edge.
+  const pad = 70;
   const cx = size / 2;
   const cy = size / 2;
   const maxR = (size / 2) - pad;
@@ -220,10 +224,10 @@ export function SkinSpectrum({
               x={p.x}
               y={p.y + 3}
               fill={colors.textMuted}
-              fontSize={9}
+              fontSize={8}
               fontWeight="700"
               textAnchor={anchor}
-              letterSpacing={0.5}
+              letterSpacing={0.3}
             >
               {axis.label.toUpperCase()}
             </SvgText>

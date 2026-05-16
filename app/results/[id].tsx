@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
   ActivityIndicator, Share, Linking, Animated, Easing,
+  useWindowDimensions,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,6 +49,10 @@ export default function Results() {
   const colors = useColors();
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const PRIORITY_COLORS = useMemo(() => buildPriorityColors(colors), [colors]);
+  // SkinSpectrum fits the card: device width − card marginH(16·2) −
+  // card padding(20·2) = width − 72, capped so it isn't huge on tablets.
+  const { width: winW } = useWindowDimensions();
+  const spectrumSize = Math.min(Math.max(winW - 72, 240), 340);
   const params = useLocalSearchParams<{ id: string; celebrate?: string }>();
   const id = params.id;
   const [analysis, setAnalysis] = useState<SkinAnalysis | null>(null);
@@ -304,7 +309,7 @@ export default function Results() {
                 <SkinSpectrum
                   current={analysis.scoresV2}
                   previous={prevAnalysis?.scoresV2}
-                  size={320}
+                  size={spectrumSize}
                   delay={120}
                 />
               </View>
