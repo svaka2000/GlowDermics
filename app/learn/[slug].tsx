@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable,
 } from 'react-native';
@@ -6,7 +6,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { ARTICLES, Article } from '../../src/data/articles';
 import { Storage } from '../../src/services/storage';
 
@@ -22,6 +23,8 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 export default function ArticleDetail() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [readProgress, setReadProgress] = useState(0);
@@ -37,7 +40,7 @@ export default function ArticleDetail() {
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
         <View style={styles.notFound}>
@@ -47,7 +50,7 @@ export default function ArticleDetail() {
     );
   }
 
-  const tagColor = TAG_COLORS[article.tag] || Colors.primary;
+  const tagColor = TAG_COLORS[article.tag] || colors.primary;
   const relatedArticles = ARTICLES.filter(a => a.slug !== article.slug && (a.tag === article.tag || a.tallowDermicsAngle)).slice(0, 2);
 
   return (
@@ -69,13 +72,13 @@ export default function ArticleDetail() {
         {/* Hero */}
         <View style={styles.hero}>
           <LinearGradient
-            colors={['rgba(10,10,15,0)', Colors.bg]}
+            colors={['rgba(10,10,15,0)', colors.bg]}
             style={styles.heroFade}
             start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
           />
           <SafeAreaView edges={['top']}>
             <Pressable style={styles.backBtnHero} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
           </SafeAreaView>
           <View style={styles.heroContent}>
@@ -90,7 +93,7 @@ export default function ArticleDetail() {
               <Text style={[styles.tagText, { color: tagColor }]}>{article.tag}</Text>
             </View>
             <View style={styles.readTimePill}>
-              <Ionicons name="time-outline" size={11} color={Colors.textMuted} />
+              <Ionicons name="time-outline" size={11} color={colors.textMuted} />
               <Text style={styles.readTimeText}>{article.readTime} min read</Text>
             </View>
           </View>
@@ -118,7 +121,7 @@ export default function ArticleDetail() {
               style={StyleSheet.absoluteFill}
             />
             <View style={styles.takeawaysHeader}>
-              <Ionicons name="bulb-outline" size={18} color={Colors.gold} />
+              <Ionicons name="bulb-outline" size={18} color={colors.gold} />
               <Text style={styles.takeawaysTitle}>Key Takeaways</Text>
             </View>
             {article.keyTakeaways.map((item, i) => (
@@ -162,7 +165,7 @@ export default function ArticleDetail() {
                       <Text style={styles.relatedName} numberOfLines={2}>{a.title}</Text>
                       <Text style={styles.relatedMeta}>{a.readTime} min read</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                    <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
                   </Pressable>
                 ))}
               </View>
@@ -172,18 +175,18 @@ export default function ArticleDetail() {
           {/* Ask coach */}
           <Pressable style={styles.coachBanner} onPress={() => router.push('/(tabs)/coach')}>
             <LinearGradient
-              colors={[Colors.primaryDark, Colors.primary]}
+              colors={[colors.primaryDark, colors.primary]}
               style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             />
             <View style={styles.coachBannerInner}>
-              <Ionicons name="chatbubble-ellipses-outline" size={22} color={Colors.white} />
+              <Ionicons name="chatbubble-ellipses-outline" size={22} color={colors.white} />
               <View>
                 <Text style={styles.coachBannerTitle}>Have questions?</Text>
                 <Text style={styles.coachBannerSub}>Ask your AI skin coach</Text>
               </View>
             </View>
-            <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+            <Ionicons name="arrow-forward" size={20} color={colors.white} />
           </Pressable>
 
           <View style={{ height: 100 }} />
@@ -193,13 +196,14 @@ export default function ArticleDetail() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   progressBar: { height: 3, backgroundColor: 'rgba(250,243,224,0.06)', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 },
-  progressFill: { height: '100%', backgroundColor: Colors.primary },
+  progressFill: { height: '100%', backgroundColor: c.primary },
 
   hero: {
-    height: 220, backgroundColor: Colors.bgCard,
+    height: 220, backgroundColor: c.bgCard,
     alignItems: 'center', justifyContent: 'center',
     overflow: 'hidden',
   },
@@ -210,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     marginLeft: 16,
   },
-  backBtn: { margin: 16, width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  backBtn: { margin: 16, width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
   heroContent: { alignItems: 'center', justifyContent: 'center', flex: 1 },
   heroEmoji: { fontSize: 72, marginTop: -20 },
 
@@ -220,15 +224,15 @@ const styles = StyleSheet.create({
   tagPill: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5 },
   tagText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
   readTimePill: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  readTimeText: { fontSize: 11, color: Colors.textMuted },
+  readTimeText: { fontSize: 11, color: c.textMuted },
 
-  title: { fontSize: 26, fontWeight: '800', color: Colors.textPrimary, lineHeight: 34, marginBottom: 10 },
-  subtitle: { fontSize: 15, color: Colors.textSecondary, lineHeight: 23, marginBottom: 24 },
-  divider: { height: 1, backgroundColor: Colors.border, marginBottom: 28 },
+  title: { fontSize: 26, fontWeight: '800', color: c.textPrimary, lineHeight: 34, marginBottom: 10 },
+  subtitle: { fontSize: 15, color: c.textSecondary, lineHeight: 23, marginBottom: 24 },
+  divider: { height: 1, backgroundColor: c.border, marginBottom: 28 },
 
   section: { marginBottom: 24 },
-  sectionHeading: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10, lineHeight: 22 },
-  sectionBody: { fontSize: 15, color: Colors.textSecondary, lineHeight: 26 },
+  sectionHeading: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10, lineHeight: 22 },
+  sectionBody: { fontSize: 15, color: c.textSecondary, lineHeight: 26 },
 
   takeawaysCard: {
     borderRadius: 18, overflow: 'hidden',
@@ -236,10 +240,10 @@ const styles = StyleSheet.create({
     padding: 20, marginBottom: 20, gap: 12,
   },
   takeawaysHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  takeawaysTitle: { fontSize: 14, fontWeight: '700', color: Colors.gold },
+  takeawaysTitle: { fontSize: 14, fontWeight: '700', color: c.gold },
   takeawayRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
-  takeawayDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary, marginTop: 8 },
-  takeawayText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, flex: 1 },
+  takeawayDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: c.primary, marginTop: 8 },
+  takeawayText: { fontSize: 13, color: c.textSecondary, lineHeight: 20, flex: 1 },
 
   tdCard: {
     borderRadius: 18, overflow: 'hidden',
@@ -247,23 +251,23 @@ const styles = StyleSheet.create({
     padding: 20, marginBottom: 20, gap: 10,
   },
   tdHeader: { marginBottom: 2 },
-  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: Colors.primary },
-  tdBody: { fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
+  tdBody: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
   tdCta: { alignSelf: 'flex-start', marginTop: 4 },
-  tdCtaText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  tdCtaText: { fontSize: 13, color: c.primary, fontWeight: '600' },
 
   relatedSection: { marginBottom: 20 },
-  relatedTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
+  relatedTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 12 },
   relatedList: { gap: 10 },
   relatedCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 14,
+    backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 14,
   },
   relatedEmoji: { fontSize: 24 },
   relatedBody: { flex: 1, gap: 4 },
-  relatedName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, lineHeight: 18 },
-  relatedMeta: { fontSize: 11, color: Colors.textMuted },
+  relatedName: { fontSize: 13, fontWeight: '700', color: c.textPrimary, lineHeight: 18 },
+  relatedMeta: { fontSize: 11, color: c.textMuted },
 
   coachBanner: {
     borderRadius: 18, overflow: 'hidden',
@@ -271,9 +275,10 @@ const styles = StyleSheet.create({
     padding: 18, marginBottom: 8,
   },
   coachBannerInner: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  coachBannerTitle: { fontSize: 15, fontWeight: '700', color: Colors.white },
+  coachBannerTitle: { fontSize: 15, fontWeight: '700', color: c.white },
   coachBannerSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
 
   notFound: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  notFoundText: { fontSize: 16, color: Colors.textMuted },
-});
+  notFoundText: { fontSize: 16, color: c.textMuted },
+  });
+}
