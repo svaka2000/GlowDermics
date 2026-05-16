@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, Pressable, View, Text, StyleSheet } from 'react-native';
 import Svg, {
+  Circle,
+  ClipPath,
   Defs,
   Ellipse,
+  G,
   LinearGradient as SvgLinearGradient,
   Path,
   RadialGradient,
@@ -12,24 +15,41 @@ import { Radii } from '../../constants/theme';
 import { FaceRegion, RegionalFinding } from '../../types';
 import { useColors } from '../../state/theme';
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
-const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
+const AnimatedG = Animated.createAnimatedComponent(G);
 
-interface RegionalSkinMapProps {
-  findings: RegionalFinding[];
-  /** Width of the rendered map in points. Defaults to 280. */
-  width?: number;
-  /** When tapping a region, fires with the region key. */
-  onRegionPress?: (region: FaceRegion) => void;
-  /** Highlight a specific region (e.g., the one user just tapped). */
-  selected?: FaceRegion | null;
-}
+type Severity = RegionalFinding['severity'];
 
-const SEVERITY_COLOR: Record<RegionalFinding['severity'], string> = {
-  none: 'rgba(22,163,74,0.45)',     // green
-  mild: 'rgba(251,191,36,0.55)',    // amber
-  moderate: 'rgba(217,119,6,0.65)', // orange
-  severe: 'rgba(220,38,38,0.75)',   // red
+/**
+ * Solid reference swatch per severity — used by the legend dots and the
+ * detail chip (a CSS background can't be an SVG gradient). The on-face
+ * heatmap uses the RadialGradients defined in <Defs> instead, which fade
+ * to transparent so the underlying skin + features stay visible.
+ */
+const SEVERITY_SWATCH: Record<Severity, string> = {
+  none: 'rgba(34,197,94,0.85)',     // soft green
+  mild: 'rgba(245,176,65,0.92)',    // warm amber
+  moderate: 'rgba(234,118,40,0.95)',// orange
+  severe: 'rgba(225,49,49,0.96)',   // red
+};
+
+/** Strong (gradient-center) color per severity. */
+const SEVERITY_CORE: Record<Severity, string> = {
+  none: '#22C55E',
+  mild: '#F5B041',
+  moderate: '#EA7628',
+  severe: '#E13131',
+};
+
+/**
+ * Center opacity for each severity's radial gradient. Severity reads through
+ * saturation + center opacity rather than brute global opacity, so the face
+ * never turns into a muddy puddle. "none" is barely-there on purpose.
+ */
+const SEVERITY_CENTER_OPACITY: Record<Severity, number> = {
+  none: 0.16,
+  mild: 0.34,
+  moderate: 0.46,
+  severe: 0.58,
 };
 
 const REGION_LABEL: Record<FaceRegion, string> = {
@@ -43,14 +63,72 @@ const REGION_LABEL: Record<FaceRegion, string> = {
   lipArea: 'Lips',
 };
 
+const SEVERITIES: Severity[] = ['none', 'mild', 'moderate', 'severe'];
+
+interface RegionalSkinMapProps {
+  findings: RegionalFinding[];
+  /** Width of the rendered map in points. Defaults to 280. */
+  width?: number;
+  /** When tapping a region, fires with the region key. */
+  onRegionPress?: (region: FaceRegion) => void;
+  /** Highlight a specific region (e.g., the one user just tapped). */
+  selected?: FaceRegion | null;
+}
+
+// Coordinates calibrated for a 280×336 viewBox (face filling most of it).
+const VB_W = 280;
+const VB_H = 336;
+
 /**
- * RegionalSkinMap — anatomically-grounded face SVG with severity heatmap zones.
+ * The face silhouette, defined once and reused as: (a) the skin fill,
+ * (b) the clip-path geometry that contains every heatmap zone, and
+ * (c) the visible rim. Keeping a single source of truth guarantees the
+ * heatmap can never bleed past the face edge.
+ */
+const FACE_PATH = `
+  M 60 132
+  Q 58 70  140 60
+  Q 222 70  220 132
+  Q 224 198 202 248
+  Q 182 296 140 309
+  Q 98 296 78 248
+  Q 56 198 60 132
+  Z
+`;
+
+/**
+ * Per-region heatmap geometry. Each zone is an ellipse painted with a soft
+ * radial gradient (strong center → transparent edge) so zones feather out
+ * instead of showing hard borders, and adjacent zones blend rather than
+ * stacking as opaque puddles. Sized + placed to actually sit where the
+ * facial region is; nothing spans the full face width any more.
+ */
+const REGION_ZONES: {
+  region: FaceRegion;
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+  /** Optional clockwise rotation in degrees (for the angled cheek zones). */
+  rot?: number;
+}[] = [
+  { region: 'forehead', cx: 140, cy: 96, rx: 58, ry: 30 },
+  { region: 'eyeArea', cx: 140, cy: 150, rx: 62, ry: 16 },
+  { region: 'leftCheek', cx: 99, cy: 196, rx: 30, ry: 34, rot: -14 },
+  { region: 'rightCheek', cx: 181, cy: 196, rx: 30, ry: 34, rot: 14 },
+  { region: 'nose', cx: 140, cy: 182, rx: 13, ry: 34 },
+  { region: 'chin', cx: 140, cy: 276, rx: 30, ry: 24 },
+  { region: 'jawline', cx: 140, cy: 256, rx: 78, ry: 52 },
+];
+
+/**
+ * RegionalSkinMap — anatomically-grounded face SVG with a contained,
+ * clinical severity heatmap.
  *
- * Each region (forehead, cheeks, nose, chin, under-eye, jawline) is rendered as
- * an ellipse over a face outline. Severity drives the fill color, and the
- * regions pulse softly to draw attention to active concerns.
- *
- * Designed to feel premium and clinical — Haut.AI / Lóvi style.
+ * Every severity zone is clipped to the face silhouette and painted with a
+ * soft radial gradient, so the heatmap reads as a premium Haut.AI / Lóvi
+ * style overlay rather than floating colored blobs. Active (non-"none")
+ * regions pulse with a gentle whole-zone opacity oscillation.
  */
 export function RegionalSkinMap({
   findings,
@@ -67,15 +145,15 @@ export function RegionalSkinMap({
       Animated.sequence([
         Animated.timing(pulse, {
           toValue: 1,
-          duration: 1600,
+          duration: 1700,
           easing: Easing.inOut(Easing.sin),
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
         Animated.timing(pulse, {
           toValue: 0,
-          duration: 1600,
+          duration: 1700,
           easing: Easing.inOut(Easing.sin),
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
       ]),
     );
@@ -89,137 +167,205 @@ export function RegionalSkinMap({
     return map;
   }, [findings]);
 
-  // Pulsing opacity animation for active regions.
-  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0.95] });
+  // Subtle whole-zone opacity pulse for active regions (no halo ring).
+  const pulseOpacity = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.72, 0.96],
+  });
 
-  // Coordinates calibrated for a 280×336 viewBox (face filling most of it).
-  const VB_W = 280;
-  const VB_H = 336;
+  const scale = width / VB_W;
 
-  const regionRects: { region: FaceRegion; cx: number; cy: number; rx: number; ry: number }[] = [
-    { region: 'forehead',   cx: 140, cy: 80,  rx: 80, ry: 26 },
-    { region: 'leftCheek',  cx: 88,  cy: 178, rx: 32, ry: 30 },
-    { region: 'rightCheek', cx: 192, cy: 178, rx: 32, ry: 30 },
-    { region: 'nose',       cx: 140, cy: 168, rx: 14, ry: 36 },
-    { region: 'chin',       cx: 140, cy: 270, rx: 32, ry: 22 },
-    { region: 'eyeArea',    cx: 140, cy: 145, rx: 80, ry: 14 },
-    { region: 'jawline',    cx: 140, cy: 240, rx: 92, ry: 16 },
-  ];
-
-  const renderRegion = (r: typeof regionRects[number]) => {
-    const finding = findingByRegion[r.region];
-    const sev: RegionalFinding['severity'] = finding?.severity ?? 'none';
-    const color = SEVERITY_COLOR[sev];
-    const isSelected = selected === r.region;
+  const zones = REGION_ZONES.map(z => {
+    const finding = findingByRegion[z.region];
+    const sev: Severity = finding?.severity ?? 'none';
+    const isSelected = selected === z.region;
     const isActive = sev !== 'none';
 
-    const handle = onRegionPress
-      ? (
-          <Pressable
-            key={r.region + '-press'}
-            onPress={() => onRegionPress(r.region)}
-            style={{
-              position: 'absolute',
-              left: (r.cx - r.rx) * (width / VB_W),
-              top: (r.cy - r.ry) * (width / VB_W),
-              width: 2 * r.rx * (width / VB_W),
-              height: 2 * r.ry * (width / VB_W),
-            }}
-          />
-        )
-      : null;
+    const transform = z.rot ? `rotate(${z.rot} ${z.cx} ${z.cy})` : undefined;
 
-    return { svg: (
-      <React.Fragment key={r.region}>
-        {/* outer halo for active regions */}
-        {isActive && (
-          <AnimatedEllipse
-            cx={r.cx}
-            cy={r.cy}
-            rx={r.rx + 4}
-            ry={r.ry + 4}
-            fill={color}
-            opacity={pulseOpacity as any}
+    // Heatmap fill, clipped to the face so it can never spill outside.
+    const fill = (
+      <React.Fragment key={z.region}>
+        {isActive ? (
+          <AnimatedG opacity={pulseOpacity as unknown as number}>
+            <Ellipse
+              cx={z.cx}
+              cy={z.cy}
+              rx={z.rx}
+              ry={z.ry}
+              fill={`url(#sev-${sev})`}
+              transform={transform}
+            />
+          </AnimatedG>
+        ) : (
+          <Ellipse
+            cx={z.cx}
+            cy={z.cy}
+            rx={z.rx}
+            ry={z.ry}
+            fill={`url(#sev-${sev})`}
+            transform={transform}
           />
         )}
-        <Ellipse
-          cx={r.cx}
-          cy={r.cy}
-          rx={r.rx}
-          ry={r.ry}
-          fill={color}
-          stroke={isSelected ? colors.primary : 'rgba(255,255,255,0.6)'}
-          strokeWidth={isSelected ? 2.5 : 1}
-        />
+        {isSelected && (
+          <Ellipse
+            cx={z.cx}
+            cy={z.cy}
+            rx={z.rx}
+            ry={z.ry}
+            fill="none"
+            stroke={colors.primary}
+            strokeWidth={2}
+            strokeOpacity={0.9}
+            transform={transform}
+          />
+        )}
       </React.Fragment>
-    ), pressable: handle };
-  };
+    );
 
-  const rendered = regionRects.map(renderRegion);
+    // Transparent press target mirroring the zone's bounding box.
+    const pressable = onRegionPress ? (
+      <Pressable
+        key={z.region + '-press'}
+        onPress={() => onRegionPress(z.region)}
+        accessibilityRole="button"
+        accessibilityLabel={`${REGION_LABEL[z.region]} region${
+          isActive ? `, ${sev} concern` : ''
+        }`}
+        style={{
+          position: 'absolute',
+          left: (z.cx - z.rx) * scale,
+          top: (z.cy - z.ry) * scale,
+          width: 2 * z.rx * scale,
+          height: 2 * z.ry * scale,
+        }}
+      />
+    ) : null;
+
+    return { fill, pressable };
+  });
 
   return (
     <View style={[styles.wrap, { width, height }]}>
       <Svg width={width} height={height} viewBox={`0 0 ${VB_W} ${VB_H}`}>
         <Defs>
-          <RadialGradient id="faceFill" cx="50%" cy="40%" r="60%">
-            <Stop offset="0%" stopColor="#FFE4D2" stopOpacity={1} />
-            <Stop offset="100%" stopColor="#E8C8B0" stopOpacity={1} />
+          {/* Skin + hair base */}
+          <RadialGradient id="faceFill" cx="50%" cy="38%" r="62%">
+            <Stop offset="0%" stopColor="#FFE7D6" stopOpacity={1} />
+            <Stop offset="70%" stopColor="#F2CDB4" stopOpacity={1} />
+            <Stop offset="100%" stopColor="#E4BC9F" stopOpacity={1} />
           </RadialGradient>
           <SvgLinearGradient id="hairFill" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor="#1F1612" stopOpacity={1} />
-            <Stop offset="100%" stopColor="#3A2A22" stopOpacity={1} />
+            <Stop offset="0%" stopColor="#231915" stopOpacity={1} />
+            <Stop offset="100%" stopColor="#3C2B22" stopOpacity={1} />
           </SvgLinearGradient>
+
+          {/* One soft radial heatmap gradient per severity: a saturated but
+              low-opacity core that fades fully to transparent at the rim. */}
+          {SEVERITIES.map(sev => (
+            <RadialGradient
+              key={sev}
+              id={`sev-${sev}`}
+              cx="50%"
+              cy="50%"
+              r="50%"
+            >
+              <Stop
+                offset="0%"
+                stopColor={SEVERITY_CORE[sev]}
+                stopOpacity={SEVERITY_CENTER_OPACITY[sev]}
+              />
+              <Stop
+                offset="55%"
+                stopColor={SEVERITY_CORE[sev]}
+                stopOpacity={SEVERITY_CENTER_OPACITY[sev] * 0.55}
+              />
+              <Stop
+                offset="100%"
+                stopColor={SEVERITY_CORE[sev]}
+                stopOpacity={0}
+              />
+            </RadialGradient>
+          ))}
+
+          {/* The clip-path is the face silhouette itself. */}
+          <ClipPath id="faceClip">
+            <Path d={FACE_PATH} />
+          </ClipPath>
         </Defs>
 
-        {/* Hair / shadow behind face */}
+        {/* Hair / shadow behind the face */}
         <Path
-          d="M70 70 Q140 -10 210 70 L220 130 Q224 70 200 50 Q140 0 80 50 Q56 70 60 130 Z"
+          d="M68 78 Q140 -6 212 78 L222 138 Q226 78 200 54 Q140 4 80 54 Q54 78 58 138 Z"
           fill="url(#hairFill)"
-          opacity={0.85}
+          opacity={0.9}
         />
 
-        {/* Face outline — soft oval */}
+        {/* Face skin */}
         <Path
-          d={`
-            M 60 130
-            Q 60 70  140 60
-            Q 220 70  220 130
-            Q 224 200 200 250
-            Q 180 295 140 308
-            Q 100 295 80 250
-            Q 56 200 60 130
-            Z
-          `}
+          d={FACE_PATH}
           fill="url(#faceFill)"
-          stroke="rgba(28,24,20,0.18)"
+          stroke="rgba(28,24,20,0.16)"
           strokeWidth={1}
         />
 
-        {/* Eye sockets — subtle */}
-        <Ellipse cx={108} cy={148} rx={11} ry={5} fill="rgba(28,24,20,0.55)" />
-        <Ellipse cx={172} cy={148} rx={11} ry={5} fill="rgba(28,24,20,0.55)" />
+        {/* Brows */}
+        <Path
+          d="M88 134 Q108 126 128 133"
+          stroke="rgba(28,24,20,0.30)"
+          strokeWidth={3}
+          strokeLinecap="round"
+          fill="none"
+        />
+        <Path
+          d="M152 133 Q172 126 192 134"
+          stroke="rgba(28,24,20,0.30)"
+          strokeWidth={3}
+          strokeLinecap="round"
+          fill="none"
+        />
 
-        {/* Nose hint */}
-        <Path d="M140 150 L134 195 Q140 200 146 195 Z" fill="rgba(28,24,20,0.10)" />
+        {/* Eyes */}
+        <Ellipse cx={108} cy={150} rx={12} ry={5.5} fill="rgba(255,255,255,0.55)" />
+        <Ellipse cx={172} cy={150} rx={12} ry={5.5} fill="rgba(255,255,255,0.55)" />
+        <Circle cx={108} cy={150} r={3.4} fill="rgba(28,24,20,0.72)" />
+        <Circle cx={172} cy={150} r={3.4} fill="rgba(28,24,20,0.72)" />
+
+        {/* Nose */}
+        <Path
+          d="M140 156 L133 200 Q140 206 147 200"
+          stroke="rgba(28,24,20,0.16)"
+          strokeWidth={2}
+          strokeLinecap="round"
+          fill="none"
+        />
 
         {/* Lips */}
         <Path
-          d="M120 232 Q140 240 160 232 Q150 248 140 248 Q130 248 120 232 Z"
-          fill="rgba(196,98,45,0.45)"
+          d="M118 236 Q140 244 162 236 Q151 252 140 252 Q129 252 118 236 Z"
+          fill="rgba(196,98,45,0.42)"
         />
 
-        {/* Severity heat regions — render on top */}
-        {rendered.map(r => r.svg)}
+        {/* Severity heatmap — entirely contained within the face outline. */}
+        <G clipPath="url(#faceClip)">{zones.map(z => z.fill)}</G>
+
+        {/* Crisp face rim drawn last so the heatmap reads as inside the skin. */}
+        <Path
+          d={FACE_PATH}
+          fill="none"
+          stroke="rgba(28,24,20,0.20)"
+          strokeWidth={1.25}
+        />
       </Svg>
 
-      {/* Pressable overlays mirror SVG ellipses */}
-      {rendered.map(r => r.pressable).filter(Boolean)}
+      {/* Pressable overlays mirror the SVG zones */}
+      {zones.map(z => z.pressable).filter(Boolean)}
 
       {/* Legend */}
       <View style={styles.legend}>
-        {(['none', 'mild', 'moderate', 'severe'] as const).map(sev => (
+        {SEVERITIES.map(sev => (
           <View key={sev} style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: SEVERITY_COLOR[sev] }]} />
+            <View style={[styles.legendDot, { backgroundColor: SEVERITY_SWATCH[sev] }]} />
             <Text style={[styles.legendText, { color: colors.textSecondary }]}>{sev}</Text>
           </View>
         ))}
@@ -236,17 +382,18 @@ export function RegionDetailChip({
 }) {
   const colors = useColors();
   if (!finding) return null;
-  const color = SEVERITY_COLOR[finding.severity];
+  const swatch = SEVERITY_SWATCH[finding.severity];
+  const core = SEVERITY_CORE[finding.severity];
   return (
     <View style={[styles.chip, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
-      <View style={[styles.chipDot, { backgroundColor: color }]} />
+      <View style={[styles.chipDot, { backgroundColor: swatch }]} />
       <View style={{ flex: 1 }}>
         <Text style={[styles.chipRegion, { color: colors.textPrimary }]}>
           {REGION_LABEL[finding.region] ?? finding.region}
         </Text>
         <Text style={[styles.chipObs, { color: colors.textSecondary }]}>{finding.observation}</Text>
       </View>
-      <Text style={[styles.chipSev, { color: color.replace(/[\d.]+\)/, '1)') }]}>
+      <Text style={[styles.chipSev, { color: core }]}>
         {finding.severity.toUpperCase()}
       </Text>
     </View>
