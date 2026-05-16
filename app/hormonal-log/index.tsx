@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, TextInput, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
 const LOG_KEY = 'gd_hormonal_log';
 const CYCLE_KEY = 'gd_cycle_start';
@@ -19,7 +20,8 @@ type PhaseEntry = {
   notes: string;
 };
 
-const PHASES = [
+function buildPhases(c: Palette) {
+  return [
   {
     id: 'menstrual',
     label: 'Menstrual',
@@ -43,7 +45,7 @@ const PHASES = [
     label: 'Ovulation',
     days: 'Days 14-17',
     emoji: '✨',
-    color: Colors.gold,
+    color: c.gold,
     desc: 'Estrogen peaks. Skin is at its most radiant and even-toned.',
     skinTips: ['Peak glow — great for photos', 'You may be more sensitive to sun', 'Light, airy products work best'],
   },
@@ -56,7 +58,8 @@ const PHASES = [
     desc: 'Progesterone rises, then drops. Increased oil, pore visibility, and breakouts.',
     skinTips: ['Prioritize anti-inflammatory ingredients', 'Tallow balm helps with breakout inflammation', 'Avoid heavy makeup', 'Zinc & B6 can help hormonally'],
   },
-];
+  ];
+}
 
 const SKIN_STATES = [
   'Glowing', 'Clear', 'Oily', 'Dry', 'Dull', 'Sensitive',
@@ -75,7 +78,7 @@ function getDayOfCycle(cycleStartStr: string | null): number | null {
   return (diff % 28) + 1;
 }
 
-function getPhaseFromDay(day: number) {
+function getPhaseFromDay(day: number, PHASES: ReturnType<typeof buildPhases>) {
   if (day <= 5) return PHASES[0];
   if (day <= 13) return PHASES[1];
   if (day <= 17) return PHASES[2];
@@ -83,6 +86,9 @@ function getPhaseFromDay(day: number) {
 }
 
 export default function HormonalLog() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const PHASES = useMemo(() => buildPhases(colors), [colors]);
   const [log, setLog] = useState<PhaseEntry[]>([]);
   const [cycleStart, setCycleStart] = useState<string | null>(null);
   const [settingCycle, setSettingCycle] = useState(false);
@@ -122,7 +128,7 @@ export default function HormonalLog() {
       setSaved(true);
     } else if (startStr) {
       const day = getDayOfCycle(startStr);
-      if (day) setSelectedPhase(getPhaseFromDay(day).id);
+      if (day) setSelectedPhase(getPhaseFromDay(day, PHASES).id);
     }
   };
 
@@ -157,7 +163,7 @@ export default function HormonalLog() {
   };
 
   const dayOfCycle = getDayOfCycle(cycleStart);
-  const currentPhase = dayOfCycle ? getPhaseFromDay(dayOfCycle) : null;
+  const currentPhase = dayOfCycle ? getPhaseFromDay(dayOfCycle, PHASES) : null;
 
   // Pattern analysis: most common skin state per phase
   const phaseSkinMap: Record<string, Record<string, number>> = {};
@@ -183,7 +189,7 @@ export default function HormonalLog() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Hormonal Skin Log</Text>
@@ -258,7 +264,7 @@ export default function HormonalLog() {
                 onPress={() => { setSelectedPhase(p.id); setSaved(false); }}
               >
                 <Text style={styles.phaseChipEmoji}>{p.emoji}</Text>
-                <Text style={[styles.phaseChipLabel, { color: selectedPhase === p.id ? p.color : Colors.textMuted }]}>{p.label}</Text>
+                <Text style={[styles.phaseChipLabel, { color: selectedPhase === p.id ? p.color : colors.textMuted }]}>{p.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -271,7 +277,7 @@ export default function HormonalLog() {
                 style={[styles.stateChip, selectedStates.includes(s) && styles.stateChipActive]}
                 onPress={() => toggleState(s)}
               >
-                <Text style={[styles.stateChipText, selectedStates.includes(s) && { color: Colors.primary }]}>{s}</Text>
+                <Text style={[styles.stateChipText, selectedStates.includes(s) && { color: colors.primary }]}>{s}</Text>
               </Pressable>
             ))}
           </View>
@@ -280,7 +286,7 @@ export default function HormonalLog() {
           <TextInput
             style={styles.notesInput}
             placeholder="How's your skin feeling today? Any triggers?"
-            placeholderTextColor={Colors.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={notes}
             onChangeText={v => { setNotes(v); setSaved(false); }}
             multiline
@@ -361,65 +367,66 @@ export default function HormonalLog() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   cycleCard: {
-    borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
   cycleDayRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   cycleDayBadge: { borderWidth: 2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4 },
   cycleDayNum: { fontSize: 16, fontWeight: '900' },
-  resetLink: { fontSize: 12, color: Colors.textMuted, textDecorationLine: 'underline' },
+  resetLink: { fontSize: 12, color: c.textMuted, textDecorationLine: 'underline' },
   phaseRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   phaseEmoji: { fontSize: 28 },
   phaseName: { fontSize: 18, fontWeight: '800' },
-  phaseDays: { fontSize: 12, color: Colors.textMuted, fontWeight: '600', marginTop: 1 },
-  phaseDesc: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  phaseDays: { fontSize: 12, color: c.textMuted, fontWeight: '600', marginTop: 1 },
+  phaseDesc: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   startCycleCard: {
-    backgroundColor: Colors.bgCard, borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border,
     padding: 20, gap: 10, marginBottom: 14, alignItems: 'center',
   },
-  startCycleTitle: { fontSize: 16, fontWeight: '800', color: Colors.textPrimary },
-  startCycleDesc: { fontSize: 13, color: Colors.textMuted, textAlign: 'center', lineHeight: 20 },
+  startCycleTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
+  startCycleDesc: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20 },
   startCycleBtn: {
-    backgroundColor: Colors.primary, paddingHorizontal: 20, paddingVertical: 12,
+    backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12,
     borderRadius: 12, marginTop: 4,
   },
-  startCycleBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  startCycleBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   savedBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: 'rgba(74,222,128,0.12)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3,
   },
   savedText: { fontSize: 11, fontWeight: '700', color: '#4ADE80' },
-  fieldLabel: { fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  fieldLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 },
 
   phaseGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   phaseChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
   phaseChipEmoji: { fontSize: 14 },
   phaseChipLabel: { fontSize: 12, fontWeight: '700' },
@@ -427,43 +434,44 @@ const styles = StyleSheet.create({
   stateGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   stateChip: {
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.bgElevated,
+    borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated,
   },
-  stateChipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
-  stateChipText: { fontSize: 12, fontWeight: '600', color: Colors.textMuted },
+  stateChipActive: { borderColor: c.primary, backgroundColor: `${c.primary}15` },
+  stateChipText: { fontSize: 12, fontWeight: '600', color: c.textMuted },
 
   notesInput: {
-    backgroundColor: Colors.bgElevated, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderRadius: 12,
+    borderWidth: 1, borderColor: c.border,
     paddingHorizontal: 12, paddingVertical: 10,
-    fontSize: 13, color: Colors.textPrimary, minHeight: 80,
+    fontSize: 13, color: c.textPrimary, minHeight: 80,
     textAlignVertical: 'top',
   },
 
   saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    height: 48, borderRadius: 12, backgroundColor: Colors.primary,
+    height: 48, borderRadius: 12, backgroundColor: c.primary,
   },
   saveBtnSaved: { backgroundColor: 'rgba(74,222,128,0.08)', borderWidth: 1, borderColor: 'rgba(74,222,128,0.25)' },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  saveBtnText: { fontSize: 14, fontWeight: '700', color: c.white },
 
   tipsCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 10, marginBottom: 14,
   },
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipDot: { width: 6, height: 6, borderRadius: 3, marginTop: 7 },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   patternRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 4 },
   patternPhaseEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
   patternPhaseName: { fontSize: 12, fontWeight: '800' },
-  patternStates: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  patternStates: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
   guideRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   guideEmojiBadge: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   guideTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   guideName: { fontSize: 13, fontWeight: '800' },
-  guideDays: { fontSize: 11, color: Colors.textMuted },
-  guideDesc: { fontSize: 12, color: Colors.textMuted, lineHeight: 18 },
-});
+  guideDays: { fontSize: 11, color: c.textMuted },
+  guideDesc: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
+  });
+}

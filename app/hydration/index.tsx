@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Animated, Easing,
 } from 'react-native';
@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../src/constants/colors';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 import { Storage } from '../../src/services/storage';
 
 const WATER_KEY = 'gd_water';
@@ -18,6 +19,8 @@ function getTodayStr() {
 }
 
 export default function HydrationTracker() {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [waterData, setWaterData] = useState<Record<string, number>>({});
   const [todayGlasses, setTodayGlasses] = useState(0);
   const [scanHistory, setScanHistory] = useState<{ date: string; overallScore: number }[]>([]);
@@ -118,7 +121,7 @@ export default function HydrationTracker() {
   })();
 
   const pct = Math.min(1, todayGlasses / WATER_GOAL);
-  const ringColor = pct >= 1 ? '#4ADE80' : pct >= 0.75 ? '#86EFAC' : pct >= 0.5 ? Colors.gold : pct >= 0.25 ? '#FCA5A5' : Colors.scorePoor;
+  const ringColor = pct >= 1 ? '#4ADE80' : pct >= 0.75 ? '#86EFAC' : pct >= 0.5 ? colors.gold : pct >= 0.25 ? '#FCA5A5' : colors.scorePoor;
 
   return (
     <View style={styles.root}>
@@ -128,7 +131,7 @@ export default function HydrationTracker() {
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Hydration Tracker</Text>
@@ -160,7 +163,7 @@ export default function HydrationTracker() {
           {/* Quick add row */}
           <View style={styles.quickRow}>
             <Pressable style={styles.bigMinusBtn} onPress={() => setGlasses(todayGlasses - 1)}>
-              <Ionicons name="remove" size={22} color={Colors.textPrimary} />
+              <Ionicons name="remove" size={22} color={colors.textPrimary} />
             </Pressable>
 
             <View style={styles.glassRow}>
@@ -179,7 +182,7 @@ export default function HydrationTracker() {
               style={[styles.bigPlusBtn, { backgroundColor: ringColor }]}
               onPress={() => setGlasses(todayGlasses + 1)}
             >
-              <Ionicons name="add" size={22} color={Colors.bg} />
+              <Ionicons name="add" size={22} color={colors.bg} />
             </Pressable>
           </View>
 
@@ -206,19 +209,19 @@ export default function HydrationTracker() {
         {/* Stats */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, { color: parseFloat(avgGlasses) >= WATER_GOAL ? '#4ADE80' : Colors.gold }]}>
+            <Text style={[styles.statNum, { color: parseFloat(avgGlasses) >= WATER_GOAL ? '#4ADE80' : colors.gold }]}>
               {avgGlasses}
             </Text>
             <Text style={styles.statLabel}>Daily avg</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, { color: goalDays >= 10 ? '#4ADE80' : goalDays >= 5 ? Colors.gold : Colors.scorePoor }]}>
+            <Text style={[styles.statNum, { color: goalDays >= 10 ? '#4ADE80' : goalDays >= 5 ? colors.gold : colors.scorePoor }]}>
               {goalDays}
             </Text>
             <Text style={styles.statLabel}>Goal days (14)</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={[styles.statNum, { color: streakDays >= 7 ? '#4ADE80' : streakDays >= 3 ? Colors.gold : Colors.textPrimary }]}>
+            <Text style={[styles.statNum, { color: streakDays >= 7 ? '#4ADE80' : streakDays >= 3 ? colors.gold : colors.textPrimary }]}>
               {streakDays}
             </Text>
             <Text style={styles.statLabel}>Day streak</Text>
@@ -234,9 +237,9 @@ export default function HydrationTracker() {
                 const barPct = chartMax > 0 ? d.glasses / chartMax : 0;
                 const barColor = d.glasses >= WATER_GOAL ? '#4ADE80'
                   : d.glasses >= 6 ? '#86EFAC'
-                  : d.glasses >= 4 ? Colors.gold
-                  : d.glasses > 0 ? Colors.scorePoor
-                  : Colors.border;
+                  : d.glasses >= 4 ? colors.gold
+                  : d.glasses > 0 ? colors.scorePoor
+                  : colors.border;
                 return (
                   <View key={i} style={styles.chartCol}>
                     <View style={styles.chartBarWrap}>
@@ -248,7 +251,7 @@ export default function HydrationTracker() {
                         }]} />
                       )}
                     </View>
-                    <Text style={[styles.chartDay, d.isToday && { color: Colors.primary, fontWeight: '800' }]}>
+                    <Text style={[styles.chartDay, d.isToday && { color: colors.primary, fontWeight: '800' }]}>
                       {d.isToday ? '•' : d.day}
                     </Text>
                   </View>
@@ -272,9 +275,9 @@ export default function HydrationTracker() {
                 <Text style={[styles.correlationScore, { color: '#4ADE80' }]}>{highWaterScanAvg}</Text>
                 <Text style={styles.correlationLabel}>After 8+ glasses</Text>
               </View>
-              <Ionicons name="arrow-forward" size={20} color={Colors.textMuted} />
+              <Ionicons name="arrow-forward" size={20} color={colors.textMuted} />
               <View style={styles.correlationItem}>
-                <Text style={[styles.correlationScore, { color: Colors.scorePoor }]}>{lowWaterScanAvg}</Text>
+                <Text style={[styles.correlationScore, { color: colors.scorePoor }]}>{lowWaterScanAvg}</Text>
                 <Text style={styles.correlationLabel}>After fewer glasses</Text>
               </View>
             </View>
@@ -308,36 +311,37 @@ export default function HydrationTracker() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: Palette) {
+  return StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.bgCard, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: c.border,
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
-  headerSub: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', marginTop: 2 },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   ringCard: {
-    borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 20, gap: 16, marginBottom: 14, alignItems: 'center',
   },
   ringWrap: { alignItems: 'center' },
   ringOuter: { width: 160, height: 160, borderRadius: 80, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   ringInner: { width: 130, height: 130, borderRadius: 65, borderWidth: 3, alignItems: 'center', justifyContent: 'center', gap: 2 },
   ringCount: { fontSize: 40, fontWeight: '900' },
-  ringUnit: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
-  ringPct: { fontSize: 13, color: Colors.textMuted, fontWeight: '700' },
+  ringUnit: { fontSize: 12, color: c.textMuted, fontWeight: '600' },
+  ringPct: { fontSize: 13, color: c.textMuted, fontWeight: '700' },
 
   quickRow: { flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%', justifyContent: 'center' },
   bigMinusBtn: {
     width: 44, height: 44, borderRadius: 22,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
   bigPlusBtn: {
@@ -350,10 +354,10 @@ const styles = StyleSheet.create({
   presetRow: { flexDirection: 'row', gap: 8 },
   presetBtn: {
     flex: 1, height: 38, borderRadius: 10,
-    backgroundColor: Colors.bgCard, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  presetBtnText: { fontSize: 14, fontWeight: '700', color: Colors.textSecondary },
+  presetBtnText: { fontSize: 14, fontWeight: '700', color: c.textSecondary },
 
   goalBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
@@ -364,24 +368,24 @@ const styles = StyleSheet.create({
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
   statCard: {
-    flex: 1, backgroundColor: Colors.bgCard, borderRadius: 14,
-    borderWidth: 1, borderColor: Colors.border, padding: 12,
+    flex: 1, backgroundColor: c.bgCard, borderRadius: 14,
+    borderWidth: 1, borderColor: c.border, padding: 12,
     alignItems: 'center', gap: 3,
   },
-  statNum: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
+  statNum: { fontSize: 22, fontWeight: '800', color: c.textPrimary },
+  statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
   card: {
-    backgroundColor: Colors.bgCard, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border, padding: 16, gap: 10, marginBottom: 14,
+    backgroundColor: c.bgCard, borderRadius: 16,
+    borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
 
   chart: { flexDirection: 'row', gap: 2, height: 80, alignItems: 'flex-end' },
   chartCol: { flex: 1, alignItems: 'center', gap: 3 },
   chartBarWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
   chartBar: { width: '100%', borderRadius: 3, minHeight: 3 },
-  chartDay: { fontSize: 8, color: Colors.textMuted, fontWeight: '600' },
+  chartDay: { fontSize: 8, color: c.textMuted, fontWeight: '600' },
   chartGoalLine: { position: 'relative', height: 16, alignItems: 'flex-end', marginTop: 2 },
   chartGoalLineInner: {
     position: 'absolute', left: 0, right: 0, height: 1,
@@ -390,17 +394,18 @@ const styles = StyleSheet.create({
   chartGoalLabel: { fontSize: 9, color: '#4ADE80' },
 
   correlationCard: {
-    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.border,
     padding: 16, gap: 12, marginBottom: 14,
   },
-  correlationTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  correlationTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   correlationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
   correlationItem: { alignItems: 'center', gap: 4 },
   correlationScore: { fontSize: 28, fontWeight: '900' },
-  correlationLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '600', textAlign: 'center' },
-  correlationNote: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
+  correlationLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
+  correlationNote: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   tipIcon: { fontSize: 18, width: 26, textAlign: 'center' },
-  tipText: { flex: 1, fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-});
+  tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  });
+}

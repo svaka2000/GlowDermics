@@ -1,26 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar, Animated, Easing,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F',
-  card: '#13131A',
-  cardAlt: '#1A1A24',
-  border: '#2A2A3A',
-  primary: '#C4622D',
-  gold: '#D4A96A',
-  textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF',
-  textMuted: '#5A5A6E',
-  green: '#4ADE80',
-  red: '#F87171',
-  blue: '#60A5FA',
-  purple: '#6B85A8',
-  orange: '#FB923C',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration,
+    purple: c.darkCircles, orange: '#FB923C',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 interface Zone {
   id: string;
@@ -34,7 +30,8 @@ interface Zone {
   science: string;
 }
 
-const ZONES: Zone[] = [
+function buildZones(Colors: ShimColors): Zone[] {
+  return [
   {
     id: 'forehead',
     label: 'Forehead',
@@ -219,9 +216,14 @@ const ZONES: Zone[] = [
     tallowNote: 'Tallow is gentle enough for the under-eye area (no fragrance, no harsh actives). Apply a tiny amount PM for barrier support and hydration. Vitamin K in tallow may help with dark circles over time.',
     science: "Under-eye skin is the thinnest on the face (0.5mm vs 2mm elsewhere). Blood vessels showing through are the primary cause of dark circles. Sleep deprivation increases fluid retention and blood pooling. Vitamin K helps with vascular permeability — tallow's K2 content is a genuine advantage here.",
   },
-];
+  ];
+}
 
 export default function FaceMappingScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const ZONES = useMemo(() => buildZones(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
   const [detailTab, setDetailTab] = useState<'causes' | 'solutions' | 'science'>('causes');
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -374,28 +376,29 @@ export default function FaceMappingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
   intro: {
-    color: Colors.textSecondary, fontSize: 13, lineHeight: 20,
+    color: c.textSecondary, fontSize: 13, lineHeight: 20,
     paddingHorizontal: 16, paddingVertical: 12,
-    borderBottomWidth: 1, borderBottomColor: Colors.border, marginBottom: 12,
+    borderBottomWidth: 1, borderBottomColor: c.border, marginBottom: 12,
   },
   faceContainer: { alignItems: 'center', paddingVertical: 12 },
   faceShape: {
     width: 300, height: 420,
-    backgroundColor: Colors.cardAlt,
+    backgroundColor: c.cardAlt,
     borderRadius: 150,
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
     overflow: 'hidden',
   },
@@ -409,20 +412,20 @@ const styles = StyleSheet.create({
   zoneEmoji: { fontSize: 12 },
   zoneLabel: { fontSize: 9, fontWeight: '700' },
   orText: {
-    color: Colors.textMuted, fontSize: 12, fontWeight: '600',
+    color: c.textMuted, fontSize: 12, fontWeight: '600',
     paddingHorizontal: 16, marginBottom: 8,
   },
   zoneChip: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 12, paddingVertical: 8,
-    backgroundColor: Colors.card, borderRadius: 20,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.card, borderRadius: 20,
+    borderWidth: 1, borderColor: c.border,
   },
   zoneChipEmoji: { fontSize: 14 },
-  zoneChipLabel: { color: Colors.textSecondary, fontSize: 12, fontWeight: '600' },
+  zoneChipLabel: { color: c.textSecondary, fontSize: 12, fontWeight: '600' },
   detailCard: {
     marginHorizontal: 16, marginTop: 16,
-    backgroundColor: Colors.card, borderRadius: 16,
+    backgroundColor: c.card, borderRadius: 16,
     borderWidth: 1, padding: 16,
   },
   detailHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 },
@@ -431,25 +434,26 @@ const styles = StyleSheet.create({
   detailTabRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   detailTab: {
     flex: 1, paddingVertical: 8, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border,
+    borderWidth: 1, borderColor: c.border,
     alignItems: 'center',
   },
-  detailTabText: { color: Colors.textMuted, fontSize: 12, fontWeight: '600' },
+  detailTabText: { color: c.textMuted, fontSize: 12, fontWeight: '600' },
   listSection: {},
   listItem: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   listBullet: { fontSize: 14, fontWeight: '700', marginTop: 1 },
-  listText: { flex: 1, color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  listText: { flex: 1, color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   tallowNote: {
-    backgroundColor: Colors.primary + '15', borderRadius: 12, padding: 12,
-    borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 8,
+    backgroundColor: c.primary + '15', borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: c.primary + '44', marginTop: 8,
   },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 12, fontWeight: '700', marginBottom: 6 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  scienceText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
+  tallowNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 6 },
+  tallowNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 19 },
+  scienceText: { color: c.textSecondary, fontSize: 13, lineHeight: 21 },
   disclaimer: {
     marginHorizontal: 16, marginTop: 16,
-    backgroundColor: Colors.cardAlt, borderRadius: 12, padding: 12,
-    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.cardAlt, borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: c.border,
   },
-  disclaimerText: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, fontStyle: 'italic' },
-});
+  disclaimerText: { color: c.textMuted, fontSize: 12, lineHeight: 18, fontStyle: 'italic' },
+  });
+}

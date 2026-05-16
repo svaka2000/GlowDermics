@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import type { Palette } from '../../src/constants/colors';
+import { useColors } from '../../src/state/theme';
 
-const Colors = {
-  bg: '#0A0A0F', card: '#13131A', cardAlt: '#1A1A24', border: '#2A2A3A',
-  primary: '#C4622D', gold: '#D4A96A', textPrimary: '#FAF3E0',
-  textSecondary: '#9A9AAF', textMuted: '#5A5A6E',
-  green: '#4ADE80', red: '#F87171', blue: '#60A5FA', teal: '#2DD4BF',
-};
+function shimColors(c: Palette) {
+  return {
+    bg: c.bg, card: c.bgCard, cardAlt: c.bgElevated, border: c.border,
+    primary: c.primary, gold: c.gold, textPrimary: c.textPrimary,
+    textSecondary: c.textSecondary, textMuted: c.textMuted,
+    green: c.scoreGood, red: c.scorePoor, blue: c.hydration, teal: '#2DD4BF',
+  };
+}
+type ShimColors = ReturnType<typeof shimColors>;
 
 const TABS = ['EFA Science', 'Omega-3', 'Omega-6', 'The Ratio', 'Oils & Tallow'];
 
@@ -23,17 +28,21 @@ const EFA_BASICS = [
   { fact: 'Topical essential fatty acids restore the barrier directly', detail: 'Linoleic acid-rich oils (rosehip, sea buckthorn, hemp seed) applied topically supplement skin ceramide precursors directly in the stratum corneum. Studies show topical linoleic acid restores barrier function in deficiency states. Conversely, topical oleic acid (olive oil) at high concentrations can disrupt the barrier — demonstrating that not all fatty acids have the same topical effect.', icon: '💧' },
 ];
 
-const OMEGA3 = [
+function buildOmega3(Colors: ShimColors) {
+  return [
   { fa: 'ALA (Alpha-Linolenic Acid)', source: 'Flaxseed, chia seeds, walnuts, hemp seeds', chain: '18:3 n-3', role: 'Parent omega-3. Converted to EPA and DHA in the body but conversion efficiency is low (5–10% to EPA, <0.5% to DHA). Plant-based omega-3 — provides the precursor but requires conversion.', skinEffect: 'Indirect benefit through EPA/DHA conversion. Lower bioavailability compared to marine sources.', color: Colors.blue },
   { fa: 'EPA (Eicosapentaenoic Acid)', source: 'Fatty fish, fish oil, krill oil, algae oil', chain: '20:5 n-3', role: 'Primary anti-inflammatory omega-3. Competitively inhibits arachidonic acid from producing pro-inflammatory eicosanoids. Reduces PGE2 (prostaglandin E2) — the primary driver of acne-associated inflammation and eczema flares.', skinEffect: 'Reduces inflammatory acne, eczema, psoriasis. Clinical doses: 1–3g EPA daily.', color: Colors.teal },
   { fa: 'DHA (Docosahexaenoic Acid)', source: 'Fatty fish, fish oil, algae oil', chain: '22:6 n-3', role: 'Structural omega-3 — incorporated into cell membranes, especially in the brain and retina. In skin: maintains membrane fluidity, modulates skin immune function, and supports the ceramide precursor pool.', skinEffect: 'Improves cell membrane function, reduces TEWL. Found at significant concentration in the skin, particularly in sebaceous glands.', color: Colors.green },
-];
+  ];
+}
 
-const OMEGA6 = [
+function buildOmega6(Colors: ShimColors) {
+  return [
   { fa: 'Linoleic Acid (LA)', source: 'Sunflower seeds, safflower oil, hemp seed, evening primrose, rosehip oil', chain: '18:2 n-6', role: 'The only EFA essential for skin barrier function. Precursor to ceramide synthesis (acylceramide). Deficiency causes hyperkeratosis, increased TEWL, and impaired barrier. Most plant oils are high in LA.', skinEffect: 'Essential for barrier ceramide production. Topically effective for dry, barrier-compromised skin.', color: Colors.gold, critical: true },
   { fa: 'GLA (Gamma-Linolenic Acid)', source: 'Evening primrose oil (8–10%), borage oil (20–25%), hemp seed oil (3%)', chain: '18:3 n-6', role: 'Anti-inflammatory omega-6 (bypasses the pro-inflammatory DGLA→AA conversion pathway). Reduces PGE2. Studied for eczema, PMS-related skin worsening, and inflammatory skin conditions.', skinEffect: 'Evening primrose oil orally: reduces eczema severity in multiple trials. 500mg GLA daily.', color: Colors.primary },
   { fa: 'Arachidonic Acid (AA)', source: 'Meat, eggs, dairy — formed from LA in the body', chain: '20:4 n-6', role: 'Pro-inflammatory precursor. Forms prostaglandin E2, leukotriene B4, and thromboxane A2. These drive acne inflammation, eczema, and psoriasis. At appropriate levels, AA is needed for immune function — excess is pathological.', skinEffect: 'High AA diet → increased inflammatory skin conditions. Balance by increasing omega-3 intake (EPA competitively inhibits AA eicosanoids).', color: Colors.red, warning: 'Excess is pro-inflammatory' },
-];
+  ];
+}
 
 const RATIO_GUIDE = [
   { point: 'The ideal ratio for skin health', detail: 'Research suggests an omega-6:omega-3 ratio of 4:1 or lower for optimal anti-inflammatory outcomes. At this ratio, EPA from diet can competitively inhibit arachidonic acid eicosanoid production, shifting the balance toward anti-inflammatory signalling. The Mediterranean diet achieves approximately 4:1.' },
@@ -51,6 +60,11 @@ const OILS_TALLOW = [
 ];
 
 export default function EFAGuideScreen() {
+  const palette = useColors();
+  const Colors = useMemo(() => shimColors(palette), [palette]);
+  const OMEGA3 = useMemo(() => buildOmega3(Colors), [Colors]);
+  const OMEGA6 = useMemo(() => buildOmega6(Colors), [Colors]);
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFact, setExpandedFact] = useState<number | null>(null);
   const [expandedO3, setExpandedO3] = useState<number | null>(null);
@@ -206,41 +220,43 @@ export default function EFAGuideScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.bg },
+function makeStyles(c: ShimColors) {
+  return StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   backBtn: { padding: 4 },
-  backText: { color: Colors.primary, fontSize: 16 },
-  headerTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '700' },
-  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  heroTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
-  heroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  backText: { color: c.primary, fontSize: 16 },
+  headerTitle: { color: c.textPrimary, fontSize: 18, fontWeight: '700' },
+  hero: { paddingHorizontal: 16, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: c.border },
+  heroTitle: { color: c.textPrimary, fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  heroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  tabScroll: { maxHeight: 48, borderBottomWidth: 1, borderBottomColor: c.border },
   tabRow: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
-  tabActive: { backgroundColor: Colors.primary + '22', borderColor: Colors.primary },
-  tabText: { color: Colors.textMuted, fontSize: 13, fontWeight: '600' },
-  tabTextActive: { color: Colors.primary },
+  tab: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, backgroundColor: c.card, borderWidth: 1, borderColor: c.border },
+  tabActive: { backgroundColor: c.primary + '22', borderColor: c.primary },
+  tabText: { color: c.textMuted, fontSize: 13, fontWeight: '600' },
+  tabTextActive: { color: c.primary },
   scroll: { flex: 1 },
   scrollContent: { padding: 16 },
-  sectionNote: { color: Colors.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
-  card: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  sectionNote: { color: c.textMuted, fontSize: 12, lineHeight: 18, marginBottom: 12, fontStyle: 'italic' },
+  card: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
   cardRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   cardEmoji: { fontSize: 18, marginTop: 2 },
-  cardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
-  cardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  expandIcon: { color: Colors.textMuted, fontSize: 12, marginTop: 4 },
-  chainText: { color: Colors.textMuted, fontSize: 12 },
+  cardTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
+  cardDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  expandIcon: { color: c.textMuted, fontSize: 12, marginTop: 4 },
+  chainText: { color: c.textMuted, fontSize: 12 },
   criticalText: { fontSize: 12, fontWeight: '600', marginTop: 2 },
-  tapHint: { color: Colors.textMuted, fontSize: 11, marginTop: 4 },
-  skinEffectBlock: { marginTop: 10, backgroundColor: Colors.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: Colors.teal + '33' },
-  skinEffectLabel: { color: Colors.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  skinEffectText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  summaryCard: { backgroundColor: Colors.cardAlt, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginTop: 6 },
-  summaryTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 10 },
-  summaryText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 22 },
+  tapHint: { color: c.textMuted, fontSize: 11, marginTop: 4 },
+  skinEffectBlock: { marginTop: 10, backgroundColor: c.teal + '11', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: c.teal + '33' },
+  skinEffectLabel: { color: c.teal, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  skinEffectText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  summaryCard: { backgroundColor: c.cardAlt, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginTop: 6 },
+  summaryTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 10 },
+  summaryText: { color: c.textSecondary, fontSize: 13, lineHeight: 22 },
   oilTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  heroBadge: { color: Colors.primary, fontSize: 11, fontWeight: '700', backgroundColor: Colors.primary + '22', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  heroBadge: { color: c.primary, fontSize: 11, fontWeight: '700', backgroundColor: c.primary + '22', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
   oilFARow: { flexDirection: 'row', gap: 10, marginTop: 4 },
-  faLabel: { color: Colors.textMuted, fontSize: 11 },
-});
+  faLabel: { color: c.textMuted, fontSize: 11 },
+  });
+}
