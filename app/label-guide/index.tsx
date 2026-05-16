@@ -281,7 +281,7 @@ function makeStyles(c: Palette) {
   root: { flex: 1, backgroundColor: c.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
+    paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 18,
