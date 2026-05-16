@@ -72,10 +72,26 @@ const DIMENSIONS = [
 export default function Onboarding() {
   const isInvalidName = (s: string) => /[^a-zA-Z0-9 '\-.]/.test(s.trim());
 
+  // Page width is the *measured* width of the pager container (set via onLayout
+  // below). For a pagingEnabled ScrollView the page width MUST equal the
+  // ScrollView's own width, otherwise paging math breaks. We do NOT trust
+  // Dimensions/useWindowDimensions here — on react-native-web inside an iframe
+  // it reports a stale/too-large value, which caused page overflow.
   const winDims = useWindowDimensions();
-  const SCREEN_W = getEffectiveScreenW(winDims.width);
+  const [SCREEN_W, setScreenW] = useState(() => getEffectiveScreenW(winDims.width));
   const screenWSV = useSharedValue(SCREEN_W);
   useEffect(() => { screenWSV.value = SCREEN_W; }, [SCREEN_W]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onPagerLayout = (e: { nativeEvent: { layout: { width: number } } }) => {
+    const w = Math.round(e.nativeEvent.layout.width);
+    if (w > 0 && w !== SCREEN_W) {
+      // Re-anchor the scroll position to the current page at the new width.
+      setScreenW(w);
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ x: page * w, animated: false });
+      });
+    }
+  };
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -204,6 +220,7 @@ export default function Onboarding() {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={onScroll}
+            onLayout={onPagerLayout}
             scrollEventThrottle={16}
             keyboardShouldPersistTaps="handled"
             // Disable user swipe past unfilled name prompt — they must input first.
