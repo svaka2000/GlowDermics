@@ -212,7 +212,7 @@ export default function Settings() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Profile</Text>
-            <Pressable onPress={() => editing ? saveProfile() : setEditing(true)}>
+            <Pressable accessibilityRole="button" hitSlop={{ top: 14, bottom: 14, left: 12, right: 12 }} onPress={() => editing ? saveProfile() : setEditing(true)}>
               <Text style={styles.editBtn}>{editing ? 'Save' : 'Edit'}</Text>
             </Pressable>
           </View>
