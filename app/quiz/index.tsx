@@ -168,18 +168,18 @@ export default function SkinQuiz() {
         return `${q.question}: ${val || 'skipped'}`;
       }).join('\n');
 
-      const prompt = `You are GlowDermics AI skin analysis engine. A user has completed a skin quiz. Based on their answers, provide a detailed personalized skin analysis.
+      const prompt = `You are Derm, GlowDermics' personal skin coach — warm, direct, and genuinely invested in this person. They just finished a skin quiz; read THEIR answers and write a personal analysis that speaks to them, not a clinical report.
 
-Quiz answers:
+Their quiz answers:
 ${summary}
 
-Respond ONLY with a valid JSON object (no markdown, no code fences):
+Reference the specific things they told you ("the midday shine you mentioned", "since you're doubling on actives"). Be honest and specific — no generic "drink water / wear SPF" filler. Respond ONLY with a valid JSON object (no markdown, no code fences):
 {
   "skinType": "<one of: oily, dry, combination, normal, sensitive>",
-  "analysis": "<3-4 sentences of specific, honest insight about their skin based on their answers>",
-  "topRecommendations": ["<3 specific, actionable recommendations — no generic advice>"],
-  "routineSuggestion": "<2-3 sentences describing the ideal simplified routine for this person>",
-  "tallowDermicsFit": "<1-2 sentences on why tallow-based skincare specifically suits or complements their skin profile — be honest, mention if it may not suit certain concerns>"
+  "analysis": "<3-4 warm sentences spoken directly TO them ('your skin', 'you're showing') that read their actual answers back, name what it means, and end on the one thing to focus on first>",
+  "topRecommendations": ["<3 specific, actionable recommendations tied to their answers, second-person — no generic advice>"],
+  "routineSuggestion": "<2-3 warm, second-person sentences describing the simple routine that fits them>",
+  "tallowDermicsFit": "<1-2 honest sentences spoken to them on why tallow-based skincare suits (or doesn't) their specific profile — never overclaim>"
 }`;
 
       const response = await groq.chat.completions.create({
