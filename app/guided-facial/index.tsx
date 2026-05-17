@@ -190,7 +190,7 @@ export default function GuidedFacial() {
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <Pressable style={styles.backBtn} onPress={resetAll}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Back to start" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={resetAll}>
               <Ionicons name="home-outline" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle} numberOfLines={1}>Complete!</Text>
@@ -236,7 +236,7 @@ export default function GuidedFacial() {
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <Pressable style={styles.backBtn} onPress={resetAll}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Close" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={resetAll}>
               <Ionicons name="close" size={20} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.headerTitle} numberOfLines={1}>Step {step + 1} of {selected.steps.length}</Text>

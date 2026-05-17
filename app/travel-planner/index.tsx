@@ -146,7 +146,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -154,7 +154,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
             <Text style={styles.headerSub}>Adapt your routine for any climate</Text>
           </View>
           {plan && (
-            <Pressable style={styles.resetBtn} onPress={() => { setPlan(null); setDestination(''); setClimate(''); }}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Reset plan" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.resetBtn} onPress={() => { setPlan(null); setDestination(''); setClimate(''); }}>
               <Ionicons name="refresh-outline" size={16} color={colors.textMuted} />
             </Pressable>
           )}

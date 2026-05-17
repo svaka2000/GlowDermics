@@ -195,14 +195,14 @@ Return ONLY JSON:
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>Minimal Routine</Text>
             <Text style={styles.headerSub}>Maximum results, minimum steps</Text>
           </View>
-          <Pressable onPress={generateAI} style={styles.refreshBtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Regenerate with AI" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={generateAI} style={styles.refreshBtn}>
             {loading ? <ActivityIndicator size="small" color={colors.textMuted} /> : <Ionicons name="sparkles-outline" size={18} color={colors.textMuted} />}
           </Pressable>
         </View>
