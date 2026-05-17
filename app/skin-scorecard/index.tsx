@@ -293,7 +293,13 @@ export default function SkinScorecard() {
                 <ScoreRing score={analysis.scores.overall} size={110} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.gradeLabel}>{grade.label}</Text>
+                <Text
+                  style={styles.gradeLabel}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
+                  {grade.label}
+                </Text>
                 <Text style={styles.gradeSubtext}>
                   Better than{' '}
                   <Text style={{ fontWeight: '800' }}>
