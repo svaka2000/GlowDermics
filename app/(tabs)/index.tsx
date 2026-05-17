@@ -240,7 +240,7 @@ export default function Home() {
                     )}
                   </View>
                 </View>
-                <Pressable style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
+                <Pressable accessibilityRole="button" accessibilityLabel="Profile and settings" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.profileBtn} onPress={() => router.push('/(tabs)/settings')}>
                   <View style={styles.heroProfileAvatar}>
                     <Text style={styles.profileAvatarText}>{(authUser?.name || profile?.name || '?')[0]?.toUpperCase()}</Text>
                   </View>

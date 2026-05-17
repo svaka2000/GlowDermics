@@ -238,14 +238,14 @@ export default function SkinWeather() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>Skin Weather</Text>
             <Text style={styles.headerSub}>Daily conditions report</Text>
           </View>
-          <Pressable style={styles.backBtn} onPress={handleShare}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Share" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={handleShare}>
             <Ionicons name="share-outline" size={20} color={colors.primary} />
           </Pressable>
         </View>

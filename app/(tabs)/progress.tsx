@@ -209,7 +209,7 @@ export default function Progress() {
                   <Text style={styles.transformEyebrow}>YOUR TRANSFORMATION</Text>
                   <Text style={styles.transformTitle}>{daysTracked} Days of Progress</Text>
                 </View>
-                <Pressable style={styles.transformShareBtn} onPress={handleShareTransformation}>
+                <Pressable accessibilityRole="button" accessibilityLabel="Share transformation" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.transformShareBtn} onPress={handleShareTransformation}>
                   <Ionicons name="share-outline" size={16} color={colors.primary} />
                 </Pressable>
               </View>
