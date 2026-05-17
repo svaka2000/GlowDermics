@@ -47,6 +47,8 @@ export default function IdentityScreen() {
       <SafeAreaView style={styles.safe} edges={['top']}>
         <View style={styles.header}>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
             style={styles.backBtn}
             hitSlop={8}
@@ -55,6 +57,8 @@ export default function IdentityScreen() {
           </Pressable>
           <Text style={styles.headerTitle} numberOfLines={1}>Skin Identity</Text>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Share"
             onPress={onShare}
             style={styles.shareBtn}
             hitSlop={8}

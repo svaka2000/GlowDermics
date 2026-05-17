@@ -39,7 +39,7 @@ export default function ArticleDetail() {
     return (
       <View style={styles.root}>
         <SafeAreaView edges={['top']}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -77,7 +77,7 @@ export default function ArticleDetail() {
             start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
           />
           <SafeAreaView edges={['top']}>
-            <Pressable style={styles.backBtnHero} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtnHero} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
           </SafeAreaView>
