@@ -184,7 +184,7 @@ export default function ActiveRotation() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -228,7 +228,7 @@ export default function ActiveRotation() {
                       {active.sensitivity === 'low' ? 'Gentle' : active.sensitivity === 'medium' ? 'Medium' : 'Strong'}
                     </Text>
                   </View>
-                  <Pressable onPress={() => setExpandedActive(isExpanded ? null : active.id)} style={{ padding: 4 }}>
+                  <Pressable accessibilityRole="button" accessibilityLabel={isExpanded ? 'Collapse' : 'Expand'} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => setExpandedActive(isExpanded ? null : active.id)} style={{ padding: 4 }}>
                     <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={14} color={colors.textMuted} />
                   </Pressable>
                   <Ionicons

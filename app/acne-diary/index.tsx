@@ -136,7 +136,7 @@ export default function AcneDiary() {
           opacity: headerAnim,
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -163,11 +163,11 @@ export default function AcneDiary() {
 
           <Text style={styles.todayQ}>How many new breakouts today?</Text>
           <View style={styles.countRow}>
-            <Pressable style={styles.countBtn} onPress={() => { setTodayCount(Math.max(0, todayCount - 1)); setSaved(false); }}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Decrease count" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.countBtn} onPress={() => { setTodayCount(Math.max(0, todayCount - 1)); setSaved(false); }}>
               <Ionicons name="remove" size={22} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.countNum}>{todayCount}</Text>
-            <Pressable style={styles.countBtn} onPress={() => { setTodayCount(todayCount + 1); setSaved(false); }}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Increase count" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.countBtn} onPress={() => { setTodayCount(todayCount + 1); setSaved(false); }}>
               <Ionicons name="add" size={22} color={colors.textPrimary} />
             </Pressable>
             <Pressable style={[styles.countBtn, { backgroundColor: 'rgba(248,113,113,0.15)' }]} onPress={() => { setTodayCount(10); setSaved(false); }}>

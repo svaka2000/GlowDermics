@@ -139,14 +139,14 @@ export default function ExpiryTracker() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>Expiry Tracker</Text>
             <Text style={styles.headerSub}>Know when to toss your products</Text>
           </View>
-          <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Add product" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.addBtn} onPress={() => setAdding(true)}>
             <Ionicons name="add" size={20} color={colors.white} />
           </Pressable>
         </View>
@@ -289,7 +289,7 @@ export default function ExpiryTracker() {
                   <Text style={styles.productName}>{product.name}</Text>
                   <Text style={styles.productCategory}>{product.category}</Text>
                 </View>
-                <Pressable onPress={() => deleteProduct(product.id)}>
+                <Pressable accessibilityRole="button" accessibilityLabel="Delete product" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => deleteProduct(product.id)}>
                   <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                 </Pressable>
               </View>

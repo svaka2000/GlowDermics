@@ -132,7 +132,7 @@ Return ONLY valid JSON (no markdown):
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -140,7 +140,7 @@ Return ONLY valid JSON (no markdown):
             <Text style={styles.headerSub}>Nutrients for your skin</Text>
           </View>
           {guide && (
-            <Pressable style={styles.backBtn} onPress={() => { AsyncStorage.removeItem(CACHE_KEY); setGuide(null); generate(); }}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Refresh guide" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => { AsyncStorage.removeItem(CACHE_KEY); setGuide(null); generate(); }}>
               <Ionicons name="refresh-outline" size={20} color={colors.primary} />
             </Pressable>
           )}

@@ -181,6 +181,9 @@ export default function UVLog() {
               transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
             }]}>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={styles.heroBackBtn}
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
