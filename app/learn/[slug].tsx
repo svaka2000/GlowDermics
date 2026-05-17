@@ -210,7 +210,8 @@ function makeStyles(c: Palette) {
   heroFade: { ...StyleSheet.absoluteFillObject },
   backBtnHero: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: c.bgElevated,
+    borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
     marginLeft: 16,
   },
