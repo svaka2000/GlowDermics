@@ -305,7 +305,9 @@ export default function Coach() {
                 Hi{profile?.name ? `, ${profile.name}` : ''}!
               </Text>
               <Text style={styles.introSub}>
-                I'm Derm — your AI skin coach. Ask me anything about skincare, ingredients, your routine, or what your scan results mean.
+                {analysis
+                  ? `I'm Derm — your personal skin coach. I've got your latest scan in front of me: ${analysis.scores.overall}/100, ${analysis.skinType} skin${analysis.concerns?.length ? `, with ${analysis.concerns.slice(0, 2).join(' & ')} as your main levers` : ''}. Ask me anything — I'll tailor it to you.`
+                  : "I'm Derm — your personal skin coach. Ask me anything about skincare, ingredients, or your routine. Run a quick scan and I'll tailor everything to your exact skin."}
               </Text>
               <View style={styles.starters}>
                 {STARTER_PROMPTS.map(p => (
