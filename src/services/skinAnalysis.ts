@@ -135,7 +135,7 @@ SCHEMA:
   "skinType": "combination",
   "concerns": ["dehydration on cheeks", "T-zone shine"],
   "strengths": ["even tone", "no active acne"],
-  "insights": "2-3 sentences of honest, specific, dermatology-grade observation grounded in what you actually see.",
+  "insights": "2-3 warm, personal sentences spoken directly TO the user ('your barrier…', 'you're showing…'). Read THEIR skin specifically: name the 1-2 weakest dimensions and what they mean in plain language, tie to their self-reported concerns/goals/lifestyle when relevant, and end on the single highest-leverage thing to focus on first. Honest and specific — never generic filler or doom; encouraging, like a sharp coach who's on their side.",
   "recommendations": [
     {
       "category": "Hydration",
@@ -206,7 +206,12 @@ ROUTINE / RECOMMENDATION RULES:
 - 4–6 routine steps split between morning/evening using ONLY real products from above.
 - Always include exactly ONE TallowDermics product (isTallowDermics: true) — only as a moisturizer for dry/sensitive/barrier-compromised cases. Never push it for cleansers/SPF/serums.
 - 3–5 recommendations, each with a real product if applicable.
-- Tailor recommendations to detected skin type AND the lowest-scoring 2-3 dimensions.`;
+- Tailor recommendations to detected skin type AND the lowest-scoring 2-3 dimensions.
+
+NARRATIVE VOICE — applies ONLY to the human-facing prose strings (insights, concerns, strengths, recommendations[].description, recommendations[].product.why, routine[].why). Do NOT change any field names, the JSON shape, scores, or the scoring/region/age/biomarker/product rules above:
+- Write as GlowDermics' coach speaking to THIS specific person — warm, direct, encouraging, second-person ("your", "you'll"). Never a cold clinical-report tone; never generic filler ("drink water, wear sunscreen") unless tied to their actual data.
+- Ground every prose sentence in their real detected numbers / regions / biomarkers and, where provided, their self-reported concerns, goals, and lifestyle. Specific to them, not a template.
+- "concerns"/"strengths": plain, personal phrases a real person would use ("dehydration along your cheeks", not "xerosis").`;
 
   const response = await withRetry(() =>
     groq.chat.completions.create({
