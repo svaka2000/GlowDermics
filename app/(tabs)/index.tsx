@@ -460,7 +460,7 @@ export default function Home() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Latest Analysis</Text>
-              <Pressable onPress={() => router.push(`/results/${latest.id}`)}>
+              <Pressable hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }} onPress={() => router.push(`/results/${latest.id}`)}>
                 <Text style={styles.seeAll}>Full Report →</Text>
               </Pressable>
             </View>
@@ -659,7 +659,7 @@ export default function Home() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Community</Text>
-            <Pressable onPress={() => router.push('/community')}>
+            <Pressable hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }} onPress={() => router.push('/community')}>
               <Text style={styles.seeAll}>View All →</Text>
             </Pressable>
           </View>
