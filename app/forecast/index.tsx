@@ -96,16 +96,16 @@ export default function Forecast() {
       const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
       const trend = scores.length >= 2 ? scores[0] - scores[scores.length - 1] : 0;
 
-      const prompt = `You are GlowDermics AI, an expert skin health forecasting engine for TallowDermics — a minimal, ancestral skincare brand.
+      const prompt = `You are Derm, GlowDermics' personal skin coach (TallowDermics — a minimal, ancestral skincare brand). You're forecasting THIS person's next 90 days and talking straight to them — warm, specific, second person ("your skin", "you'll", "if you keep…"). Ground every line in their ACTUAL numbers below, be honest about what's holding them back, and make the path forward feel achievable, not clinical. No "N/A"/"no data" hedging — if something isn't logged yet, speak to it warmly and move on.
 
 User data:
-- Current overall skin score: ${history[0]?.overallScore ?? 'N/A'}/100
+- Current overall skin score: ${history[0]?.overallScore ?? 'no scan logged yet'}/100
 - Scan history (newest first): ${scores.join(', ')} (${scores.length} scans)
 - Score trend over scans: ${trend >= 0 ? '+' : ''}${trend} points
 - Average score: ${avgScore}
-- Skin type: ${profile?.skinType || 'unknown'}
-- Concerns: ${profile?.primaryConcerns?.join(', ') || 'none listed'}
-- Goals: ${profile?.goals?.join(', ') || 'none listed'}
+- Skin type: ${profile?.skinType || 'not set yet'}
+- Concerns: ${profile?.primaryConcerns?.join(', ') || 'none set yet'}
+- Goals: ${profile?.goals?.join(', ') || 'none set yet'}
 - Lifestyle: sleep ${profile?.lifestyle?.sleepHours ?? 7}hrs, water ${profile?.lifestyle?.waterIntake ?? 'moderate'}, diet ${profile?.lifestyle?.diet ?? 'balanced'}
 - Routine consistency (last 14 days): ${routineConsistency}% (${routineDays}/14 days)
 - Daily habit score (last 7 days average): ${avgHabitScore}%
@@ -120,17 +120,19 @@ Respond ONLY with valid JSON (no markdown, no code fences):
   "score60": <realistic 60-day projection, 0-100>,
   "score90": <realistic 90-day projection, 0-100>,
   "trajectory": "<improving|declining|stable>",
-  "keyDrivers": ["<top 3 positive drivers for their score — what's working>"],
-  "risks": ["<top 3 risks — what could hold them back>"],
+  "keyDrivers": ["<top 3 things YOU'RE doing that are working — second person, name the real number/habit behind each>"],
+  "risks": ["<top 3 honest things that could hold YOUR skin back — second person, specific to their data, kind but straight>"],
   "actions": [
-    {"action": "<specific high-impact action>", "impact": "<high|medium|low>", "timeframe": "<e.g. 2 weeks>"},
-    {"action": "<second action>", "impact": "<high|medium|low>", "timeframe": "<e.g. 4 weeks>"},
-    {"action": "<third action>", "impact": "<high|medium|low>", "timeframe": "<e.g. 4-6 weeks>"},
-    {"action": "<fourth action>", "impact": "<high|medium|low>", "timeframe": "<e.g. 6-8 weeks>"}
+    {"action": "<specific high-impact thing YOU should do, spoken to them ('start…', 'swap…')>", "impact": "<high|medium|low>", "timeframe": "<e.g. 2 weeks>"},
+    {"action": "<second action, second person, concrete>", "impact": "<high|medium|low>", "timeframe": "<e.g. 4 weeks>"},
+    {"action": "<third action, second person, concrete>", "impact": "<high|medium|low>", "timeframe": "<e.g. 4-6 weeks>"},
+    {"action": "<fourth action, second person, concrete>", "impact": "<high|medium|low>", "timeframe": "<e.g. 6-8 weeks>"}
   ],
-  "summary": "<2-3 sentence honest, motivating assessment of their skin trajectory>",
-  "tallowNote": "<1 sentence on how TallowDermics tallow balm fits into their specific journey>"
-}`;
+  "summary": "<2-3 warm sentences spoken directly TO them ('your skin', 'you') — an honest, motivating read of where their trajectory is heading and the one lever that matters most, citing their real numbers>",
+  "tallowNote": "<1 warm second-person sentence on how TallowDermics tallow balm fits THEIR specific journey — honest, not a hard sell>"
+}
+
+VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].action, summary, tallowNote); NOT to currentScore/score30/score60/score90 numbers, the trajectory/impact enums, or the timeframe labels, which stay exactly as specified: write every prose string in warm second person ("your skin", "you", "you'll"), grounded in the SPECIFIC numbers above — never generic, never "N/A"/"no data" hedging. Be honest about the risks but always make the path forward feel achievable. Keep every JSON field name, the shape, and the enum/number rules above EXACTLY.`;
 
       const response = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
