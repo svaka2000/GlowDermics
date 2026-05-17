@@ -158,11 +158,11 @@ export default function Results() {
       )}
       <SafeAreaView edges={['top']} style={styles.safeTop}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle} numberOfLines={1}>Skin Report</Text>
-          <Pressable style={styles.shareBtn} onPress={handleShare}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Share report" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.shareBtn} onPress={handleShare}>
             <Ionicons name="share-outline" size={20} color={colors.primary} />
           </Pressable>
         </View>
