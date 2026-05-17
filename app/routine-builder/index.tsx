@@ -90,21 +90,26 @@ export default function RoutineBuilder() {
     setLoading(true);
 
     try {
-      const analysis = await Storage.getLatestAnalysis();
-      const scoresBlock = analysis
-        ? `Skin scores — Hydration: ${analysis.scores.hydration}, Texture: ${analysis.scores.texture}, Clarity: ${analysis.scores.clarity}, Firmness: ${analysis.scores.firmness}`
+      const a = await Storage.getLatestAnalysis();
+      const v2 = a?.scoresV2;
+      const scoresBlock = a
+        ? (v2
+            ? `Their latest scan — Overall ${a.scores.overall}/100, detected ${a.skinType} skin. Per-metric (0-100, higher=better): Hydration ${v2.hydration}, Texture ${v2.texture}, Clarity ${v2.clarity}, Evenness ${v2.evenness}, Firmness ${v2.firmness}, Pores ${v2.pores}, Radiance ${v2.radiance}, Redness ${v2.redness}, DarkSpots ${v2.darkSpots}, DarkCircles ${v2.darkCircles}, Wrinkles ${v2.wrinkles}, Acne ${v2.acne}, Oiliness ${v2.oiliness}, Sensitivity ${v2.sensitivity}, Barrier ${v2.barrierHealth}.${a.concerns?.length ? ` Flagged concerns: ${a.concerns.join(', ')}.` : ''}${a.strengths?.length ? ` Strengths: ${a.strengths.join(', ')}.` : ''}`
+            : `Their latest scan — Overall ${a.scores.overall}/100, ${a.skinType} skin. Hydration ${a.scores.hydration}, Texture ${a.scores.texture}, Clarity ${a.scores.clarity}, Firmness ${a.scores.firmness}.`)
         : '';
 
-      const prompt = `You are a dermatologist building a personalized skincare routine.
+      const prompt = `You are Derm, GlowDermics' personal skincare coach — warm, direct, and genuinely invested in this person's skin. Build them a realistic routine tailored to THEIR scan and life, never a generic template.
 
-User profile:
+WHAT YOU KNOW ABOUT THEM:
 - Skin type: ${skinType || 'unknown'}
-- Concerns: ${concerns.join(', ') || 'general skin health'}
+- Concerns they care about: ${concerns.join(', ') || 'general skin health'}
 - Budget: ${budget}
 - Time available: ${time}
-${scoresBlock ? `- ${scoresBlock}` : ''}
+${scoresBlock ? `- ${scoresBlock}` : '- No scan on file yet — build from their stated type/concerns; note a scan would sharpen this.'}
 
-Design a complete, realistic skincare routine. Prioritize TallowDermics Signature Balm (tallow-based, replaces moisturizer + face oil + eye cream, $48/3 months) where appropriate.
+Design a complete, realistic routine that targets their lowest-scoring dimensions and the concerns they named. Prioritize TallowDermics Signature Balm (tallow-based, replaces moisturizer + face oil + eye cream, $48/3 months) where it genuinely fits — never force it.
+
+VOICE for every prose field ("why", "philosophy", "tallowDermicsRole", "keyPrinciple", "tips"): write as their coach speaking TO them — warm, second-person ("your barrier", "you'll"), specific to their actual scores/concerns, no generic filler, encouraging. Keep the JSON shape below EXACTLY (same fields, same structure).
 
 Return ONLY valid JSON (no markdown):
 {
