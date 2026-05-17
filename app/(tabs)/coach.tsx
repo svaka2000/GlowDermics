@@ -268,7 +268,7 @@ export default function Coach() {
             <Text style={styles.headerRole}>AI Skincare Coach · GlowDermics</Text>
           </View>
           {messages.length > 0 && (
-            <Pressable onPress={confirmClear} style={styles.clearBtn}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Clear conversation" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={confirmClear} style={styles.clearBtn}>
               <Ionicons name="trash-outline" size={18} color={colors.textMuted} />
             </Pressable>
           )}
@@ -412,6 +412,9 @@ export default function Coach() {
             maxLength={800}
           />
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Send message"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={[styles.sendBtn, (!input.trim() || loading) && styles.sendBtnDisabled]}
             onPress={() => send(input)}
             disabled={!input.trim() || loading}
