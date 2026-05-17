@@ -213,7 +213,11 @@ function makeStyles(c: Palette) {
     backgroundColor: c.bgElevated,
     borderWidth: 1, borderColor: c.border,
     alignItems: 'center', justifyContent: 'center',
-    marginLeft: 16,
+    // SafeAreaView edges={['top']} returns 0 inset on web, so without a
+    // top margin this hero back button jams against the very top edge
+    // (and under the notch). marginTop matches the sibling backBtn's
+    // margin:16; harmless on native where SafeAreaView already insets.
+    marginLeft: 16, marginTop: 16,
   },
   backBtn: { margin: 16, width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
   heroContent: { alignItems: 'center', justifyContent: 'center', flex: 1 },
