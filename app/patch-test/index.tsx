@@ -156,14 +156,14 @@ export default function PatchTestTracker() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>Patch Test Tracker</Text>
             <Text style={styles.headerSub}>Test new products safely</Text>
           </View>
-          <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Add patch test" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.addBtn} onPress={() => setAdding(true)}>
             <Ionicons name="add" size={20} color={colors.white} />
           </Pressable>
         </View>
@@ -294,7 +294,7 @@ export default function PatchTestTracker() {
                       <Text style={styles.testName}>{test.productName}</Text>
                       <Text style={styles.testMeta}>{test.testZone} · Started {Math.floor(hours)}h ago</Text>
                     </View>
-                    <Pressable onPress={() => deleteTest(test.id)}>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Delete test" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => deleteTest(test.id)}>
                       <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                     </Pressable>
                   </View>
