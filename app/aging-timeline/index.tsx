@@ -187,7 +187,7 @@ export default function AgingTimeline() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.back}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.back}>
           <Ionicons name="chevron-back" size={24} color={Colors.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle} numberOfLines={1}>Skin Aging Timeline</Text>

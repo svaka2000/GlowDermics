@@ -41,7 +41,7 @@ export default function Learn() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -65,7 +65,7 @@ export default function Learn() {
             onChangeText={setSearch}
           />
           {search ? (
-            <Pressable onPress={() => setSearch('')}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Clear search" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => setSearch('')}>
               <Ionicons name="close-circle" size={16} color={colors.textMuted} />
             </Pressable>
           ) : null}
