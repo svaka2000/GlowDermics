@@ -152,7 +152,7 @@ export default function CoachChat() {
       />
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View style={styles.headerCenter}>
@@ -165,7 +165,7 @@ export default function CoachChat() {
               <Text style={styles.headerSub}>AI Skincare Advisor</Text>
             </View>
           </View>
-          <Pressable style={styles.clearBtn} onPress={clearChat}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Clear chat" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.clearBtn} onPress={clearChat}>
             <Ionicons name="refresh-outline" size={18} color={colors.textMuted} />
           </Pressable>
         </View>
@@ -269,6 +269,9 @@ export default function CoachChat() {
               returnKeyType="send"
             />
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Send message"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={[styles.sendBtn, (!input.trim() || loading) && { opacity: 0.4 }]}
               onPress={() => sendMessage()}
               disabled={!input.trim() || loading}

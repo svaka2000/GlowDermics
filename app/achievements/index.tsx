@@ -61,6 +61,8 @@ export default function AchievementsScreen() {
       <SafeAreaView style={styles.safe} edges={['top']}>
         <View style={styles.header}>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
             style={styles.backBtn}
             hitSlop={8}

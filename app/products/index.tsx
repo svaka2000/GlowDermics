@@ -123,14 +123,14 @@ export default function ProductShelf() {
       }}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
               <Text style={styles.headerTitle} numberOfLines={1}>My Shelf</Text>
               <Text style={styles.headerSub}>{shelf.length} product{shelf.length !== 1 ? 's' : ''} saved</Text>
             </View>
-            <Pressable style={styles.addBtn} onPress={() => setAdding(!adding)}>
+            <Pressable accessibilityRole="button" accessibilityLabel={adding ? 'Close' : 'Add product'} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.addBtn} onPress={() => setAdding(!adding)}>
               <Ionicons name={adding ? 'close' : 'add'} size={22} color={colors.white} />
             </Pressable>
           </View>
@@ -269,7 +269,7 @@ export default function ProductShelf() {
                     <View style={[styles.ratingBadge, { backgroundColor: r.color + '18' }]}>
                       <Text style={[styles.ratingBadgeText, { color: r.color }]}>{r.label}</Text>
                     </View>
-                    <Pressable onPress={() => deleteProduct(product.id)} style={styles.deleteBtn}>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Delete product" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => deleteProduct(product.id)} style={styles.deleteBtn}>
                       <Ionicons name="trash-outline" size={14} color={colors.textMuted} />
                     </Pressable>
                   </View>
