@@ -123,7 +123,7 @@ export default function Journal() {
           opacity: headerAnim,
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }],
         }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -131,6 +131,9 @@ export default function Journal() {
             <Text style={styles.headerSub}>{entries.length} entries</Text>
           </View>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={writing ? 'Close' : 'New entry'}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={styles.addBtn}
             onPress={() => writing ? resetForm() : openCompose()}
           >
@@ -251,7 +254,7 @@ export default function Journal() {
                         <Text style={styles.moodBadgeEmoji}>{m.emoji}</Text>
                         <Text style={[styles.moodBadgeLabel, { color: m.color }]}>{m.label}</Text>
                       </View>
-                      <Pressable onPress={() => deleteEntry(entry.id)} style={styles.deleteBtn}>
+                      <Pressable accessibilityRole="button" accessibilityLabel="Delete entry" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => deleteEntry(entry.id)} style={styles.deleteBtn}>
                         <Ionicons name="trash-outline" size={14} color={colors.textMuted} />
                       </Pressable>
                     </View>

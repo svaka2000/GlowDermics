@@ -163,11 +163,11 @@ export default function Goals() {
           opacity: headerAnim,
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
         }]}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle} numberOfLines={1}>Skin Goals</Text>
-          <Pressable onPress={() => setShowAdd(true)} style={styles.addBtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Add goal" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => setShowAdd(true)} style={styles.addBtn}>
             <Ionicons name="add" size={24} color={colors.primary} />
           </Pressable>
         </Animated.View>
@@ -283,10 +283,10 @@ export default function Goals() {
                     </View>
                   </View>
                   <View style={styles.goalActions}>
-                    <Pressable style={styles.goalActionBtn} onPress={() => toggleComplete(goal.id)}>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Mark goal complete" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.goalActionBtn} onPress={() => toggleComplete(goal.id)}>
                       <Ionicons name="checkmark-circle-outline" size={22} color={colors.scoreExcellent} />
                     </Pressable>
-                    <Pressable style={styles.goalActionBtn} onPress={() => deleteGoal(goal.id)}>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Delete goal" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.goalActionBtn} onPress={() => deleteGoal(goal.id)}>
                       <Ionicons name="trash-outline" size={18} color={colors.textMuted} />
                     </Pressable>
                   </View>
@@ -315,7 +315,7 @@ export default function Goals() {
                       Completed {new Date(goal.completedDate!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </Text>
                   </View>
-                  <Pressable onPress={() => deleteGoal(goal.id)}>
+                  <Pressable accessibilityRole="button" accessibilityLabel="Delete goal" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={() => deleteGoal(goal.id)}>
                     <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
                   </Pressable>
                 </View>

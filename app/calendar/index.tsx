@@ -141,7 +141,7 @@ export default function SkinCalendar() {
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -174,11 +174,11 @@ export default function SkinCalendar() {
         <View style={styles.calendarCard}>
           {/* Month nav */}
           <View style={styles.monthNav}>
-            <Pressable style={styles.monthBtn} onPress={prevMonth}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Previous month" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.monthBtn} onPress={prevMonth}>
               <Ionicons name="chevron-back" size={18} color={colors.textPrimary} />
             </Pressable>
             <Text style={styles.monthTitle}>{MONTH_NAMES[viewDate.getMonth()]} {viewDate.getFullYear()}</Text>
-            <Pressable style={styles.monthBtn} onPress={nextMonth}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Next month" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.monthBtn} onPress={nextMonth}>
               <Ionicons name="chevron-forward" size={18} color={colors.textPrimary} />
             </Pressable>
           </View>

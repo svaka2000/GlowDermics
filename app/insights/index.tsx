@@ -72,6 +72,9 @@ export default function InsightsHub() {
           <SafeAreaView edges={['top']}>
             <View style={styles.heroHeader}>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={styles.heroBackBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
