@@ -14,7 +14,7 @@
  *
  * Tap-anywhere dismisses. Auto-dismisses after 5s if untouched.
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -96,6 +96,15 @@ export function ScanCelebration({
   const personaOp = useSharedValue(0);
   const personaTy = useSharedValue(20);
   const [shown, setShown] = useState(0);
+  // RN-web replays the in-flight click/pointerup from whatever press
+  // triggered navigation onto this freshly-mounted full-screen Pressable
+  // (classic web click-through), instantly dismissing the celebration so
+  // the user never sees it. Ignore any dismiss press until the entrance
+  // animation has played; real taps after that still dismiss.
+  const mountedAt = useRef(Date.now());
+  const tryDismiss = () => {
+    if (Date.now() - mountedAt.current >= 800) onDismiss();
+  };
 
   useEffect(() => {
     overlayOpacity.value = withTiming(1, { duration: 220 });
@@ -148,7 +157,7 @@ export function ScanCelebration({
         style={StyleSheet.absoluteFillObject}
       />
 
-      <Pressable style={StyleSheet.absoluteFillObject} onPress={onDismiss} />
+      <Pressable style={StyleSheet.absoluteFillObject} onPress={tryDismiss} />
 
       {/* Confetti — origin is centered just above the score */}
       <View style={styles.confettiOrigin}>

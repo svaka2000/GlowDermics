@@ -62,7 +62,8 @@ export default function Results() {
   const [tab, setTab] = useState<'scores' | 'routine' | 'recommendations'>('scores');
   const [selectedRegion, setSelectedRegion] = useState<FaceRegion | null>(null);
   const [identity, setIdentity] = useState<SkinIdentity | null>(null);
-  const [showCelebration, setShowCelebration] = useState(params.celebrate === '1');
+  const [showCelebration, setShowCelebration] = useState(false);
+  const celebratedRef = useRef(false);
 
   // Entrance animations
   const heroAnim = useRef(new Animated.Value(0)).current;
@@ -80,10 +81,6 @@ export default function Results() {
       setPrevAnalysis(prev);
       setEngineReport(report);
       setLoading(false);
-      // Load identity in parallel for the celebration overlay (only if celebrating)
-      if (params.celebrate === '1') {
-        runSkinIdentity().then(setIdentity).catch(() => {});
-      }
       Animated.stagger(120, [
         Animated.timing(heroAnim, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
         Animated.spring(scoreRingScale, { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
@@ -91,6 +88,19 @@ export default function Results() {
       ]).start();
     })();
   }, [id]);
+
+  // `celebrate` arrives via the query string, which expo-router hydrates
+  // AFTER the first render on web — so a useState initializer reading
+  // params.celebrate misses it and the post-scan celebration never shows.
+  // Gate it on an effect instead; the ref fires it at most once so a
+  // dismiss sticks even while ?celebrate=1 remains in the URL.
+  useEffect(() => {
+    if (params.celebrate === '1' && !celebratedRef.current) {
+      celebratedRef.current = true;
+      setShowCelebration(true);
+      runSkinIdentity().then(setIdentity).catch(() => {});
+    }
+  }, [params.celebrate]);
 
   if (loading) {
     return (
