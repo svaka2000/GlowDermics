@@ -362,7 +362,12 @@ export function RegionalSkinMap({
       {zones.map(z => z.pressable).filter(Boolean)}
 
       {/* Legend */}
-      <View style={styles.legend}>
+      <View
+        style={[
+          styles.legend,
+          { backgroundColor: colors.bgCard, borderColor: colors.border },
+        ]}
+      >
         {SEVERITIES.map(sev => (
           <View key={sev} style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: SEVERITY_SWATCH[sev] }]} />
