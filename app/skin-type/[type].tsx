@@ -104,7 +104,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     return (
       <View style={styles.root}>
         <SafeAreaView>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -120,7 +120,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     return (
       <View style={styles.root}>
         <SafeAreaView>
-          <Pressable style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={[styles.backBtn, { margin: 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
         </SafeAreaView>
@@ -139,7 +139,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <View style={styles.header}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle} numberOfLines={1}>Skin Type Guide</Text>

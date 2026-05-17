@@ -195,6 +195,9 @@ export default function IngredientConflictsScreen() {
         <GlassHero height={130} tint={colors.primary} style={styles.heroWrap}>
           <Animated.View style={[headerStyle, styles.heroHeader]}>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={styles.backBtn}
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
