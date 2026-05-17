@@ -205,7 +205,7 @@ Return ONLY valid JSON (no markdown, no explanation):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Age</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Age</Text>
             <Text style={styles.headerSub}>Biological vs Chronological</Text>
           </View>
           {result ? (

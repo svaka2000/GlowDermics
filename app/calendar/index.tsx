@@ -145,7 +145,7 @@ export default function SkinCalendar() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Calendar</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Calendar</Text>
             <Text style={styles.headerSub}>Your monthly skin journey</Text>
           </View>
           <View style={{ width: 36 }} />

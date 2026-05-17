@@ -243,7 +243,7 @@ export default function FaceMappingScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Face Mapping</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Face Mapping</Text>
         <View style={{ width: 60 }} />
       </Animated.View>
 

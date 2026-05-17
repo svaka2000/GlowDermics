@@ -51,7 +51,7 @@ export default function SevenDayForecastScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>7-Day Forecast</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>7-Day Forecast</Text>
           <View style={{ width: 40 }} />
         </View>
 

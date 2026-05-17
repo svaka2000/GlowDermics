@@ -189,7 +189,7 @@ export default function BaumannTest() {
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Baumann Skin Type</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Baumann Skin Type</Text>
             <View style={{ width: 36 }} />
           </Animated.View>
         </SafeAreaView>
@@ -246,7 +246,7 @@ export default function BaumannTest() {
             <Pressable style={styles.backBtn} onPress={restart}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Question {currentQ + 1} of {QUESTIONS.length}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Question {currentQ + 1} of {QUESTIONS.length}</Text>
             <View style={{ width: 36 }} />
           </View>
           <View style={styles.progressBg}>
@@ -289,7 +289,7 @@ export default function BaumannTest() {
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Your Result</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Your Result</Text>
           <Pressable onPress={restart}>
             <Text style={styles.retakeText}>Retake</Text>
           </Pressable>

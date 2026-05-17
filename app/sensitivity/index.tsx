@@ -171,7 +171,7 @@ Only flag ingredients that have legitimate scientific concern. If the formula is
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Sensitivity Test</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Sensitivity Test</Text>
             <Text style={styles.headerSub}>Scan for irritants & allergens</Text>
           </View>
           <View style={{ width: 36 }} />

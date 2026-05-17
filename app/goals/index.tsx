@@ -166,7 +166,7 @@ export default function Goals() {
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Goals</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Goals</Text>
           <Pressable onPress={() => setShowAdd(true)} style={styles.addBtn}>
             <Ionicons name="add" size={24} color={colors.primary} />
           </Pressable>

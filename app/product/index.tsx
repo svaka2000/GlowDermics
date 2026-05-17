@@ -95,7 +95,7 @@ export default function ProductShowcase() {
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>The Formula</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>The Formula</Text>
           <View style={{ width: 40 }} />
         </View>
       </SafeAreaView>

@@ -88,7 +88,7 @@ export default function Glossary() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Glossary</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Glossary</Text>
             <Text style={styles.headerSub}>{TERMS.length} terms explained</Text>
           </View>
           <View style={{ width: 36 }} />

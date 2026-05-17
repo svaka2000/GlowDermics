@@ -68,7 +68,7 @@ export default function Dupes() {
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Dupe Finder</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Dupe Finder</Text>
           <View style={{ width: 40 }} />
         </Animated.View>
       </SafeAreaView>
@@ -158,7 +158,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
           <Pressable onPress={onBack} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Dupe Results</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Dupe Results</Text>
           <Pressable onPress={onNewSearch} style={styles.backBtn}>
             <Ionicons name="search" size={20} color={colors.primary} />
           </Pressable>

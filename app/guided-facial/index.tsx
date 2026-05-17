@@ -193,7 +193,7 @@ export default function GuidedFacial() {
             <Pressable style={styles.backBtn} onPress={resetAll}>
               <Ionicons name="home-outline" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Complete!</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Complete!</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -239,7 +239,7 @@ export default function GuidedFacial() {
             <Pressable style={styles.backBtn} onPress={resetAll}>
               <Ionicons name="close" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Step {step + 1} of {selected.steps.length}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Step {step + 1} of {selected.steps.length}</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -302,7 +302,7 @@ export default function GuidedFacial() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Guided Facial</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Guided Facial</Text>
             <Text style={styles.headerSub}>Step-by-step skincare sessions</Text>
           </View>
           <View style={{ width: 36 }} />

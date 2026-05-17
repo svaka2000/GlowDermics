@@ -90,7 +90,7 @@ export default function SleepSkinScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Sleep & Skin</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Sleep & Skin</Text>
         <View style={{ width: 60 }} />
       </View>
 

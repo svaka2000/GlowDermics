@@ -195,7 +195,7 @@ export default function SkinDetox() {
             <Pressable style={styles.backBtn} onPress={() => setSelectedProtocol(null)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>{selectedProtocol.name}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>{selectedProtocol.name}</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -274,7 +274,7 @@ export default function SkinDetox() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Detox</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Detox</Text>
             <Text style={styles.headerSub}>Reset protocols for overloaded skin</Text>
           </View>
           <View style={{ width: 36 }} />

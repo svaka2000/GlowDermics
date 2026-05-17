@@ -193,7 +193,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Trend Report</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Trend Report</Text>
           <Pressable style={styles.refreshBtn} onPress={generate}>
             <Ionicons name="refresh-outline" size={18} color={colors.textMuted} />
           </Pressable>

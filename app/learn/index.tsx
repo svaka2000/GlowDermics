@@ -45,7 +45,7 @@ export default function Learn() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Lab</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Lab</Text>
             <Text style={styles.headerSub}>Evidence-based skin science</Text>
           </View>
           <View style={{ width: 36 }} />

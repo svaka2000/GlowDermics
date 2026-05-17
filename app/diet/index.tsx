@@ -155,7 +155,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Diet for Skin</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Diet for Skin</Text>
             <Text style={styles.headerSub}>Eat your way to better skin</Text>
           </View>
           <Pressable style={styles.reloadBtn} onPress={generate}>

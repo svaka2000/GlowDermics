@@ -134,7 +134,7 @@ export default function HydrationTracker() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Hydration Tracker</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Hydration Tracker</Text>
             <Text style={styles.headerSub}>Your skin is mostly water</Text>
           </View>
           <View style={{ width: 36 }} />

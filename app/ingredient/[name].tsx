@@ -190,7 +190,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Ingredient Decoder</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Ingredient Decoder</Text>
           <View style={{ width: 36 }} />
         </View>
       </SafeAreaView>

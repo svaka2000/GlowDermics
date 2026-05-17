@@ -284,7 +284,7 @@ export default function Milestones() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Milestones</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Milestones</Text>
             <Text style={styles.headerSub}>Your skin journey achievements</Text>
           </View>
           <View style={{ width: 36 }} />

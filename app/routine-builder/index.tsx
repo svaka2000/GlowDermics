@@ -195,7 +195,7 @@ Return ONLY valid JSON (no markdown):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Routine Builder</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Routine Builder</Text>
             <Text style={styles.headerSub}>AI-crafted just for you</Text>
           </View>
           {routine ? (

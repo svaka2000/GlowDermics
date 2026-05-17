@@ -158,7 +158,7 @@ export default function TallowScience() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>The Science of Tallow</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>The Science of Tallow</Text>
             <Text style={styles.headerSub}>Why ancestral skincare works</Text>
           </View>
           <View style={{ width: 36 }} />

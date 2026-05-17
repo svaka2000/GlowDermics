@@ -127,7 +127,7 @@ export default function Journal() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Journal</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Journal</Text>
             <Text style={styles.headerSub}>{entries.length} entries</Text>
           </View>
           <Pressable

@@ -89,7 +89,7 @@ export default function BarrierRepairScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Barrier Repair</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Barrier Repair</Text>
         <View style={{ width: 60 }} />
       </View>
 

@@ -150,7 +150,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Travel Skin Planner</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Travel Skin Planner</Text>
             <Text style={styles.headerSub}>Adapt your routine for any climate</Text>
           </View>
           {plan && (

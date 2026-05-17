@@ -272,7 +272,7 @@ export default function Scan() {
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Scan</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Scan</Text>
           <View style={{ width: 40 }} />
         </View>
 

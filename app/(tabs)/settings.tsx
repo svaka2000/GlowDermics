@@ -147,7 +147,7 @@ export default function Settings() {
           opacity: headerAnim,
           transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-12, 0] }) }],
         }]}>
-          <Text style={styles.headerTitle}>Settings</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Settings</Text>
         </Animated.View>
       </SafeAreaView>
 

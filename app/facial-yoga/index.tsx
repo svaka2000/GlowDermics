@@ -334,7 +334,7 @@ export default function FacialYogaScreen() {
           <TouchableOpacity onPress={() => setDetailEx(null)} style={styles.backBtn}>
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{detailEx.name}</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>{detailEx.name}</Text>
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -366,7 +366,7 @@ export default function FacialYogaScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Facial Yoga</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Facial Yoga</Text>
         <View style={{ width: 60 }} />
       </Animated.View>
 

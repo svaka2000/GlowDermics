@@ -160,7 +160,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Forecast</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Forecast</Text>
             <Text style={styles.headerSub}>AI-predicted 90-day trajectory</Text>
           </View>
           <View style={{ width: 36 }} />

@@ -74,7 +74,7 @@ export default function NotificationsScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Notifications</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Notifications</Text>
           {unread.length > 0 ? (
             <Pressable onPress={onClearAll} style={styles.clearBtn} hitSlop={8}>
               <Text style={styles.clearText}>Clear</Text>

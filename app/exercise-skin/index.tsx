@@ -82,7 +82,7 @@ export default function ExerciseSkinScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Exercise & Skin</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Exercise & Skin</Text>
         <View style={{ width: 60 }} />
       </View>
 

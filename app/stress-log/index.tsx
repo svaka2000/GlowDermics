@@ -132,7 +132,7 @@ export default function StressLog() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Stress & Triggers</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Stress & Triggers</Text>
             <Text style={styles.headerSub}>Track what affects your skin</Text>
           </View>
           <View style={{ width: 36 }} />

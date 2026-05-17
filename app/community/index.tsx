@@ -221,7 +221,7 @@ export default function Community() {
               <View style={styles.header}>
                 <View>
                   <Text style={styles.headerEyebrow}>GLOWDERMICS</Text>
-                  <Text style={styles.headerTitle}>Community</Text>
+                  <Text style={styles.headerTitle} numberOfLines={1}>Community</Text>
                 </View>
                 <Pressable style={styles.shareBtn} onPress={() => router.push('/skin-scorecard')}>
                   <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.shareBtnGrad}>

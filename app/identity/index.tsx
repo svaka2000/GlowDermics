@@ -53,7 +53,7 @@ export default function IdentityScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Identity</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Identity</Text>
           <Pressable
             onPress={onShare}
             style={styles.shareBtn}

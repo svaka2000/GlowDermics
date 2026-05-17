@@ -242,7 +242,7 @@ export default function SkinWeather() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Weather</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Weather</Text>
             <Text style={styles.headerSub}>Daily conditions report</Text>
           </View>
           <Pressable style={styles.backBtn} onPress={handleShare}>

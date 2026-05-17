@@ -192,7 +192,7 @@ export default function HormonalLog() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Hormonal Skin Log</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Hormonal Skin Log</Text>
             <Text style={styles.headerSub}>Cycle → skin pattern tracker</Text>
           </View>
           <View style={{ width: 36 }} />

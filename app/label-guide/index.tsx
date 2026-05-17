@@ -227,7 +227,7 @@ export default function LabelGuide() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Label Reading Guide</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Label Reading Guide</Text>
             <Text style={styles.headerSub}>Decode any skincare label</Text>
           </View>
           <View style={{ width: 36 }} />

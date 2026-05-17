@@ -250,7 +250,7 @@ export default function DIYRecipes() {
             <Pressable style={styles.backBtn} onPress={() => setSelectedRecipe(null)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>{selectedRecipe.name}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>{selectedRecipe.name}</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -350,7 +350,7 @@ export default function DIYRecipes() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>DIY Tallow Recipes</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>DIY Tallow Recipes</Text>
             <Text style={styles.headerSub}>Make your own ancestral skincare</Text>
           </View>
           <View style={{ width: 36 }} />

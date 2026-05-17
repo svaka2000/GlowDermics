@@ -182,7 +182,7 @@ export default function AntioxidantsScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Antioxidant Guide</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Antioxidant Guide</Text>
         <View style={{ width: 60 }} />
       </View>
 

@@ -87,7 +87,7 @@ export default function HabitMatrixScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Habit Matrix</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Habit Matrix</Text>
           <View style={{ width: 40 }} />
         </View>
 

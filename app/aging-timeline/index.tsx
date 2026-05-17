@@ -190,7 +190,7 @@ export default function AgingTimeline() {
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.back}>
           <Ionicons name="chevron-back" size={24} color={Colors.textPrimary} />
         </Pressable>
-        <Text style={styles.headerTitle}>Skin Aging Timeline</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Skin Aging Timeline</Text>
         <View style={{ width: 40 }} />
       </View>
 

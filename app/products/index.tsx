@@ -127,7 +127,7 @@ export default function ProductShelf() {
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
-              <Text style={styles.headerTitle}>My Shelf</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>My Shelf</Text>
               <Text style={styles.headerSub}>{shelf.length} product{shelf.length !== 1 ? 's' : ''} saved</Text>
             </View>
             <Pressable style={styles.addBtn} onPress={() => setAdding(!adding)}>

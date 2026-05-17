@@ -199,7 +199,7 @@ export default function MensSkin() {
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.back}>
           <Ionicons name="chevron-back" size={24} color={Colors.textPrimary} />
         </Pressable>
-        <Text style={styles.headerTitle}>Men's Skin Guide</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Men's Skin Guide</Text>
         <View style={{ width: 40 }} />
       </View>
 

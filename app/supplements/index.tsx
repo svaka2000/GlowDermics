@@ -136,7 +136,7 @@ Return ONLY valid JSON (no markdown):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Supplement Guide</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Supplement Guide</Text>
             <Text style={styles.headerSub}>Nutrients for your skin</Text>
           </View>
           {guide && (

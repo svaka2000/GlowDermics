@@ -150,7 +150,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>{season.emoji} {season.season} Guide</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>{season.emoji} {season.season} Guide</Text>
             <Text style={styles.headerSub}>Seasonal skincare adjustments</Text>
           </View>
           <Pressable style={styles.reloadBtn} onPress={generate}>

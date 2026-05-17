@@ -255,7 +255,7 @@ export default function ChallengePage() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Challenges</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Challenges</Text>
             <Text style={styles.headerSub}>30-day habits that transform skin</Text>
           </View>
           {active && (

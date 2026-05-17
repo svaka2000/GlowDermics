@@ -311,7 +311,7 @@ export default function GuaShaGuide() {
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View style={{ flex: 1 }}>
-              <Text style={styles.headerTitle}>{selectedTechnique.name}</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>{selectedTechnique.name}</Text>
               <View style={styles.stepProgress}>
                 {selectedTechnique.steps.map((_, i) => (
                   <Pressable key={i} onPress={() => goToStep(i)}>
@@ -388,7 +388,7 @@ export default function GuaShaGuide() {
             <Pressable style={styles.backBtn} onPress={backToList}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>{selectedTechnique.name}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>{selectedTechnique.name}</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -417,7 +417,7 @@ export default function GuaShaGuide() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Gua Sha Guide</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Gua Sha Guide</Text>
             <Text style={styles.headerSub}>Ancient lymphatic sculpting ritual</Text>
           </View>
           <View style={{ width: 36 }} />

@@ -106,7 +106,7 @@ export default function DehydratedSkinScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Dry vs Dehydrated</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Dry vs Dehydrated</Text>
         <View style={{ width: 60 }} />
       </View>
 

@@ -82,7 +82,7 @@ export default function BudgetCalculator() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Budget Calculator</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Budget Calculator</Text>
             <Text style={styles.headerSub}>Conventional vs TallowDermics</Text>
           </View>
           <View style={{ width: 36 }} />

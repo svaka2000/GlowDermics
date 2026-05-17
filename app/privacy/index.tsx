@@ -95,7 +95,7 @@ export default function Privacy() {
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Privacy Policy</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Privacy Policy</Text>
           <View style={{ width: 36 }} />
         </View>
       </SafeAreaView>

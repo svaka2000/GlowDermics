@@ -106,7 +106,7 @@ export default function Scanner() {
             <Pressable onPress={() => setMode('choose')} style={styles.backBtn}>
               <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Type Ingredients</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Type Ingredients</Text>
             <View style={{ width: 40 }} />
           </View>
         </SafeAreaView>
@@ -151,7 +151,7 @@ export default function Scanner() {
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Ingredient Scanner</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Ingredient Scanner</Text>
           <View style={{ width: 40 }} />
         </Animated.View>
       </SafeAreaView>
@@ -217,7 +217,7 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
           <Pressable onPress={onReset} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Ingredient Report</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Ingredient Report</Text>
           <View style={{ width: 40 }} />
         </View>
       </SafeAreaView>

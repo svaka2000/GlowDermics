@@ -132,7 +132,7 @@ export default function SpeedRoutineScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Speed Routines</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Speed Routines</Text>
         <View style={{ width: 60 }} />
       </View>
 

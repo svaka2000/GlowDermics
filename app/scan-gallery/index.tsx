@@ -70,7 +70,7 @@ export default function ScanGallery() {
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Skin Gallery</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Gallery</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -100,7 +100,7 @@ export default function ScanGallery() {
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View style={{ alignItems: 'center' }}>
-              <Text style={styles.headerTitle}>Skin Gallery</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>Skin Gallery</Text>
               <Text style={styles.headerSub}>{history.length} scan{history.length !== 1 ? 's' : ''}</Text>
             </View>
             <Pressable style={styles.shareBtn} onPress={handleShare}>

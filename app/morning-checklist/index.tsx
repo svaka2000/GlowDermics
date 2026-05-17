@@ -201,7 +201,7 @@ export default function MorningChecklistScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Routine Checklist</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Routine Checklist</Text>
         <View style={{ width: 60 }} />
       </Animated.View>
 

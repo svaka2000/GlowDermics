@@ -233,7 +233,7 @@ export default function BarrierQuiz() {
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Barrier Health Quiz</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Barrier Health Quiz</Text>
             <View style={{ width: 36 }} />
           </Animated.View>
         </SafeAreaView>
@@ -287,7 +287,7 @@ export default function BarrierQuiz() {
             <Pressable style={styles.backBtn} onPress={restart}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>{currentQ + 1} of {QUESTIONS.length}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>{currentQ + 1} of {QUESTIONS.length}</Text>
             <View style={{ width: 36 }} />
           </View>
           <View style={styles.progressBg}>
@@ -320,7 +320,7 @@ export default function BarrierQuiz() {
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Your Barrier Result</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Your Barrier Result</Text>
           <Pressable onPress={restart}>
             <Text style={styles.retakeText}>Retake</Text>
           </Pressable>

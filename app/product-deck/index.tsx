@@ -175,7 +175,7 @@ Return ONLY valid JSON (no markdown):
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>My Product Deck</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>My Product Deck</Text>
             <Text style={styles.headerSub}>AI-curated just for you</Text>
           </View>
           {deck && (

@@ -199,7 +199,7 @@ Return ONLY JSON:
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Minimal Routine</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Minimal Routine</Text>
             <Text style={styles.headerSub}>Maximum results, minimum steps</Text>
           </View>
           <Pressable onPress={generateAI} style={styles.refreshBtn}>

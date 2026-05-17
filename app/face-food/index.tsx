@@ -246,7 +246,7 @@ export default function FaceFoodGuide() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Face Food Guide</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Face Food Guide</Text>
             <Text style={styles.headerSub}>Eat for your skin's biology</Text>
           </View>
           <View style={{ width: 36 }} />

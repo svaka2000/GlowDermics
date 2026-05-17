@@ -59,7 +59,7 @@ export default function SkinTypeLibrary() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Skin Type Guides</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin Type Guides</Text>
             <Text style={styles.headerSub}>Deep-dives on every skin type</Text>
           </View>
           <View style={{ width: 36 }} />

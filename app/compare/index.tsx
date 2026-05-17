@@ -118,7 +118,7 @@ export default function Compare() {
             >
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Compare Scans</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Compare Scans</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -146,7 +146,7 @@ export default function Compare() {
             <Pressable style={styles.backBtn} onPress={() => setPickingFor(null)}>
               <Ionicons name="close" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Pick {pickingFor === 'left' ? 'first' : 'second'} scan</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Pick {pickingFor === 'left' ? 'first' : 'second'} scan</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -221,7 +221,7 @@ export default function Compare() {
           >
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Progress</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Progress</Text>
           <View style={{ width: 36 }} />
         </Animated.View>
       </SafeAreaView>

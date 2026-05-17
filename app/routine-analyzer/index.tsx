@@ -131,7 +131,7 @@ If there are no conflicts/redundancies/gaps/orderIssues, return empty arrays for
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Routine Analyzer</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Routine Analyzer</Text>
             <Text style={styles.headerSub}>Detect conflicts & optimize order</Text>
           </View>
           <View style={{ width: 36 }} />

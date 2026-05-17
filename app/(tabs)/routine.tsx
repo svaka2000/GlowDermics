@@ -84,7 +84,7 @@ export default function Routine() {
       <View style={styles.root}>
         <SafeAreaView>
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Routine</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Routine</Text>
           </View>
         </SafeAreaView>
         <View style={styles.emptyWrap}>
@@ -111,7 +111,7 @@ export default function Routine() {
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <View>
-              <Text style={styles.headerTitle}>My Routine</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>My Routine</Text>
               <Text style={styles.headerSub}>Based on your latest scan</Text>
             </View>
             <View style={[styles.streakBadge, { marginBottom: 0 }]}>

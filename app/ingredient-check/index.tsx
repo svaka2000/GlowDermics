@@ -146,7 +146,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Conflict Checker</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Conflict Checker</Text>
             <Text style={styles.headerSub}>Check ingredient compatibility</Text>
           </View>
           <View style={{ width: 36 }} />

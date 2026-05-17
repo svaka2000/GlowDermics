@@ -160,7 +160,7 @@ export default function PatchTestTracker() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Patch Test Tracker</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Patch Test Tracker</Text>
             <Text style={styles.headerSub}>Test new products safely</Text>
           </View>
           <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>

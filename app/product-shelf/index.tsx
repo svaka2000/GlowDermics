@@ -165,7 +165,7 @@ export default function ProductShelfScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Shelf</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>My Shelf</Text>
         <TouchableOpacity onPress={() => { resetForm(); setAdding(true); }} style={styles.addBtn}>
           <Text style={styles.addBtnText}>+ Add</Text>
         </TouchableOpacity>

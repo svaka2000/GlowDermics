@@ -143,7 +143,7 @@ export default function ExpiryTracker() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Expiry Tracker</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Expiry Tracker</Text>
             <Text style={styles.headerSub}>Know when to toss your products</Text>
           </View>
           <Pressable style={styles.addBtn} onPress={() => setAdding(true)}>

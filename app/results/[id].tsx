@@ -151,7 +151,7 @@ export default function Results() {
           <Pressable onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Report</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Report</Text>
           <Pressable style={styles.shareBtn} onPress={handleShare}>
             <Ionicons name="share-outline" size={20} color={colors.primary} />
           </Pressable>

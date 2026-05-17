@@ -197,7 +197,7 @@ export default function DailyCheckIn() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Daily Check-In</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Daily Check-In</Text>
             <Text style={styles.headerSub}>Step {step + 1} of {totalSteps}</Text>
           </View>
           <View style={{ width: 36 }} />

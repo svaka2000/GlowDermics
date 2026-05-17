@@ -146,7 +146,7 @@ export default function Blacklist() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Ingredient Blacklist</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Ingredient Blacklist</Text>
             <Text style={styles.headerSub}>Your personal avoid list</Text>
           </View>
           <Pressable style={styles.backBtn} onPress={() => { setCheckMode(!checkMode); setCheckResults(null); }}>

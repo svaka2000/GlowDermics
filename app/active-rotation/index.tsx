@@ -188,7 +188,7 @@ export default function ActiveRotation() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Active Rotation</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Active Rotation</Text>
             <Text style={styles.headerSub}>Schedule actives without conflicts</Text>
           </View>
           <View style={{ width: 36 }} />

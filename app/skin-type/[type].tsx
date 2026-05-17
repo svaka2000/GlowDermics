@@ -142,7 +142,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Skin Type Guide</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Skin Type Guide</Text>
           <View style={{ width: 36 }} />
         </View>
       </SafeAreaView>

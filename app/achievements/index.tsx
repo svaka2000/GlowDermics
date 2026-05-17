@@ -67,7 +67,7 @@ export default function AchievementsScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Achievements</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Achievements</Text>
           <View style={{ width: 40 }} />
         </View>
 

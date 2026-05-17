@@ -255,7 +255,7 @@ Return ONLY valid JSON (no markdown):
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
-              <Text style={styles.headerTitle}>Weekly Digest</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>Weekly Digest</Text>
               <Text style={styles.headerSub}>{weekLabel()}</Text>
             </View>
             {digest ? (

@@ -161,7 +161,7 @@ export default function CoachChat() {
               <Text style={styles.coachAvatarText}>✨</Text>
             </View>
             <View>
-              <Text style={styles.headerTitle}>Glow Coach</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>Glow Coach</Text>
               <Text style={styles.headerSub}>AI Skincare Advisor</Text>
             </View>
           </View>

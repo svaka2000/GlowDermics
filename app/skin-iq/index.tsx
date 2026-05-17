@@ -205,7 +205,7 @@ export default function SkinIQ() {
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Skin IQ Quiz</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Skin IQ Quiz</Text>
             <View style={{ width: 36 }} />
           </Animated.View>
         </SafeAreaView>
@@ -250,7 +250,7 @@ export default function SkinIQ() {
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Text style={styles.headerTitle}>Your Results</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Your Results</Text>
             <View style={{ width: 36 }} />
           </View>
         </SafeAreaView>
@@ -326,7 +326,7 @@ export default function SkinIQ() {
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
-          <Text style={styles.headerTitle}>Question {currentQ + 1}/{QUESTIONS.length}</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Question {currentQ + 1}/{QUESTIONS.length}</Text>
           <View style={[styles.backBtn, { backgroundColor: 'transparent', borderColor: 'transparent' }]}>
             <Text style={[styles.difficultyBadge, {
               color: q.difficulty === 'easy' ? '#4ADE80' : q.difficulty === 'medium' ? colors.gold : colors.scorePoor,

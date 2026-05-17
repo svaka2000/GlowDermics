@@ -54,7 +54,7 @@ export default function IngredientSearch() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Ingredient Decoder</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Ingredient Decoder</Text>
             <Text style={styles.headerSub}>Search any cosmetic ingredient</Text>
           </View>
           <View style={{ width: 36 }} />

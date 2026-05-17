@@ -140,7 +140,7 @@ export default function AcneDiary() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Acne Diary</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Acne Diary</Text>
             <Text style={styles.headerSub}>Track, analyze, and clear</Text>
           </View>
           <View style={{ width: 36 }} />

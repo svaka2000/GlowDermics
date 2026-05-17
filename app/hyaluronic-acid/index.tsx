@@ -131,7 +131,7 @@ export default function HyaluronicAcidScreen() {
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Hyaluronic Acid</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Hyaluronic Acid</Text>
         <View style={{ width: 60 }} />
       </Animated.View>
 

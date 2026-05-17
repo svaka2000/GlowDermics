@@ -192,7 +192,7 @@ export default function EnvironmentLog() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle}>Environment Log</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Environment Log</Text>
             <Text style={styles.headerSub}>Track what the world does to your skin</Text>
           </View>
           <View style={{ width: 36 }} />
