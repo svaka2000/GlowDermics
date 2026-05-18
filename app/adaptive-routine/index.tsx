@@ -94,7 +94,7 @@ export default function AdaptiveRoutineScreen() {
               Take a scan and Velumi AI will tune your routine to how your skin actually responds — reinforcing what
               works, easing what doesn't.
             </Text>
-            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scanner' as any)} accessibilityRole="button">
+            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scanner' as any)} accessibilityRole="button" accessibilityLabel="Take a scan">
               <Text style={styles.emptyBtnText}>Take a scan</Text>
             </Pressable>
           </View>
