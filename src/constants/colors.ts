@@ -1,146 +1,147 @@
 export const Colors = {
-  // Primary brand
-  primary: '#C4622D',       // TallowDermics burnt orange
-  primaryLight: '#E08250',
-  primaryDark: '#A04D24',
+  // Primary brand — Velumi warm taupe / mocha
+  primary: '#8A7860',       // Velumi taupe
+  primaryLight: '#A89A86',
+  primaryDark: '#665845',
 
-  // Backgrounds — marble white
-  bg: '#F5F0EA',            // warm marble base
-  bgCard: '#FFFFFF',        // pure white cards
-  bgElevated: '#EDE9E2',   // slightly deeper for elevated areas
-  bgSheet: '#FAFAF7',       // tab bar / bottom sheet
+  // Backgrounds — warm ivory (quiet luxury)
+  bg: '#F7F3EC',            // warm ivory base
+  bgCard: '#FFFFFF',        // clean white cards
+  bgElevated: '#EFE9DF',    // soft sand for elevated areas
+  bgSheet: '#FBF8F2',       // tab bar / bottom sheet
 
-  // Text — dark warm
-  textPrimary: '#1C1814',
-  textSecondary: 'rgba(28,24,20,0.55)',
-  textMuted: 'rgba(28,24,20,0.32)',
+  // Text — espresso ink
+  textPrimary: '#2B2722',
+  textSecondary: 'rgba(43,39,34,0.58)',
+  textMuted: 'rgba(43,39,34,0.34)',
 
-  // Accent gold
-  gold: '#B8882E',
-  goldLight: '#D4A84A',
+  // Accent — champagne
+  gold: '#B79B6E',
+  goldLight: '#D8C29A',
 
-  // Skin score colors
-  scoreExcellent: '#16A34A',
-  scoreGood: '#22C55E',
-  scoreFair: '#D97706',
-  scorePoor: '#DC2626',
+  // Skin score colors — softened to harmonize with the warm palette
+  scoreExcellent: '#4F9D77',
+  scoreGood: '#6FB58F',
+  scoreFair: '#C8923E',
+  scorePoor: '#C75D4A',
 
   // Borders
-  border: 'rgba(28,24,20,0.07)',
-  borderStrong: 'rgba(196,98,45,0.25)',
+  border: 'rgba(43,39,34,0.08)',
+  borderStrong: 'rgba(138,120,96,0.28)',
 
-  // Glass
-  glass: 'rgba(255,255,255,0.9)',
-  glassDeep: 'rgba(255,255,255,0.72)',
-  glassDark: 'rgba(13,11,9,0.72)',
+  // Glass — warm white
+  glass: 'rgba(255,255,255,0.92)',
+  glassDeep: 'rgba(255,253,250,0.75)',
+  glassDark: 'rgba(43,39,34,0.55)',
 
-  // Semantic accents — for new v2 dimensions
-  hydration: '#3B82F6',     // blue (water)
-  texture: '#A855F7',       // purple (granular)
-  clarity: '#06B6D4',       // cyan (clean)
-  evenness: '#F59E0B',      // amber (tone)
-  firmness: '#EF4444',      // red (collagen)
-  pores: '#8B5CF6',         // violet
-  radiance: '#FBBF24',      // gold/yellow (glow)
-  redness: '#F43F5E',       // rose (inflammation)
-  darkSpots: '#92400E',     // deep amber (hyperpigmentation)
-  darkCircles: '#475569',   // slate (under eye)
-  wrinkles: '#7C3AED',      // deep purple (lines)
-  acne: '#DC2626',          // red alert
-  oiliness: '#10B981',      // green (sebum)
-  sensitivity: '#EC4899',   // pink (reactive)
-  barrierHealth: '#0EA5E9', // sky (protective)
+  // Semantic accents — refined earthy-jewel (re-toned from neon for premium data viz)
+  hydration: '#5E8BA8',     // dusty blue (water)
+  texture: '#9A86A8',       // muted mauve (granular)
+  clarity: '#5FA3A0',       // soft teal (clean)
+  evenness: '#C29A5B',      // warm sand (tone)
+  firmness: '#B5705F',      // clay rose (collagen)
+  pores: '#8C7CA6',         // lavender-grey
+  radiance: '#CBA86A',      // champagne (glow)
+  redness: '#C16B6B',       // dusty rose (inflammation)
+  darkSpots: '#9A6B4A',     // cocoa (hyperpigmentation)
+  darkCircles: '#6E7686',   // slate (under eye)
+  wrinkles: '#7E6F94',      // deep mauve (lines)
+  acne: '#C25C52',          // clay alert
+  oiliness: '#6E9A7E',      // sage (sebum)
+  sensitivity: '#C07C99',   // rosé (reactive)
+  barrierHealth: '#5C93A6', // sky-slate (protective)
 
   // Tier badges
-  tierBronze: '#A16207',
-  tierSilver: '#737373',
-  tierGold: '#D4A84A',
-  tierPlatinum: '#0EA5E9',
-  tierDiamond: '#A855F7',
+  tierBronze: '#A87C4F',
+  tierSilver: '#9A938A',
+  tierGold: '#C9A86A',
+  tierPlatinum: '#7FA0A8',
+  tierDiamond: '#9A86A8',
 
   // White / black
   white: '#FFFFFF',
   black: '#000000',
-  ink: '#0D0B09',           // near-black for dark surfaces
-  inkSoft: '#1A1612',
+  ink: '#2B2722',           // soft espresso for dark surfaces
+  inkSoft: '#3A352E',
 };
 
 /**
- * ColorsDark — warm-marble inverse for dark mode.
+ * ColorsDark — Velumi refined night.
  *
- * Strategy: invert the surface lightness while preserving the brand
- * terracotta/gold accents and semantic dimension tints (which are already
- * vivid enough to read on dark surfaces). Text inverts cleanly. Glass
- * variants become dark-tinted instead of white-tinted.
+ * Strategy: warm espresso-charcoal surfaces (NOT pure black), lit
+ * champagne-taupe brand accent, and brightened earthy-jewel semantic
+ * tints that read clearly on dark without going neon. Text inverts to
+ * warm ivory. Glass variants become dark-tinted.
  *
  * Same key set as `Colors` so a `useColors()` hook can return either
- * palette without callers branching.
+ * palette without callers branching. The `ink` semantic flips to a
+ * light value on dark — every screen relies on this contract.
  */
 export const ColorsDark: typeof Colors = {
-  // Primary brand — slightly brighter for dark surfaces
-  primary: '#E08250',
-  primaryLight: '#F0A07A',
-  primaryDark: '#C4622D',
+  // Primary brand — lit champagne-taupe for dark surfaces
+  primary: '#B7A083',
+  primaryLight: '#D0BE9F',
+  primaryDark: '#8A7860',
 
-  // Backgrounds — warm dark marble
-  bg: '#0D0B09',                 // deep ink with warm undertone
-  bgCard: '#1A1612',             // elevated card surface
-  bgElevated: '#241F19',         // hovered/pressed
-  bgSheet: '#15110D',            // tab bar / bottom sheet
+  // Backgrounds — warm espresso-charcoal
+  bg: '#1A1714',                 // soft warm charcoal (not pure black)
+  bgCard: '#241F1A',             // elevated card surface
+  bgElevated: '#2E2823',         // hovered/pressed
+  bgSheet: '#1F1B17',            // tab bar / bottom sheet
 
-  // Text — light warm
-  textPrimary: '#F5F0EA',        // warm marble inverted
-  textSecondary: 'rgba(245,240,234,0.65)',
-  textMuted: 'rgba(245,240,234,0.40)',
+  // Text — warm ivory
+  textPrimary: '#F2EDE3',
+  textSecondary: 'rgba(242,237,227,0.66)',
+  textMuted: 'rgba(242,237,227,0.40)',
 
-  // Accent gold — slightly brighter
-  gold: '#D4A84A',
-  goldLight: '#F0C94A',
+  // Accent — brighter champagne
+  gold: '#CBAE80',
+  goldLight: '#E4CFA3',
 
   // Skin score colors — slightly brighter for contrast
-  scoreExcellent: '#22C55E',
-  scoreGood: '#4ADE80',
-  scoreFair: '#FBBF24',
-  scorePoor: '#F87171',
+  scoreExcellent: '#5FB386',
+  scoreGood: '#7FC79E',
+  scoreFair: '#D9A85A',
+  scorePoor: '#D9745E',
 
   // Borders
-  border: 'rgba(245,240,234,0.10)',
-  borderStrong: 'rgba(232,131,74,0.30)',
+  border: 'rgba(242,237,227,0.10)',
+  borderStrong: 'rgba(183,160,131,0.34)',
 
-  // Glass — invert toward dark
-  glass: 'rgba(13,11,9,0.92)',
-  glassDeep: 'rgba(26,22,18,0.74)',
-  glassDark: 'rgba(13,11,9,0.86)',
+  // Glass — invert toward warm dark
+  glass: 'rgba(26,23,20,0.92)',
+  glassDeep: 'rgba(36,31,26,0.76)',
+  glassDark: 'rgba(26,23,20,0.88)',
 
-  // Semantic accents — keep as-is, vivid enough for dark
-  hydration: '#60A5FA',
-  texture: '#C084FC',
-  clarity: '#22D3EE',
-  evenness: '#FBBF24',
-  firmness: '#F87171',
-  pores: '#A78BFA',
-  radiance: '#FCD34D',
-  redness: '#FB7185',
-  darkSpots: '#D97706',
-  darkCircles: '#94A3B8',
-  wrinkles: '#A78BFA',
-  acne: '#F87171',
-  oiliness: '#34D399',
-  sensitivity: '#F472B6',
-  barrierHealth: '#38BDF8',
+  // Semantic accents — brightened earthy-jewel for dark
+  hydration: '#7FA8C2',
+  texture: '#B6A2C2',
+  clarity: '#7FBCB8',
+  evenness: '#D9B57A',
+  firmness: '#CE8B79',
+  pores: '#A99AC0',
+  radiance: '#E0C088',
+  redness: '#D78B8B',
+  darkSpots: '#BA8765',
+  darkCircles: '#8C94A4',
+  wrinkles: '#9B8BB0',
+  acne: '#D6766B',
+  oiliness: '#88B59A',
+  sensitivity: '#D295B0',
+  barrierHealth: '#7DB0C2',
 
   // Tier badges — brighten for dark
-  tierBronze: '#D97706',
-  tierSilver: '#A3A3A3',
-  tierGold: '#F0C94A',
-  tierPlatinum: '#38BDF8',
-  tierDiamond: '#C084FC',
+  tierBronze: '#C2925F',
+  tierSilver: '#B3ABA0',
+  tierGold: '#E0C088',
+  tierPlatinum: '#9ABBC2',
+  tierDiamond: '#B6A2C2',
 
-  // White / black — keep absolutes but ink is now equal to bg
+  // White / black — keep absolutes; ink flips to light text on dark
   white: '#FFFFFF',
   black: '#000000',
-  ink: '#F5F0EA',                // "ink" semantic flips to light text on dark
-  inkSoft: '#E8DFCE',
+  ink: '#F2EDE3',                // "ink" semantic flips to light on dark
+  inkSoft: '#E4DCCB',
 };
 
 /**
