@@ -18,8 +18,8 @@ import { Storage } from '../src/services/storage';
 import { Auth } from '../src/services/auth';
 
 const { width, height } = Dimensions.get('window');
-const PRIMARY = '#C4622D';
-const GOLD = '#D4A96A';
+const PRIMARY = '#8A7860';
+const GOLD = '#B79B6E';
 const DARK = '#0D0805';
 const LOGO_SIZE = 108;
 const RING_SIZE = LOGO_SIZE + 24;
@@ -214,7 +214,7 @@ export default function Index() {
       {/* Floating glow blob — top */}
       <Animated.View style={[styles.glowBlobTop, blob1Style]}>
         <LinearGradient
-          colors={['rgba(196,98,45,0.45)', 'rgba(196,98,45,0)']}
+          colors={['rgba(138,120,96,0.45)', 'rgba(138,120,96,0)']}
           style={{ flex: 1 }}
         />
       </Animated.View>
@@ -222,7 +222,7 @@ export default function Index() {
       {/* Floating glow blob — bottom */}
       <Animated.View style={[styles.glowBlobBottom, blob2Style]}>
         <LinearGradient
-          colors={['rgba(212,169,106,0.30)', 'rgba(212,169,106,0)']}
+          colors={['rgba(183,155,110,0.30)', 'rgba(183,155,110,0)']}
           style={{ flex: 1 }}
         />
       </Animated.View>
@@ -230,7 +230,7 @@ export default function Index() {
       {/* Radial center glow */}
       <Animated.View style={[styles.centerGlow, centerGlowStyle]}>
         <LinearGradient
-          colors={['rgba(196,98,45,0.28)', 'rgba(196,98,45,0.08)', 'transparent']}
+          colors={['rgba(138,120,96,0.28)', 'rgba(138,120,96,0.08)', 'transparent']}
           style={{ flex: 1, borderRadius: 300 }}
         />
       </Animated.View>
@@ -256,7 +256,7 @@ export default function Index() {
 
           <Animated.View style={[styles.logoWrap, logoWrapStyle]}>
             <LinearGradient
-              colors={['#E8834A', '#C4622D', '#9E4D22']}
+              colors={['#D8C29A', '#B79B6E', '#8A7860']}
               style={styles.logoGrad}
               start={{ x: 0.1, y: 0 }}
               end={{ x: 0.9, y: 1 }}
@@ -290,7 +290,7 @@ export default function Index() {
         <View style={styles.barTrack}>
           <Animated.View style={[styles.barFill, barFillStyle]}>
             <LinearGradient
-              colors={['#E8834A', '#C4622D', '#D4A96A']}
+              colors={['#D8C29A', '#B79B6E', '#8A7860']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={StyleSheet.absoluteFill}
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     height: LOGO_SIZE + 20,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.35)',
+    borderColor: 'rgba(138,120,96,0.35)',
     top: -10,
     left: -10,
   },
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#FAF3E0',
     letterSpacing: -1,
-    textShadowColor: 'rgba(196,98,45,0.4)',
+    textShadowColor: 'rgba(138,120,96,0.4)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 16,
   },
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   },
   brand: {
     fontSize: 11,
-    color: 'rgba(212,169,106,0.7)',
+    color: 'rgba(183,155,110,0.7)',
     letterSpacing: 2,
     fontWeight: '600',
     marginTop: 4,
