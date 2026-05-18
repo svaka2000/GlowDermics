@@ -84,6 +84,7 @@ function RootContent() {
           <Stack.Screen name="challenge/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-story/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="progress-story/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="adaptive-routine/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="privacy/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="stress-log/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-iq/index" options={{ animation: 'slide_from_right' }} />
