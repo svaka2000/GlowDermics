@@ -170,6 +170,19 @@ export default function Progress() {
           <Ionicons name="chevron-forward" size={20} color={colors.primary} />
         </Pressable>
 
+        <Pressable
+          style={styles.baCta}
+          onPress={() => router.push('/before-after' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="See your before and after"
+        >
+          <View style={styles.baCtaText}>
+            <Text style={styles.baCtaEyebrow}>SEE YOUR TRANSFORMATION</Text>
+            <Text style={styles.baCtaTitle}>Before / After</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+        </Pressable>
+
         {/* XP / Level card */}
         {(() => {
           const xp = (history.length * 50) + (routineStreak * 10) + (journalCount * 5) + (articlesRead * 8);
@@ -753,6 +766,10 @@ function makeStyles(c: Palette) {
   trendsCtaText: { flex: 1, gap: 3 },
   trendsCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
   trendsCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
+  baCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 12, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16 },
+  baCtaText: { flex: 1, gap: 3 },
+  baCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  baCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
   emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
