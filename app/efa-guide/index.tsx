@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['EFA Science', 'Omega-3', 'Omega-6', 'The Ratio', 'Oils & Tallow'];
+const TABS = ['EFA Science', 'Omega-3', 'Omega-6', 'The Ratio', 'Oils & Fats'];
 
 const EFA_BASICS = [
   { fact: 'Essential fatty acids cannot be synthesised by the body', detail: 'Omega-3 (alpha-linolenic acid — ALA) and omega-6 (linoleic acid — LA) are "essential" because human metabolism cannot create them. They must come from diet. These precursor fatty acids are then converted to longer-chain derivatives (EPA, DHA from omega-3; arachidonic acid from omega-6) that drive the body\'s pro- and anti-inflammatory signalling systems.', icon: '🧬' },
@@ -47,12 +47,12 @@ function buildOmega6(Colors: ShimColors) {
 const RATIO_GUIDE = [
   { point: 'The ideal ratio for skin health', detail: 'Research suggests an omega-6:omega-3 ratio of 4:1 or lower for optimal anti-inflammatory outcomes. At this ratio, EPA from diet can competitively inhibit arachidonic acid eicosanoid production, shifting the balance toward anti-inflammatory signalling. The Mediterranean diet achieves approximately 4:1.' },
   { point: 'How to calculate your ratio', detail: 'Track for one week: all oils used in cooking, animal products, nuts and seeds, and supplements. Identify sources of omega-6 (vegetable oils) vs omega-3 (fatty fish, walnuts, supplements). Most people are shocked to find their ratio is 15:1 or higher.' },
-  { point: 'Reducing omega-6: the most impactful change', detail: 'The fastest way to improve the ratio is reducing omega-6 — specifically by replacing refined vegetable oils (soybean, canola, corn, sunflower, safflower) with stable saturated and monounsaturated fats: grass-fed butter, tallow, coconut oil, and olive oil. These do not skew the omega-6 side of the equation.' },
+  { point: 'Reducing omega-6: the most impactful change', detail: 'The fastest way to improve the ratio is reducing omega-6 — specifically by replacing refined vegetable oils (soybean, canola, corn, sunflower, safflower) with stable saturated and monounsaturated fats: grass-fed butter, animal fats, coconut oil, and olive oil. These do not skew the omega-6 side of the equation.' },
   { point: 'Increasing omega-3: fish oil supplementation', detail: 'For most people on a Western diet, supplementation is necessary to achieve meaningful EPA/DHA levels. Dose: 1–3g combined EPA+DHA daily from fish oil, krill oil, or algae oil. Food sources: 3 servings weekly of fatty fish (salmon, mackerel, sardines, herring) provides significant EPA+DHA.' },
 ];
 
 const OILS_TALLOW = [
-  { oil: 'Grass-Fed Tallow', omega3: '~1%', omega6: '~3%', oleic: '~47%', palmitic: '~26%', stearic: '~14%', notes: 'Balanced saturated/monounsaturated profile. Does not significantly skew omega-6:omega-3 ratio. CLA content (1–2% in grass-fed) is anti-inflammatory. The saturated fat content makes it extremely stable against oxidation. Natural vitamin E, A, D, K2 — makes it a complete skin food.', heroForSkin: true },
+  { oil: 'Grass-Fed Beef Fat', omega3: '~1%', omega6: '~3%', oleic: '~47%', palmitic: '~26%', stearic: '~14%', notes: 'Balanced saturated/monounsaturated profile. Does not significantly skew the omega-6:omega-3 ratio. CLA content (1–2% in grass-fed) is anti-inflammatory. High saturated-fat content makes it very stable against oxidation. Naturally contains vitamins E, A, D, and K2.', heroForSkin: true },
   { oil: 'Rosehip Oil', omega3: '~1%', omega6: '~35–45%', oleic: '~18%', palmitic: '~4%', stearic: '~2%', notes: 'Very high linoleic acid — excellent for barrier ceramide precursor supply. Also contains trans-retinoic acid (vitamin A derivative) in small amounts. Can go rancid quickly due to high PUFA content — store refrigerated. Not for Malassezia-prone skin (high LA but also risky).', heroForSkin: false },
   { oil: 'Hemp Seed Oil', omega3: '~20%', omega6: '~55%', oleic: '~12%', palmitic: '~6%', stearic: '~2%', notes: 'Closest to ideal omega-6:omega-3 ratio of any plant oil (approximately 2.5:1). Contains GLA. Low comedogenic rating. Good choice for combination skin types wanting EFA balance without heavy oils.', heroForSkin: false },
   { oil: 'Evening Primrose Oil', omega3: '~0%', omega6: '~65% (includes 8–10% GLA)', oleic: '~10%', palmitic: '~6%', stearic: '~2%', notes: 'High GLA — anti-inflammatory unlike most omega-6. Studied orally for eczema, PMS acne. Topically for barrier repair. Not good for balancing omega-6:omega-3 ratio (adds omega-6), but GLA is anti-inflammatory which partially offsets this.', heroForSkin: false },
@@ -183,7 +183,7 @@ export default function EFAGuideScreen() {
             <View style={styles.summaryCard}>
               <Text style={styles.summaryTitle}>The Quick Fix</Text>
               <Text style={styles.summaryText}>1. Stop cooking with refined vegetable oils (soybean, canola, corn).</Text>
-              <Text style={styles.summaryText}>2. Switch to grass-fed tallow, butter, or olive oil.</Text>
+              <Text style={styles.summaryText}>2. Switch to grass-fed animal fats, butter, or olive oil.</Text>
               <Text style={styles.summaryText}>3. Eat fatty fish 3× weekly or supplement 2–3g EPA+DHA daily.</Text>
               <Text style={styles.summaryText}>4. Ratio shifts measurably within 4–6 weeks.</Text>
             </View>
@@ -198,7 +198,7 @@ export default function EFAGuideScreen() {
                   <View style={{ flex: 1 }}>
                     <View style={styles.oilTitleRow}>
                       <Text style={[styles.cardTitle, o.heroForSkin && { color: Colors.primary }]}>{o.oil}</Text>
-                      {o.heroForSkin && <Text style={styles.heroBadge}>★ TALLOW</Text>}
+                      {o.heroForSkin && <Text style={styles.heroBadge}>★ TOP PICK</Text>}
                     </View>
                     <View style={styles.oilFARow}>
                       <Text style={styles.faLabel}>ω-3: {o.omega3}</Text>

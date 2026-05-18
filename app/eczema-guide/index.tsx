@@ -23,7 +23,7 @@ const TABS = [
   { id: 'triggers', label: 'Triggers', icon: '⚠️' },
   { id: 'skincare', label: 'Skincare', icon: '🧴' },
   { id: 'flare', label: 'Flare Protocol', icon: '🆘' },
-  { id: 'tallow', label: 'Tallow Approach', icon: '🌿' },
+  { id: 'tallow', label: 'Barrier Approach', icon: '🌿' },
 ];
 
 const SCIENCE = [
@@ -72,7 +72,7 @@ const SKINCARE_GUIDE = {
     { name: 'Petrolatum (as pure as possible)', note: 'One of the most effective barrier occlusives. Used as "wet wrap therapy" on top of corticosteroid creams during flares.' },
     { name: 'Coconut oil (specific use — antimicrobial)', note: 'Lauric acid in coconut oil reduces S. aureus colonization. However, it is comedogenic — appropriate for body eczema, not facial eczema in acne-prone individuals.' },
     { name: 'Bleach baths (sodium hypochlorite, 0.005%)', note: 'Dilute bleach baths (1 teaspoon per gallon of water) reduce S. aureus colonization. Evidence-based by multiple dermatology organizations.' },
-    { name: 'Tallow (see Tallow tab)', note: 'Biocompatible fatty acid profile, natural anti-inflammatory properties, no synthetic preservatives or fragrance. See dedicated tab.' },
+    { name: 'Lipid-rich occlusive (see Barrier tab)', note: 'Biocompatible fatty acid profile, natural anti-inflammatory properties, no synthetic preservatives or fragrance. See dedicated tab.' },
   ],
   avoid: [
     { name: 'Fragrance (all forms)', note: 'Most common eczema contact allergen. No exceptions — fragrance-free only.' },
@@ -89,7 +89,7 @@ const FLARE_PROTOCOL = [
   { step: 'Step 1: Cool shower or bath (15 min, tepid water)', note: 'Hydrates the skin by rehydrating the stratum corneum. Avoid hot water — it worsens itch and causes vasodilation.' },
   { step: 'Step 2: Pat (do not rub) dry with clean cotton towel', note: 'Rubbing causes friction damage. Leave skin slightly damp.' },
   { step: 'Step 3: Apply prescribed topical corticosteroid (if prescribed)', note: 'Apply within 3 minutes of bathing on affected areas only, while skin is still damp. Follow your dermatologist\'s protocol.' },
-  { step: 'Step 4: Apply heavy emollient/barrier repair immediately after', note: 'Ceramide cream, tallow balm, or petrolatum over the steroid. This is the "soak and seal" method — proven to maximize steroid efficacy and reduce the amount needed.' },
+  { step: 'Step 4: Apply heavy emollient/barrier repair immediately after', note: 'Ceramide cream, a lipid-rich balm, or petrolatum over the steroid. This is the "soak and seal" method — proven to maximize steroid efficacy and reduce the amount needed.' },
   { step: 'Step 5: Colloidal oatmeal bath for full-body flares', note: '15–20 min oatmeal bath reduces inflammation and itch. Follow with immediate moisturization on exit.' },
   { step: 'Step 6: Cold pack or ice for immediate itch relief', note: 'Cold temporarily inhibits itch signals. Apply wrapped ice pack (never direct ice) for 10 minutes to itchiest areas.' },
   { step: 'Step 7: Cotton gloves overnight', note: 'Prevents scratch damage during sleep (unconscious scratching is responsible for much eczema progression). Wear after applying barrier treatment.' },
@@ -198,33 +198,33 @@ export default function EczemaGuideScreen() {
           <>
             <View style={styles.tallowIntro}>
               <Text style={styles.tallowIntroText}>
-                Tallow has historically been used on eczema-affected skin and is gaining attention among eczema communities. Here is an honest assessment of the evidence and practical approach.
+                Lipid-rich animal-fat occlusives have historically been used on eczema-affected skin and are gaining attention in eczema communities. Here is an honest assessment of the evidence and practical approach.
               </Text>
             </View>
             {[
               {
-                title: 'Why tallow may help',
-                detail: "Grass-fed tallow's fatty acid profile (oleic, stearic, palmitoleic, palmitic) closely matches the lipids that eczema skin is deficient in. Applying these biocompatible lipids directly to the skin can partially compensate for the filaggrin deficiency that allows barrier leakiness.",
+                title: 'Why a lipid occlusive may help',
+                detail: "A sebum-similar occlusive's fatty acid profile (oleic, stearic, palmitoleic, palmitic) closely matches the lipids eczema skin is deficient in. Applying these biocompatible lipids directly can partially compensate for the filaggrin deficiency that allows barrier leakiness.",
               },
               {
                 title: 'No synthetic preservatives — a critical advantage',
-                detail: 'Most conventional eczema moisturizers contain parabens, phenoxyethanol, or formaldehyde-releasing preservatives — all known eczema sensitizers. Pure tallow contains none of these. This alone makes it worth trialing for those who react to conventional products.',
+                detail: 'Most conventional eczema moisturizers contain parabens, phenoxyethanol, or formaldehyde-releasing preservatives — all known eczema sensitizers. A pure single-ingredient occlusive contains none of these. This alone makes it worth trialing for those who react to conventional products.',
               },
               {
                 title: 'Palmitoleic acid\'s antimicrobial role',
-                detail: 'Palmitoleic acid in tallow (5–8%) has demonstrated antimicrobial activity against S. aureus in research. Since S. aureus colonization drives eczema flares in 90% of patients, reducing colonization is clinically meaningful.',
+                detail: 'Palmitoleic acid in some animal-fat occlusives (5–8%) has demonstrated antimicrobial activity against S. aureus in research. Since S. aureus colonization drives eczema flares in 90% of patients, reducing colonization is clinically meaningful.',
               },
               {
-                title: 'Vitamin D in tallow',
-                detail: 'Eczema patients consistently show lower Vitamin D levels. Tallow contains cholecalciferol (Vitamin D3) — the same form used in supplements. Topical Vitamin D has been studied as a complementary eczema treatment.',
+                title: 'Vitamin D in animal-fat occlusives',
+                detail: 'Eczema patients consistently show lower Vitamin D levels. Some animal-fat occlusives contain cholecalciferol (Vitamin D3) — the same form used in supplements. Topical Vitamin D has been studied as a complementary eczema treatment.',
               },
               {
                 title: 'How to introduce carefully',
                 detail: 'Apply a tiny amount (pinhead-sized) to a small inner arm patch. Wait 24 hours before expanding. Introduce during remission only, not during active flare. If reaction occurs, discontinue. Patch test is essential — even natural products can sensitize.',
               },
               {
-                title: 'What tallow cannot replace',
-                detail: "Tallow is a barrier support, not a substitute for prescribed topical corticosteroids or immunomodulators (tacrolimus, dupilumab) during active eczema. Always follow your dermatologist's medical protocol. Use tallow as a complementary barrier repair product, not as a replacement for medical treatment.",
+                title: 'What an occlusive cannot replace',
+                detail: "A lipid occlusive is barrier support, not a substitute for prescribed topical corticosteroids or immunomodulators (tacrolimus, dupilumab) during active eczema. Always follow your clinician's medical protocol. Use an occlusive as complementary barrier repair, not a replacement for medical treatment.",
                 caution: true,
               },
             ].map((item, i) => (

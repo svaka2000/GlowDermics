@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Dry vs Dehydrated', 'Pinch Test', 'Causes', 'Fix It', 'Tallow Role'];
+const TABS = ['Dry vs Dehydrated', 'Pinch Test', 'Causes', 'Fix It', 'Lipid Role'];
 
 function buildComparison(Colors: ShimColors) {
   return {
@@ -33,7 +33,7 @@ function buildComparison(Colors: ShimColors) {
       'Rarely experiences oiliness',
       'Tightness is chronic, not temporary',
     ],
-    fix: 'Needs lipid supplementation — oils, butter, tallow. The missing ingredient is sebum, not water.',
+    fix: 'Needs lipid supplementation — facial oils or a rich occlusive. The missing ingredient is sebum, not water.',
     permanent: true,
   },
   dehydrated: {
@@ -76,7 +76,7 @@ const CAUSES = [
 const FIX_STEPS = [
   { step: 1, title: 'Switch to a gentle, pH-balanced cleanser', detail: 'pH 4.5–5.5 range. Cream, gel, or milk cleansers without SLS or SLES. This preserves the NMF and acid mantle during cleansing. Do not cleanse more than twice daily. In very dehydrated states, PM-only cleansing (no AM wash, just water rinse) is appropriate for 1–2 weeks.' },
   { step: 2, title: 'Apply HA to damp skin every AM and PM', detail: 'Hyaluronic acid serum on damp skin (immediately after cleansing, while skin still has residual moisture). Pat in. Do not rub. This is the humectant step — drawing water into the stratum corneum.' },
-  { step: 3, title: 'Seal immediately with an occlusive', detail: 'Within 60 seconds of HA, apply an occlusive. Tallow (best), petrolatum (inert), or a ceramide-rich moisturiser. This prevents the water drawn by HA from evaporating. Without this step, HA can worsen dehydration in dry environments.' },
+  { step: 3, title: 'Seal immediately with an occlusive', detail: 'Within 60 seconds of HA, apply an occlusive — a lipid-rich balm, petrolatum (inert), or a ceramide-rich moisturiser. This prevents the water drawn by HA from evaporating. Without this step, HA can worsen dehydration in dry environments.' },
   { step: 4, title: 'Stop or reduce exfoliants for 1–2 weeks', detail: 'Give the stratum corneum time to rebuild NMF. Acids, retinoids, and physical exfoliants all disrupt the water-holding capacity of the corneocyte layer. Pause them, fix dehydration, then reintroduce slowly.' },
   { step: 5, title: 'Drink 2.5–3L of total fluids daily', detail: 'Internal hydration matters. Skin is the last organ to receive water from the bloodstream. Even modest dehydration (1–2% body weight in water loss) measurably reduces skin turgor and barrier function. Track intake for 1 week to establish baseline.' },
   { step: 6, title: 'Add a humidifier or desk mister', detail: '40–60% indoor humidity is ideal for skin water retention. Dry indoor air is a major driver of TEWL. A bedroom humidifier at night (when TEWL is already elevated during sleep) has the highest return-on-investment for skin hydration.' },
@@ -84,11 +84,11 @@ const FIX_STEPS = [
 ];
 
 const TALLOW_ROLE = [
-  { title: 'Tallow targets dry skin, not dehydration directly', body: 'Tallow is a lipid — it addresses dry skin (lack of sebum/oil) directly by supplementing the skin\'s lipid layer. It does not primarily function as a humectant. However, by improving barrier integrity (reducing TEWL), it dramatically reduces the rate of water loss, which helps dehydrated skin retain water longer.' },
-  { title: 'The correct stack for dehydrated skin', body: 'Dehydrated skin needs water (HA) + seal (tallow). Apply HA serum to damp skin first. Allow 60 seconds. Apply tallow. The HA provides the water-binding humectant action; the tallow provides the lipid occlusive seal. This is the most effective two-product stack for dehydration.' },
-  { title: 'Tallow\'s glycerin content: bonus humectant', body: 'Natural tallow contains glycerin (a breakdown product of triglyceride fats). Glycerin is itself a potent humectant. This gives tallow a dual function: primary occlusive barrier support + secondary humectant activity from its natural glycerin content.' },
-  { title: 'Dehydrated oily skin and tallow', body: 'Dehydrated oily skin produces excess sebum as a compensation for lost water. The sebaceous glands increase output when the skin is dehydrated. Tallow (which is not "more oil" in the comedogenic sense — it is structurally similar to sebum) applied to oily-dehydrated skin often reduces oiliness by resolving the dehydration signal. The glands stop compensating.' },
-  { title: 'Dry skin type long-term: tallow is the treatment', body: 'For genuine dry skin (genetic, year-round, insufficient sebum production), tallow is a long-term supplementation tool. It replaces what the sebaceous glands are not producing. For this skin type, tallow applied daily PM — and even a small amount AM — replaces the traditional heavy moisturiser protocol.' },
+  { title: 'Occlusives target dry skin, not dehydration directly', body: 'A lipid-rich occlusive addresses dry skin (lack of sebum/oil) directly by supplementing the skin\'s lipid layer. It does not primarily function as a humectant. However, by improving barrier integrity (reducing TEWL), it dramatically reduces the rate of water loss, which helps dehydrated skin retain water longer.' },
+  { title: 'The correct stack for dehydrated skin', body: 'Dehydrated skin needs water (HA) + a seal. Apply HA serum to damp skin first. Allow 60 seconds. Apply a lipid-rich occlusive. The HA provides water-binding humectant action; the occlusive provides the lipid seal. This is the most effective two-product stack for dehydration.' },
+  { title: 'Natural glycerin content: bonus humectant', body: 'Some natural fat-based occlusives contain glycerin (a breakdown product of triglyceride fats). Glycerin is itself a potent humectant. This gives such an occlusive a dual function: primary occlusive barrier support + secondary humectant activity from its glycerin content.' },
+  { title: 'Dehydrated oily skin and occlusives', body: 'Dehydrated oily skin produces excess sebum as a compensation for lost water. The sebaceous glands increase output when the skin is dehydrated. A sebum-similar occlusive (not "more oil" in the comedogenic sense — structurally close to sebum) applied to oily-dehydrated skin often reduces oiliness by resolving the dehydration signal. The glands stop compensating.' },
+  { title: 'Dry skin type long-term: occlusives are the treatment', body: 'For genuine dry skin (genetic, year-round, insufficient sebum production), a lipid-rich occlusive is a long-term supplementation tool. It replaces what the sebaceous glands are not producing. Applied daily PM — and a small amount AM — it can replace the traditional heavy moisturiser protocol.' },
 ];
 
 export default function DehydratedSkinScreen() {
@@ -200,8 +200,8 @@ export default function DehydratedSkinScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow for Dry vs Dehydrated Skin</Text>
-              <Text style={styles.tallowHeroSub}>Tallow addresses different aspects of dry and dehydrated skin. Understanding which you have determines how tallow fits into your protocol.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Occlusives for Dry vs Dehydrated Skin</Text>
+              <Text style={styles.tallowHeroSub}>Lipid-rich occlusives address different aspects of dry and dehydrated skin. Understanding which you have determines how an occlusive fits into your protocol.</Text>
             </View>
             {TALLOW_ROLE.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

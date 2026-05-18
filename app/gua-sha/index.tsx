@@ -39,7 +39,7 @@ function buildTechniques(c: Palette): Technique[] {
         title: 'Neck & Decolletage',
         instruction: 'Hold the gua sha flat. Glide upward from collarbone to jawline on each side of the neck. Always move upward.',
         duration: 60,
-        tip: 'Apply tallow balm generously first — never drag dry skin.',
+        tip: 'Apply a facial oil or balm generously first — never drag dry skin.',
         strokes: '5 upward strokes each side',
       },
       {
@@ -133,7 +133,7 @@ function buildTechniques(c: Palette): Technique[] {
         title: 'Final Lymph Drain',
         instruction: 'Light downward strokes from ear to collarbone. End by pressing gently under the collarbone for a few seconds.',
         duration: 60,
-        tip: 'Hold tallow balm in palms and press onto the face for 30 seconds after finishing.',
+        tip: 'Hold the balm in your palms and press onto the face for 30 seconds after finishing.',
         strokes: '5 downward strokes each side',
       },
     ],
@@ -147,10 +147,10 @@ function buildTechniques(c: Palette): Technique[] {
     color: c.primary,
     steps: [
       {
-        title: 'Prep: Apply Tallow',
-        instruction: 'Warm a small amount of TallowDermics balm between your palms and press onto your face and neck. It should feel slippery — this prevents micro-tears.',
+        title: 'Prep: Apply Balm',
+        instruction: 'Warm a small amount of facial balm or oil between your palms and press onto your face and neck. It should feel slippery — this prevents micro-tears.',
         duration: 30,
-        tip: 'Never use gua sha on dry skin. Tallow is the ideal slip medium — it absorbs slowly and nourishes during the ritual.',
+        tip: 'Never use gua sha on dry skin. A facial oil or balm is the ideal slip medium — it absorbs slowly and nourishes during the ritual.',
         strokes: 'Press and hold for 10 seconds',
       },
       {
@@ -397,7 +397,7 @@ export default function GuaShaGuide() {
           <Text style={styles.completedEmoji}>{selectedTechnique.emoji}</Text>
           <Text style={styles.completedTitle}>Ritual Complete!</Text>
           <Text style={styles.completedBenefit}>{selectedTechnique.benefit}</Text>
-          <Text style={styles.completedNote}>Your lymphatic system is now draining, circulation is up, and your skin is primed to absorb nutrients. Apply a final layer of tallow balm and let it sink in.</Text>
+          <Text style={styles.completedNote}>Your lymphatic system is now draining, circulation is up, and your skin is primed to absorb nutrients. Apply a final layer of facial balm and let it sink in.</Text>
           <Pressable style={styles.completedBtn} onPress={backToList}>
             <Text style={styles.completedBtnText}>Back to Rituals</Text>
           </Pressable>
@@ -458,7 +458,7 @@ export default function GuaShaGuide() {
         <View style={styles.prepCard}>
           <Text style={styles.prepTitle}>Before You Begin</Text>
           {[
-            { icon: '🌿', text: 'Apply TallowDermics balm generously. The tallow provides ideal slip and nourishes simultaneously.' },
+            { icon: '🌿', text: 'Apply a facial balm or oil generously. It provides ideal slip and nourishes simultaneously.' },
             { icon: '🧊', text: 'For depuffing, refrigerate your gua sha tool overnight. Cool stone reduces inflammation instantly.' },
             { icon: '💧', text: 'Wash your face first. Gua sha over makeup or SPF is counterproductive.' },
             { icon: '⬆️', text: 'Always move upward and outward. Downward strokes fight gravity — upward strokes lift tissue.' },

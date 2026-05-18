@@ -377,7 +377,7 @@ export default function FacialYogaScreen() {
               <Text style={styles.completeEmoji}>🌸</Text>
               <Text style={styles.completeTitle}>Session Complete!</Text>
               <Text style={styles.completeSub}>
-                Your facial muscles have been worked and will strengthen over time with consistency. Apply tallow now for maximum post-yoga skin absorption.
+                Your facial muscles have been worked and will strengthen over time with consistency. Apply your moisturiser now for maximum post-yoga skin absorption.
               </Text>
               <TouchableOpacity style={styles.doneBtn} onPress={() => setSessionComplete(false)}>
                 <Text style={styles.doneBtnText}>Back to Routines</Text>

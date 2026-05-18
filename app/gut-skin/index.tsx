@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['The Connection', 'Dysbiosis & Skin', 'Fix Your Gut', 'Skin-Gut Foods', 'Tallow Link'];
+const TABS = ['The Connection', 'Dysbiosis & Skin', 'Fix Your Gut', 'Skin-Gut Foods', 'Dietary Fats'];
 
 const CONNECTION_FACTS = [
   { fact: 'The gut-skin axis is a bidirectional communication system', detail: 'The gut microbiome communicates with skin through multiple pathways: immune modulation (70% of the immune system is in the gut), inflammatory cytokine production, short-chain fatty acid (SCFA) secretion, the enteric nervous system, and hormonal signalling. Skin changes can also affect gut microbiome — the relationship runs both ways.', icon: '🔄' },
@@ -58,10 +58,10 @@ const GUT_SKIN_FOODS = [
 ];
 
 const TALLOW_LINK = [
-  { title: 'Tallow and the gut microbiome: dietary fat quality matters', body: 'Grass-fed tallow is saturated fat with a balanced palmitic:stearic:oleic ratio, plus CLA and omega-3 fatty acids (though less than fish). Unlike refined vegetable oils, grass-fed animal fats do not contain trans fats, oxidised lipids, or the high omega-6 content that promotes gut dysbiosis. Quality of dietary fat is a key gut microbiome modulator.' },
-  { title: 'Butyric acid: the gut-skin SCFA', body: 'Butyric acid (butyrate) is a short-chain fatty acid produced by gut bacteria fermenting fibre — and also found in grass-fed butter and tallow. Topical butyrate has been studied for eczema with promising results. Dietary butyrate from fermented fibre and from grass-fed animal fats addresses the gut-skin inflammation pathway simultaneously.' },
-  { title: 'Vitamin K2 MK-4 and gut-skin health', body: 'Grass-fed tallow is one of the richest dietary sources of vitamin K2 MK-4. K2 is produced by gut bacteria AND obtained from grass-fed animal products. K2 deficiency is increasingly associated with systemic inflammation and impaired skin elasticity. Adequate K2 from diet supports both gut-based immune regulation and skin structural integrity.' },
-  { title: 'Tallow-based skin probiotics: emerging research', body: 'The skin has its own microbiome that communicates with gut microbiome through immune crosstalk. Tallow\'s antimicrobial fatty acids (palmitoleic acid) selectively inhibit pathogenic skin bacteria while being compatible with Staphylococcus epidermidis (a key beneficial skin commensal). Topical tallow may support skin microbiome health — complementary to gut microbiome support through diet.' },
+  { title: 'Dietary fat quality and the gut microbiome', body: 'Grass-fed animal fats are saturated fat with a balanced palmitic:stearic:oleic ratio, plus CLA and some omega-3 (less than fish). Unlike refined vegetable oils, they do not contain trans fats, oxidised lipids, or the high omega-6 content that promotes gut dysbiosis. Dietary fat quality is a key gut microbiome modulator.' },
+  { title: 'Butyric acid: the gut-skin SCFA', body: 'Butyric acid (butyrate) is a short-chain fatty acid produced by gut bacteria fermenting fibre — and also found in grass-fed butter and animal fats. Topical butyrate has been studied for eczema with promising results. Dietary butyrate from fermented fibre and grass-fed animal fats addresses the gut-skin inflammation pathway simultaneously.' },
+  { title: 'Vitamin K2 MK-4 and gut-skin health', body: 'Grass-fed animal fats are among the richest dietary sources of vitamin K2 MK-4. K2 is produced by gut bacteria AND obtained from grass-fed animal products. K2 deficiency is increasingly associated with systemic inflammation and impaired skin elasticity. Adequate K2 from diet supports both gut-based immune regulation and skin structural integrity.' },
+  { title: 'Animal-fat skin lipids and the skin microbiome: emerging research', body: 'The skin has its own microbiome that communicates with the gut microbiome through immune crosstalk. Antimicrobial fatty acids (palmitoleic acid) in some animal-fat occlusives selectively inhibit pathogenic skin bacteria while remaining compatible with Staphylococcus epidermidis (a key beneficial skin commensal). A topical occlusive may support skin microbiome health — complementary to gut microbiome support through diet.' },
 ];
 
 export default function GutSkinScreen() {
@@ -181,8 +181,8 @@ export default function GutSkinScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow in the Gut-Skin Framework</Text>
-              <Text style={styles.tallowHeroSub}>Tallow addresses the gut-skin axis from both directions: as a dietary fat that supports microbiome health, and as a topical that supports the skin microbiome.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Dietary Fats in the Gut-Skin Framework</Text>
+              <Text style={styles.tallowHeroSub}>Quality dietary fats address the gut-skin axis from both directions: as nutrition that supports microbiome health, and as a topical occlusive that supports the skin microbiome.</Text>
             </View>
             {TALLOW_LINK.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Benefits', 'Exercise Types', 'Pre & Post', 'Skin During Exercise', 'Tallow Protocol'];
+const TABS = ['Benefits', 'Exercise Types', 'Pre & Post', 'Skin During Exercise', 'Recovery Protocol'];
 
 const EXERCISE_BENEFITS = [
   { benefit: 'Growth hormone secretion: the collagen trigger', detail: 'Resistance training and high-intensity interval training (HIIT) are the strongest known non-pharmaceutical stimulants of growth hormone (GH) secretion. GH directly stimulates collagen synthesis in fibroblasts and IGF-1 production. Regular strength training measurably increases dermal collagen density in multiple studies — an anti-aging effect not achievable through topicals alone.', icon: '💪' },
@@ -40,11 +40,11 @@ function buildExerciseTypes(Colors: ShimColors) {
 
 const PRE_POST = {
   pre: [
-    { step: 'Pre-workout (30–60 min before)', actions: ['Remove makeup completely — sweating through makeup clogs pores', 'Apply a light, non-comedogenic moisturiser if skin is dry — prevents moisture loss during exercise', 'Apply SPF if exercising outdoors (sweat-resistant mineral SPF 30+)', 'Do NOT apply heavy occlusive skincare (tallow, thick moisturisers) — they trap heat and block sweating thermoregulation'] },
+    { step: 'Pre-workout (30–60 min before)', actions: ['Remove makeup completely — sweating through makeup clogs pores', 'Apply a light, non-comedogenic moisturiser if skin is dry — prevents moisture loss during exercise', 'Apply SPF if exercising outdoors (sweat-resistant mineral SPF 30+)', 'Do NOT apply heavy occlusive skincare (rich balms, thick moisturisers) — they trap heat and block sweating thermoregulation'] },
   ],
   post: [
     { step: 'Immediately post-exercise (within 15 min)', actions: ['Rinse face with cool water — removes sweat, salt, and bacteria before they can re-enter follicles', 'Blot dry with clean cloth — do not rub (skin is temporarily more fragile from increased blood flow and sweating)', 'If showering delayed: apply a light toner or micellar water to remove sweat film temporarily'] },
-    { step: 'Post-shower (within 30–60 min)', actions: ['Full PM or AM routine as appropriate', 'Tallow can be applied post-workout as barrier support and anti-inflammatory recovery', 'Protein consumption within 30 min supports skin repair alongside muscle repair (collagen amino acids from bone broth + protein)'] },
+    { step: 'Post-shower (within 30–60 min)', actions: ['Full PM or AM routine as appropriate', 'A lipid-rich occlusive can be applied post-workout as barrier support and anti-inflammatory recovery', 'Protein consumption within 30 min supports skin repair alongside muscle repair (collagen amino acids from bone broth + protein)'] },
   ],
 };
 
@@ -52,17 +52,17 @@ const DURING_EXERCISE = [
   { concern: 'Sweat and pore clogging', detail: 'Sweat itself does not clog pores — it is mostly water and salt. The risk comes from sweat mixing with sebum, sunscreen, makeup, and airborne particles and being pushed back into follicles during towel-wiping. Blot (do not rub), use clean towels only, and shower as soon as possible.', icon: '💦' },
   { concern: 'Post-exercise flushing and redness', detail: 'Acute facial redness during and immediately after exercise is normal vasodilation. In rosacea-prone individuals, exercise-induced vasodilation can trigger or worsen flushing. Cool compress immediately post-exercise helps. Low-intensity steady-state cardio (vs high-intensity) reduces the magnitude of vasodilation.', icon: '🔴' },
   { concern: 'Outdoor UV exposure during exercise', detail: 'Moderate exercise in sunlight without SPF is a significant photodamage risk — compounded by sweating (which dilutes SPF on skin) and increased skin surface temperature (which may increase photosensitivity). Use water-resistant mineral SPF 50, reapply every 90 min for long outdoor sessions.', icon: '☀️' },
-  { concern: 'Chlorine from swimming pools', detail: 'Pool chlorine is alkaline (pH 7.2–7.8) — disrupts the acid mantle (pH 4.5–5.5). Chlorine also dissolves skin lipids and oxidises melanin, causing patchiness. Apply an occlusive layer (tallow or coconut oil) before swimming as a barrier. Shower with a pH-balanced cleanser immediately after. Post-swim: HA serum + tallow to restore.', icon: '🏊' },
+  { concern: 'Chlorine from swimming pools', detail: 'Pool chlorine is alkaline (pH 7.2–7.8) — disrupts the acid mantle (pH 4.5–5.5). Chlorine also dissolves skin lipids and oxidises melanin, causing patchiness. Apply an occlusive layer (a rich balm or coconut oil) before swimming as a barrier. Shower with a pH-balanced cleanser immediately after. Post-swim: HA serum + an occlusive to restore.', icon: '🏊' },
   { concern: 'Acne and folliculitis from gym equipment', detail: 'Face towels, gym mats, and surfaces carry bacteria (including MRSA). Phone pressed against face during calls post-workout. Helmet strap acne. Headband-related folliculitis. Clean all contact points. Use a dedicated clean gym towel for face only. Bench covers for face-down positions.', icon: '🦠' },
 ];
 
 const TALLOW_PROTOCOL = [
-  { title: 'Pre-workout: tallow is not ideal', body: 'Avoid tallow immediately before intense exercise. The occlusive layer traps heat and can impair sweating (a vital thermoregulation mechanism). It can also mix with sweat to create a pore-blocking film. Pre-exercise skin should be clean and minimally occluded.' },
-  { title: 'Post-workout: the ideal tallow window', body: 'Post-shower, post-workout is the ideal tallow application window. Skin is: clean (sweat removed), slightly warm (increased penetration), and potentially slightly moisture-depleted from sweating. Apply tallow to slightly damp post-shower skin within 60 seconds for maximum barrier-replenishment and anti-inflammatory effect.' },
-  { title: 'Tallow\'s anti-inflammatory fatty acids for post-workout recovery', body: 'Intense exercise creates temporary micro-inflammation in muscles and skin (from increased blood flow and mechanical friction). Tallow\'s palmitoleic acid has documented anti-inflammatory effects — applied topically post-exercise, it may reduce the minor skin inflammation associated with exertion. This is particularly relevant for eczema and rosacea-prone skin after exercise.' },
-  { title: 'Pre-swim barrier: tallow or coconut oil', body: 'Applying a thin layer of tallow to face and body before pool swimming creates a hydrophobic barrier that partially resists chlorine penetration. This is the same principle as the "grease" applied by competitive open-water swimmers. Less chlorine penetration = less barrier disruption = less post-swim irritation and dryness.' },
-  { title: 'Post-swim recovery protocol', body: 'Shower with pH-balanced cleanser to remove chlorine residue. Apply HA serum while skin is damp. Then apply tallow to restore the lipid barrier that chlorine stripped. The post-swim skin state (lipid-depleted, pH-disrupted, dehydrated) is exactly the state tallow was designed to address.' },
-  { title: 'Exercise + tallow as the complete collagen protocol', body: 'Resistance training 3× weekly (GH secretion → collagen stimulation) + tallow PM (vitamin A → retinoid-like collagen gene upregulation + barrier repair) = addressing collagen from both an endocrine/cellular level (exercise) and a topical signalling level (tallow vitamin A). A comprehensive natural anti-aging protocol without pharmaceuticals.' },
+  { title: 'Pre-workout: heavy occlusives are not ideal', body: 'Avoid heavy occlusives immediately before intense exercise. An occlusive layer traps heat and can impair sweating (a vital thermoregulation mechanism). It can also mix with sweat to create a pore-blocking film. Pre-exercise skin should be clean and minimally occluded.' },
+  { title: 'Post-workout: the ideal occlusive window', body: 'Post-shower, post-workout is the ideal window for an occlusive. Skin is clean (sweat removed), slightly warm (increased penetration), and potentially moisture-depleted from sweating. Apply a lipid-rich occlusive to slightly damp post-shower skin within 60 seconds for maximum barrier replenishment and anti-inflammatory effect.' },
+  { title: 'Anti-inflammatory fatty acids for post-workout recovery', body: 'Intense exercise creates temporary micro-inflammation in muscles and skin (from increased blood flow and mechanical friction). Palmitoleic acid in some animal-fat occlusives has documented anti-inflammatory effects — applied topically post-exercise, it may reduce the minor skin inflammation associated with exertion. Particularly relevant for eczema- and rosacea-prone skin after exercise.' },
+  { title: 'Pre-swim barrier: a rich balm or coconut oil', body: 'Applying a thin layer of a rich occlusive to face and body before pool swimming creates a hydrophobic barrier that partially resists chlorine penetration. This is the same principle as the "grease" used by competitive open-water swimmers. Less chlorine penetration = less barrier disruption = less post-swim irritation and dryness.' },
+  { title: 'Post-swim recovery protocol', body: 'Shower with pH-balanced cleanser to remove chlorine residue. Apply HA serum while skin is damp. Then apply a lipid-rich occlusive to restore the lipid barrier that chlorine stripped. The post-swim skin state (lipid-depleted, pH-disrupted, dehydrated) is exactly what an occlusive addresses.' },
+  { title: 'Exercise + occlusive as a complete collagen protocol', body: 'Resistance training 3× weekly (GH secretion → collagen stimulation) + a vitamin-A-containing occlusive PM (retinoid-like collagen gene upregulation + barrier repair) addresses collagen at both an endocrine/cellular level (exercise) and a topical signalling level. A comprehensive natural anti-aging protocol without pharmaceuticals.' },
 ];
 
 export default function ExerciseSkinScreen() {
@@ -176,8 +176,8 @@ export default function ExerciseSkinScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow + Exercise Protocol</Text>
-              <Text style={styles.tallowHeroSub}>Exercise and tallow address skin health through complementary pathways — tallow never goes on before intense exercise, but it is ideal for the post-workout recovery window.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Occlusive + Exercise Protocol</Text>
+              <Text style={styles.tallowHeroSub}>Exercise and a lipid-rich occlusive address skin health through complementary pathways — never apply a heavy occlusive before intense exercise, but it is ideal for the post-workout recovery window.</Text>
             </View>
             {TALLOW_PROTOCOL.map((p, i) => (
               <View key={i} style={styles.tallowCard}>
