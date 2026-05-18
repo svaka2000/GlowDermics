@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Auth } from '../../src/services/auth';
 import { Colors } from '../../src/constants/colors';
+import { fonts } from '../../src/constants/typography';
 
 export default function Register() {
   const [name, setName]         = useState('');
@@ -70,7 +71,7 @@ export default function Register() {
         <SafeAreaView edges={['top']}>
           {/* Header */}
           <View style={styles.header}>
-            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)/login' as any)}>
+            <Pressable style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)/login' as any)}>
               <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
             </Pressable>
           </View>
@@ -149,7 +150,7 @@ export default function Register() {
                   placeholderTextColor={Colors.textMuted}
                   secureTextEntry={!showPw}
                 />
-                <Pressable onPress={() => setShowPw(p => !p)} style={styles.eyeBtn}>
+                <Pressable onPress={() => setShowPw(p => !p)} style={styles.eyeBtn} accessibilityRole="button" accessibilityLabel={showPw ? 'Hide password' : 'Show password'}>
                   <Ionicons name={showPw ? 'eye-off-outline' : 'eye-outline'} size={16} color={Colors.textMuted} />
                 </Pressable>
               </View>
@@ -237,8 +238,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
   },
   logoMark: { fontSize: 28, color: '#fff' },
-  pageTitle: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary },
-  pageSub: { fontSize: 13, color: Colors.textSecondary },
+  pageTitle: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, fontFamily: fonts.display },
+  pageSub: { fontSize: 13, color: Colors.textSecondary, fontFamily: fonts.body },
 
   freeBadge: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',

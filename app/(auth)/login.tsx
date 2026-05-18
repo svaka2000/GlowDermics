@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Auth } from '../../src/services/auth';
 import { Colors } from '../../src/constants/colors';
+import { fonts } from '../../src/constants/typography';
 
 export default function Login() {
   const [email, setEmail]       = useState('');
@@ -142,7 +143,7 @@ export default function Login() {
                   secureTextEntry={!showPw}
                   autoComplete="password"
                 />
-                <Pressable onPress={() => setShowPw(p => !p)} style={styles.eyeBtn}>
+                <Pressable onPress={() => setShowPw(p => !p)} style={styles.eyeBtn} accessibilityRole="button" accessibilityLabel={showPw ? 'Hide password' : 'Show password'}>
                   <Ionicons name={showPw ? 'eye-off-outline' : 'eye-outline'} size={16} color={Colors.textMuted} />
                 </Pressable>
               </View>
@@ -209,8 +210,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35, shadowRadius: 16, elevation: 10,
   },
   logoMark: { fontSize: 34, color: '#fff' },
-  appName: { fontSize: 28, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.5 },
-  tagline: { fontSize: 13, color: Colors.textSecondary, fontStyle: 'italic' },
+  appName: { fontSize: 28, fontWeight: '900', color: Colors.textPrimary, letterSpacing: -0.5, fontFamily: fonts.display },
+  tagline: { fontSize: 13, color: Colors.textSecondary, fontStyle: 'italic', fontFamily: fonts.body },
 
   card: {
     backgroundColor: Colors.bgCard,
@@ -220,8 +221,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08, shadowRadius: 16, elevation: 4,
     gap: 16,
   },
-  cardTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  cardSub: { fontSize: 14, color: Colors.textSecondary, marginTop: -8 },
+  cardTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, fontFamily: fonts.display },
+  cardSub: { fontSize: 14, color: Colors.textSecondary, marginTop: -8, fontFamily: fonts.body },
 
   errorBox: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
