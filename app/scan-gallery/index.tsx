@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 
@@ -148,7 +149,7 @@ export default function ScanGallery() {
         {withPhotos.length >= 2 && (
           <Pressable style={styles.timelineCta} onPress={() => router.push('/timeline')}>
             <LinearGradient
-              colors={['rgba(196,98,45,0.10)', 'rgba(212,168,74,0.06)']}
+              colors={[colors.primary + '1A', colors.gold + '0F']}
               style={StyleSheet.absoluteFill}
             />
             <View style={styles.timelineCtaIcon}>
@@ -350,8 +351,8 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
-  shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.primary + '1F', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center', fontFamily: fonts.display },
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
@@ -375,7 +376,7 @@ function makeStyles(c: Palette) {
   timelineCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     backgroundColor: c.bgCard,
-    borderRadius: 16, borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
+    borderRadius: 16, borderWidth: 1, borderColor: c.primary + '38',
     padding: 14, marginBottom: 14,
     overflow: 'hidden',
     shadowColor: '#1C1814', shadowOpacity: 0.06, shadowRadius: 10,
@@ -383,7 +384,7 @@ function makeStyles(c: Palette) {
   },
   timelineCtaIcon: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(196,98,45,0.14)',
+    backgroundColor: c.primary + '24',
     alignItems: 'center', justifyContent: 'center',
   },
   timelineCtaTitle: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: -0.2 },
@@ -468,9 +469,9 @@ function makeStyles(c: Palette) {
   listInfo: { flex: 1, gap: 5 },
   listDate: { fontSize: 13, fontWeight: '600', color: c.textPrimary },
   listMeta: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
-  listSkinBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
+  listSkinBadge: { backgroundColor: c.primary + '1F', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   listSkinText: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1 },
-  concernChip: { backgroundColor: 'rgba(212,169,106,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
+  concernChip: { backgroundColor: c.gold + '1F', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   concernText: { fontSize: 9, color: c.gold, fontWeight: '600' },
   listRight: { alignItems: 'flex-end', gap: 3 },
   listScore: { fontSize: 22, fontWeight: '900' },

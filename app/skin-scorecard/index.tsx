@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -385,7 +386,7 @@ export default function SkinScorecard() {
           {/* Top insight */}
           {analysis.insights && (
             <View style={styles.insightCard}>
-              <LinearGradient colors={['rgba(212,169,106,0.12)', 'rgba(212,169,106,0.04)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[colors.gold + '1F', colors.gold + '0A']} style={StyleSheet.absoluteFill} />
               <View style={styles.insightHeader}>
                 <Ionicons name="bulb" size={16} color={colors.gold} />
                 <Text style={styles.insightTitle}>AI Insight</Text>
@@ -459,7 +460,7 @@ function makeStyles(c: Palette) {
   scroll: { paddingHorizontal: 20, paddingTop: 8 },
 
   navBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
-  navTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: c.textPrimary },
+  navTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
   backBtn: { padding: 6 },
   shareNavBtn: { padding: 6 },
 
@@ -533,12 +534,12 @@ function makeStyles(c: Palette) {
   },
   concernsTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
   concernChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  concernChip: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6 },
+  concernChip: { backgroundColor: c.primary + '1A', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6 },
   concernChipText: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
   insightCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)',
+    borderWidth: 1, borderColor: c.gold + '33',
     padding: 16, marginBottom: 14,
   },
   insightHeader: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 8 },
