@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { Auth, AuthUser } from '../../src/services/auth';
 import { SkinAnalysis, UserProfile } from '../../src/types';
@@ -812,9 +813,9 @@ function makeStyles(c: Palette) {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingTop: 12, paddingBottom: 4, paddingHorizontal: 20,
   },
-  heroGreeting: { fontSize: 13, color: 'rgba(255,255,255,0.78)', fontWeight: '600', letterSpacing: 0.2 },
+  heroGreeting: { fontFamily: fonts.body, fontSize: 13, color: 'rgba(255,255,255,0.78)', fontWeight: '500', letterSpacing: 0.4 },
   heroName: {
-    fontSize: 26, fontWeight: '900', color: c.white, marginTop: 2, letterSpacing: -0.4,
+    fontFamily: fonts.display, fontSize: 30, fontWeight: '600', color: c.white, marginTop: 3, letterSpacing: 0.3, lineHeight: 36,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroPremiumBadge: {
@@ -914,8 +915,8 @@ function makeStyles(c: Palette) {
   },
   emptyQuizBtn: { marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 12 },
   emptyQuizText: { fontSize: 13, color: c.primary, fontWeight: '600' },
-  brandEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
-  brandTagline: { fontSize: 12, color: c.textSecondary, textAlign: 'center', fontStyle: 'italic' },
+  brandEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  brandTagline: { fontFamily: fonts.display, fontSize: 13, color: c.textSecondary, textAlign: 'center', letterSpacing: 0.2, lineHeight: 19 },
 
   checkInCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
