@@ -45,7 +45,7 @@ const AFFIRMATIONS: Affirmation[] = [
   { text: 'The best moisturizer is the one you actually use. Find it. Use it. Move on.', themes: ['mastery', 'rhythm'] },
   { text: 'Patch test everything. Your future self will thank you.', themes: ['science', 'mastery'] },
   { text: 'Glow is not a destination. It\'s a practice.', themes: ['rhythm', 'consistency'] },
-  { text: 'Tallow has been used for skin care for 6,000+ years. Some traditions don\'t need updating.', themes: ['science', 'discovery'] },
+  { text: 'Simple occlusive balms have been used for skin care for thousands of years. Some traditions don\'t need updating.', themes: ['science', 'discovery'] },
   { text: 'Trust the process. Real change in skin shows up in 4-6 weeks, not 4-6 days.', themes: ['patience', 'hope'] },
   { text: 'Your stress lives on your face. Take a breath, drop your shoulders, and treat yourself softly.', themes: ['recovery', 'rhythm'] },
   { text: 'Don\'t pick. Don\'t squeeze. Don\'t scrub. Sometimes the best thing you can do is leave it alone.', themes: ['mastery', 'patience'] },

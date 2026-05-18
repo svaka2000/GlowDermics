@@ -33,7 +33,7 @@ function buildFattyAcids(colors: Palette) {
     pct: '4%',
     skinRole: 'Antimicrobial + anti-aging',
     color: '#F97316',
-    desc: 'Produced naturally by human sebaceous glands — and decreases significantly with age. Tallow replenishes this decline. Antibacterial against P. acnes and promotes wound healing.',
+    desc: 'Produced naturally by human sebaceous glands — and decreases significantly with age. A sebum-similar occlusive replenishes this decline. Antibacterial against P. acnes and promotes wound healing.',
   },
   {
     name: 'Stearic Acid',
@@ -68,7 +68,7 @@ function buildVitamins(colors: Palette) {
     name: 'Vitamin A (Retinol)',
     emoji: '🔬',
     color: '#F97316',
-    desc: 'The gold standard anti-aging vitamin. In tallow, it\'s in its bioavailable retinol form — your skin can use it directly without conversion. Supports cell turnover and collagen production.',
+    desc: 'The gold standard anti-aging vitamin. In animal-fat occlusives it occurs in bioavailable retinol form — your skin can use it directly without conversion. Supports cell turnover and collagen production.',
     comparison: 'Same vitamin as prescription tretinoin, but at gentler, natural concentrations.',
   },
   {
@@ -76,21 +76,21 @@ function buildVitamins(colors: Palette) {
     emoji: '☀️',
     color: colors.gold,
     desc: 'Skin cells contain vitamin D receptors — it regulates cell growth and immune function in skin. Vitamin D deficiency is associated with eczema, psoriasis, and impaired wound healing.',
-    comparison: 'Tallow contains D3 (cholecalciferol) — the same form produced by skin in sunlight, and far more bioavailable than plant-derived D2.',
+    comparison: 'Some animal-fat occlusives contain D3 (cholecalciferol) — the same form produced by skin in sunlight, and far more bioavailable than plant-derived D2.',
   },
   {
     name: 'Vitamin E (Tocopherol)',
     emoji: '🌿',
     color: '#4ADE80',
-    desc: 'The skin\'s primary fat-soluble antioxidant. Neutralizes UV-induced free radicals that degrade collagen. Also serves as a natural preservative, extending tallow\'s shelf life.',
-    comparison: 'Acts as a natural preservative — tallow needs no synthetic preservatives partly because of its natural vitamin E content.',
+    desc: 'The skin\'s primary fat-soluble antioxidant. Neutralizes UV-induced free radicals that degrade collagen. Also a natural preservative, extending an anhydrous balm\'s shelf life.',
+    comparison: 'Acts as a natural preservative — anhydrous balms need no synthetic preservatives partly because of their natural vitamin E content.',
   },
   {
     name: 'Vitamin K (K2 — MK-4)',
     emoji: '💊',
     color: '#6B85A8',
     desc: 'K2 in particular (found in grass-fed animal products) activates proteins that regulate calcium in soft tissue. May reduce dark circles and vascular redness when applied topically.',
-    comparison: 'K2 (menaquinone-4) is found only in grass-fed animal products — not in plant-based fats or conventional grain-fed tallow.',
+    comparison: 'K2 (menaquinone-4) is found mainly in grass-fed animal products — not in plant-based fats or grain-fed animal fat.',
   },
   ];
 }
@@ -98,37 +98,37 @@ function buildVitamins(colors: Palette) {
 const SCIENCE_FACTS = [
   {
     fact: 'Closest match to human sebum',
-    detail: 'Tallow\'s fatty acid profile — palmitic, oleic, palmitoleic, stearic acids — is virtually identical to what human sebaceous glands produce. This means it\'s recognized by skin receptors as "self" rather than foreign.',
+    detail: 'A sebum-similar occlusive\'s fatty acid profile — palmitic, oleic, palmitoleic, stearic acids — is virtually identical to what human sebaceous glands produce. Skin receptors recognize it as "self" rather than foreign.',
     icon: '🧬',
   },
   {
     fact: 'Sebum mimicry = zero rejection',
-    detail: 'Because tallow so closely mirrors human sebum, it doesn\'t trigger the same protective inflammatory response that foreign ingredients can cause. It absorbs into the stratum corneum seamlessly.',
+    detail: 'Because a sebum-similar occlusive so closely mirrors human sebum, it doesn\'t trigger the same protective inflammatory response that foreign ingredients can cause. It absorbs into the stratum corneum seamlessly.',
     icon: '🔄',
   },
   {
     fact: 'Anhydrous = no bacterial growth',
-    detail: 'Pure tallow contains zero water. Bacteria and fungi need water to survive — without it, the product is intrinsically preserved without needing synthetic preservatives.',
+    detail: 'A pure anhydrous balm contains zero water. Bacteria and fungi need water to survive — without it, the product is intrinsically preserved without needing synthetic preservatives.',
     icon: '🛡️',
   },
   {
     fact: 'CLA decreases 5x in grain-fed animals',
-    detail: 'Conjugated linoleic acid is 3-5x higher in 100% grass-fed beef tallow. This is why sourcing matters — conventional tallow from feedlot animals is significantly inferior for anti-inflammatory effects.',
+    detail: 'Conjugated linoleic acid is 3-5x higher in 100% grass-fed animal fat. Sourcing matters — feedlot-animal fat is significantly inferior for anti-inflammatory effects.',
     icon: '🌿',
   },
   {
     fact: 'Palmitoleic acid declines with age',
-    detail: 'Sebaceous gland palmitoleic acid output decreases roughly 50% between ages 20 and 50. Tallow topically replenishes exactly this decline — it\'s literally anti-aging by replacement.',
+    detail: 'Sebaceous gland palmitoleic acid output decreases roughly 50% between ages 20 and 50. A sebum-similar occlusive topically replenishes exactly this decline — anti-aging by replacement.',
     icon: '📉',
   },
   {
     fact: 'Historical record: 12,000+ years',
-    detail: 'Archaeological evidence shows humans have been using animal fats as skin salves since at least 12,000 BCE. Egyptian records describe tallow-based preparations for wound healing. This isn\'t a trend — it\'s ancestral wisdom.',
+    detail: 'Archaeological evidence shows humans using animal fats as skin salves since at least 12,000 BCE. Egyptian records describe fat-based preparations for wound healing. This is a long empirical record, not a trend.',
     icon: '📜',
   },
   {
     fact: 'TEWL reduction comparable to petrolatum',
-    detail: 'Transepidermal water loss (TEWL) studies comparing animal fats to petrolatum (the gold standard barrier) show similar reduction rates — tallow is as effective at preventing water loss without petroleum derivatives.',
+    detail: 'Transepidermal water loss (TEWL) studies comparing animal fats to petrolatum (the gold-standard barrier) show similar reduction rates — a lipid-rich occlusive is as effective at preventing water loss without petroleum derivatives.',
     icon: '💧',
   },
 ];
@@ -158,8 +158,8 @@ export default function TallowScience() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle} numberOfLines={1}>The Science of Tallow</Text>
-            <Text style={styles.headerSub}>Why ancestral skincare works</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>The Science of Skin Barrier</Text>
+            <Text style={styles.headerSub}>How your barrier actually works</Text>
           </View>
           <View style={{ width: 36 }} />
         </Animated.View>
@@ -170,19 +170,19 @@ export default function TallowScience() {
         <View style={styles.hero}>
           <LinearGradient colors={[colors.primaryDark, colors.primary, colors.gold]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.heroEmoji}>🧬</Text>
-          <Text style={styles.heroTitle}>Tallow Is Your Skin</Text>
+          <Text style={styles.heroTitle}>Lipids Are Your Barrier</Text>
           <Text style={styles.heroDesc}>
-            Grass-fed beef tallow contains the same fatty acids your skin produces, the fat-soluble vitamins your cells use, and a fatty acid profile matching human sebum closer than any synthetic moisturizer can achieve.
+            Your skin barrier is built from specific fatty acids and fat-soluble vitamins. A sebum-similar occlusive carries the same fatty acids your skin produces and the vitamins your cells use, matching human sebum closer than any synthetic moisturizer can achieve.
           </Text>
         </View>
 
         {/* Sebum comparison */}
         <View style={styles.compCard}>
-          <Text style={styles.compTitle}>Tallow vs Human Sebum</Text>
+          <Text style={styles.compTitle}>Sebum-Similar Fats vs Human Sebum</Text>
           <View style={styles.compTable}>
             <View style={[styles.compRow, styles.compHeader]}>
               <Text style={[styles.compCell, { fontWeight: '800', color: colors.textPrimary }]}>Fatty Acid</Text>
-              <Text style={[styles.compCellSmall, { fontWeight: '800', color: colors.textPrimary }]}>Tallow</Text>
+              <Text style={[styles.compCellSmall, { fontWeight: '800', color: colors.textPrimary }]}>Occlusive</Text>
               <Text style={[styles.compCellSmall, { fontWeight: '800', color: colors.textPrimary }]}>Sebum</Text>
             </View>
             {[
@@ -226,7 +226,7 @@ export default function TallowScience() {
                 <View style={styles.faHeader}>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.faName, { color: fa.color }]}>{fa.name}</Text>
-                    <Text style={styles.faType}>{fa.type} · {fa.pct} of tallow</Text>
+                    <Text style={styles.faType}>{fa.type} · {fa.pct} of the lipid blend</Text>
                   </View>
                   <View style={[styles.faBadge, { backgroundColor: `${fa.color}20` }]}>
                     <Text style={[styles.faBadgeText, { color: fa.color }]}>{fa.skinRole}</Text>
@@ -273,19 +273,19 @@ export default function TallowScience() {
 
         {/* The ancestral argument */}
         <View style={styles.ancestralCard}>
-          <Text style={styles.ancestralTitle}>The Ancestral Argument</Text>
+          <Text style={styles.ancestralTitle}>The Evolutionary Argument</Text>
           <Text style={styles.ancestralText}>
-            For 99.9% of human history, animal fats were the primary moisturizer. Eczema, rosacea, and widespread skin sensitivity are modern phenomena — coinciding with the replacement of animal fats with synthetic alternatives in the 20th century.
+            For 99.9% of human history, simple animal and plant fats were the primary moisturizer. Eczema, rosacea, and widespread skin sensitivity are largely modern — coinciding with the replacement of simple lipids with complex synthetic formulations in the 20th century.
           </Text>
           <Text style={styles.ancestralText}>
-            This doesn't mean ancestral = automatically better. But when modern skin science confirms that tallow's composition is nearly identical to human sebum, and that the vitamins it contains (A, D, E, K2) are the exact ones skin cells use — the ancestral use of animal fats isn't superstition. It's empiricism across 10,000 years.
+            This doesn't mean older = automatically better. But modern skin science confirms that a sebum-similar lipid profile integrates into the barrier, and that the fat-soluble vitamins it can carry (A, D, E, K2) are the exact ones skin cells use — the long history of simple-lipid skincare reflects empiricism, not superstition.
           </Text>
         </View>
 
         {/* CTA */}
         <Pressable style={styles.cta} onPress={() => router.push('/product')}>
           <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
-          <Text style={styles.ctaText}>Shop TallowDermics →</Text>
+          <Text style={styles.ctaText}>Explore Velumi AI →</Text>
         </Pressable>
 
         <View style={{ height: 100 }} />

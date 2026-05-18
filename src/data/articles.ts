@@ -28,7 +28,7 @@ export const ARTICLES: Article[] = [
       },
       {
         heading: 'The fatty acid connection',
-        body: 'The lipids your barrier needs most are oleic acid (omega-9), linoleic acid (omega-6), and stearic acid. These are the same fatty acids found in human sebum — and almost nowhere else in nature in the same ratio. Tallow from grass-fed beef fat comes closest, with an oleic acid content of ~45%, stearic ~25%, and palmitic ~25%.',
+        body: 'The lipids your barrier needs most are oleic acid (omega-9), linoleic acid (omega-6), and stearic acid. These are the same fatty acids found in human sebum — and almost nowhere else in nature in the same ratio. Sebum-similar animal fats come closest, with an oleic acid content of ~45%, stearic ~25%, and palmitic ~25%.',
       },
       {
         heading: 'Rebuilding vs patching',
@@ -42,15 +42,15 @@ export const ARTICLES: Article[] = [
     keyTakeaways: [
       'The skin barrier is made of lipids — ceramides, cholesterol, fatty acids',
       'Sulfates, alcohol, and synthetic fragrance degrade it',
-      'Tallow\'s fatty acid profile closely mirrors human sebum',
+      'Sebum-similar lipids\' fatty acid profile closely mirrors human sebum',
       'Rebuilding the barrier takes 4–6 weeks of consistent care',
       'Skin pH should stay between 4.5 and 5.5',
     ],
-    tallowDermicsAngle: 'TallowDermics Tallow Cream is formulated around barrier repair — not a temporary fix. Its oleic and stearic acid content feeds the lipid matrix your barrier is built from.',
+    tallowDermicsAngle: 'Velumi AI\'s barrier guidance centers on lipid repair — not a temporary fix. Oleic- and stearic-acid-rich occlusives feed the lipid matrix your barrier is built from.',
   },
   {
     slug: 'tallow-vs-moisturizers',
-    title: 'Why Tallow Outperforms Every Water-Based Moisturizer',
+    title: 'Why Occlusives Outperform Every Water-Based Moisturizer',
     subtitle: 'The biochemistry that most brands don\'t want you to understand',
     tag: 'INGREDIENTS',
     readTime: 6,
@@ -65,29 +65,29 @@ export const ARTICLES: Article[] = [
       },
       {
         heading: 'What biocompatible actually means',
-        body: 'Biocompatible means the ingredient is structurally similar enough to your skin\'s own chemistry that it can be used, not just tolerated. Mineral oil sits on top. Silicone sits on top. Tallow, on the other hand, shares the same triglyceride backbone as human sebum. Its fatty acids — oleic, stearic, palmitic — are the same building blocks your sebaceous glands use.',
+        body: 'Biocompatible means the ingredient is structurally similar enough to your skin\'s own chemistry that it can be used, not just tolerated. Mineral oil sits on top. Silicone sits on top. A sebum-similar occlusive, on the other hand, shares the same triglyceride backbone as human sebum. Its fatty acids — oleic, stearic, palmitic — are the same building blocks your sebaceous glands use.',
       },
       {
         heading: 'The sebum comparison',
-        body: 'Human sebum is ~57% triglycerides, with oleic acid as the dominant fatty acid. Tallow from grass-fed beef is ~57% saturated/monounsaturated triglycerides, with oleic acid at ~45%. No plant oil comes this close. Coconut oil is almost entirely saturated (no oleic). Jojoba is technically a wax ester. Argan is high in oleic but lacks the stearic/palmitic balance.',
+        body: 'Human sebum is ~57% triglycerides, with oleic acid as the dominant fatty acid. Sebum-similar animal fat is ~57% saturated/monounsaturated triglycerides, with oleic acid at ~45%. No plant oil comes this close. Coconut oil is almost entirely saturated (no oleic). Jojoba is technically a wax ester. Argan is high in oleic but lacks the stearic/palmitic balance.',
       },
       {
         heading: 'Penetration depth',
-        body: 'Because of this structural similarity, tallow\'s fatty acids can integrate into the stratum corneum rather than just sit on the surface. Studies on oleic acid show it increases skin permeability and delivers active ingredients deeper. This is the same reason oleic-rich oils like olive oil are used as penetration enhancers in pharmaceutical formulations.',
+        body: 'Because of this structural similarity, a sebum-similar occlusive\'s fatty acids can integrate into the stratum corneum rather than just sit on the surface. Studies on oleic acid show it increases skin permeability and delivers active ingredients deeper. This is the same reason oleic-rich oils like olive oil are used as penetration enhancers in pharmaceutical formulations.',
       },
       {
         heading: 'The preservative problem',
-        body: 'Water-based formulas need preservatives — because water breeds bacteria. Parabens, phenoxyethanol, DMDM hydantoin (a formaldehyde releaser) are all standard. Anhydrous (water-free) formulas like pure tallow preparations don\'t need preservatives at all. That\'s fewer ingredients, and fewer ingredients means less inflammation.',
+        body: 'Water-based formulas need preservatives — because water breeds bacteria. Parabens, phenoxyethanol, DMDM hydantoin (a formaldehyde releaser) are all standard. Anhydrous (water-free) formulas like pure balm preparations don\'t need preservatives at all. That\'s fewer ingredients, and fewer ingredients means less inflammation.',
       },
     ],
     keyTakeaways: [
       'Water-based moisturizers are primarily water — which evaporates',
       'Most rely on silicones and mineral oil that sit on skin rather than absorb',
-      'Tallow\'s fatty acid profile mirrors human sebum more closely than any plant oil',
+      'Sebum-similar animal fat mirrors human sebum more closely than any plant oil',
       'Biocompatible ingredients integrate into skin chemistry; inert ones just coat it',
       'Anhydrous formulas skip preservatives — fewer ingredients, less irritation',
     ],
-    tallowDermicsAngle: 'TallowDermics is anhydrous by design. No water, no preservatives, no silicones. Just tallow, beeswax, manuka honey, and essential oil — four ingredients that work with your skin\'s biology, not around it.',
+    tallowDermicsAngle: 'Velumi AI favours anhydrous, barrier-first formulas: no water, no preservatives, no silicones — minimal ingredients that work with your skin\'s biology, not around it.',
   },
   {
     slug: 'minimalist-skincare',
@@ -124,7 +124,7 @@ export const ARTICLES: Article[] = [
       'The 10-step routine was a marketing invention, not a dermatological recommendation',
       'Fewer products = fewer chances for sensitization',
     ],
-    tallowDermicsAngle: 'The TallowDermics formula exists in 4 ingredients by conviction, not convenience. Tallow, beeswax, manuka honey, lavender. Nothing you can\'t pronounce. Nothing your great-grandmother couldn\'t identify.',
+    tallowDermicsAngle: 'A minimal-ingredient philosophy by conviction, not convenience — short ingredient lists you can pronounce, the kind your great-grandmother could identify.',
   },
   {
     slug: 'reading-ingredients',
@@ -201,7 +201,7 @@ export const ARTICLES: Article[] = [
       'Comedogenic ratings are based on outdated, unreliable rabbit ear testing',
       'Niacinamide (4–5%) has the strongest evidence for regulating sebum',
     ],
-    tallowDermicsAngle: 'Tallow is oleic-acid dominant, which penetrates rather than sits. Many people with oily skin report normalization of sebum production after 4–6 weeks — consistent with the feedback loop theory.',
+    tallowDermicsAngle: 'Oleic-acid-dominant occlusives penetrate rather than sit. Many people with oily skin report normalization of sebum production after 4–6 weeks — consistent with the feedback-loop theory.',
   },
   {
     slug: 'the-28-day-rule',
@@ -274,7 +274,7 @@ export const ARTICLES: Article[] = [
       'The shift to synthetic ingredients was economic, not clinical',
       'Modern dermatology is returning to barrier-focused, lipid-rich formulations',
     ],
-    tallowDermicsAngle: 'TallowDermics is part of this return — a modern interpretation of ancestral skincare, built on exactly the ingredients that have the deepest record of efficacy and safety.',
+    tallowDermicsAngle: 'Velumi AI is part of this return — a modern, barrier-first interpretation of time-tested skincare, built on the ingredients with the deepest record of efficacy and safety.',
   },
   {
     slug: 'spf-guide',

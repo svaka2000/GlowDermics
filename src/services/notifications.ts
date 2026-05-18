@@ -35,7 +35,7 @@ export async function scheduleRoutineReminder(hour = 8): Promise<void> {
     "Consistency builds results. Time for your daily scan. ✦",
     "Your streak is on the line — scan today to keep it. 🔥",
     "Small daily habits. Big skin results. Scan now. ✨",
-    "TallowDermics reminder: check in with your skin today. 🌱",
+    "Velumi AI reminder: check in with your skin today. 🌱",
   ];
 
   const msg = ROUTINE_MESSAGES[new Date().getDay() % ROUTINE_MESSAGES.length];
