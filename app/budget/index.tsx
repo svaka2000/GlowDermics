@@ -18,10 +18,10 @@ type ProductCategory = {
 };
 
 const CATEGORIES: ProductCategory[] = [
-  { label: 'Cleanser', icon: '🧴', placeholder: '$28', tdAlternative: 'Honey Cleanse (Tallow + Honey)', tdPrice: 0 },
-  { label: 'Moisturizer', icon: '💧', placeholder: '$65', tdAlternative: 'TallowDermics Balm', tdPrice: 48 },
-  { label: 'Serum', icon: '✨', placeholder: '$80', tdAlternative: 'Olive Oil + Tallow layer', tdPrice: 0 },
-  { label: 'Eye Cream', icon: '👁️', placeholder: '$55', tdAlternative: 'TallowDermics Balm (eyes)', tdPrice: 0 },
+  { label: 'Cleanser', icon: '🧴', placeholder: '$28', tdAlternative: 'Honey + oil cleanse', tdPrice: 0 },
+  { label: 'Moisturizer', icon: '💧', placeholder: '$65', tdAlternative: 'Occlusive balm', tdPrice: 48 },
+  { label: 'Serum', icon: '✨', placeholder: '$80', tdAlternative: 'Olive oil + occlusive layer', tdPrice: 0 },
+  { label: 'Eye Cream', icon: '👁️', placeholder: '$55', tdAlternative: 'Occlusive balm (eyes)', tdPrice: 0 },
   { label: 'Face Oil', icon: '🌿', placeholder: '$45', tdAlternative: 'Included in Balm', tdPrice: 0 },
   { label: 'Toner', icon: '💦', placeholder: '$30', tdAlternative: 'Rosewater mist (DIY ~$5)', tdPrice: 5 },
   { label: 'SPF', icon: '☀️', placeholder: '$25', tdAlternative: 'SPF still recommended', tdPrice: 20 },
@@ -29,7 +29,7 @@ const CATEGORIES: ProductCategory[] = [
 ];
 
 const TALLOW_PRODUCT = {
-  name: 'TallowDermics Signature Balm',
+  name: 'Signature Occlusive Balm',
   price: 48,
   lasts: '3 months',
   description: 'Replaces moisturizer, face oil, eye cream, and serum for most users',
@@ -83,7 +83,7 @@ export default function BudgetCalculator() {
           </Pressable>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>Budget Calculator</Text>
-            <Text style={styles.headerSub}>Conventional vs TallowDermics</Text>
+            <Text style={styles.headerSub}>Conventional vs One Occlusive</Text>
           </View>
           <View style={{ width: 36 }} />
         </Animated.View>
@@ -97,7 +97,7 @@ export default function BudgetCalculator() {
           <Text style={styles.introEmoji}>💰</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.introTitle}>What are you spending?</Text>
-            <Text style={styles.introSub}>Enter what you pay for each product to see how TallowDermics compares.</Text>
+            <Text style={styles.introSub}>Enter what you pay for each product to see how a single occlusive balm compares.</Text>
           </View>
         </View>
 
@@ -144,7 +144,7 @@ export default function BudgetCalculator() {
                   <Text style={styles.vsText}>VS</Text>
                 </View>
                 <View style={[styles.compItem, { alignItems: 'flex-end' }]}>
-                  <Text style={[styles.compLabel, { color: colors.primary }]}>TALLOWDERMICS</Text>
+                  <Text style={[styles.compLabel, { color: colors.primary }]}>ONE BALM</Text>
                   <Text style={[styles.compAmount, { color: colors.primary }]}>${Math.round(tdAnnual)}</Text>
                   <Text style={styles.compSub}>per year</Text>
                   <Text style={styles.compMonthly}>(${Math.round(tdMonthlyFull)}/month)</Text>
@@ -174,7 +174,7 @@ export default function BudgetCalculator() {
               )}
             </View>
 
-            {/* What TallowDermics replaces */}
+            {/* What one balm replaces */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>What One Balm Replaces</Text>
               <Text style={styles.cardSub}>${TALLOW_PRODUCT.price} lasts {TALLOW_PRODUCT.lasts}</Text>
@@ -193,12 +193,12 @@ export default function BudgetCalculator() {
 
         {/* TD product breakdown */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>The Minimal TallowDermics Stack</Text>
+          <Text style={styles.cardTitle}>The Minimal Occlusive Stack</Text>
           {[
-            { item: 'TallowDermics Balm', price: '$48 / 3 months', note: 'Core moisturizer — replaces 4 products' },
+            { item: 'Occlusive balm', price: '$48 / 3 months', note: 'Core moisturizer — replaces 4 products' },
             { item: 'Rosewater Mist (DIY)', price: '~$5 / 3 months', note: 'Optional hydrating toner' },
             { item: 'Mineral SPF', price: '$18-25 / 3 months', note: 'Non-negotiable sun protection' },
-            { item: 'Gentle Cleanser', price: 'Optional', note: 'Or oil cleanse with tallow' },
+            { item: 'Gentle Cleanser', price: 'Optional', note: 'Or oil cleanse with a balm' },
           ].map((row, i) => (
             <View key={i} style={styles.tdRow}>
               <View style={{ flex: 1 }}>

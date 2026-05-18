@@ -40,7 +40,7 @@ function buildFoodGroups(c: Palette): FoodGroup[] {
       { food: 'Wild salmon', emoji: '🐟', note: 'Wild-caught has 5x more omega-3 than farmed. 3.5oz has 2.2g omega-3.' },
       { food: 'Sardines', emoji: '🐟', note: 'The most cost-effective omega-3 source. Also loaded with skin-boosting vitamin D.' },
       { food: 'Mackerel', emoji: '🐠', note: 'Higher omega-3 content than salmon, cheaper, and sustainable.' },
-      { food: 'Grass-fed beef', emoji: '🥩', note: 'Significantly better omega-3:6 ratio than grain-fed. TallowDermics uses grass-fed animals for this reason.' },
+      { food: 'Grass-fed beef', emoji: '🥩', note: 'Significantly better omega-3:6 ratio than grain-fed.' },
       { food: 'Chia seeds', emoji: '🌱', note: '5g ALA per tablespoon — great plant source, though conversion to EPA/DHA is limited.' },
     ],
     howMuch: '2-3 servings of fatty fish per week, or 1-2g omega-3 supplement daily',
@@ -87,7 +87,7 @@ function buildFoodGroups(c: Palette): FoodGroup[] {
       { food: 'Organ meats (liver)', emoji: '🥩', note: 'The original multivitamin. Liver has vitamin A, zinc, copper — all critical for collagen.' },
       { food: 'Egg yolks', emoji: '🥚', note: 'Rich in collagen precursors and sulfur, which crosslinks collagen for stability.' },
       { food: 'Shellfish (oysters, shrimp)', emoji: '🦪', note: 'High zinc and copper content — essential cofactors for collagen synthesis enzymes.' },
-      { food: 'Grass-fed beef', emoji: '🥩', note: 'Provides glycine-rich protein plus CLA — the same CLA found in TallowDermics tallow.' },
+      { food: 'Grass-fed beef', emoji: '🥩', note: 'Provides glycine-rich protein plus CLA — the same CLA found in grass-fed animal fat.' },
     ],
     howMuch: '1 cup bone broth daily or high-quality collagen peptide supplement (10-15g)',
     timing: 'Vitamin C with every collagen-containing meal for maximum synthesis',
@@ -150,7 +150,7 @@ function buildFoodGroups(c: Palette): FoodGroup[] {
     ],
     topFoods: [
       { food: 'Added sugars (all forms)', emoji: '🍭', note: 'Trigger insulin spikes, feed inflammatory gut bacteria, and cause glycation of collagen.' },
-      { food: 'Refined seed oils', emoji: '🫙', note: 'Sunflower, soybean, canola, corn oil — high in omega-6 that drives inflammation. Use tallow, butter, or olive oil instead.' },
+      { food: 'Refined seed oils', emoji: '🫙', note: 'Sunflower, soybean, canola, corn oil — high in omega-6 that drives inflammation. Use animal fats, butter, or olive oil instead.' },
       { food: 'Ultra-processed foods', emoji: '🍟', note: 'Contain emulsifiers that break down gut lining, trigger systemic inflammation seen in skin flares.' },
       { food: 'Alcohol', emoji: '🍷', note: 'Dehydrates skin, depletes vitamin A (essential for cell turnover), and increases inflammation.' },
       { food: 'Dairy (for acne-prone)', emoji: '🥛', note: 'Conventional dairy contains hormones that activate androgen receptors in skin. Try removing for 30 days if acne-prone.' },
@@ -298,7 +298,7 @@ export default function FaceFoodGuide() {
           <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
           <Text style={styles.ancestralTitle}>🌿 The Ancestral Connection</Text>
           <Text style={styles.ancestralText}>
-            Our ancestors ate a diet rich in omega-3s from pasture-raised animals, seasonal vegetables, and fermented foods — with minimal processed sugar or seed oils. The same principles that make TallowDermics effective topically (grass-fed fat, no synthetic ingredients) apply internally: eat real, whole, ancestrally-appropriate foods and your skin will reflect it.
+            Our ancestors ate a diet rich in omega-3s from pasture-raised animals, seasonal vegetables, and fermented foods — with minimal processed sugar or seed oils. The same principles that make a clean occlusive effective topically (grass-fed fat, no synthetic ingredients) apply internally: eat real, whole, ancestrally-appropriate foods and your skin will reflect it.
           </Text>
         </View>
 

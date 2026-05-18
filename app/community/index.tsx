@@ -31,11 +31,11 @@ const COMMUNITY_TIPS = [
   { skinType: 'Combination', tip: 'Multi-masking: clay on my T-zone, hydrating mask on cheeks. Game changer.', author: 'Alex', daysAgo: 3, likes: 312 },
   { skinType: 'Sensitive', tip: "Eliminated fragrance from all products. My redness is 80% gone after 3 weeks.", author: 'Sam', daysAgo: 4, likes: 421 },
   { skinType: 'Normal', tip: '7 glasses of water daily + 15-min walk. My glow score jumped 12 points.', author: 'Maya', daysAgo: 1, likes: 156 },
-  { skinType: 'All Types', tip: 'Tallow moisturizer at night. Woke up with the softest skin of my life.', author: 'Chris', daysAgo: 2, likes: 567 },
+  { skinType: 'All Types', tip: 'A rich occlusive at night. Woke up with the softest skin of my life.', author: 'Chris', daysAgo: 2, likes: 567 },
 ];
 
 const TRENDING_CHALLENGES = [
-  { id: 'tallow-30', title: '30-Day Tallow Switch', emoji: '🌿', joined: 8421, completedToday: 1203, hot: true },
+  { id: 'tallow-30', title: '30-Day Barrier Reset', emoji: '🌿', joined: 8421, completedToday: 1203, hot: true },
   { id: 'hydration-14', title: '14-Day Glow Hydration', emoji: '💧', joined: 5832, completedToday: 891, hot: false },
   { id: 'minimal-7', title: '7-Day Minimal Routine', emoji: '✨', joined: 12940, completedToday: 2104, hot: true },
   { id: 'sleep-skin-14', title: '14-Day Sleep for Skin', emoji: '🌙', joined: 3291, completedToday: 443, hot: false },
@@ -220,7 +220,7 @@ export default function Community() {
             >
               <View style={styles.header}>
                 <View>
-                  <Text style={styles.headerEyebrow}>GLOWDERMICS</Text>
+                  <Text style={styles.headerEyebrow}>VELUMI AI</Text>
                   <Text style={styles.headerTitle} numberOfLines={1}>Community</Text>
                 </View>
                 <Pressable style={styles.shareBtn} onPress={() => router.push('/skin-scorecard')}>

@@ -327,7 +327,7 @@ export default function ExpiryTracker() {
             { product: 'Vitamin C Serum', pao: '3-6 months', note: 'Oxidizes quickly. Discard when it turns orange/brown.' },
             { product: 'Retinol', pao: '6-12 months', note: 'Degrades in light and air. Use airtight, opaque packaging.' },
             { product: 'Cleanser', pao: '12-18 months', note: 'Generally stable but watch for changes in smell/texture.' },
-            { product: 'Tallow Balm', pao: '12-24 months', note: 'TallowDermics uses no water (anhydrous) — much longer stable than water-based products.' },
+            { product: 'Anhydrous Balm', pao: '12-24 months', note: 'Water-free (anhydrous) balms are much more stable than water-based products.' },
             { product: 'Eye Cream', pao: '6-12 months', note: 'Fingers introduce bacteria directly. Use a spatula.' },
             { product: 'Exfoliants (AHA/BHA)', pao: '12 months', note: 'Acids degrade over time and may become irritating or ineffective.' },
           ].map((item, i) => (

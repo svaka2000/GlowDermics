@@ -116,8 +116,8 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   "conflictsWith": ["<1-3 ingredients to avoid pairing with, or empty array if none>"],
   "naturalVsSynthetic": "<brief note on whether typically natural, synthetic, or both, and what to prefer>",
   "researchStrength": "<strong|moderate|limited|theoretical>",
-  "isTallowIngredient": <true if this ingredient is found in or similar to tallow/tallow-based formulas>,
-  "tallowNote": "<optional: 1 sentence on how tallow relates to this ingredient>"
+  "isTallowIngredient": <true if this ingredient is an occlusive lipid or found in lipid-rich/animal-fat formulas>,
+  "tallowNote": "<optional: 1 sentence on how occlusive/lipid-barrier skincare relates to this ingredient>"
 }`;
 
       const response = await groq.chat.completions.create({
@@ -303,14 +303,14 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
           <Text style={styles.bodyText}>{profile.naturalVsSynthetic}</Text>
         </View>
 
-        {/* TallowDermics connection */}
+        {/* Occlusive connection */}
         {(profile.isTallowIngredient || profile.tallowNote) && (
           <View style={styles.tdCard}>
             <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.tdEyebrow}>TALLOWDERMICS CONNECTION</Text>
-            <Text style={styles.tdText}>{profile.tallowNote || 'This ingredient is present in or closely related to tallow-based skincare formulations.'}</Text>
+            <Text style={styles.tdEyebrow}>LIPID-BARRIER CONNECTION</Text>
+            <Text style={styles.tdText}>{profile.tallowNote || 'This ingredient is present in or closely related to occlusive / lipid-barrier skincare formulations.'}</Text>
             <Pressable onPress={() => router.push('/product')} style={{ marginTop: 8 }}>
-              <Text style={styles.tdCta}>Learn about TallowDermics formula →</Text>
+              <Text style={styles.tdCta}>Learn about the skin barrier →</Text>
             </Pressable>
           </View>
         )}

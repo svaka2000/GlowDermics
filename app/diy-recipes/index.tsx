@@ -30,7 +30,7 @@ function buildRecipes(colors: Palette): Recipe[] {
   return [
   {
     id: 'basic-balm',
-    name: 'Original Tallow Balm',
+    name: 'Original Barrier Balm',
     emoji: '🌿',
     category: 'Moisturizer',
     time: '15 min',
@@ -39,12 +39,12 @@ function buildRecipes(colors: Palette): Recipe[] {
     color: colors.primary,
     skinTypes: ['All skin types'],
     ingredients: [
-      { name: 'Grass-fed beef tallow', amount: '4 tbsp', note: 'Must be rendered and filtered' },
+      { name: 'Shea butter (unrefined)', amount: '4 tbsp', note: 'Use raw, unrefined for maximum nutrients' },
       { name: 'Organic jojoba oil', amount: '1 tbsp', note: 'Mirrors skin sebum' },
       { name: 'Vitamin E oil', amount: '5 drops', note: 'Natural preservative + antioxidant' },
     ],
     steps: [
-      'Warm tallow gently until just melted (not boiling). Use a double boiler.',
+      'Warm the shea butter gently until just melted (not boiling). Use a double boiler.',
       'Remove from heat and stir in jojoba oil.',
       'Add vitamin E drops and mix well.',
       'Pour into a clean, sterilized glass jar.',
@@ -52,7 +52,7 @@ function buildRecipes(colors: Palette): Recipe[] {
       'Store in a cool, dark place.',
     ],
     tips: [
-      'Use rendered, not raw tallow — render by slow-cooking kidney fat (suet) until pure fat separates.',
+      'Use unrefined shea for the fullest nutrient profile — refined shea loses vitamins in processing.',
       'Whip with a hand mixer while cooling for a lighter, mousse-like texture.',
       'Add 2-3 drops of lavender essential oil for a subtle scent.',
     ],
@@ -70,14 +70,14 @@ function buildRecipes(colors: Palette): Recipe[] {
     color: colors.gold,
     skinTypes: ['Normal', 'Dry', 'Combination'],
     ingredients: [
-      { name: 'Grass-fed beef tallow', amount: '2 tbsp' },
+      { name: 'Shea butter (unrefined)', amount: '2 tbsp' },
       { name: 'Rosehip seed oil', amount: '1 tbsp', note: 'Rich in vitamin A and C precursors' },
       { name: 'Sea buckthorn oil', amount: '3 drops', note: 'Intense orange — use sparingly' },
       { name: 'Vitamin C (L-ascorbic acid)', amount: '1/4 tsp', note: 'Oil-soluble form recommended' },
       { name: 'Vitamin E oil', amount: '8 drops' },
     ],
     steps: [
-      'Melt tallow gently, remove from heat when liquid.',
+      'Melt the shea butter gently, remove from heat when liquid.',
       'Add rosehip oil and sea buckthorn oil — mix well.',
       'Once cooled to skin temperature, stir in vitamin C and vitamin E.',
       'Pour into a dropper bottle for easy application.',
@@ -102,13 +102,13 @@ function buildRecipes(colors: Palette): Recipe[] {
     color: '#6B85A8',
     skinTypes: ['All skin types'],
     ingredients: [
-      { name: 'Grass-fed beef tallow', amount: '1 tbsp' },
+      { name: 'Shea butter (unrefined)', amount: '1 tbsp' },
       { name: 'Castor oil', amount: '1 tsp', note: 'Promotes circulation and lash growth' },
       { name: 'Caffeine powder', amount: '1/8 tsp', note: 'De-puffing, constricts vessels' },
       { name: 'Vitamin K oil', amount: '5 drops', note: 'Reduces dark circles' },
     ],
     steps: [
-      'Melt tallow and remove from heat.',
+      'Melt the shea butter and remove from heat.',
       'Add castor oil and stir to combine.',
       'Whisk in caffeine powder until fully dissolved — this takes 2-3 minutes of vigorous stirring.',
       'Add vitamin K drops and mix.',
@@ -135,13 +135,13 @@ function buildRecipes(colors: Palette): Recipe[] {
     skinTypes: ['Oily', 'Combination', 'Acne-prone'],
     ingredients: [
       { name: 'Kaolin clay', amount: '2 tbsp', note: 'Gentle, non-drying' },
-      { name: 'Melted tallow', amount: '1 tsp', note: 'Prevents clay from over-drying' },
+      { name: 'Melted shea butter', amount: '1 tsp', note: 'Prevents clay from over-drying' },
       { name: 'Raw apple cider vinegar', amount: '1-2 tsp', note: 'pH balancing' },
       { name: 'Manuka honey', amount: '1 tsp', note: 'Antibacterial and humectant' },
       { name: 'Tea tree essential oil', amount: '2 drops', note: 'Antimicrobial — don\'t exceed 2 drops' },
     ],
     steps: [
-      'Mix clay and tallow together until a paste forms.',
+      'Mix clay and melted shea together until a paste forms.',
       'Add ACV slowly, mixing to reach a spreadable consistency.',
       'Stir in honey and tea tree oil.',
       'Apply to face, avoiding eye area.',
@@ -168,14 +168,14 @@ function buildRecipes(colors: Palette): Recipe[] {
     skinTypes: ['All skin types'],
     ingredients: [
       { name: 'Beeswax pastilles', amount: '1 tsp', note: 'Creates firm but spreadable texture' },
-      { name: 'Tallow', amount: '1.5 tsp' },
+      { name: 'Shea butter', amount: '1.5 tsp' },
       { name: 'Castor oil', amount: '0.5 tsp', note: 'Provides shine' },
       { name: 'Mica powder (red/pink)', amount: '1/4 tsp', note: 'Cosmetic grade only' },
       { name: 'Peppermint essential oil', amount: '2 drops', note: 'Plumping effect' },
     ],
     steps: [
       'Melt beeswax in a double boiler first (it has the highest melting point).',
-      'Add tallow and castor oil once wax is melted.',
+      'Add shea butter and castor oil once wax is melted.',
       'Remove from heat and let cool slightly.',
       'Sift in mica powder and mix vigorously for 1 minute to prevent clumping.',
       'Add peppermint oil and stir.',
@@ -200,7 +200,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     color: '#22C55E',
     skinTypes: ['Dry', 'Very Dry', 'Sensitive'],
     ingredients: [
-      { name: 'Grass-fed tallow', amount: '4 tbsp' },
+      { name: 'Mango butter', amount: '4 tbsp' },
       { name: 'Shea butter', amount: '2 tbsp' },
       { name: 'Coconut oil', amount: '1 tbsp', note: 'Fractionated for smoother texture' },
       { name: 'Arrowroot powder', amount: '1 tbsp', note: 'Reduces greasiness' },
@@ -208,7 +208,7 @@ function buildRecipes(colors: Palette): Recipe[] {
       { name: 'Magnesium flakes', amount: '1 tbsp', note: 'Transdermal magnesium for muscle recovery' },
     ],
     steps: [
-      'Melt tallow, shea, and coconut oil together over low heat.',
+      'Melt the mango butter, shea, and coconut oil together over low heat.',
       'Remove from heat and let cool until just starting to solidify (about 20-30 min in fridge).',
       'Whip with a hand mixer on high for 3-5 minutes until fluffy and white.',
       'Add arrowroot powder and beat again for 1 minute.',
@@ -350,8 +350,8 @@ export default function DIYRecipes() {
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
-            <Text style={styles.headerTitle} numberOfLines={1}>DIY Tallow Recipes</Text>
-            <Text style={styles.headerSub}>Make your own ancestral skincare</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>DIY Skincare Recipes</Text>
+            <Text style={styles.headerSub}>Make your own simple skincare</Text>
           </View>
           <View style={{ width: 36 }} />
         </View>
@@ -363,7 +363,7 @@ export default function DIYRecipes() {
           <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
           <Text style={styles.listHeroTitle}>🌿 Craft Your Routine</Text>
           <Text style={styles.listHeroDesc}>
-            All recipes use grass-fed tallow as the base — the closest thing to your skin's own sebum. These are the formulas our ancestors used before the synthetic skincare industry existed.
+            These recipes use simple plant butters and oils as the base — close to your skin's own lipids. Time-tested formulas, free of synthetic fillers.
           </Text>
         </View>
 
@@ -406,12 +406,12 @@ export default function DIYRecipes() {
 
         {/* Quality note */}
         <View style={styles.qualityCard}>
-          <Text style={styles.qualityTitle}>Why Grass-Fed Tallow?</Text>
+          <Text style={styles.qualityTitle}>Why Quality Plant Butters?</Text>
           <Text style={styles.qualityText}>
-            The quality of your tallow determines the quality of your results. Grass-fed, pasture-raised tallow contains significantly higher levels of conjugated linoleic acid (CLA), palmitoleic acid, and fat-soluble vitamins A, D, E, and K compared to grain-fed animals. These nutrients are what make tallow uniquely effective for skin.
+            The quality of your base butter determines your results. Unrefined, cold-pressed shea and mango butters retain significantly higher levels of fat-soluble vitamins A, E, and F (essential fatty acids) and skin-soothing compounds than refined versions. These nutrients are what make a DIY balm effective.
           </Text>
           <Pressable style={styles.qualityBtn} onPress={() => router.push('/product')}>
-            <Text style={styles.qualityBtnText}>Shop TallowDermics →</Text>
+            <Text style={styles.qualityBtnText}>Explore Velumi AI →</Text>
           </Pressable>
         </View>
 

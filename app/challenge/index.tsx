@@ -34,11 +34,11 @@ function buildChallenges(c: Palette): Challenge[] {
   return [
   {
     id: 'tallow-30',
-    title: '30-Day Tallow Switch',
+    title: '30-Day Barrier Reset',
     emoji: '🌿',
-    description: 'Replace your moisturizer with TallowDermics Balm for 30 days and track the transformation.',
+    description: 'Replace your moisturizer with a single rich occlusive balm for 30 days and track the transformation.',
     duration: 30,
-    dailyAction: 'Apply TallowDermics Balm morning and evening instead of your regular moisturizer',
+    dailyAction: 'Apply a rich occlusive balm morning and evening instead of your regular moisturizer',
     tips: [
       'Start with a pea-sized amount and warm between fingers',
       'Apply to damp skin for maximum absorption',
@@ -91,7 +91,7 @@ function buildChallenges(c: Palette): Challenge[] {
       'Skip actives, serums, and treatments this week',
       'Let your barrier rebuild naturally',
       'Notice how your skin feels with less product',
-      'Great preparation for introducing tallow-based skincare',
+      'Great preparation for introducing occlusive-based skincare',
     ],
     color: ['#2D3748', '#4A5568'],
     category: 'minimal',
@@ -236,7 +236,7 @@ export default function ChallengePage() {
 
   const getCategoryLabel = (cat: Challenge['category']) => {
     switch (cat) {
-      case 'tallow': return 'TallowDermics';
+      case 'tallow': return 'Barrier';
       case 'routine': return 'Routine';
       case 'hydration': return 'Hydration';
       case 'minimal': return 'Minimal';
