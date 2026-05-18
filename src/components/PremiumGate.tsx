@@ -17,6 +17,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '../constants/colors';
+import { fonts } from '../constants/typography';
 import { Auth } from '../services/auth';
 import { TierCard, TierFeature, SocialProofStrip } from './ui';
 
@@ -522,20 +523,24 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   heroTitle: {
-    fontSize: 22,
-    fontWeight: '900',
+    fontFamily: fonts.display,
+    fontSize: 27,
+    fontWeight: '600',
     color: Colors.textPrimary,
-    letterSpacing: -0.4,
+    letterSpacing: 0.2,
+    lineHeight: 33,
     textAlign: 'center',
   },
   heroSub: {
-    fontSize: 13,
+    fontFamily: fonts.body,
+    fontSize: 14,
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 19,
-    marginTop: 6,
-    paddingHorizontal: 16,
+    lineHeight: 21,
+    marginTop: 8,
+    paddingHorizontal: 20,
     fontWeight: '500',
+    letterSpacing: 0.1,
   },
 
   featureLabel: {
@@ -645,7 +650,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 17,
   },
-  ctaText: { fontSize: 15, fontWeight: '900', color: '#fff', letterSpacing: 0.2 },
+  ctaText: { fontFamily: fonts.body, fontSize: 15, fontWeight: '700', color: '#fff', letterSpacing: 0.6 },
 
   dismissBtn: { alignItems: 'center', paddingVertical: 10, marginTop: 4 },
   dismissText: { fontSize: 13, color: Colors.textMuted, fontWeight: '600' },
@@ -674,8 +679,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 8,
   },
-  successTitle: { fontSize: 22, fontWeight: '900', color: Colors.textPrimary },
-  successSub: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20 },
+  successTitle: { fontFamily: fonts.display, fontSize: 24, fontWeight: '600', color: Colors.textPrimary, letterSpacing: 0.2 },
+  successSub: { fontFamily: fonts.body, fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 21, letterSpacing: 0.1 },
 
   /* Inline banner */
   banner: {
