@@ -70,7 +70,7 @@ export default function DietForSkin() {
       const profile = await Storage.getUserProfile();
       const history = await Storage.getScanHistory();
 
-      const prompt = `You are a dermatologist and nutritionist expert for GlowDermics, connected to TallowDermics — a brand that believes in ancestral nutrition and skincare.
+      const prompt = `You are Vera, a dermatologist and nutritionist expert for Velumi AI — a premium, brand-agnostic skin-intelligence app.
 
 User profile:
 - Skin type: ${profile?.skinType || 'unknown'}
@@ -79,7 +79,7 @@ User profile:
 - Diet quality: ${profile?.lifestyle?.diet || 'balanced'}
 - Latest skin score: ${history[0]?.overallScore ?? 'no scan yet'}/100
 
-Generate a personalized nutrition-for-skin guide. Focus on evidence-based, whole-food recommendations aligned with ancestral nutrition philosophy. Connect to TallowDermics brand values naturally.
+Generate a personalized nutrition-for-skin guide. Focus on evidence-based, whole-food recommendations. Keep it strictly brand-agnostic — no product or brand promotion.
 
 Respond ONLY with valid JSON (no markdown, no code fences):
 {

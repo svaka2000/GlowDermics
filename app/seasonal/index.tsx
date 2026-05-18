@@ -78,7 +78,7 @@ export default function Seasonal() {
       const history = await Storage.getScanHistory();
       const latest = history[0];
 
-      const prompt = `You are GlowDermics AI, an expert skincare coach for TallowDermics — an ancestral, minimal skincare brand using grass-fed tallow, manuka honey, olive oil, and calendula.
+      const prompt = `You are Vera, Velumi AI's expert skincare coach — premium, brand-agnostic skin intelligence.
 
 Current season: ${season.season} (${season.months})
 User skin type: ${profile?.skinType || 'not specified'}
@@ -87,7 +87,7 @@ User goals: ${profile?.goals?.join(', ') || 'none listed'}
 Latest skin score: ${latest?.overallScore ?? 'no scan yet'}/100
 Lifestyle: sleep ${profile?.lifestyle?.sleepHours ?? 7}hrs, water ${profile?.lifestyle?.waterIntake ?? 'moderate'}, diet ${profile?.lifestyle?.diet ?? 'balanced'}
 
-Generate a comprehensive seasonal skincare guide for ${season.season}. Focus on practical, science-backed adjustments. Mention tallow/TallowDermics where relevant and natural.
+Generate a comprehensive seasonal skincare guide for ${season.season}. Focus on practical, science-backed adjustments. Keep it strictly brand-agnostic — no product or brand promotion.
 
 Respond ONLY with valid JSON (no markdown, no code fences):
 {
@@ -114,7 +114,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"name": "<another to reduce>", "reason": "<reason>"}
   ],
   "lifestyleTips": ["<lifestyle tip for skin in ${season.season}>", "<second lifestyle tip>", "<third tip>", "<fourth tip>"],
-  "tallowNote": "<specific advice on how TallowDermics tallow balm fits this season — e.g. heavier application in winter, lighter in summer>",
+  "tallowNote": "<one brand-agnostic, season-specific skincare tip — e.g. richer moisturizer in winter, lighter in summer; no products, no brand>",
   "watchOutFor": ["<seasonal skin risk 1>", "<risk 2>", "<risk 3>"]
 }`;
 
@@ -337,12 +337,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
               </View>
             )}
 
-            {/* TallowDermics note */}
+            {/* Seasonal tip */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
               <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowEmoji}>🌿</Text>
+              <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>TallowDermics This {season.season}</Text>
+                <Text style={styles.tallowTitle}>Your {season.season} Tip</Text>
                 <Text style={styles.tallowText}>{guide.tallowNote}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.primary} />

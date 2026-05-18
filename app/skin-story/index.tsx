@@ -143,7 +143,7 @@ Return ONLY valid JSON (no markdown):
   "biggestWin": "<their single biggest achievement in this journey — be specific with numbers>",
   "currentChapter": "<1 sentence on where they are right now in their journey>",
   "nextChapter": "<1 sentence on what comes next — what they should be building toward>",
-  "tallowMoment": "<1 sentence connecting their journey to ancestral/tallow-based skincare philosophy>",
+  "tallowMoment": "<1 brand-agnostic, encouraging sentence with a meaningful takeaway about their skin journey — no products, no brand>",
   "socialCaption": "<a short, shareable Instagram-style caption for their journey — 2-3 sentences, include relevant emojis>",
   "highlights": [
     { "label": "Days tracking", "value": "${s.daysTracking}", "emoji": "📅" },
@@ -182,10 +182,10 @@ Return ONLY valid JSON (no markdown):
         `📊 My Skin Journey Stats:`,
         ...story.highlights.map(h => `${h.emoji} ${h.label}: ${h.value}`),
         '',
-        `🌿 ${story.tallowMoment}`,
+        `✨ ${story.tallowMoment}`,
         '',
-        '— Tracked with GlowDermics × TallowDermics',
-        'tallowdermics.com',
+        '— Tracked with Velumi AI',
+        'velumi.ai',
       ].join('\n'),
     });
   };
@@ -226,7 +226,7 @@ Return ONLY valid JSON (no markdown):
           <View style={styles.emptyCard}>
             <Text style={styles.emptyEmoji}>📖</Text>
             <Text style={styles.emptyTitle}>Your story hasn't started yet</Text>
-            <Text style={styles.emptySub}>Take your first skin scan to begin your GlowDermics journey.</Text>
+            <Text style={styles.emptySub}>Take your first skin scan to begin your Velumi AI journey.</Text>
             <Pressable style={styles.emptyBtn} onPress={() => router.push('/scan')}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} />
               <Text style={styles.emptyBtnText}>Take First Scan</Text>
@@ -294,12 +294,12 @@ Return ONLY valid JSON (no markdown):
               </View>
             </View>
 
-            {/* Tallow moment */}
+            {/* Skin journey moment */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-              <Text style={styles.tallowEmoji}>🌿</Text>
+              <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowLabel}>THE ANCESTRAL CONNECTION</Text>
+                <Text style={styles.tallowLabel}>YOUR JOURNEY</Text>
                 <Text style={styles.tallowText}>{story.tallowMoment}</Text>
               </View>
               <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.6)" />
