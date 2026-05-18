@@ -279,7 +279,7 @@ export default function Scan() {
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.heroSection}>
             <LinearGradient
-              colors={['rgba(196,98,45,0.12)', 'transparent']}
+              colors={[colors.primary + '1F', 'transparent']}
               style={styles.heroGlow}
             />
             <View style={styles.heroIconWrap}>
