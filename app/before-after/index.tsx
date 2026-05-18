@@ -77,7 +77,7 @@ export default function BeforeAfterScreen() {
             <Text style={styles.emptySub}>
               Take another scan a few weeks apart and Velumi AI will line them up side by side with your score change.
             </Text>
-            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scan' as any)} accessibilityRole="button">
+            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scan' as any)} accessibilityRole="button" accessibilityLabel="Take a scan">
               <Text style={styles.emptyBtnText}>Take a scan</Text>
             </Pressable>
           </View>
