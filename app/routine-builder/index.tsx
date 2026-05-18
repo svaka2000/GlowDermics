@@ -29,7 +29,7 @@ type RoutineStep = {
   product: string;
   why: string;
   duration: string;
-  isTallowDermics?: boolean;
+  isKeyStep?: boolean;
 };
 
 type BuiltRoutine = {
@@ -121,7 +121,7 @@ Return ONLY valid JSON (no markdown):
       "product": "<specific product or type>",
       "why": "<1 sentence why>",
       "duration": "<e.g. 1 min>",
-      "isTallowDermics": <true|false>
+      "isKeyStep": <true|false>
     }
   ],
   "evening": [
@@ -131,7 +131,7 @@ Return ONLY valid JSON (no markdown):
       "product": "<specific product or type>",
       "why": "<1 sentence why>",
       "duration": "<e.g. 2 min>",
-      "isTallowDermics": <true|false>
+      "isKeyStep": <true|false>
     }
   ],
   "weekly": [
@@ -141,7 +141,7 @@ Return ONLY valid JSON (no markdown):
       "product": "<product>",
       "why": "<why weekly>",
       "duration": "<duration>",
-      "isTallowDermics": false
+      "isKeyStep": false
     }
   ],
   "philosophy": "<2-3 sentences on the philosophy behind this routine>",
@@ -328,8 +328,8 @@ Return ONLY valid JSON (no markdown):
               {steps.map((step, i) => (
                 <View key={i} style={[styles.stepRow, i < steps.length - 1 && styles.stepBorder]}>
                   <View style={styles.stepOrderCol}>
-                    <View style={[styles.stepCircle, step.isTallowDermics && styles.stepCircleTD]}>
-                      <Text style={[styles.stepNum, step.isTallowDermics && { color: colors.white }]}>{step.order}</Text>
+                    <View style={[styles.stepCircle, step.isKeyStep && styles.stepCircleTD]}>
+                      <Text style={[styles.stepNum, step.isKeyStep && { color: colors.white }]}>{step.order}</Text>
                     </View>
                     {i < steps.length - 1 && <View style={styles.stepLine} />}
                   </View>
@@ -338,8 +338,8 @@ Return ONLY valid JSON (no markdown):
                       <Text style={styles.stepName}>{step.step}</Text>
                       <Text style={styles.stepDuration}>{step.duration}</Text>
                     </View>
-                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: colors.primary }]}>
-                      {step.isTallowDermics && '🌿 '}{step.product}
+                    <Text style={[styles.stepProduct, step.isKeyStep && { color: colors.primary }]}>
+                      {step.isKeyStep && '🌿 '}{step.product}
                     </Text>
                     <Text style={styles.stepWhy}>{step.why}</Text>
                   </View>

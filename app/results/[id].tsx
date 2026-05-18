@@ -429,7 +429,7 @@ export default function Results() {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Recommendations</Text>
             {analysis.recommendations.map((rec, i) => (
-              <View key={i} style={[styles.recCard, rec.product?.isTallowDermics && styles.recCardHighlight]}>
+              <View key={i} style={[styles.recCard, rec.product?.isKeyStep && styles.recCardHighlight]}>
                 <View style={styles.recHeader}>
                   <View style={styles.recCategoryWrap}>
                     <Text style={styles.recCategory}>{rec.category}</Text>
@@ -452,7 +452,7 @@ export default function Results() {
                         resizeMode="cover"
                       />
                       <View style={{ flex: 1 }}>
-                        {rec.product.isTallowDermics && (
+                        {rec.product.isKeyStep && (
                           <View style={styles.tdBadge}>
                             <LinearGradient colors={[colors.primaryLight, colors.primary]} style={StyleSheet.absoluteFill} />
                             <Text style={styles.tdBadgeText}>✦ Velumi Pick</Text>

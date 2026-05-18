@@ -25,7 +25,7 @@ type Product = {
   whyItWorks: string;
   keyIngredients: string[];
   avoid: string;
-  isTallowDermics: boolean;
+  isKeyStep: boolean;
   priority: 'essential' | 'recommended' | 'optional';
 };
 
@@ -124,7 +124,7 @@ Return ONLY valid JSON (no markdown):
       "whyItWorks": "<1-2 sentences why this is ideal for their specific profile>",
       "keyIngredients": ["<ingredient 1>", "<ingredient 2>"],
       "avoid": "<what this replaces or what to avoid using it with>",
-      "isTallowDermics": <true|false>,
+      "isKeyStep": <true|false>,
       "priority": "<essential|recommended|optional>"
     }
   ],
@@ -254,18 +254,18 @@ Return ONLY valid JSON (no markdown):
                     </Text>
                   </View>
                   {products.map((product, i) => (
-                    <View key={i} style={[styles.productCard, product.isTallowDermics && styles.productCardTD]}>
-                      {product.isTallowDermics && (
+                    <View key={i} style={[styles.productCard, product.isKeyStep && styles.productCardTD]}>
+                      {product.isKeyStep && (
                         <LinearGradient colors={['rgba(138,120,96,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
                       )}
                       <View style={styles.productTop}>
-                        <View style={[styles.productIcon, product.isTallowDermics && { backgroundColor: 'rgba(138,120,96,0.15)', borderColor: 'rgba(138,120,96,0.3)' }]}>
-                          <Ionicons name={getIcon(product.category) as any} size={18} color={product.isTallowDermics ? colors.primary : colors.textMuted} />
+                        <View style={[styles.productIcon, product.isKeyStep && { backgroundColor: 'rgba(138,120,96,0.15)', borderColor: 'rgba(138,120,96,0.3)' }]}>
+                          <Ionicons name={getIcon(product.category) as any} size={18} color={product.isKeyStep ? colors.primary : colors.textMuted} />
                         </View>
                         <View style={{ flex: 1 }}>
                           <View style={styles.productNameRow}>
                             <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-                            {product.isTallowDermics && (
+                            {product.isKeyStep && (
                               <View style={styles.tdBadge}><Text style={styles.tdBadgeText}>🌿 TD</Text></View>
                             )}
                           </View>
@@ -293,7 +293,7 @@ Return ONLY valid JSON (no markdown):
                         <Text style={styles.avoidText}>⚠️ {product.avoid}</Text>
                       )}
 
-                      {product.isTallowDermics && (
+                      {product.isKeyStep && (
                         <Pressable style={styles.tdBtn} onPress={() => router.push('/product')}>
                           <Text style={styles.tdBtnText}>View Product →</Text>
                         </Pressable>

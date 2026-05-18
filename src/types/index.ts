@@ -132,7 +132,7 @@ export interface ProductSuggestion {
   brand: string;
   category: string;
   why: string;
-  isTallowDermics?: boolean;
+  isKeyStep?: boolean;
 }
 
 export interface RoutineStep {

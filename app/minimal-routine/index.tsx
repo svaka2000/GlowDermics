@@ -23,8 +23,8 @@ const CACHE_TTL = 1000 * 60 * 60 * 24 * 14; // 14 days
 type MinimalRoutine = {
   generatedAt: number;
   philosophy: string;
-  morning: { step: number; name: string; product: string; howTo: string; timeSeconds: number; isTallowDermics: boolean }[];
-  evening: { step: number; name: string; product: string; howTo: string; timeSeconds: number; isTallowDermics: boolean }[];
+  morning: { step: number; name: string; product: string; howTo: string; timeSeconds: number; isKeyStep: boolean }[];
+  evening: { step: number; name: string; product: string; howTo: string; timeSeconds: number; isKeyStep: boolean }[];
   weeklyExtra: string;
   whyItWorks: string;
   totalMorningTime: string;
@@ -36,14 +36,14 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     generatedAt: 0,
     philosophy: 'Oily skin needs balance, not stripping. Less is more — over-cleansing triggers more oil production.',
     morning: [
-      { step: 1, name: 'Rinse', product: 'Lukewarm water only', howTo: 'Splash water on face for 20 seconds. No cleanser in AM — night cleansing is enough.', timeSeconds: 30, isTallowDermics: false },
-      { step: 2, name: 'Niacinamide', product: 'Niacinamide 10% serum', howTo: '2-3 drops, pat gently into skin. Regulates sebum and minimizes pores.', timeSeconds: 60, isTallowDermics: false },
-      { step: 3, name: 'SPF', product: 'Lightweight SPF 50 (mineral preferred)', howTo: '1/4 teaspoon for full face. Wait 5 min before going out.', timeSeconds: 60, isTallowDermics: false },
+      { step: 1, name: 'Rinse', product: 'Lukewarm water only', howTo: 'Splash water on face for 20 seconds. No cleanser in AM — night cleansing is enough.', timeSeconds: 30, isKeyStep: false },
+      { step: 2, name: 'Niacinamide', product: 'Niacinamide 10% serum', howTo: '2-3 drops, pat gently into skin. Regulates sebum and minimizes pores.', timeSeconds: 60, isKeyStep: false },
+      { step: 3, name: 'SPF', product: 'Lightweight SPF 50 (mineral preferred)', howTo: '1/4 teaspoon for full face. Wait 5 min before going out.', timeSeconds: 60, isKeyStep: false },
     ],
     evening: [
-      { step: 1, name: 'Double Cleanse', product: 'Oil cleanser → gentle foam', howTo: 'Massage oil cleanser for 1 min to dissolve SPF/sebum. Follow with gentle foam cleanser.', timeSeconds: 120, isTallowDermics: false },
-      { step: 2, name: 'BHA (2-3x/week)', product: 'Salicylic acid 2%', howTo: 'Apply to entire face. Wait 10 min before next step. Skip on off nights.', timeSeconds: 60, isTallowDermics: false },
-      { step: 3, name: 'Occlusive Spot Treatment', product: 'Occlusive balm (tiny amount)', howTo: 'Apply just a rice-grain amount to dry areas or healing breakouts. CLA reduces inflammation.', timeSeconds: 30, isTallowDermics: true },
+      { step: 1, name: 'Double Cleanse', product: 'Oil cleanser → gentle foam', howTo: 'Massage oil cleanser for 1 min to dissolve SPF/sebum. Follow with gentle foam cleanser.', timeSeconds: 120, isKeyStep: false },
+      { step: 2, name: 'BHA (2-3x/week)', product: 'Salicylic acid 2%', howTo: 'Apply to entire face. Wait 10 min before next step. Skip on off nights.', timeSeconds: 60, isKeyStep: false },
+      { step: 3, name: 'Occlusive Spot Treatment', product: 'Occlusive balm (tiny amount)', howTo: 'Apply just a rice-grain amount to dry areas or healing breakouts. CLA reduces inflammation.', timeSeconds: 30, isKeyStep: true },
     ],
     weeklyExtra: 'Gentle clay mask (kaolin) once per week to deep clean pores without stripping',
     whyItWorks: 'Morning water-only rinse prevents the over-strip/over-produce oil cycle. Niacinamide directly suppresses sebocyte activity. Evening BHA penetrates oil-filled pores. The occlusive spot-treats without adding oil to the T-zone.',
@@ -54,14 +54,14 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     generatedAt: 0,
     philosophy: 'Dry skin needs layers — water to hydrate, then lipids to seal. Adding ingredients is counterproductive without fixing the barrier.',
     morning: [
-      { step: 1, name: 'Water splash', product: 'Lukewarm water', howTo: 'Splash, but don\'t towel dry completely — apply next step on damp skin.', timeSeconds: 30, isTallowDermics: false },
-      { step: 2, name: 'Hyaluronic Acid', product: 'HA serum (multiple molecular weights)', howTo: '4-5 drops on still-damp skin. The water helps HA draw moisture into cells.', timeSeconds: 45, isTallowDermics: false },
-      { step: 3, name: 'Seal with an Occlusive', product: 'Occlusive balm', howTo: 'Warm a pea-sized amount in palms, press gently onto face. This seals all the moisture in.', timeSeconds: 60, isTallowDermics: true },
-      { step: 4, name: 'SPF', product: 'Moisturizing SPF 30+', howTo: 'Mineral SPF over the occlusive. Look for SPFs with ceramides or hyaluronic acid.', timeSeconds: 45, isTallowDermics: false },
+      { step: 1, name: 'Water splash', product: 'Lukewarm water', howTo: 'Splash, but don\'t towel dry completely — apply next step on damp skin.', timeSeconds: 30, isKeyStep: false },
+      { step: 2, name: 'Hyaluronic Acid', product: 'HA serum (multiple molecular weights)', howTo: '4-5 drops on still-damp skin. The water helps HA draw moisture into cells.', timeSeconds: 45, isKeyStep: false },
+      { step: 3, name: 'Seal with an Occlusive', product: 'Occlusive balm', howTo: 'Warm a pea-sized amount in palms, press gently onto face. This seals all the moisture in.', timeSeconds: 60, isKeyStep: true },
+      { step: 4, name: 'SPF', product: 'Moisturizing SPF 30+', howTo: 'Mineral SPF over the occlusive. Look for SPFs with ceramides or hyaluronic acid.', timeSeconds: 45, isKeyStep: false },
     ],
     evening: [
-      { step: 1, name: 'Gentle cleanse', product: 'Cream or oil cleanser — no foam/gel', howTo: 'Massage for 60 seconds, rinse with lukewarm water. Pat dry — don\'t rub.', timeSeconds: 90, isTallowDermics: false },
-      { step: 2, name: 'Occlusive Moisture Layer', product: 'Occlusive balm (generous)', howTo: 'Apply generously while skin is still slightly damp. No need for serum tonight — the occlusive provides everything.', timeSeconds: 60, isTallowDermics: true },
+      { step: 1, name: 'Gentle cleanse', product: 'Cream or oil cleanser — no foam/gel', howTo: 'Massage for 60 seconds, rinse with lukewarm water. Pat dry — don\'t rub.', timeSeconds: 90, isKeyStep: false },
+      { step: 2, name: 'Occlusive Moisture Layer', product: 'Occlusive balm (generous)', howTo: 'Apply generously while skin is still slightly damp. No need for serum tonight — the occlusive provides everything.', timeSeconds: 60, isKeyStep: true },
     ],
     weeklyExtra: 'Gentle lactic acid (10%) mask once per week to remove dead cells that prevent moisture absorption',
     whyItWorks: 'The HA + occlusive stack on damp skin is the most efficient dry skin routine possible: HA pulls water into cells, the occlusive locks it in with a lipid seal. No unnecessary steps that could further compromise the barrier.',
@@ -72,15 +72,15 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     generatedAt: 0,
     philosophy: 'Combination skin doesn\'t need two separate routines. Use one balanced routine and spot-treat zones as needed.',
     morning: [
-      { step: 1, name: 'Gentle cleanser', product: 'Low-pH gel cleanser', howTo: 'Full face cleanse, 30 seconds. Rinse thoroughly.', timeSeconds: 45, isTallowDermics: false },
-      { step: 2, name: 'Niacinamide', product: 'Niacinamide 5-10%', howTo: 'Apply all over. Niacinamide regulates oil in T-zone while hydrating cheeks.', timeSeconds: 45, isTallowDermics: false },
-      { step: 3, name: 'Balanced moisture', product: 'Lightweight gel moisturizer', howTo: 'All over. If cheeks feel tight, add a tiny dot of an occlusive on cheek bones only.', timeSeconds: 45, isTallowDermics: false },
-      { step: 4, name: 'SPF', product: 'SPF 30-50', howTo: 'Full coverage. Mineral SPF is less likely to clog T-zone pores.', timeSeconds: 30, isTallowDermics: false },
+      { step: 1, name: 'Gentle cleanser', product: 'Low-pH gel cleanser', howTo: 'Full face cleanse, 30 seconds. Rinse thoroughly.', timeSeconds: 45, isKeyStep: false },
+      { step: 2, name: 'Niacinamide', product: 'Niacinamide 5-10%', howTo: 'Apply all over. Niacinamide regulates oil in T-zone while hydrating cheeks.', timeSeconds: 45, isKeyStep: false },
+      { step: 3, name: 'Balanced moisture', product: 'Lightweight gel moisturizer', howTo: 'All over. If cheeks feel tight, add a tiny dot of an occlusive on cheek bones only.', timeSeconds: 45, isKeyStep: false },
+      { step: 4, name: 'SPF', product: 'SPF 30-50', howTo: 'Full coverage. Mineral SPF is less likely to clog T-zone pores.', timeSeconds: 30, isKeyStep: false },
     ],
     evening: [
-      { step: 1, name: 'Cleanse', product: 'Same morning cleanser or micellar water', howTo: '45-second cleanse. Focus on T-zone where product and oil accumulate.', timeSeconds: 60, isTallowDermics: false },
-      { step: 2, name: 'Targeted serum', product: 'Retinol (2-3x/week) or skip', howTo: 'Apply only where needed. Skip if skin is irritated.', timeSeconds: 60, isTallowDermics: false },
-      { step: 3, name: 'Zone moisturize', product: 'Gel on T-zone, an occlusive on cheeks/dry areas', howTo: 'Use different amounts in different zones. The occlusive goes on dry cheeks/under-eye only.', timeSeconds: 60, isTallowDermics: true },
+      { step: 1, name: 'Cleanse', product: 'Same morning cleanser or micellar water', howTo: '45-second cleanse. Focus on T-zone where product and oil accumulate.', timeSeconds: 60, isKeyStep: false },
+      { step: 2, name: 'Targeted serum', product: 'Retinol (2-3x/week) or skip', howTo: 'Apply only where needed. Skip if skin is irritated.', timeSeconds: 60, isKeyStep: false },
+      { step: 3, name: 'Zone moisturize', product: 'Gel on T-zone, an occlusive on cheeks/dry areas', howTo: 'Use different amounts in different zones. The occlusive goes on dry cheeks/under-eye only.', timeSeconds: 60, isKeyStep: true },
     ],
     weeklyExtra: 'BHA (salicylic 2%) on T-zone only, once per week',
     whyItWorks: 'Niacinamide is the perfect combination skin ingredient — it reduces oil in oily zones while improving barrier in dry zones. A rich occlusive is used strategically only on dry areas where its lipids are actually needed.',
@@ -91,13 +91,13 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     generatedAt: 0,
     philosophy: 'Sensitive skin needs fewer ingredients, not more. The #1 rule: if skin is reacting, remove things — don\'t add more.',
     morning: [
-      { step: 1, name: 'Water rinse', product: 'Room temperature water only', howTo: 'No cleansers in AM. They disrupt the barrier\'s overnight repair work.', timeSeconds: 30, isTallowDermics: false },
-      { step: 2, name: 'Occlusive barrier seal', product: 'Occlusive balm', howTo: 'Warm 2-3 drops in palms, press gently. Its CLA and fatty acids calm inflammation and seal the barrier.', timeSeconds: 60, isTallowDermics: true },
-      { step: 3, name: 'Mineral SPF', product: 'Zinc oxide SPF 30+, fragrance-free', howTo: 'Over the occlusive. Zinc is physically reflective — no chemical reaction with skin.', timeSeconds: 45, isTallowDermics: false },
+      { step: 1, name: 'Water rinse', product: 'Room temperature water only', howTo: 'No cleansers in AM. They disrupt the barrier\'s overnight repair work.', timeSeconds: 30, isKeyStep: false },
+      { step: 2, name: 'Occlusive barrier seal', product: 'Occlusive balm', howTo: 'Warm 2-3 drops in palms, press gently. Its CLA and fatty acids calm inflammation and seal the barrier.', timeSeconds: 60, isKeyStep: true },
+      { step: 3, name: 'Mineral SPF', product: 'Zinc oxide SPF 30+, fragrance-free', howTo: 'Over the occlusive. Zinc is physically reflective — no chemical reaction with skin.', timeSeconds: 45, isKeyStep: false },
     ],
     evening: [
-      { step: 1, name: 'Oil cleanse', product: 'Fragrance-free cleansing oil or micellar water', howTo: 'Gentle massage, 60 sec. Rinse with lukewarm water. No foam — foam cleaners are alkaline.', timeSeconds: 90, isTallowDermics: false },
-      { step: 2, name: 'Occlusive balm', product: 'Occlusive balm (generous)', howTo: 'Generous application on still-damp skin. This is your serum, moisturizer, and barrier seal in one step.', timeSeconds: 60, isTallowDermics: true },
+      { step: 1, name: 'Oil cleanse', product: 'Fragrance-free cleansing oil or micellar water', howTo: 'Gentle massage, 60 sec. Rinse with lukewarm water. No foam — foam cleaners are alkaline.', timeSeconds: 90, isKeyStep: false },
+      { step: 2, name: 'Occlusive balm', product: 'Occlusive balm (generous)', howTo: 'Generous application on still-damp skin. This is your serum, moisturizer, and barrier seal in one step.', timeSeconds: 60, isKeyStep: true },
     ],
     weeklyExtra: 'Nothing — keep it minimal. If skin is stable, try a fragrance-free ceramide mask once per week.',
     whyItWorks: 'Every additional ingredient is a potential trigger. This routine has 3 evening ingredients total — none of which are known sensitizers. A sebum-similar occlusive\'s near-identical match to human sebum means the skin recognises it and doesn\'t react defensively.',
@@ -159,10 +159,10 @@ Return ONLY JSON:
   "generatedAt": 0,
   "philosophy": "One sentence guiding principle for this skin type",
   "morning": [
-    {"step": 1, "name": "Step name", "product": "Specific product type", "howTo": "30-word instruction", "timeSeconds": 45, "isTallowDermics": false}
+    {"step": 1, "name": "Step name", "product": "Specific product type", "howTo": "30-word instruction", "timeSeconds": 45, "isKeyStep": false}
   ],
   "evening": [
-    {"step": 1, "name": "Step name", "product": "Specific product type", "howTo": "30-word instruction", "timeSeconds": 60, "isTallowDermics": false}
+    {"step": 1, "name": "Step name", "product": "Specific product type", "howTo": "30-word instruction", "timeSeconds": 60, "isKeyStep": false}
   ],
   "weeklyExtra": "One optional weekly addition",
   "whyItWorks": "2-3 sentences on the science",
@@ -269,19 +269,19 @@ Return ONLY JSON:
 
             {/* Steps */}
             {steps.map((step, i) => (
-              <View key={i} style={[styles.stepCard, step.isTallowDermics && styles.tallowStepCard]}>
-                {step.isTallowDermics && (
+              <View key={i} style={[styles.stepCard, step.isKeyStep && styles.tallowStepCard]}>
+                {step.isKeyStep && (
                   <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
                 )}
                 <View style={styles.stepTop}>
-                  <View style={[styles.stepCircle, step.isTallowDermics && { backgroundColor: colors.primary }]}>
+                  <View style={[styles.stepCircle, step.isKeyStep && { backgroundColor: colors.primary }]}>
                     <Text style={styles.stepCircleText}>{step.step}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.stepName}>{step.name}</Text>
-                    <Text style={[styles.stepProduct, step.isTallowDermics && { color: colors.primary }]}>
+                    <Text style={[styles.stepProduct, step.isKeyStep && { color: colors.primary }]}>
                       {step.product}
-                      {step.isTallowDermics && ' 🌿'}
+                      {step.isKeyStep && ' 🌿'}
                     </Text>
                   </View>
                   <View style={styles.stepTimeBadge}>

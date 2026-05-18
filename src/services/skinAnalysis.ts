@@ -147,7 +147,7 @@ SCHEMA:
         "brand": "The Ordinary",
         "category": "Serum",
         "why": "1 sentence why this product specifically",
-        "isTallowDermics": false
+        "isKeyStep": false
       }
     }
   ],
@@ -204,7 +204,7 @@ TREATMENTS:
 
 ROUTINE / RECOMMENDATION RULES:
 - 4–6 routine steps split between morning/evening using ONLY real products from above.
-- Recommend ONLY widely-available third-party products from the lists above. Never recommend a house or first-party brand; set isTallowDermics to false for every recommendation.
+- Recommend ONLY widely-available third-party products from the lists above. Never recommend a house or first-party brand; set isKeyStep to false for every recommendation.
 - 3–5 recommendations, each with a real product if applicable.
 - Tailor recommendations to detected skin type AND the lowest-scoring 2-3 dimensions.
 
