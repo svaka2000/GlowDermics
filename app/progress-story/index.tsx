@@ -81,7 +81,7 @@ export default function ProgressStoryScreen() {
             <Text style={styles.emptySub}>
               Run your first analysis and Velumi AI will start tracking how your skin evolves over time.
             </Text>
-            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scanner' as any)} accessibilityRole="button">
+            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scanner' as any)} accessibilityRole="button" accessibilityLabel="Take a scan">
               <Text style={styles.emptyBtnText}>Take a scan</Text>
             </Pressable>
           </View>
