@@ -104,7 +104,7 @@ export default function ProductShowcase() {
 
         {/* Hero */}
         <View style={styles.hero}>
-          <LinearGradient colors={['rgba(196,98,45,0.2)', 'transparent']} style={styles.heroGlow} />
+          <LinearGradient colors={['rgba(138,120,96,0.2)', 'transparent']} style={styles.heroGlow} />
           <Text style={styles.heroEyebrow}>VELUMI AI</Text>
           <Text style={styles.heroTitle}>4 ingredients.{'\n'}Thousands of years{'\n'}of proof.</Text>
           <Text style={styles.heroSub}>
@@ -197,7 +197,7 @@ export default function ProductShowcase() {
 
         {/* Philosophy */}
         <View style={styles.philosophyCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.philosophyEyebrow}>THE VELUMI AI PHILOSOPHY</Text>
           <Text style={styles.philosophyText}>
             "Modern skincare invented a problem — and then sold you the solution. Your skin doesn't need 30 ingredients. It needs the 4 it evolved with."

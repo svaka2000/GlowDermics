@@ -480,7 +480,7 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
     borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   tagChipText: { fontSize: 13, color: c.textSecondary },
   tagChipTextActive: { color: c.primary, fontWeight: '600' },
   noteInput: {

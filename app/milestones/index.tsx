@@ -297,7 +297,7 @@ export default function Milestones() {
         {/* Progress card */}
         <View style={styles.progressCard}>
           <LinearGradient
-            colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.04)']}
+            colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.04)']}
             style={StyleSheet.absoluteFill}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           />
@@ -413,7 +413,7 @@ function makeStyles(c: Palette) {
 
   progressCard: {
     borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 20, marginBottom: 16,
   },
   progressTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
@@ -422,7 +422,7 @@ function makeStyles(c: Palette) {
   progressLabel: { fontSize: 13, color: c.textSecondary, marginTop: 2 },
   trophyCircle: {
     width: 56, height: 56, borderRadius: 28,
-    backgroundColor: 'rgba(196,98,45,0.12)',
+    backgroundColor: 'rgba(138,120,96,0.12)',
     alignItems: 'center', justifyContent: 'center',
   },
   trophyEmoji: { fontSize: 26 },
@@ -436,7 +436,7 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
     borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   catChipText: { fontSize: 11, fontWeight: '600', color: c.textMuted },
   catChipTextActive: { color: c.primary },
 
@@ -465,8 +465,8 @@ function makeStyles(c: Palette) {
 
   footerCard: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: 'rgba(212,169,106,0.06)', borderRadius: 14,
-    borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)',
+    backgroundColor: 'rgba(183,155,110,0.06)', borderRadius: 14,
+    borderWidth: 1, borderColor: 'rgba(183,155,110,0.15)',
     padding: 16,
   },
   footerText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },

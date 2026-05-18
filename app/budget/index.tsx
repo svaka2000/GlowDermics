@@ -93,7 +93,7 @@ export default function BudgetCalculator() {
 
         {/* Intro */}
         <View style={styles.introCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.introEmoji}>💰</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.introTitle}>What are you spending?</Text>
@@ -242,7 +242,7 @@ function makeStyles(c: Palette) {
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, marginBottom: 16 },
+  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, marginBottom: 16 },
   introEmoji: { fontSize: 30 },
   introTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
   introSub: { fontSize: 13, color: c.textSecondary, lineHeight: 20, marginTop: 3 },

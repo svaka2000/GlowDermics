@@ -100,7 +100,7 @@ export function XPBar({
       <View style={[styles.track, { height, borderRadius: height / 2, backgroundColor: trackBg }]}>
         <Animated.View style={[styles.fill, { borderRadius: height / 2 }, fillStyle]}>
           <LinearGradient
-            colors={['#FBBF24', '#E8834A', colors.primary]}
+            colors={['#D8C29A', '#B79B6E', colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={StyleSheet.absoluteFill}

@@ -208,7 +208,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
 
         {/* Headline card */}
         <View style={styles.headlineCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
           <View style={styles.headlineMeta}>
             <Text style={styles.scanCountBadge}>{scanCount} scan{scanCount !== 1 ? 's' : ''} analyzed</Text>
             {latest && oldest && scanCount > 1 && (
@@ -274,7 +274,7 @@ Generate a comprehensive skin trend report. Respond ONLY with a valid JSON objec
 
         {/* Top insight */}
         <View style={styles.insightCard}>
-          <LinearGradient colors={['rgba(212,169,106,0.12)', 'rgba(212,169,106,0.04)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(183,155,110,0.12)', 'rgba(183,155,110,0.04)']} style={StyleSheet.absoluteFill} />
           <View style={styles.insightHeader}>
             <Ionicons name="bulb-outline" size={18} color={colors.gold} />
             <Text style={styles.insightTitle}>Key Insight</Text>
@@ -339,7 +339,7 @@ function makeStyles(c: Palette) {
 
   headlineCard: {
     borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 22, marginBottom: 16, gap: 10,
   },
   headlineMeta: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
@@ -359,7 +359,7 @@ function makeStyles(c: Palette) {
 
   insightCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)',
+    borderWidth: 1, borderColor: 'rgba(183,155,110,0.15)',
     padding: 20, marginBottom: 14, gap: 10,
   },
   insightHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },

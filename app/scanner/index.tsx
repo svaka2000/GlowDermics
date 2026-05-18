@@ -159,7 +159,7 @@ export default function Scanner() {
 
       <Animated.ScrollView contentContainerStyle={styles.content} style={{ opacity: contentAnim }}>
         <View style={styles.hero}>
-          <LinearGradient colors={['rgba(196,98,45,0.15)', 'transparent']} style={styles.heroGlow} />
+          <LinearGradient colors={['rgba(138,120,96,0.15)', 'transparent']} style={styles.heroGlow} />
           <View style={styles.heroIconWrap}>
             <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.heroIconGrad}>
               <Ionicons name="flask" size={38} color={colors.white} />
@@ -312,7 +312,7 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
 
         {/* Ingredient-philosophy comparison */}
         <View style={styles.tdCompareCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.tdCompareEyebrow}>INGREDIENT PHILOSOPHY</Text>
           <Text style={styles.tdCompareText}>{report.tallowDermicsComparison}</Text>
         </View>
@@ -352,7 +352,7 @@ function makeStyles(c: Palette) {
   mainBtnDisabled: { opacity: 0.5 },
   mainBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20 },
   mainBtnText: { fontSize: 17, fontWeight: '700', color: c.white },
-  secondaryBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 18, borderWidth: 1.5, borderColor: c.borderStrong, backgroundColor: 'rgba(196,98,45,0.05)' },
+  secondaryBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 18, borderWidth: 1.5, borderColor: c.borderStrong, backgroundColor: 'rgba(138,120,96,0.05)' },
   secondaryBtnText: { fontSize: 15, fontWeight: '600', color: c.primary },
   manualContent: { padding: 24, flexGrow: 1 },
   manualLabel: { fontSize: 15, fontWeight: '600', color: c.textPrimary, marginBottom: 12 },

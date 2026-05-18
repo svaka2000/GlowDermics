@@ -24,7 +24,7 @@ function getCurrentSeason(): { season: string; emoji: string; months: string; co
   const month = new Date().getMonth();
   if (month >= 2 && month <= 4) return { season: 'Spring', emoji: '🌸', months: 'Mar – May', color: '#4ADE80', bg: 'rgba(74,222,128,0.10)' };
   if (month >= 5 && month <= 7) return { season: 'Summer', emoji: '☀️', months: 'Jun – Aug', color: '#F59E0B', bg: 'rgba(245,158,11,0.10)' };
-  if (month >= 8 && month <= 10) return { season: 'Autumn', emoji: '🍂', months: 'Sep – Nov', color: '#C4622D', bg: 'rgba(196,98,45,0.12)' };
+  if (month >= 8 && month <= 10) return { season: 'Autumn', emoji: '🍂', months: 'Sep – Nov', color: '#8A7860', bg: 'rgba(138,120,96,0.12)' };
   return { season: 'Winter', emoji: '❄️', months: 'Dec – Feb', color: '#60A5FA', bg: 'rgba(96,165,250,0.10)' };
 }
 
@@ -339,7 +339,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
             {/* Seasonal tip */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>Your {season.season} Tip</Text>
@@ -398,7 +398,7 @@ function makeStyles(c: Palette) {
 
   headlineCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 20, gap: 12, marginBottom: 14,
   },
   headline: { fontSize: 20, fontWeight: '800', lineHeight: 27 },
@@ -430,7 +430,7 @@ function makeStyles(c: Palette) {
   adjustRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginTop: 4 },
   adjustNum: {
     width: 26, height: 26, borderRadius: 13,
-    backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(138,120,96,0.12)', alignItems: 'center', justifyContent: 'center',
   },
   adjustNumText: { fontSize: 12, fontWeight: '700', color: c.primary },
   adjustStep: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 3, lineHeight: 20 },
@@ -447,7 +447,7 @@ function makeStyles(c: Palette) {
   tallowCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginTop: 4, marginBottom: 14,
   },
   tallowEmoji: { fontSize: 24 },

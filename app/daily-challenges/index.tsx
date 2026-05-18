@@ -417,7 +417,7 @@ function BadgeTile({
         style={[
           styles.badgeEmojiWrap,
           unlocked
-            ? { backgroundColor: 'rgba(184,136,46,0.18)', borderColor: colors.gold }
+            ? { backgroundColor: 'rgba(183,155,110,0.18)', borderColor: colors.gold }
             : { backgroundColor: 'rgba(28,24,20,0.05)', borderColor: 'rgba(28,24,20,0.10)' },
         ]}
       >
@@ -470,7 +470,7 @@ function CelebrationOverlay({
       <Pressable style={StyleSheet.absoluteFill} onPress={onDismiss} />
       <Animated.View style={[styles.celebrateCard, cardStyle]}>
         <LinearGradient
-          colors={['#FBBF24', '#E8834A', '#C4622D']}
+          colors={['#D8C29A', '#B79B6E', '#8A7860']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFillObject}
@@ -535,8 +535,8 @@ function makeStyles(c: Palette) {
 
   tipBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 6,
-    backgroundColor: 'rgba(184,136,46,0.10)',
-    borderWidth: 1, borderColor: 'rgba(184,136,46,0.25)',
+    backgroundColor: 'rgba(183,155,110,0.10)',
+    borderWidth: 1, borderColor: 'rgba(183,155,110,0.25)',
     borderRadius: 10, padding: 10, marginTop: 12,
   },
   tipText: { flex: 1, fontSize: 12, color: c.textPrimary, lineHeight: 17, fontWeight: '500' },

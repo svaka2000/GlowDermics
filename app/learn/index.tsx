@@ -15,8 +15,8 @@ const TAGS = ['ALL', 'SKIN SCIENCE', 'INGREDIENTS', 'GUIDE', 'PHILOSOPHY', 'SKIN
 const TAG_COLORS: Record<string, string> = {
   'SKIN SCIENCE': '#4ADE80',
   'INGREDIENTS': '#60A5FA',
-  'GUIDE': '#C4622D',
-  'PHILOSOPHY': '#D4A96A',
+  'GUIDE': '#8A7860',
+  'PHILOSOPHY': '#B79B6E',
   'SKIN TYPE': '#6B85A8',
   'TIMELINE': '#F59E0B',
   'HISTORY': '#FB923C',
@@ -75,7 +75,7 @@ export default function Learn() {
         {!search && activeTag === 'ALL' && (
           <Pressable style={styles.featured} onPress={() => router.push(`/learn/${featured.slug}`)}>
             <LinearGradient
-              colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']}
+              colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']}
               style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             />
@@ -189,7 +189,7 @@ function makeStyles(c: Palette) {
 
   featured: {
     borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 22, marginBottom: 16, gap: 10,
   },
   featuredBadge: {
@@ -199,7 +199,7 @@ function makeStyles(c: Palette) {
   },
   featuredBadgeText: { fontSize: 9, fontWeight: '800', color: c.white, letterSpacing: 1.5 },
   featuredHero: { fontSize: 36 },
-  tagPill: { backgroundColor: 'rgba(196,98,45,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  tagPill: { backgroundColor: 'rgba(138,120,96,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   tagPillText: { fontSize: 9, fontWeight: '700', letterSpacing: 1.5 },
   featuredTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, lineHeight: 27 },
   featuredSubtitle: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
@@ -213,7 +213,7 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
     borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard,
   },
-  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   tagChipText: { fontSize: 11, fontWeight: '600', color: c.textMuted },
   tagChipTextActive: { color: c.primary },
 
@@ -252,8 +252,8 @@ function makeStyles(c: Palette) {
 
   scienceBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: 'rgba(196,98,45,0.05)', borderRadius: 12,
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.1)',
+    backgroundColor: 'rgba(138,120,96,0.05)', borderRadius: 12,
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.1)',
     padding: 14, marginTop: 16, justifyContent: 'center',
   },
   scienceText: { fontSize: 12, color: c.textMuted, flex: 1 },

@@ -442,7 +442,7 @@ function makeStyles(c: Palette) {
   flaggedNote: { flex: 1, fontSize: 11, color: c.primary, lineHeight: 16 },
 
   warnRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  skinTypePill: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  skinTypePill: { backgroundColor: 'rgba(138,120,96,0.12)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   skinTypePillText: { fontSize: 10, fontWeight: '700', color: c.primary, textTransform: 'capitalize' },
   warnText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
@@ -457,8 +457,8 @@ function makeStyles(c: Palette) {
 
   infoCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 8,
-    backgroundColor: 'rgba(196,98,45,0.05)', borderRadius: 12,
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.1)', padding: 14, marginTop: 4,
+    backgroundColor: 'rgba(138,120,96,0.05)', borderRadius: 12,
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.1)', padding: 14, marginTop: 4,
   },
   infoText: { flex: 1, fontSize: 11, color: c.textMuted, lineHeight: 17 },
   });

@@ -159,7 +159,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
         <View style={styles.inputSection}>
           <View style={styles.inputCard}>
             <View style={styles.inputCardHeader}>
-              <View style={[styles.productBadge, { backgroundColor: 'rgba(196,98,45,0.15)' }]}>
+              <View style={[styles.productBadge, { backgroundColor: 'rgba(138,120,96,0.15)' }]}>
                 <Text style={[styles.productBadgeText, { color: colors.primary }]}>PRODUCT A</Text>
               </View>
               <Pressable onPress={() => loadExample(0)}>
@@ -408,8 +408,8 @@ function makeStyles(c: Palette) {
 
   recCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 10,
-    backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 14,
-    borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)',
+    backgroundColor: 'rgba(183,155,110,0.08)', borderRadius: 14,
+    borderWidth: 1, borderColor: 'rgba(183,155,110,0.2)',
     padding: 14, marginBottom: 14,
   },
   recText: { flex: 1, fontSize: 14, color: c.textPrimary, lineHeight: 20, fontWeight: '500' },
@@ -441,8 +441,8 @@ function makeStyles(c: Palette) {
 
   infoCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 8,
-    backgroundColor: 'rgba(196,98,45,0.05)', borderRadius: 12,
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.1)', padding: 14, marginTop: 8,
+    backgroundColor: 'rgba(138,120,96,0.05)', borderRadius: 12,
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.1)', padding: 14, marginTop: 8,
   },
   infoText: { flex: 1, fontSize: 11, color: c.textMuted, lineHeight: 17 },
   });

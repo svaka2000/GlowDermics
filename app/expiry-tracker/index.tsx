@@ -236,7 +236,7 @@ export default function ExpiryTracker() {
 
         {expiring.length > 0 && (
           <View style={styles.warningCard}>
-            <LinearGradient colors={['rgba(212,169,106,0.1)', 'rgba(212,169,106,0.03)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(183,155,110,0.1)', 'rgba(183,155,110,0.03)']} style={StyleSheet.absoluteFill} />
             <View style={styles.alertHeader}>
               <Text style={styles.alertEmoji}>⏰</Text>
               <Text style={[styles.alertTitle, { color: colors.gold }]}>{expiring.length} expiring in 30 days</Text>

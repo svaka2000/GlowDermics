@@ -185,7 +185,7 @@ VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].ac
         {hasData && !result && !loading && (
           <View style={styles.introCard}>
             <LinearGradient
-              colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.03)']}
+              colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.03)']}
               style={StyleSheet.absoluteFill}
             />
             <Text style={styles.introHero}>🔮</Text>
@@ -344,7 +344,7 @@ VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].ac
 
             {/* Skin tip */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>Your Skin Tip</Text>
@@ -392,7 +392,7 @@ function makeStyles(c: Palette) {
 
   introCard: {
     borderRadius: 22, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 24, gap: 16, marginBottom: 16,
   },
   introHero: { fontSize: 44, textAlign: 'center' },
@@ -462,7 +462,7 @@ function makeStyles(c: Palette) {
   tallowCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginBottom: 14,
   },
   tallowEmoji: { fontSize: 24 },

@@ -396,7 +396,7 @@ export default function ChallengePage() {
           <>
             {active && (
               <View style={styles.activeBanner}>
-                <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
                 <Text style={styles.activeBannerEmoji}>{activeChallenge?.emoji}</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.activeBannerTitle}>{activeChallenge?.title}</Text>
@@ -505,7 +505,7 @@ function makeStyles(c: Palette) {
   abandonBtn: { alignItems: 'center', paddingVertical: 12 },
   abandonText: { fontSize: 12, color: c.textMuted },
 
-  activeBanner: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
+  activeBanner: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
   activeBannerEmoji: { fontSize: 24 },
   activeBannerTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   activeBannerSub: { fontSize: 11, color: c.textMuted, marginTop: 2 },
@@ -523,7 +523,7 @@ function makeStyles(c: Palette) {
   categoryBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
   challengeDesc: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
   challengeDays: { fontSize: 11, fontWeight: '600', color: c.primary },
-  activePill: { backgroundColor: 'rgba(196,98,45,0.2)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
+  activePill: { backgroundColor: 'rgba(138,120,96,0.2)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   activePillText: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 0.5 },
   });
 }

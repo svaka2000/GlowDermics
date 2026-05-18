@@ -265,7 +265,7 @@ export default function AcneDiary() {
         {/* Zone analysis */}
         {topZone && (
           <View style={styles.insightCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.10)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.10)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.insightEmoji}>🔍</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.insightTitle}>Most Affected Zone</Text>
@@ -295,7 +295,7 @@ export default function AcneDiary() {
 
         {/* Link to scan */}
         <Pressable style={styles.scanCta} onPress={() => router.push('/scan')}>
-          <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
           <Ionicons name="camera-outline" size={18} color={colors.primary} />
           <View style={{ flex: 1 }}>
             <Text style={styles.scanCtaTitle}>Scan Your Skin</Text>
@@ -336,7 +336,7 @@ function makeStyles(c: Palette) {
   sectionLabelInCard: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  chipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  chipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.12)' },
   chipEmoji: { fontSize: 13 },
   chipText: { fontSize: 12, color: c.textMuted, fontWeight: '500' },
 
@@ -359,7 +359,7 @@ function makeStyles(c: Palette) {
   chartBar: { width: '100%', borderRadius: 2, minHeight: 2 },
   chartDay: { fontSize: 7, color: c.textMuted, fontWeight: '600' },
 
-  insightCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  insightCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   insightEmoji: { fontSize: 22 },
   insightTitle: { fontSize: 12, fontWeight: '700', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 3 },
   insightZone: { fontSize: 14, fontWeight: '700', color: c.primary, marginBottom: 4 },
@@ -372,7 +372,7 @@ function makeStyles(c: Palette) {
   zoneMeaning: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   zoneCount: { fontSize: 12, fontWeight: '700', color: c.primary },
 
-  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   scanCtaTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
   scanCtaSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   });

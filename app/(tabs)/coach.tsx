@@ -457,7 +457,7 @@ function makeStyles(c: Palette) {
   contextBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 16, paddingVertical: 7,
-    backgroundColor: 'rgba(196,98,45,0.08)',
+    backgroundColor: 'rgba(138,120,96,0.08)',
     borderBottomWidth: 1, borderBottomColor: c.border,
   },
   contextBannerText: { fontSize: 11, color: c.primary, fontWeight: '500' },

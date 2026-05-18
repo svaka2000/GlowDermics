@@ -232,7 +232,7 @@ Reference the specific things they told you ("the midday shine you mentioned", "
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
           {/* Hero card */}
           <View style={styles.skinTypeCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.skinTypeEyebrow}>YOUR SKIN TYPE</Text>
             <Text style={styles.skinTypeLabel}>{result.skinType.charAt(0).toUpperCase() + result.skinType.slice(1)} Skin</Text>
             <Text style={styles.analysisText}>{result.analysis}</Text>
@@ -257,7 +257,7 @@ Reference the specific things they told you ("the midday shine you mentioned", "
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ideal Routine for You</Text>
             <View style={styles.routineCard}>
-              <LinearGradient colors={['rgba(212,169,106,0.1)', 'rgba(212,169,106,0.03)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(183,155,110,0.1)', 'rgba(183,155,110,0.03)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="list-outline" size={18} color={colors.gold} style={{ marginBottom: 8 }} />
               <Text style={styles.routineText}>{result.routineSuggestion}</Text>
             </View>
@@ -267,7 +267,7 @@ Reference the specific things they told you ("the midday shine you mentioned", "
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Your Skin Takeaway</Text>
             <View style={styles.tdCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tdEyebrow}>INGREDIENT FIT</Text>
               <Text style={styles.tdText}>{result.tallowDermicsFit}</Text>
               <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
@@ -396,7 +396,7 @@ function makeStyles(c: Palette) {
     backgroundColor: c.bgCard, borderRadius: 16,
     borderWidth: 1, borderColor: c.border, padding: 16,
   },
-  optionSelected: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  optionSelected: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.12)' },
   optionEmoji: { fontSize: 22, width: 32, textAlign: 'center' },
   optionLabel: { fontSize: 15, color: c.textSecondary, flex: 1 },
   optionLabelSelected: { color: c.textPrimary, fontWeight: '600' },
@@ -417,7 +417,7 @@ function makeStyles(c: Palette) {
 
   skinTypeCard: {
     borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 24, marginBottom: 20, gap: 8,
   },
   skinTypeEyebrow: { fontSize: 9, fontWeight: '800', letterSpacing: 2, color: c.primary },
@@ -434,10 +434,10 @@ function makeStyles(c: Palette) {
   recNumText: { fontSize: 12, fontWeight: '800', color: c.white },
   recText: { fontSize: 14, color: c.textSecondary, lineHeight: 21, flex: 1 },
 
-  routineCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)', padding: 18 },
+  routineCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(183,155,110,0.15)', padding: 18 },
   routineText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
-  tdCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.15)', padding: 18, gap: 8 },
+  tdCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.15)', padding: 18, gap: 8 },
   tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
   tdText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   tdCta: { alignSelf: 'flex-start', marginTop: 4 },

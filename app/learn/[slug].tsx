@@ -14,8 +14,8 @@ import { Storage } from '../../src/services/storage';
 const TAG_COLORS: Record<string, string> = {
   'SKIN SCIENCE': '#4ADE80',
   'INGREDIENTS': '#60A5FA',
-  'GUIDE': '#C4622D',
-  'PHILOSOPHY': '#D4A96A',
+  'GUIDE': '#8A7860',
+  'PHILOSOPHY': '#B79B6E',
   'SKIN TYPE': '#6B85A8',
   'TIMELINE': '#F59E0B',
   'HISTORY': '#FB923C',
@@ -117,7 +117,7 @@ export default function ArticleDetail() {
           {/* Key takeaways */}
           <View style={styles.takeawaysCard}>
             <LinearGradient
-              colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']}
+              colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']}
               style={StyleSheet.absoluteFill}
             />
             <View style={styles.takeawaysHeader}>
@@ -136,7 +136,7 @@ export default function ArticleDetail() {
           {article.tallowDermicsAngle && (
             <View style={styles.tdCard}>
               <LinearGradient
-                colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']}
+                colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']}
                 style={StyleSheet.absoluteFill}
               />
               <View style={styles.tdHeader}>
@@ -241,7 +241,7 @@ function makeStyles(c: Palette) {
 
   takeawaysCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.15)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.15)',
     padding: 20, marginBottom: 20, gap: 12,
   },
   takeawaysHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -252,7 +252,7 @@ function makeStyles(c: Palette) {
 
   tdCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 20, marginBottom: 20, gap: 10,
   },
   tdHeader: { marginBottom: 2 },

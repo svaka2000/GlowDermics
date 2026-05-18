@@ -388,7 +388,7 @@ export default function PoreGuideScreen() {
         return (
           <View>
             <LinearGradient
-              colors={['#C4622D22', '#0A0A0F']}
+              colors={['#8A786022', '#0A0A0F']}
               style={styles.tallowHero}
             >
               <Text style={styles.tallowHeroTitle}>Occlusives & Pore Health</Text>

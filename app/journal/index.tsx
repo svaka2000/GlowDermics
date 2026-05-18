@@ -209,7 +209,7 @@ export default function Journal() {
         {/* Today nudge */}
         {!writing && !hasTodayEntry && entries.length > 0 && (
           <Pressable style={styles.nudgeCard} onPress={openCompose}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Ionicons name="create-outline" size={20} color={colors.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.nudgeTitle}>Log today's skin check-in</Text>
@@ -310,7 +310,7 @@ function makeStyles(c: Palette) {
   tagSectionLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, letterSpacing: 0.5 },
   tagWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tagChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  tagChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   tagChipText: { fontSize: 12, color: c.textMuted },
   tagChipTextActive: { color: c.primary, fontWeight: '600' },
   noteInput: {
@@ -328,7 +328,7 @@ function makeStyles(c: Palette) {
   nudgeCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginBottom: 20,
   },
   nudgeTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },

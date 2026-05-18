@@ -306,7 +306,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         {/* Occlusive connection */}
         {(profile.isTallowIngredient || profile.tallowNote) && (
           <View style={styles.tdCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdEyebrow}>LIPID-BARRIER CONNECTION</Text>
             <Text style={styles.tdText}>{profile.tallowNote || 'This ingredient is present in or closely related to occlusive / lipid-barrier skincare formulations.'}</Text>
             <Pressable onPress={() => router.push('/product')} style={{ marginTop: 8 }}>
@@ -402,7 +402,7 @@ function makeStyles(c: Palette) {
 
   tdCard: {
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 18, marginBottom: 12, gap: 8,
   },
   tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },

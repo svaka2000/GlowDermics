@@ -350,7 +350,7 @@ function MilestoneRow({
                 backgroundColor: milestone.unlocked
                   ? 'rgba(22,163,74,0.16)'
                   : isCurrent
-                  ? 'rgba(196,98,45,0.14)'
+                  ? 'rgba(138,120,96,0.14)'
                   : 'rgba(28,24,20,0.05)',
               },
             ]}
@@ -434,8 +434,8 @@ function makeStyles(c: Palette) {
   actionBtn: {
     flex: 1,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5,
-    backgroundColor: 'rgba(196,98,45,0.06)',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
+    backgroundColor: 'rgba(138,120,96,0.06)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.22)',
     borderRadius: 12,
     paddingVertical: 10,
   },

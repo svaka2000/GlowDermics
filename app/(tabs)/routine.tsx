@@ -245,7 +245,7 @@ export default function Routine() {
 
         {/* Routine tip */}
         <View style={styles.tipCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={styles.tipGrad}>
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={styles.tipGrad}>
             <Text style={styles.tipEyebrow}>ROUTINE TIP</Text>
             <Text style={styles.tipText}>
               Apply your moisturizer as the final hydrating step — morning and evening. Choose an emollient that absorbs without leaving a heavy, pore-clogging film.

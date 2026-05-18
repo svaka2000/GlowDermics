@@ -223,7 +223,7 @@ Return ONLY valid JSON (no markdown):
           <>
             {/* Summary */}
             <View style={styles.summaryCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
               <View style={styles.summaryRow}>
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryNum}>{deck.products.length}</Text>
@@ -256,10 +256,10 @@ Return ONLY valid JSON (no markdown):
                   {products.map((product, i) => (
                     <View key={i} style={[styles.productCard, product.isTallowDermics && styles.productCardTD]}>
                       {product.isTallowDermics && (
-                        <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+                        <LinearGradient colors={['rgba(138,120,96,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
                       )}
                       <View style={styles.productTop}>
-                        <View style={[styles.productIcon, product.isTallowDermics && { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: 'rgba(196,98,45,0.3)' }]}>
+                        <View style={[styles.productIcon, product.isTallowDermics && { backgroundColor: 'rgba(138,120,96,0.15)', borderColor: 'rgba(138,120,96,0.3)' }]}>
                           <Ionicons name={getIcon(product.category) as any} size={18} color={product.isTallowDermics ? colors.primary : colors.textMuted} />
                         </View>
                         <View style={{ flex: 1 }}>
@@ -340,13 +340,13 @@ function makeStyles(c: Palette) {
   setupSub: { fontSize: 13, color: c.textMuted },
   budgetRow: { gap: 8 },
   budgetChip: { paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  budgetChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  budgetChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.12)' },
   budgetText: { fontSize: 14, color: c.textMuted, fontWeight: '500' },
   budgetTextActive: { color: c.primary, fontWeight: '700' },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 52, borderRadius: 14, overflow: 'hidden' },
   generateBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
-  summaryCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 12, marginBottom: 20 },
+  summaryCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, gap: 12, marginBottom: 20 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-around' },
   summaryItem: { alignItems: 'center', gap: 3 },
   summaryNum: { fontSize: 22, fontWeight: '800', color: c.primary },
@@ -359,12 +359,12 @@ function makeStyles(c: Palette) {
   sectionTitle: { fontSize: 13, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
 
   productCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 14, gap: 8, marginBottom: 10, overflow: 'hidden' },
-  productCardTD: { borderColor: 'rgba(196,98,45,0.35)' },
+  productCardTD: { borderColor: 'rgba(138,120,96,0.35)' },
   productTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   productIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border, alignItems: 'center', justifyContent: 'center' },
   productNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
   productName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, flex: 1 },
-  tdBadge: { backgroundColor: 'rgba(196,98,45,0.15)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
+  tdBadge: { backgroundColor: 'rgba(138,120,96,0.15)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
   tdBadgeText: { fontSize: 10, fontWeight: '700', color: c.primary },
   productBrand: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   productPrice: { fontSize: 12, fontWeight: '700', color: c.primary },
@@ -374,7 +374,7 @@ function makeStyles(c: Palette) {
   ingredientChip: { backgroundColor: c.bgElevated, borderRadius: 8, borderWidth: 1, borderColor: c.border, paddingHorizontal: 8, paddingVertical: 4 },
   ingredientText: { fontSize: 11, color: c.primary, fontWeight: '600' },
   avoidText: { fontSize: 11, color: c.textMuted, lineHeight: 16 },
-  tdBtn: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)', backgroundColor: 'rgba(196,98,45,0.08)' },
+  tdBtn: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(138,120,96,0.3)', backgroundColor: 'rgba(138,120,96,0.08)' },
   tdBtnText: { fontSize: 12, fontWeight: '700', color: c.primary },
 
   tallowCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },

@@ -230,7 +230,7 @@ export default function Progress() {
           };
           return (
             <View style={styles.transformCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.08)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.08)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
               <View style={styles.transformHeader}>
                 <View>
                   <Text style={styles.transformEyebrow}>YOUR TRANSFORMATION</Text>
@@ -340,7 +340,7 @@ export default function Progress() {
           opacity: statsAnim,
           transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }],
         }]}>
-          <View style={[styles.activityCard, { borderColor: 'rgba(196,98,45,0.25)', backgroundColor: 'rgba(196,98,45,0.06)' }]}>
+          <View style={[styles.activityCard, { borderColor: 'rgba(138,120,96,0.25)', backgroundColor: 'rgba(138,120,96,0.06)' }]}>
             <Text style={[styles.activityNum, { color: colors.primary }]}>{history.length}</Text>
             <Text style={styles.activityLabel}>Scans</Text>
           </View>
@@ -361,7 +361,7 @@ export default function Progress() {
         {/* Streak milestone celebration */}
         {routineStreak > 0 && [7, 14, 21, 30, 60, 100].includes(routineStreak) && (
           <LinearGradient
-            colors={routineStreak >= 30 ? ['#B8882E', '#D4A96A'] : [colors.primaryDark, colors.primary]}
+            colors={routineStreak >= 30 ? ['#B8882E', '#B79B6E'] : [colors.primaryDark, colors.primary]}
             style={styles.streakMilestone}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           >
@@ -410,7 +410,7 @@ export default function Progress() {
               <View style={[styles.trendBadge, {
                 backgroundColor: engineReport.overallTrend === 'improving'
                   ? 'rgba(22,163,74,0.12)' : engineReport.overallTrend === 'declining'
-                  ? 'rgba(220,38,38,0.12)' : 'rgba(196,98,45,0.1)',
+                  ? 'rgba(220,38,38,0.12)' : 'rgba(138,120,96,0.1)',
               }]}>
                 <Ionicons
                   name={engineReport.overallTrend === 'improving' ? 'trending-up' : engineReport.overallTrend === 'declining' ? 'trending-down' : 'remove'}
@@ -526,7 +526,7 @@ export default function Progress() {
                 <Text style={styles.optimizerSection}>YOUR SHELF — RANKED BY EFFECTIVENESS</Text>
                 {optimizedRoutine.productRankings.slice(0, 4).map((p, i) => (
                   <View key={i} style={styles.productRankRow}>
-                    <View style={[styles.rankNum, { backgroundColor: i === 0 ? 'rgba(196,98,45,0.15)' : colors.bgElevated }]}>
+                    <View style={[styles.rankNum, { backgroundColor: i === 0 ? 'rgba(138,120,96,0.15)' : colors.bgElevated }]}>
                       <Text style={[styles.rankNumText, { color: i === 0 ? colors.primary : colors.textMuted }]}>#{i + 1}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
@@ -821,7 +821,7 @@ function makeStyles(c: Palette) {
   streakNudge: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     marginHorizontal: 16, borderRadius: 16, padding: 14, marginBottom: 10, marginTop: 6,
-    backgroundColor: c.bgCard, borderWidth: 1, borderColor: 'rgba(212,169,106,0.25)',
+    backgroundColor: c.bgCard, borderWidth: 1, borderColor: 'rgba(183,155,110,0.25)',
   },
   streakNudgeEmoji: { fontSize: 22 },
   streakNudgeTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
@@ -831,13 +831,13 @@ function makeStyles(c: Palette) {
 
   transformCard: {
     marginHorizontal: 16, borderRadius: 20, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginBottom: 12, marginTop: 4,
   },
   transformHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
   transformEyebrow: { fontSize: 8, fontWeight: '900', letterSpacing: 2, color: c.primary, marginBottom: 3 },
   transformTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary },
-  transformShareBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(196,98,45,0.1)', alignItems: 'center', justifyContent: 'center' },
+  transformShareBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(138,120,96,0.1)', alignItems: 'center', justifyContent: 'center' },
   transformRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   transformSide: { flex: 1, alignItems: 'center', gap: 6 },
   transformPhoto: { width: '100%', height: 100, borderRadius: 14 },
@@ -854,7 +854,7 @@ function makeStyles(c: Palette) {
 
   metricScroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
   metricChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard },
-  metricChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  metricChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   metricChipText: { fontSize: 13, color: c.textMuted, fontWeight: '500' },
   metricChipTextActive: { color: c.primary, fontWeight: '700' },
 

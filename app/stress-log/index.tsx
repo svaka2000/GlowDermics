@@ -251,7 +251,7 @@ export default function StressLog() {
         {/* Top trigger */}
         {topTrigger && (
           <View style={styles.insightCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.10)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.10)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Ionicons name="bulb-outline" size={22} color={colors.gold} />
             <View style={{ flex: 1 }}>
               <Text style={styles.insightTitle}>Your Most Common Trigger</Text>
@@ -302,7 +302,7 @@ export default function StressLog() {
 
         {/* Link to scan */}
         <Pressable style={styles.scanCta} onPress={() => router.push('/scan')}>
-          <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
           <Ionicons name="camera-outline" size={20} color={colors.primary} />
           <View style={{ flex: 1 }}>
             <Text style={styles.scanCtaTitle}>Scan After High Stress Days</Text>
@@ -345,7 +345,7 @@ function makeStyles(c: Palette) {
   triggersLabel: { fontSize: 12, fontWeight: '600', color: c.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
   triggersGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   triggerChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  triggerChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.12)' },
+  triggerChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.12)' },
   triggerEmoji: { fontSize: 14 },
   triggerLabel: { fontSize: 12, color: c.textMuted, fontWeight: '500' },
 
@@ -371,7 +371,7 @@ function makeStyles(c: Palette) {
   chartLegendDot: { width: 7, height: 7, borderRadius: 3.5 },
   chartLegendText: { fontSize: 9, color: c.textMuted },
 
-  insightCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  insightCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   insightTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 3 },
   insightText: { fontSize: 13, color: c.primary, fontWeight: '600', marginBottom: 3 },
   insightSub: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
@@ -388,7 +388,7 @@ function makeStyles(c: Palette) {
   logLevelBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   logLevelText: { fontSize: 11, fontWeight: '700' },
 
-  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   scanCtaTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
   scanCtaSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   });

@@ -77,9 +77,9 @@ export default function Dupes() {
         <Animated.ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" style={{ opacity: contentAnim }}>
 
           <View style={styles.hero}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'transparent']} style={styles.heroGlow} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'transparent']} style={styles.heroGlow} />
             <View style={styles.heroIconWrap}>
-              <LinearGradient colors={[colors.gold, '#C4622D']} style={styles.heroIconGrad}>
+              <LinearGradient colors={[colors.gold, '#8A7860']} style={styles.heroIconGrad}>
                 <Text style={styles.heroIcon}>💰</Text>
               </LinearGradient>
             </View>
@@ -196,7 +196,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
         {result.dupes.map((dupe, i) => (
           <View key={i} style={[styles.dupeCard, i === 0 && styles.dupeCardBest]}>
             {i === 0 && (
-              <LinearGradient colors={['rgba(212,169,106,0.12)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(183,155,110,0.12)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
             )}
             <View style={styles.dupeTop}>
               <View style={styles.dupeMatch}>
@@ -239,7 +239,7 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
         {/* Skin-barrier note */}
         {result.tallowDermicsNote && (
           <View style={styles.tdNote}>
-            <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdNoteEyebrow}>VELUMI AI PERSPECTIVE</Text>
             <Text style={styles.tdNoteText}>{result.tallowDermicsNote}</Text>
             <View style={{ marginTop: 12 }}>
@@ -303,10 +303,10 @@ function makeStyles(c: Palette) {
   originalBrand: { fontSize: 13, color: c.textSecondary, marginBottom: 14 },
   keyIngredients: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
   keyIngrLabel: { fontSize: 12, color: c.textMuted, fontWeight: '600' },
-  ingChip: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  ingChip: { backgroundColor: 'rgba(138,120,96,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   ingChipText: { fontSize: 11, color: c.primary, fontWeight: '600' },
 
-  whyCard: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 14, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)' },
+  whyCard: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: 'rgba(183,155,110,0.08)', borderRadius: 14, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(183,155,110,0.15)' },
   whyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20, flex: 1 },
 
   dupesTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
@@ -318,7 +318,7 @@ function makeStyles(c: Palette) {
   dupeMatchLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5 },
   dupeInfo: { flex: 1 },
   dupeNameRow: { marginBottom: 2 },
-  bestBadge: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.gold, backgroundColor: 'rgba(212,169,106,0.15)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
+  bestBadge: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.gold, backgroundColor: 'rgba(183,155,110,0.15)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
   dupeName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   dupeBrand: { fontSize: 12, color: c.textMuted },
   dupePriceWrap: { alignItems: 'flex-end', gap: 4 },

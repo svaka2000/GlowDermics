@@ -146,7 +146,7 @@ export default function HydrationTracker() {
         {/* Today's ring */}
         <View style={styles.ringCard}>
           <LinearGradient
-            colors={['rgba(74,222,128,0.08)', 'rgba(196,98,45,0.05)']}
+            colors={['rgba(74,222,128,0.08)', 'rgba(138,120,96,0.05)']}
             style={StyleSheet.absoluteFill}
           />
 
@@ -271,7 +271,7 @@ export default function HydrationTracker() {
         {/* Correlation card */}
         {highWaterScanAvg !== null && lowWaterScanAvg !== null && (
           <View style={styles.correlationCard}>
-            <LinearGradient colors={['rgba(74,222,128,0.08)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(74,222,128,0.08)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.correlationTitle}>Hydration → Skin Score</Text>
             <View style={styles.correlationRow}>
               <View style={styles.correlationItem}>

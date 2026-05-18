@@ -174,7 +174,7 @@ export default function PatchTestTracker() {
         {/* Add new test form */}
         {adding && (
           <View style={styles.addCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.08)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.08)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.addCardTitle}>New Patch Test</Text>
 
             <TextInput
@@ -228,7 +228,7 @@ export default function PatchTestTracker() {
           if (!test) return null;
           return (
             <View style={styles.checkInCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.checkInTitle}>{checkingIn.hour}h Check-In</Text>
               <Text style={styles.checkInProduct}>{test.productName}</Text>
 

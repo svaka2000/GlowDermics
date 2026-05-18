@@ -249,7 +249,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
 
         {/* Pro tips */}
         <View style={styles.proCard}>
-          <LinearGradient colors={['rgba(212,169,106,0.12)', 'rgba(212,169,106,0.04)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(183,155,110,0.12)', 'rgba(183,155,110,0.04)']} style={StyleSheet.absoluteFill} />
           <View style={styles.cardTitleRow}>
             <Ionicons name="bulb-outline" size={16} color={colors.gold} />
             <Text style={[styles.cardTitle, { marginBottom: 0, color: colors.gold }]}>Pro Tips</Text>
@@ -264,7 +264,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
 
         {/* Barrier fit */}
         <View style={styles.tdCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.tdEyebrow}>BARRIER FIT</Text>
           <Text style={styles.tdText}>{profile.tallowFit}</Text>
           <Pressable style={{ marginTop: 8 }} onPress={() => router.push('/product')}>
@@ -322,8 +322,8 @@ function makeStyles(c: Palette) {
   routineRec: { fontSize: 12, color: c.primary, fontWeight: '500', marginBottom: 2 },
   routineWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 17 },
 
-  proCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(212,169,106,0.15)', padding: 16, marginBottom: 12, gap: 8 },
-  tdCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 18, marginBottom: 12, gap: 8 },
+  proCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(183,155,110,0.15)', padding: 16, marginBottom: 12, gap: 8 },
+  tdCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 18, marginBottom: 12, gap: 8 },
   tdEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary },
   tdText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   tdCta: { fontSize: 13, color: c.primary, fontWeight: '600' },

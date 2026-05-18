@@ -283,7 +283,7 @@ export default function EnvironmentLog() {
         {/* Real-time skin impact */}
         {(impact.issues.length > 0 || impact.advice.length > 0) && (
           <View style={styles.impactCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.08)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.08)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.impactTitle}>Today's Skin Impact</Text>
             {impact.issues.length > 0 && (
               <>

@@ -289,7 +289,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                   ))}
                 </View>
                 <View style={styles.tallowCard}>
-                  <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
                   <Text style={styles.tallowEmoji}>✨</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.tallowTitle}>Your Skin Fit</Text>
@@ -382,7 +382,7 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
-  shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
+  shareBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(138,120,96,0.12)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
@@ -436,7 +436,7 @@ function makeStyles(c: Palette) {
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   bulletText: { flex: 1, fontSize: 14, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, marginBottom: 12 },
+  tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, marginBottom: 12 },
   tallowEmoji: { fontSize: 24 },
   tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
   tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
@@ -446,7 +446,7 @@ function makeStyles(c: Palette) {
   ingWhy: { fontSize: 12, color: c.textSecondary, lineHeight: 17 },
 
   blueprintStep: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  blueprintNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(196,98,45,0.12)', alignItems: 'center', justifyContent: 'center' },
+  blueprintNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(138,120,96,0.12)', alignItems: 'center', justifyContent: 'center' },
   blueprintNumText: { fontSize: 12, fontWeight: '700', color: c.primary },
   blueprintStepName: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 3 },
   blueprintNote: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },

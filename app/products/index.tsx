@@ -288,7 +288,7 @@ export default function ProductShelf() {
         {/* Coach tip */}
         {shelf.length > 0 && (
           <Pressable style={styles.coachTip} onPress={() => router.push('/(tabs)/coach')}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.coachTipTitle}>Ask your AI coach about your routine</Text>
@@ -328,7 +328,7 @@ function makeStyles(c: Palette) {
   },
   catRow: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
   catChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  catChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   catChipText: { fontSize: 12, color: c.textMuted },
   catChipTextActive: { color: c.primary, fontWeight: '600' },
   ratingRow: { gap: 6 },
@@ -345,7 +345,7 @@ function makeStyles(c: Palette) {
   filterScroll: { marginBottom: 14 },
   filterContent: { gap: 8, paddingVertical: 4 },
   filterChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgCard },
-  filterChipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  filterChipActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.15)' },
   filterChipText: { fontSize: 12, color: c.textMuted },
   filterChipTextActive: { color: c.primary, fontWeight: '600' },
 
@@ -361,7 +361,7 @@ function makeStyles(c: Palette) {
   productCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 8 },
   productTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
   productInfo: { flex: 1, gap: 4 },
-  productCatBadge: { backgroundColor: 'rgba(196,98,45,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
+  productCatBadge: { backgroundColor: 'rgba(138,120,96,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   productCatText: { fontSize: 8, fontWeight: '800', letterSpacing: 1.5, color: c.primary },
   productName: { fontSize: 15, fontWeight: '700', color: c.textPrimary, lineHeight: 21 },
   productBrand: { fontSize: 12, color: c.textMuted },
@@ -375,7 +375,7 @@ function makeStyles(c: Palette) {
   coachTip: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginTop: 6,
   },
   coachTipTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary },

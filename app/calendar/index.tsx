@@ -358,7 +358,7 @@ function makeStyles(c: Palette) {
     alignItems: 'center', justifyContent: 'flex-start',
     paddingTop: 6, borderRadius: 10,
   },
-  dayCellToday: { backgroundColor: 'rgba(196,98,45,0.15)', borderWidth: 1, borderColor: c.primary + '40' },
+  dayCellToday: { backgroundColor: 'rgba(138,120,96,0.15)', borderWidth: 1, borderColor: c.primary + '40' },
   dayCellSelected: { backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.borderStrong },
   dayCellPerfect: { backgroundColor: 'rgba(74,222,128,0.08)' },
   dayCellFuture: { opacity: 0.3 },

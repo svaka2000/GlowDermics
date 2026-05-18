@@ -308,7 +308,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
             {/* Ancestral note */}
             <Pressable style={styles.ancestralCard} onPress={() => router.push('/product')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.ancestralEmoji}>🥩</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ancestralTitle}>Ancestral Nutrition</Text>
@@ -423,7 +423,7 @@ function makeStyles(c: Palette) {
   ancestralCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginBottom: 12,
   },
   ancestralEmoji: { fontSize: 24 },

@@ -215,7 +215,7 @@ Return ONLY valid JSON (no markdown):
 
         {loading && (
           <View style={styles.loadingCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.loadingTitle}>Writing your story...</Text>
             <Text style={styles.loadingSub}>Analyzing your skin journey</Text>
@@ -239,7 +239,7 @@ Return ONLY valid JSON (no markdown):
             {/* Hero gradient card */}
             <View style={styles.heroCard}>
               <LinearGradient
-                colors={[colors.primaryDark, colors.primary, '#D4A96A']}
+                colors={[colors.primaryDark, colors.primary, '#B79B6E']}
                 style={StyleSheet.absoluteFill}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -347,7 +347,7 @@ function makeStyles(c: Palette) {
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  loadingCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 40, alignItems: 'center', gap: 14, marginBottom: 14 },
+  loadingCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 40, alignItems: 'center', gap: 14, marginBottom: 14 },
   loadingTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
   loadingSub: { fontSize: 13, color: c.textMuted },
 
@@ -372,7 +372,7 @@ function makeStyles(c: Palette) {
   chaptersCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 16, gap: 0, marginBottom: 14 },
   chapter: { flexDirection: 'row', gap: 14, paddingBottom: 16 },
   chapterBorder: { borderBottomWidth: 1, borderBottomColor: c.border, marginBottom: 16 },
-  chapterNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(196,98,45,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)', marginTop: 2 },
+  chapterNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(138,120,96,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(138,120,96,0.3)', marginTop: 2 },
   chapterNumText: { fontSize: 13, fontWeight: '800', color: c.primary },
   chapterTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
   chapterParagraph: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
@@ -395,7 +395,7 @@ function makeStyles(c: Palette) {
   captionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   captionLabel: { fontSize: 13, fontWeight: '600', color: c.textMuted },
   captionText: { fontSize: 13, color: c.textSecondary, lineHeight: 22, fontStyle: 'italic' },
-  shareBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)', paddingVertical: 10, backgroundColor: 'rgba(196,98,45,0.08)' },
+  shareBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(138,120,96,0.3)', paddingVertical: 10, backgroundColor: 'rgba(138,120,96,0.08)' },
   shareBtnText: { fontSize: 13, fontWeight: '700', color: c.primary },
 
   regenBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10 },

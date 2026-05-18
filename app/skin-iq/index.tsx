@@ -258,7 +258,7 @@ export default function SkinIQ() {
           {/* Score card */}
           <View style={styles.resultCard}>
             <LinearGradient
-              colors={pct >= 70 ? ['rgba(74,222,128,0.15)', 'rgba(74,222,128,0.04)'] : pct >= 50 ? ['rgba(212,169,106,0.15)', 'rgba(212,169,106,0.04)'] : ['rgba(248,113,113,0.15)', 'rgba(248,113,113,0.04)']}
+              colors={pct >= 70 ? ['rgba(74,222,128,0.15)', 'rgba(74,222,128,0.04)'] : pct >= 50 ? ['rgba(183,155,110,0.15)', 'rgba(183,155,110,0.04)'] : ['rgba(248,113,113,0.15)', 'rgba(248,113,113,0.04)']}
               style={StyleSheet.absoluteFill}
             />
             <Text style={[styles.resultScore, { color: scoreColor }]}>{score}/{QUESTIONS.length}</Text>
@@ -352,7 +352,7 @@ export default function SkinIQ() {
               if (i === q.correct) { bg = 'rgba(74,222,128,0.12)'; border = '#4ADE80'; textColor = '#4ADE80'; }
               else if (i === selected && selected !== q.correct) { bg = 'rgba(248,113,113,0.12)'; border = colors.scorePoor; textColor = colors.scorePoor; }
             } else if (selected === i) {
-              bg = 'rgba(196,98,45,0.12)'; border = colors.primary; textColor = colors.primary;
+              bg = 'rgba(138,120,96,0.12)'; border = colors.primary; textColor = colors.primary;
             }
 
             return (
@@ -380,7 +380,7 @@ export default function SkinIQ() {
 
         {showExplanation && (
           <View style={styles.explanationCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Ionicons name="bulb-outline" size={18} color={colors.gold} />
             <View style={{ flex: 1 }}>
               <Text style={styles.explanationTitle}>
@@ -439,7 +439,7 @@ function makeStyles(c: Palette) {
   optionLetterText: { fontSize: 13, fontWeight: '800' },
   optionText: { flex: 1, fontSize: 14, fontWeight: '500', lineHeight: 22 },
 
-  explanationCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginTop: 16 },
+  explanationCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginTop: 16 },
   explanationTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 6 },
   explanationText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 

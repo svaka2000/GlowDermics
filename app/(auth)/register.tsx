@@ -77,7 +77,7 @@ export default function Register() {
 
           <View style={styles.topSection}>
             <LinearGradient
-              colors={['#E8834A', '#C4622D', '#9E4D22']}
+              colors={['#B79B6E', '#8A7860', '#665845']}
               style={styles.logoGrad}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             >
@@ -189,7 +189,7 @@ export default function Register() {
             {/* Create account */}
             <Pressable style={styles.primaryBtn} onPress={handleRegister} disabled={loading}>
               <LinearGradient
-                colors={['#E8834A', '#C4622D']}
+                colors={['#B79B6E', '#8A7860']}
                 style={styles.primaryBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   logoGrad: {
     width: 60, height: 60, borderRadius: 18,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#C4622D', shadowOffset: { width: 0, height: 6 },
+    shadowColor: '#8A7860', shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
   },
   logoMark: { fontSize: 28, color: '#fff' },

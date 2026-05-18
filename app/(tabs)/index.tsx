@@ -317,7 +317,7 @@ export default function Home() {
         {/* Active Challenge widget */}
         {activeChallenge && (
           <Pressable style={styles.challengeWidget} onPress={() => router.push('/challenge')}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.challengeEmoji}>{activeChallenge.emoji}</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.challengeLabel}>ACTIVE CHALLENGE</Text>
@@ -456,7 +456,7 @@ export default function Home() {
               <Text style={styles.teaserCta}>Discover →</Text>
             </Pressable>
             <Pressable style={[styles.teaser, { flex: 1 }]} onPress={() => router.push('/skin-scorecard')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.teaserEmoji}>📊</Text>
               <Text style={styles.teaserTitle}>Scorecard</Text>
               <Text style={styles.teaserSub}>Share your skin journey with the world</Text>
@@ -532,7 +532,7 @@ export default function Home() {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickGrid}>
             <Pressable style={styles.quickCard} onPress={() => router.push('/scanner')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="flask-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Ingredient{'\n'}Scanner</Text>
             </Pressable>
@@ -561,7 +561,7 @@ export default function Home() {
               <Text style={styles.quickLabel}>Daily{'\n'}Habits</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/milestones')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="trophy-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Mile{'\n'}stones</Text>
             </Pressable>
@@ -586,22 +586,22 @@ export default function Home() {
               <Text style={styles.quickLabel}>Skin{'\n'}Weather</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/challenge')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="flash-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>30-Day{'\n'}Challenge</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/daily-challenges')}>
-              <LinearGradient colors={['rgba(212,169,106,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(183,155,110,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="trophy-outline" size={22} color={colors.gold} />
               <Text style={[styles.quickLabel, { color: colors.gold }]}>Daily{'\n'}Quests</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/insights')}>
-              <LinearGradient colors={['rgba(22,163,74,0.14)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(22,163,74,0.14)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="analytics-outline" size={22} color={colors.scoreExcellent} />
               <Text style={[styles.quickLabel, { color: colors.scoreExcellent }]}>Insights{'\n'}Hub</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/community')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="people-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Commu{'\n'}nity</Text>
             </Pressable>
@@ -618,7 +618,7 @@ export default function Home() {
               <Text style={styles.quickLabel}>Weekly{'\n'}Digest</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-report')}>
-              <LinearGradient colors={['rgba(212,169,106,0.15)', 'rgba(212,169,106,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(183,155,110,0.15)', 'rgba(183,155,110,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="document-text-outline" size={22} color={colors.gold} />
               <Text style={[styles.quickLabel, { color: colors.gold }]}>Skin{'\n'}Report</Text>
             </Pressable>
@@ -627,32 +627,32 @@ export default function Home() {
               <Text style={styles.quickLabel}>Photo{'\n'}Gallery</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/skin-dna')}>
-              <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="git-network-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Skin{'\n'}DNA</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/identity' as any)}>
-              <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="finger-print-outline" size={22} color={'#9B5BA8'} />
               <Text style={[styles.quickLabel, { color: '#9B5BA8' }]}>Skin{'\n'}Persona</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/seven-day' as any)}>
-              <LinearGradient colors={['rgba(31,138,111,0.16)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(31,138,111,0.16)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="trending-up-outline" size={22} color={colors.scoreGood} />
               <Text style={[styles.quickLabel, { color: colors.scoreGood }]}>7-Day{'\n'}Forecast</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/achievements' as any)}>
-              <LinearGradient colors={['rgba(212,169,106,0.20)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(183,155,110,0.20)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="medal-outline" size={22} color={colors.gold} />
               <Text style={[styles.quickLabel, { color: colors.gold }]}>Achiev{'\n'}ements</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/habit-matrix' as any)}>
-              <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="grid-outline" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Habit{'\n'}Matrix</Text>
             </Pressable>
             <Pressable style={styles.quickCard} onPress={() => router.push('/notifications' as any)}>
-              <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(155,91,168,0.18)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="notifications-outline" size={22} color={'#9B5BA8'} />
               <Text style={[styles.quickLabel, { color: '#9B5BA8' }]}>Notifi{'\n'}cations</Text>
             </Pressable>
@@ -770,7 +770,7 @@ export default function Home() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Daily Tip</Text>
           <View style={styles.tipCard}>
-            <LinearGradient colors={['rgba(212,169,106,0.12)', 'rgba(212,169,106,0.04)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(183,155,110,0.12)', 'rgba(183,155,110,0.04)']} style={StyleSheet.absoluteFill} />
             <View style={styles.tipHeader}>
               <View style={styles.tipTagWrap}>
                 <Text style={styles.tipTag}>{dailyTip.tag}</Text>
@@ -912,16 +912,16 @@ function makeStyles(c: Palette) {
   analysisThumb: { width: 66, height: 66, borderRadius: 12, backgroundColor: c.bgElevated },
   analysisThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
   analysisInfo: { flex: 1, gap: 6 },
-  skinTypeBadge: { backgroundColor: 'rgba(196,98,45,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  skinTypeBadge: { backgroundColor: 'rgba(138,120,96,0.12)', alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   skinTypeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.primary },
   concernChips: { flexDirection: 'row', gap: 5, flexWrap: 'wrap' },
-  concernChip: { backgroundColor: 'rgba(212,169,106,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
+  concernChip: { backgroundColor: 'rgba(183,155,110,0.12)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
   concernText: { fontSize: 10, color: c.gold, fontWeight: '600' },
   analysisDate: { fontSize: 11, color: c.textMuted },
   scoreGrid: { gap: 10, marginBottom: 14 },
   insightBox: {
     flexDirection: 'row', gap: 8, alignItems: 'flex-start',
-    backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 10, padding: 10,
+    backgroundColor: 'rgba(183,155,110,0.08)', borderRadius: 10, padding: 10,
   },
   insightText: { fontSize: 12, color: c.textSecondary, lineHeight: 18, flex: 1 },
 
@@ -936,10 +936,10 @@ function makeStyles(c: Palette) {
 
   tipCard: {
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)', padding: 20,
+    borderWidth: 1, borderColor: 'rgba(183,155,110,0.2)', padding: 20,
   },
   tipHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  tipTagWrap: { backgroundColor: 'rgba(212,169,106,0.15)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  tipTagWrap: { backgroundColor: 'rgba(183,155,110,0.15)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   tipTag: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.gold },
   tipCalendar: { fontSize: 11, color: c.textMuted },
   tipText: { fontSize: 15, color: c.textPrimary, lineHeight: 24, fontStyle: 'italic', marginBottom: 10 },
@@ -951,8 +951,8 @@ function makeStyles(c: Palette) {
   emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
 
   brandStrip: {
-    borderRadius: 14, borderWidth: 1, borderColor: 'rgba(196,98,45,0.12)',
-    backgroundColor: 'rgba(196,98,45,0.05)', padding: 18, alignItems: 'center', gap: 6,
+    borderRadius: 14, borderWidth: 1, borderColor: 'rgba(138,120,96,0.12)',
+    backgroundColor: 'rgba(138,120,96,0.05)', padding: 18, alignItems: 'center', gap: 6,
   },
   emptyQuizBtn: { marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 20, paddingVertical: 12 },
   emptyQuizText: { fontSize: 13, color: c.primary, fontWeight: '600' },
@@ -1027,7 +1027,7 @@ function makeStyles(c: Palette) {
   waterProgress: { fontSize: 12, color: c.textMuted },
   waterPct: { fontSize: 13, fontWeight: '800', color: '#3B82F6' },
 
-  challengeWidget: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.25)', padding: 14, marginBottom: 10 },
+  challengeWidget: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.25)', padding: 14, marginBottom: 10 },
   challengeEmoji: { fontSize: 24 },
   challengeLabel: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
   challengeTitle: { fontSize: 13, fontWeight: '700', color: c.textPrimary, marginBottom: 6 },

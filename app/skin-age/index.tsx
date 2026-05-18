@@ -260,7 +260,7 @@ Return ONLY valid JSON (no markdown, no explanation):
         {/* How it works */}
         {!hasData && !loading && (
           <View style={styles.infoCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.infoTitle}>How Skin Age is Calculated</Text>
             <View style={styles.infoRows}>
               {[
@@ -287,7 +287,7 @@ Return ONLY valid JSON (no markdown, no explanation):
             {/* Hero age comparison */}
             <View style={styles.heroCard}>
               <LinearGradient
-                colors={result.ageGap < 0 ? ['rgba(74,222,128,0.12)', 'rgba(74,222,128,0.03)'] : result.ageGap > 3 ? ['rgba(248,113,113,0.12)', 'rgba(248,113,113,0.03)'] : ['rgba(212,169,106,0.12)', 'rgba(212,169,106,0.03)']}
+                colors={result.ageGap < 0 ? ['rgba(74,222,128,0.12)', 'rgba(74,222,128,0.03)'] : result.ageGap > 3 ? ['rgba(248,113,113,0.12)', 'rgba(248,113,113,0.03)'] : ['rgba(183,155,110,0.12)', 'rgba(183,155,110,0.03)']}
                 style={StyleSheet.absoluteFill}
               />
               <View style={styles.ageRow}>
@@ -382,7 +382,7 @@ Return ONLY valid JSON (no markdown, no explanation):
 
             {/* Rescan CTA */}
             <Pressable style={styles.rescanCard} onPress={() => router.push('/scan')}>
-              <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.03)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.03)']} style={StyleSheet.absoluteFill} />
               <Ionicons name="camera-outline" size={22} color={colors.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.rescanTitle}>Rescan to Track Progress</Text>
@@ -430,7 +430,7 @@ function makeStyles(c: Palette) {
   analyzeBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
   errorText: { fontSize: 13, color: c.scorePoor, fontWeight: '500' },
 
-  infoCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 12, marginBottom: 14 },
+  infoCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, gap: 12, marginBottom: 14 },
   infoTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
   infoRows: { gap: 12 },
   infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
@@ -448,7 +448,7 @@ function makeStyles(c: Palette) {
   ageGapEmoji: { fontSize: 22 },
   ageGapNum: { fontSize: 20, fontWeight: '900' },
   ageGapSub: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
-  headlineBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
+  headlineBadge: { backgroundColor: 'rgba(138,120,96,0.12)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)' },
   headlineText: { fontSize: 13, fontWeight: '700', color: c.primary },
   verdictText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
 
@@ -470,7 +470,7 @@ function makeStyles(c: Palette) {
   riskItem: { fontSize: 12, color: c.textSecondary, lineHeight: 18 },
 
   recRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 10 },
-  recNum: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(196,98,45,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,98,45,0.3)' },
+  recNum: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(138,120,96,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(138,120,96,0.3)' },
   recNumText: { fontSize: 12, fontWeight: '800', color: c.primary },
   recText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
@@ -479,7 +479,7 @@ function makeStyles(c: Palette) {
   tallowTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 3 },
   tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
 
-  rescanCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  rescanCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   rescanTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
   rescanSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   });

@@ -458,7 +458,7 @@ function makeStyles(c: Palette) {
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28, gap: 12, paddingTop: 60, paddingBottom: 80 },
   emptyEmojiBox: {
     width: 84, height: 84, borderRadius: 42,
-    backgroundColor: 'rgba(196,98,45,0.10)',
+    backgroundColor: 'rgba(138,120,96,0.10)',
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 8,
   },
@@ -468,7 +468,7 @@ function makeStyles(c: Palette) {
   elapsedRow: { gap: 10 },
   elapsedChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(196,98,45,0.10)',
+    backgroundColor: 'rgba(138,120,96,0.10)',
     borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5,
     alignSelf: 'flex-start',
   },
@@ -493,7 +493,7 @@ function makeStyles(c: Palette) {
   narrativeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   narrativeIcon: {
     width: 26, height: 26, borderRadius: 13,
-    backgroundColor: 'rgba(196,98,45,0.12)',
+    backgroundColor: 'rgba(138,120,96,0.12)',
     alignItems: 'center', justifyContent: 'center',
   },
   narrativeTitle: { fontSize: 13, fontWeight: '800', color: c.textPrimary, letterSpacing: 0.2 },
@@ -522,7 +522,7 @@ function makeStyles(c: Palette) {
     borderWidth: 1, borderColor: c.border, padding: 14,
     marginBottom: 10,
   },
-  pickCardActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.08)' },
+  pickCardActive: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.08)' },
   pickThumb: { width: 50, height: 50, borderRadius: 10, backgroundColor: c.bgElevated },
   pickThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
   pickDate: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 3 },

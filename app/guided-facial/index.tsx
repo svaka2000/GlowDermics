@@ -312,7 +312,7 @@ export default function GuidedFacial() {
       <Animated.ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} style={{ opacity: contentAnim }}>
 
         <View style={styles.introCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.introEmoji}>🧖</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.introTitle}>Real-Time Skincare Guidance</Text>
@@ -360,7 +360,7 @@ function makeStyles(c: Palette) {
   progressBarOuter: { height: 3, backgroundColor: c.border },
   progressBarInner: { height: 3, backgroundColor: c.primary },
 
-  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 16 },
+  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 16 },
   introEmoji: { fontSize: 28 },
   introTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   introSub: { fontSize: 12, color: c.textMuted, marginTop: 2, lineHeight: 18 },
@@ -391,7 +391,7 @@ function makeStyles(c: Palette) {
   productLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1, textTransform: 'uppercase' },
   productName: { fontSize: 15, fontWeight: '700', color: c.primary },
 
-  tipCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)', padding: 12, marginBottom: 16 },
+  tipCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(183,155,110,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(183,155,110,0.2)', padding: 12, marginBottom: 16 },
   tipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   nextStepBtn: { height: 54, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 10 },

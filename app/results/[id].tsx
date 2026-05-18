@@ -509,7 +509,7 @@ function makeStyles(c: Palette) {
   },
   headerTitle: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.3 },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  shareBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20 },
+  shareBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(138,120,96,0.12)', borderRadius: 20 },
   scroll: { paddingBottom: 40 },
   heroCard: { height: 300, backgroundColor: c.bgCard },
   heroImage: { width: '100%', height: '100%' },
@@ -571,7 +571,7 @@ function makeStyles(c: Palette) {
   routineStep: { flexDirection: 'row', gap: 14, marginBottom: 14 },
   routineNum: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: 'rgba(196,98,45,0.15)', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(138,120,96,0.15)', alignItems: 'center', justifyContent: 'center',
     marginTop: 2,
   },
   routineNumText: { fontSize: 12, fontWeight: '700', color: c.primary },

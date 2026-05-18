@@ -152,7 +152,7 @@ Return ONLY valid JSON (no markdown):
 
         {loading && (
           <View style={styles.loadingCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.10)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(138,120,96,0.10)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
             <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.loadingText}>Building your supplement guide...</Text>
           </View>
@@ -162,7 +162,7 @@ Return ONLY valid JSON (no markdown):
           <>
             {/* Intro card */}
             <View style={styles.introCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.introEmoji}>💊</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.introTitle}>Inside-Out Skin Health</Text>
@@ -248,7 +248,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Diet link */}
             <Pressable style={styles.dietLink} onPress={() => router.push('/diet')}>
-              <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={['rgba(138,120,96,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
               <Ionicons name="restaurant-outline" size={18} color={colors.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.dietLinkTitle}>See the Full Diet Guide</Text>
@@ -277,10 +277,10 @@ function makeStyles(c: Palette) {
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  loadingCard: { borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 40, alignItems: 'center', gap: 14 },
+  loadingCard: { borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 40, alignItems: 'center', gap: 14 },
   loadingText: { fontSize: 14, color: c.textSecondary },
 
-  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  introCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   introEmoji: { fontSize: 28 },
   introTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary },
   introSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
@@ -305,7 +305,7 @@ function makeStyles(c: Palette) {
   supConcernsWrap: { gap: 6 },
   supMetaLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
   supConcerns: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  supConcernChip: { backgroundColor: 'rgba(196,98,45,0.1)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)' },
+  supConcernChip: { backgroundColor: 'rgba(138,120,96,0.1)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)' },
   supConcernText: { fontSize: 11, color: c.primary, fontWeight: '600' },
 
   foodSourcesRow: { gap: 4 },
@@ -319,10 +319,10 @@ function makeStyles(c: Palette) {
   ancestralTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 4 },
   ancestralText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
 
-  cautionCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(212,169,106,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(212,169,106,0.2)', padding: 12, marginBottom: 14 },
+  cautionCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(183,155,110,0.08)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(183,155,110,0.2)', padding: 12, marginBottom: 14 },
   cautionText: { flex: 1, fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
-  dietLink: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  dietLink: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   dietLinkTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
   dietLinkSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   });

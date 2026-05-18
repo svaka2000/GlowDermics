@@ -186,7 +186,7 @@ export default function SPFGuideScreen() {
         <View style={{ width: 60 }} />
       </Animated.View>
 
-      <LinearGradient colors={['#FBBF2422', '#0A0A0F']} style={styles.hero}>
+      <LinearGradient colors={['#D8C29A22', '#0A0A0F']} style={styles.hero}>
         <Text style={styles.heroEmoji}>☀️</Text>
         <Text style={styles.heroTitle}>The Complete SPF Guide</Text>
         <Text style={styles.heroSub}>The highest-ROI skincare step you can take — if you use it correctly</Text>

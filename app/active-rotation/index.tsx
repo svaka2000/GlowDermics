@@ -220,7 +220,7 @@ export default function ActiveRotation() {
                     <Text style={styles.activeDesc} numberOfLines={1}>{active.desc}</Text>
                   </View>
                   <View style={[styles.sensitivityBadge, {
-                    backgroundColor: active.sensitivity === 'low' ? 'rgba(74,222,128,0.15)' : active.sensitivity === 'medium' ? 'rgba(212,169,106,0.15)' : 'rgba(239,68,68,0.15)',
+                    backgroundColor: active.sensitivity === 'low' ? 'rgba(74,222,128,0.15)' : active.sensitivity === 'medium' ? 'rgba(183,155,110,0.15)' : 'rgba(239,68,68,0.15)',
                   }]}>
                     <Text style={[styles.sensitivityText, {
                       color: active.sensitivity === 'low' ? '#4ADE80' : active.sensitivity === 'medium' ? colors.gold : colors.scorePoor,

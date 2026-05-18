@@ -185,7 +185,7 @@ export default function Onboarding() {
         pointerEvents="none"
       >
         <LinearGradient
-          colors={['rgba(196,98,45,0.55)', 'rgba(196,98,45,0)']}
+          colors={['rgba(138,120,96,0.55)', 'rgba(138,120,96,0)']}
           style={{ flex: 1, borderRadius: 200 }}
         />
       </Animated.View>
@@ -359,7 +359,7 @@ function PageWelcome({
       <View style={styles.pageContent}>
         <Animated.View style={[styles.welcomeLogo, logoStyle]}>
           <LinearGradient
-            colors={['#E8834A', '#C4622D', '#9E4D22']}
+            colors={['#B79B6E', '#8A7860', '#665845']}
             start={{ x: 0.1, y: 0 }}
             end={{ x: 0.9, y: 1 }}
             style={styles.welcomeLogoGrad}
@@ -659,7 +659,7 @@ function PageFirstScan({
           <Animated.View style={[styles.scanHalo, haloStyle]} pointerEvents="none" />
           <Animated.View style={[styles.scanIconCircle, heroStyle]}>
             <LinearGradient
-              colors={['#E8834A', '#C4622D']}
+              colors={['#B79B6E', '#8A7860']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
@@ -680,7 +680,7 @@ function PageFirstScan({
         <Animated.View style={[{ width: '100%', gap: 12, marginTop: 36 }, ctaStyle]}>
           <Pressable style={styles.scanCta} onPress={onScan}>
             <LinearGradient
-              colors={['#E8834A', '#C4622D']}
+              colors={['#B79B6E', '#8A7860']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
@@ -891,7 +891,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: 'rgba(196,98,45,0.30)',
+    backgroundColor: 'rgba(138,120,96,0.30)',
     shadowColor: Colors.primary,
     shadowOpacity: 0.8,
     shadowRadius: 40,

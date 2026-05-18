@@ -324,7 +324,7 @@ export default function Blacklist() {
 
         {/* CTA to scanner */}
         <Pressable style={styles.scanCta} onPress={() => router.push('/scanner')}>
-          <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.02)']} style={StyleSheet.absoluteFill} />
           <Ionicons name="flask-outline" size={20} color={colors.primary} />
           <View style={{ flex: 1 }}>
             <Text style={styles.scanCtaTitle}>Scan a Product Label</Text>
@@ -369,7 +369,7 @@ function makeStyles(c: Palette) {
   statCard: { flex: 1, backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border, padding: 16, alignItems: 'center', gap: 4 },
   statNum: { fontSize: 28, fontWeight: '900', color: c.textPrimary },
   statLabel: { fontSize: 11, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
-  addCard: { borderColor: 'rgba(196,98,45,0.3)', backgroundColor: 'rgba(196,98,45,0.06)' },
+  addCard: { borderColor: 'rgba(138,120,96,0.3)', backgroundColor: 'rgba(138,120,96,0.06)' },
   addCardText: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
   addForm: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 10, marginBottom: 14 },
@@ -404,7 +404,7 @@ function makeStyles(c: Palette) {
   emptyTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
   emptySub: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
 
-  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  scanCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   scanCtaTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },
   scanCtaSub: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   });

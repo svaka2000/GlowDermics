@@ -68,7 +68,7 @@ function getWeatherReport(data: {
   } else if (hydration >= 75 && clarity >= 75 && stressLevel <= 2 && water >= 6) {
     condition = 'Golden Hour';
     conditionIcon = '🌟';
-    gradientColors = [c.primaryDark, '#D4A96A'];
+    gradientColors = [c.primaryDark, '#B79B6E'];
     headline = 'Peak skin conditions today';
     summary = 'You\'re hydrated, calm, and consistent. Your skin is glowing and primed to absorb everything you give it.';
     skinAdvice = 'Perfect day to take a skin scan — your scores will be at their best right now.';

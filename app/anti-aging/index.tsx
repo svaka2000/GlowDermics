@@ -211,7 +211,7 @@ export default function AntiAgingScreen() {
         <View style={{ width: 60 }} />
       </View>
 
-      <LinearGradient colors={['#D4A96A22', '#0A0A0F']} style={styles.hero}>
+      <LinearGradient colors={['#B79B6E22', '#0A0A0F']} style={styles.hero}>
         <Text style={styles.heroEmoji}>⏳</Text>
         <Text style={styles.heroTitle}>Anti-Aging Protocol</Text>
         <Text style={styles.heroSub}>Evidence-based strategies to slow aging — and what actually moves the needle</Text>

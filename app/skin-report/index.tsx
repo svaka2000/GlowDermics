@@ -49,7 +49,7 @@ type SkinReport = {
 
 const GRADE_COLORS: Record<string, string> = {
   'A+': '#4ADE80', 'A': '#4ADE80', 'A-': '#86EFAC',
-  'B+': '#86EFAC', 'B': '#D4A96A', 'B-': '#D4A96A',
+  'B+': '#86EFAC', 'B': '#B79B6E', 'B-': '#B79B6E',
   'C+': '#F97316', 'C': '#F97316', 'C-': '#EF4444',
   'D': '#EF4444', 'F': '#EF4444',
 };

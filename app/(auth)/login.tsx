@@ -84,7 +84,7 @@ export default function Login() {
                 opacity: glowOpacity,
               }]} />
               <LinearGradient
-                colors={['#E8834A', '#C4622D', '#9E4D22']}
+                colors={['#B79B6E', '#8A7860', '#665845']}
                 style={styles.logoGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
@@ -151,7 +151,7 @@ export default function Login() {
             {/* Sign in button */}
             <Pressable style={styles.primaryBtn} onPress={handleLogin} disabled={loading}>
               <LinearGradient
-                colors={['#E8834A', '#C4622D']}
+                colors={['#B79B6E', '#8A7860']}
                 style={styles.primaryBtnGrad}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               >
@@ -200,12 +200,12 @@ const styles = StyleSheet.create({
   logoGlow: {
     position: 'absolute',
     width: 110, height: 110, borderRadius: 55,
-    backgroundColor: '#C4622D',
+    backgroundColor: '#8A7860',
   },
   logoGrad: {
     width: 72, height: 72, borderRadius: 22,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#C4622D', shadowOffset: { width: 0, height: 8 },
+    shadowColor: '#8A7860', shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.35, shadowRadius: 16, elevation: 10,
   },
   logoMark: { fontSize: 34, color: '#fff' },
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   secondaryBtn: {
     borderWidth: 1.5, borderColor: Colors.borderStrong,
     borderRadius: 16, paddingVertical: 15,
-    alignItems: 'center', backgroundColor: 'rgba(196,98,45,0.04)',
+    alignItems: 'center', backgroundColor: 'rgba(138,120,96,0.04)',
   },
   secondaryBtnText: { fontSize: 15, fontWeight: '600', color: Colors.primary },
 

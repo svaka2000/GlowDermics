@@ -203,7 +203,7 @@ export default function DailyHabits() {
           opacity: scoreAnim,
           transform: [{ translateY: scoreAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
         }]}>
-          <LinearGradient colors={['rgba(196,98,45,0.15)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
           <View style={styles.scoreLeft}>
             <Text style={styles.scoreDateLabel}>TODAY</Text>
             <Text style={styles.scoreValue}>{score}%</Text>
@@ -330,7 +330,7 @@ function makeStyles(c: Palette) {
   scoreCard: {
     flexDirection: 'row', alignItems: 'center',
     borderRadius: 18, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 20, marginBottom: 14, gap: 16,
   },
   scoreLeft: { alignItems: 'center', gap: 2 },
@@ -352,7 +352,7 @@ function makeStyles(c: Palette) {
 
   section: { marginBottom: 16 },
   sectionHeader: { gap: 4, marginBottom: 10 },
-  impactBadge: { alignSelf: 'flex-start', backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  impactBadge: { alignSelf: 'flex-start', backgroundColor: 'rgba(138,120,96,0.12)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   impactBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.primary },
   sectionSub: { fontSize: 12, color: c.textMuted },
 

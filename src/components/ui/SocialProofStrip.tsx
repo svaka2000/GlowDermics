@@ -128,7 +128,7 @@ function Star({
       <Ionicons
         name={filled ? 'star' : 'star-outline'}
         size={14}
-        color="#FBBF24"
+        color="#D8C29A"
       />
     </Animated.View>
   );

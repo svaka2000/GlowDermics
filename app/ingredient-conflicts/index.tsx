@@ -741,9 +741,9 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 6,
     paddingVertical: 9,
     borderRadius: 14,
-    backgroundColor: 'rgba(196,98,45,0.06)',
+    backgroundColor: 'rgba(138,120,96,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.20)',
+    borderColor: 'rgba(138,120,96,0.20)',
   },
   tabBtnActive: {
     backgroundColor: c.primary,
@@ -758,7 +758,7 @@ function makeStyles(c: Palette) {
   aiHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
   aiSparkleIcon: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: 'rgba(196,98,45,0.15)',
+    backgroundColor: 'rgba(138,120,96,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
   aiHeaderTitle: { fontSize: 14, fontWeight: '900', color: c.textPrimary, letterSpacing: 0.2 },
@@ -782,8 +782,8 @@ function makeStyles(c: Palette) {
   presetChip: {
     paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 999,
-    backgroundColor: 'rgba(196,98,45,0.08)',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
+    backgroundColor: 'rgba(138,120,96,0.08)',
+    borderWidth: 1, borderColor: 'rgba(138,120,96,0.22)',
   },
   presetChipText: { fontSize: 11, fontWeight: '700', color: c.primary },
 
@@ -858,7 +858,7 @@ function makeStyles(c: Palette) {
     backgroundColor: c.bgCard, borderRadius: 14,
     borderWidth: 1, borderColor: c.border,
   },
-  ingChipActiveA: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.10)' },
+  ingChipActiveA: { borderColor: c.primary, backgroundColor: 'rgba(138,120,96,0.10)' },
   ingChipActiveB: { borderColor: c.scorePoor, backgroundColor: 'rgba(220,38,38,0.10)' },
   ingChipText: { fontSize: 12, color: c.textPrimary, fontWeight: '600' },
   ingChipTextActiveA: { color: c.primary, fontWeight: '800' },
