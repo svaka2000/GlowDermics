@@ -395,7 +395,6 @@ export default function Settings() {
               if (Platform.OS === 'web') window.open('https://velumi.ai', '_blank');
               else Linking.openURL('https://velumi.ai');
             }} />
-            <LinkRow icon="leaf-outline" label="The Formula — 4 Ingredients" onPress={() => router.push('/product')} />
             <LinkRow icon="book-outline" label="The Journal" onPress={() => router.push('/journal')} last />
           </View>
         </View>

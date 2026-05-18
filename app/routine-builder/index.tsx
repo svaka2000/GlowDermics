@@ -349,15 +349,14 @@ Return ONLY valid JSON (no markdown):
 
             {/* Routine principle */}
             {routine.keyPrincipleNote && (
-              <Pressable style={styles.tdCard} onPress={() => router.push('/product')}>
+              <View style={styles.tdCard}>
                 <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
                 <Text style={styles.tdEmoji}>✨</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.tdTitle}>The Principle Behind Your Routine</Text>
                   <Text style={styles.tdText}>{routine.keyPrincipleNote}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />
-              </Pressable>
+              </View>
             )}
 
             {/* Pro tips */}

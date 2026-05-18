@@ -309,9 +309,6 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
             <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdEyebrow}>LIPID-BARRIER CONNECTION</Text>
             <Text style={styles.tdText}>{profile.tallowNote || 'This ingredient is present in or closely related to occlusive / lipid-barrier skincare formulations.'}</Text>
-            <Pressable onPress={() => router.push('/product')} style={{ marginTop: 8 }}>
-              <Text style={styles.tdCta}>Learn about the skin barrier →</Text>
-            </Pressable>
           </View>
         )}
 

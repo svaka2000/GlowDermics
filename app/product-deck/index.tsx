@@ -292,12 +292,6 @@ Return ONLY valid JSON (no markdown):
                       {product.avoid && (
                         <Text style={styles.avoidText}>⚠️ {product.avoid}</Text>
                       )}
-
-                      {product.isKeyStep && (
-                        <Pressable style={styles.tdBtn} onPress={() => router.push('/product')}>
-                          <Text style={styles.tdBtnText}>View Product →</Text>
-                        </Pressable>
-                      )}
                     </View>
                   ))}
                 </View>
@@ -305,15 +299,14 @@ Return ONLY valid JSON (no markdown):
             })}
 
             {/* Occlusive cornerstone */}
-            <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
+            <View style={styles.tallowCard}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>Why the Occlusive Is the Cornerstone</Text>
                 <Text style={styles.tallowText}>{deck.tallowNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />
-            </Pressable>
+            </View>
           </>
         )}
 

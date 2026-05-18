@@ -267,9 +267,6 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
           <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.tdEyebrow}>BARRIER FIT</Text>
           <Text style={styles.tdText}>{profile.tallowFit}</Text>
-          <Pressable style={{ marginTop: 8 }} onPress={() => router.push('/product')}>
-            <Text style={styles.tdCta}>See the formula →</Text>
-          </Pressable>
         </View>
 
         {/* Coach CTA */}

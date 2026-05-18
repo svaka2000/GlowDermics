@@ -214,16 +214,6 @@ export default function BudgetCalculator() {
           </View>
         </View>
 
-        {/* CTA */}
-        <Pressable style={styles.ctaCard} onPress={() => router.push('/product')}>
-          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.ctaTitle}>See What's in the Balm</Text>
-            <Text style={styles.ctaSub}>4 ingredients. Ancestral formula. No synthetics.</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
-        </Pressable>
-
         <View style={{ height: 100 }} />
       </Animated.ScrollView>
     </View>

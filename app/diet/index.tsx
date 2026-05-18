@@ -307,15 +307,14 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             </View>
 
             {/* Ancestral note */}
-            <Pressable style={styles.ancestralCard} onPress={() => router.push('/product')}>
+            <View style={styles.ancestralCard}>
               <LinearGradient colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.ancestralEmoji}>🥩</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ancestralTitle}>Ancestral Nutrition</Text>
                 <Text style={styles.ancestralText}>{guide.ancestralNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color={colors.primary} />
-            </Pressable>
+            </View>
           </>
         )}
 

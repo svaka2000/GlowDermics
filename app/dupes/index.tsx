@@ -10,7 +10,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
 import { findDupes, DupeResult } from '../../src/services/dupeFinder';
-import { AffiliateDisclosure } from '../../src/components/ui';
 
 const POPULAR = [
   { name: 'Drunk Elephant Protini', brand: 'Drunk Elephant' },
@@ -166,9 +165,6 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
       </SafeAreaView>
 
       <ScrollView contentContainerStyle={styles.resultsScroll}>
-
-        {/* FTC affiliate disclosure — adjacent to shoppable recommendations */}
-        <AffiliateDisclosure />
 
         {/* Original product */}
         <View style={styles.originalCard}>

@@ -338,15 +338,14 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             )}
 
             {/* Seasonal tip */}
-            <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
+            <View style={styles.tallowCard}>
               <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowTitle}>Your {season.season} Tip</Text>
                 <Text style={styles.tallowText}>{guide.tallowNote}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={colors.primary} />
-            </Pressable>
+            </View>
           </>
         )}
 

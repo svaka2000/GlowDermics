@@ -270,9 +270,6 @@ Reference the specific things they told you ("the midday shine you mentioned", "
               <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tdEyebrow}>INGREDIENT FIT</Text>
               <Text style={styles.tdText}>{result.approachFit}</Text>
-              <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
-                <Text style={styles.tdCtaText}>Explore the formula →</Text>
-              </Pressable>
             </View>
           </View>
 

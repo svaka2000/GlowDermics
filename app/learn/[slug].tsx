@@ -143,9 +143,6 @@ export default function ArticleDetail() {
                 <Text style={styles.tdEyebrow}>SKIN BARRIER</Text>
               </View>
               <Text style={styles.tdBody}>{article.editorialAngle}</Text>
-              <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
-                <Text style={styles.tdCtaText}>Learn about the formula →</Text>
-              </Pressable>
             </View>
           )}
 
