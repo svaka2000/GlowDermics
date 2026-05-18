@@ -22,7 +22,7 @@ const TABS = [
   { id: 'types', label: 'Types', icon: '⚗️' },
   { id: 'start', label: 'Starting Guide', icon: '🚀' },
   { id: 'mistakes', label: 'Mistakes', icon: '❌' },
-  { id: 'tallow', label: 'Tallow Buffer', icon: '🌿' },
+  { id: 'tallow', label: 'Occlusive Buffer', icon: '🌿' },
 ];
 
 const INTRO_FACTS = [
@@ -127,7 +127,7 @@ function buildStartGuide(Colors: ReturnType<typeof shimColors>) {
       'Apply every 3rd night only (Monday/Thursday schedule works)',
       'Apply to dry skin (not damp — increases penetration and irritation)',
       'Pea-sized amount for full face — less is genuinely more',
-      'Follow immediately with tallow or heavy moisturizer as buffer',
+      'Follow immediately with an occlusive or heavy moisturizer as buffer',
     ],
   },
   {
@@ -136,7 +136,7 @@ function buildStartGuide(Colors: ReturnType<typeof shimColors>) {
     steps: [
       'Evaluate tolerance: no irritation? Increase to every other night',
       'Mild flaking or dryness? Continue 3× weekly for another 2 weeks',
-      'Significant irritation? Reduce frequency and add tallow buffer BEFORE retinol ("sandwich method")',
+      'Significant irritation? Reduce frequency and add an occlusive buffer BEFORE retinol ("sandwich method")',
       'Purging? Small breakouts in existing congested areas — expected, not a reaction. Continue.',
     ],
   },
@@ -147,7 +147,7 @@ function buildStartGuide(Colors: ReturnType<typeof shimColors>) {
       'If tolerating well: increase to nightly application',
       'Can increase concentration: 0.025% → 0.05% → 0.1%',
       'Maintain SPF every morning without exception — photosensitivity persists',
-      'Keep tallow in PM routine — buffer support prevents the burnout that makes people quit',
+      'Keep an occlusive in the PM routine — buffer support prevents the burnout that makes people quit',
     ],
   },
   {
@@ -289,31 +289,31 @@ export default function RetinolGuideScreen() {
         {activeTab === 'tallow' && (
           <>
             <View style={styles.tallowIntro}>
-              <Text style={styles.tallowIntroTitle}>🌿 The Tallow-Retinol Buffer System</Text>
+              <Text style={styles.tallowIntroTitle}>🌿 The Occlusive-Retinol Buffer System</Text>
               <Text style={styles.tallowIntroText}>
-                Tallow is one of the most effective buffers for retinol. Its biocompatible fatty acid profile reduces irritation while preserving efficacy.
+                A lipid-rich occlusive is one of the most effective buffers for retinol. Its biocompatible fatty acid profile reduces irritation while preserving efficacy.
               </Text>
             </View>
             {[
               {
                 title: 'The sandwich method',
-                detail: 'Moisturize (or apply tallow) → wait 5 minutes → apply retinol → wait 15 minutes → apply tallow again as the final occlusive layer. This dramatically reduces irritation for beginners without significantly reducing retinol efficacy.',
+                detail: 'Moisturize (or apply an occlusive) → wait 5 minutes → apply retinol → wait 15 minutes → apply the occlusive again as the final layer. This dramatically reduces irritation for beginners without significantly reducing retinol efficacy.',
               },
               {
-                title: 'Why tallow over other moisturizers',
-                detail: "Most buffer moisturizers contain synthetic emollients that can interfere with retinol's mechanism or cause their own reactions. Tallow's sebum-identical profile provides buffering without foreign compounds. No fragrance, no alcohol, no preservatives that could compound retinol's irritation.",
+                title: 'Why a sebum-similar occlusive over other moisturizers',
+                detail: "Most buffer moisturizers contain synthetic emollients that can interfere with retinol's mechanism or cause their own reactions. A sebum-identical occlusive provides buffering without foreign compounds. No fragrance, no alcohol, no preservatives that could compound retinol's irritation.",
               },
               {
-                title: 'Vitamin A in tallow + retinol',
-                detail: "Tallow's fat-soluble Vitamin A (precursor to retinol) adds a gentle baseline of retinoid-like activity. This means on recovery nights (when not using synthetic retinol), tallow maintains mild cell turnover continuity.",
+                title: 'Vitamin A in an occlusive + retinol',
+                detail: "A fat-soluble Vitamin A occlusive (vitamin A is a retinol precursor) adds a gentle baseline of retinoid-like activity. On recovery nights (when not using synthetic retinol), it maintains mild cell turnover continuity.",
               },
               {
-                title: 'Recovery nights: tallow only',
-                detail: 'Skin cycling protocol: Night 1 (exfoliate) → Night 2 (retinol → tallow buffer) → Night 3 (tallow only) → Night 4 (tallow only). The two tallow-only recovery nights allow the barrier to fully restore between retinol applications. This is why skin cycling produces better long-term results than daily retinol in many users.',
+                title: 'Recovery nights: occlusive only',
+                detail: 'Skin cycling protocol: Night 1 (exfoliate) → Night 2 (retinol → occlusive buffer) → Night 3 (occlusive only) → Night 4 (occlusive only). The two occlusive-only recovery nights allow the barrier to fully restore between retinol applications. This is why skin cycling produces better long-term results than daily retinol in many users.',
               },
               {
-                title: 'Tallow and tretinoin',
-                detail: 'For prescription tretinoin users: the sandwich method with tallow is especially effective. Tretinoin is significantly more potent — tallow buffering allows many users to use it 5–7 nights per week instead of the 2–3 nights they could tolerate without the buffer.',
+                title: 'Occlusives and tretinoin',
+                detail: 'For prescription tretinoin users: the sandwich method with an occlusive is especially effective. Tretinoin is significantly more potent — occlusive buffering allows many users to use it 5–7 nights per week instead of the 2–3 nights they could tolerate without the buffer.',
               },
             ].map((item, i) => (
               <View key={i} style={styles.tallowCard}>

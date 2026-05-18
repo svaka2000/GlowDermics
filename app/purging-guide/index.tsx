@@ -51,7 +51,7 @@ const PURGING_PRODUCTS = [
 
 const NO_PURGE_PRODUCTS = [
   'Physical SPF (mineral sunscreen)',
-  'Moisturizers and occlusives (including tallow)',
+  'Moisturizers and occlusives (balms, ceramide creams)',
   'Cleansers',
   'Niacinamide',
   'Hyaluronic acid',
@@ -71,7 +71,7 @@ const SURVIVE_TIPS = [
   },
   {
     tip: 'Double down on barrier repair',
-    detail: 'Heavy tallow application on non-active nights. Ceramide moisturizers. Minimum other actives during purge period. The barrier is under stress — support it aggressively.',
+    detail: 'Heavy occlusive application on non-active nights. Ceramide moisturizers. Minimum other actives during purge period. The barrier is under stress — support it aggressively.',
   },
   {
     tip: 'Don\'t introduce other new products',
@@ -213,13 +213,13 @@ export default function PurgingGuideScreen() {
             </View>
 
             <View style={styles.tallowNote}>
-              <Text style={styles.tallowNoteTitle}>🌿 Tallow During Purging</Text>
+              <Text style={styles.tallowNoteTitle}>🌿 Occlusives During Purging</Text>
               <Text style={styles.tallowNoteText}>
-                Tallow can cause an initial purge in congested skin — the barrier repair and mild vitamin A activity accelerates microcomedone clearing in the same way as retinol.
+                A vitamin-A-containing occlusive can cause an initial purge in congested skin — the barrier repair and mild vitamin A activity accelerates microcomedone clearing in the same way as retinol.
                 {'\n\n'}
                 This is expected and normal. Keep using it. Apply after any BHA treatment (not before). The purge typically resolves in 2–4 weeks, after which skin noticeably improves.
                 {'\n\n'}
-                Signs it's NOT tallow purging: redness, burning, spreading to new areas. These indicate sensitivity, not purging.
+                Signs it's NOT occlusive purging: redness, burning, spreading to new areas. These indicate sensitivity, not purging.
               </Text>
             </View>
           </>
@@ -253,7 +253,7 @@ export default function PurgingGuideScreen() {
                   </View>
                 ))}
                 <Text style={styles.stopNote}>
-                  If you stop: wait 2 weeks for skin to calm, then consider a gentler version of the same active at lower concentration, or use the sandwich method (tallow before and after) to buffer.
+                  If you stop: wait 2 weeks for skin to calm, then consider a gentler version of the same active at lower concentration, or use the sandwich method (an occlusive before and after) to buffer.
                 </Text>
               </View>
             )}

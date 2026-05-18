@@ -50,7 +50,7 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Lightweight moisturizer', detail: 'A thin layer — avoid heavy occlusives over fresh exfoliant' },
     ],
     warnings: ['No retinol tonight', 'Avoid Vitamin C (pH conflict)', 'Use SPF next morning without fail'],
-    tallowNote: 'Skip tallow tonight — use a lighter moisturizer over fresh exfoliant. Return to tallow on recovery nights.',
+    tallowNote: 'Skip heavy occlusives tonight — use a lighter moisturizer over fresh exfoliant. Return to a rich occlusive on recovery nights.',
   },
   {
     day: 2,
@@ -62,10 +62,10 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Gentle single cleanse', detail: 'No double cleanse needed — skin is already clear from Night 1' },
       { step: 'Niacinamide serum (optional)', detail: 'Reduces retinol irritation. Apply first, wait 30 seconds' },
       { step: 'Retinol / retinoid', detail: 'Pea-sized amount for full face. Avoid eye area. Wait 20–30 min' },
-      { step: 'Tallow balm or moisturizer', detail: 'Apply on top to buffer irritation and lock in the retinoid' },
+      { step: 'Occlusive balm or moisturizer', detail: 'Apply on top to buffer irritation and lock in the retinoid' },
     ],
     warnings: ['No AHA/BHA tonight', 'No Vitamin C tonight', 'This is where the magic happens — do not skip'],
-    tallowNote: 'Tallow is excellent as a retinol buffer on Night 2. Apply after the retinoid wait time. Its fatty acid profile buffers irritation without reducing efficacy.',
+    tallowNote: 'A lipid-rich occlusive is excellent as a retinol buffer on Night 2. Apply after the retinoid wait time. Its fatty acid profile buffers irritation without reducing efficacy.',
   },
   {
     day: 3,
@@ -76,11 +76,11 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
     steps: [
       { step: 'Gentle cleanse', detail: 'Gentle, pH-balanced cleanser. No oil cleanse required unless heavy makeup' },
       { step: 'Hydrating serum (optional)', detail: 'Hyaluronic acid or centella asiatica serum if desired' },
-      { step: 'Tallow balm — generous layer', detail: 'This is the tallow night. Apply generously to allow overnight repair. Focus on any dry or irritated areas' },
-      { step: 'Facial oil over tallow (optional)', detail: 'A drop of rosehip or squalane can be layered over tallow for extra nourishment' },
+      { step: 'Occlusive balm — generous layer', detail: 'This is the recovery night. Apply generously to allow overnight repair. Focus on any dry or irritated areas' },
+      { step: 'Facial oil over the occlusive (optional)', detail: 'A drop of rosehip or squalane can be layered over the occlusive for extra nourishment' },
     ],
-    warnings: ['Zero actives tonight', 'If skin is irritated — add ceramide or aloe before tallow', 'This night is what makes the actives sustainable'],
-    tallowNote: 'Recovery Night 1 is THE tallow night. Use it generously. This is when tallow\'s barrier-repair properties shine — rebuilding what the actives processed.',
+    warnings: ['Zero actives tonight', 'If skin is irritated — add ceramide or aloe before the occlusive', 'This night is what makes the actives sustainable'],
+    tallowNote: 'Recovery Night 1 is THE occlusive night. Use it generously. This is when an occlusive\'s barrier-repair properties shine — rebuilding what the actives processed.',
   },
   {
     day: 4,
@@ -91,11 +91,11 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
     steps: [
       { step: 'Cleanse as usual', detail: 'Standard gentle cleanse' },
       { step: 'Peptide serum (optional)', detail: 'If using — peptides support collagen synthesis alongside retinol from Night 2' },
-      { step: 'Tallow balm — moderate layer', detail: 'Another tallow night, slightly lighter than Night 3. Maintain the barrier repair' },
-      { step: 'Eye care', detail: 'Apply tallow or eye cream around eyes' },
+      { step: 'Occlusive balm — moderate layer', detail: 'Another recovery night, slightly lighter than Night 3. Maintain the barrier repair' },
+      { step: 'Eye care', detail: 'Apply an occlusive or eye cream around eyes' },
     ],
     warnings: ['Still no actives', 'Tomorrow night the cycle repeats from Night 1', 'Consistency over weeks is what produces results'],
-    tallowNote: 'Second tallow night — keep it consistent. By cycling recovery nights with active nights, you prevent the chronic barrier damage that makes actives unsustainable long-term.',
+    tallowNote: 'Second recovery night — keep it consistent. By cycling recovery nights with active nights, you prevent the chronic barrier damage that makes actives unsustainable long-term.',
   },
   ];
 }
@@ -233,7 +233,7 @@ export default function SkinCyclingScreen() {
                   ))}
                 </View>
                 <View style={styles.tallowNoteCard}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Tallow Note</Text>
+                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
                   <Text style={styles.tallowNoteText}>{night.tallowNote}</Text>
                 </View>
                 <View style={styles.warningsBlock}>
@@ -316,7 +316,7 @@ export default function SkinCyclingScreen() {
                   </View>
 
                   <View style={styles.tonightTallow}>
-                    <Text style={styles.tonightTallowTitle}>🌿 Tallow Tonight</Text>
+                    <Text style={styles.tonightTallowTitle}>🌿 Occlusive Tonight</Text>
                     <Text style={styles.tonightTallowText}>{nightInfo.tallowNote}</Text>
                   </View>
                 </LinearGradient>

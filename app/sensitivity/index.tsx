@@ -61,8 +61,8 @@ const EXAMPLE_LISTS = [
     list: 'Water, Glycerin, Petrolatum, Dimethicone, Niacinamide, Fragrance, Phenoxyethanol, Methylparaben, Propylparaben, DMDM Hydantoin, Sodium Lauryl Sulfate, Alcohol Denat.',
   },
   {
-    label: 'TallowDermics Balm',
-    list: 'Grass-fed Beef Tallow, Manuka Honey, Organic Olive Oil, Calendula Extract',
+    label: 'Grass-Fed Balm',
+    list: 'Grass-fed Beef Fat, Manuka Honey, Organic Olive Oil, Calendula Extract',
   },
   {
     label: 'Popular serum',

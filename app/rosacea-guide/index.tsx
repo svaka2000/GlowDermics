@@ -32,7 +32,7 @@ const TABS = [
   { id: 'triggers', label: 'Triggers', icon: '⚠️' },
   { id: 'ingredients', label: 'Ingredients', icon: '🧪' },
   { id: 'routine', label: 'Routine', icon: '📋' },
-  { id: 'tallow', label: 'Tallow Approach', icon: '🌿' },
+  { id: 'tallow', label: 'Barrier Approach', icon: '🌿' },
 ];
 
 function buildSubtypes(Colors: ReturnType<typeof shimColors>) {
@@ -75,8 +75,8 @@ const TRIGGERS = [
   { trigger: 'Sun exposure', icon: '☀️', detail: 'UV triggers immune response and inflammatory pathways in rosacea-prone skin. Mineral SPF (zinc oxide) is anti-inflammatory and the most critical daily rosacea management tool.' },
   { trigger: 'Emotional stress', icon: '😰', detail: 'Cortisol and adrenaline trigger vasoconstriction then rebound vasodilation. Stress management has measurable impact on rosacea flare frequency and severity.' },
   { trigger: 'Harsh skincare products', icon: '🧴', detail: 'Alcohol-based toners, physical scrubs, AHAs and BHAs (in most rosacea cases), fragrance, and preservatives like phenoxyethanol trigger barrier disruption and flares.' },
-  { trigger: 'Demodex mites (overgrowth)', icon: '🔬', detail: 'Everyone has Demodex mites on their skin; rosacea patients often have 4× more. Overgrowth drives inflammation. Azelaic acid and ivermectin are effective; tallow does not feed Demodex (it prefers human sebum).' },
-  { trigger: 'Extreme cold', icon: '❄️', detail: 'Cold wind causes vasomotor response — vessels constrict then dilate, causing redness. Barrier protection (tallow, occlusives) in cold weather reduces this response significantly.' },
+  { trigger: 'Demodex mites (overgrowth)', icon: '🔬', detail: 'Everyone has Demodex mites on their skin; rosacea patients often have 4× more. Overgrowth drives inflammation. Azelaic acid and ivermectin are effective; sebum-similar occlusives do not feed Demodex (it prefers human sebum).' },
+  { trigger: 'Extreme cold', icon: '❄️', detail: 'Cold wind causes vasomotor response — vessels constrict then dilate, causing redness. Barrier protection (a rich occlusive) in cold weather reduces this response significantly.' },
   { trigger: 'Certain skincare actives', icon: '⚗️', detail: 'Retinol, AHAs, high-concentration Vitamin C, and most exfoliants trigger rosacea flares. Introduction must be extremely slow, if at all.' },
 ];
 
@@ -108,14 +108,14 @@ const ROUTINE = {
     { step: 'Cool water rinse (lukewarm, not hot)', note: 'No cleanser AM unless night was sweaty. Cleansers may be too stripping for daily AM use on rosacea skin.' },
     { step: 'Azelaic acid or niacinamide serum', note: 'Apply to redness-prone areas. Let absorb 60 seconds.' },
     { step: 'Centella or ceramide moisturizer', note: 'Anti-inflammatory moisturizer. Barrier first.' },
-    { step: 'Tallow balm (thin layer over moisturizer)', note: 'Optional but beneficial — see Tallow tab for rationale.' },
+    { step: 'Occlusive balm (thin layer over moisturizer)', note: 'Optional but beneficial — see the Barrier tab for rationale.' },
     { step: 'Mineral SPF (zinc oxide)', note: 'Non-negotiable. Apply generously. Reapply if outdoors.' },
   ],
   pm: [
-    { step: 'Gentle oil cleanse (30 seconds only)', note: 'Remove SPF and debris without rubbing. A light jojoba or tallow oil cleanse is very well-tolerated.' },
+    { step: 'Gentle oil cleanse (30 seconds only)', note: 'Remove SPF and debris without rubbing. A light jojoba or balm oil cleanse is very well-tolerated.' },
     { step: 'Centella or gentle cleanser rinse', note: 'pH-balanced, fragrance-free, minimal ingredients. Rinse with cool water only.' },
     { step: 'Azelaic acid (if not used AM) or nothing', note: 'Azelaic acid can be used once or twice daily. On reactive nights, skip and use only moisturizer.' },
-    { step: 'Tallow balm — generous application', note: 'PM is when tallow shines for rosacea. Full barrier repair overnight. See Tallow tab.' },
+    { step: 'Occlusive balm — generous application', note: 'PM is when an occlusive shines for rosacea. Full barrier repair overnight. See the Barrier tab.' },
     { step: 'No retinol, no AHA, no exfoliants', note: 'These belong in non-rosacea routines. If you must use retinol, use bakuchiol or encapsulated retinol at very low frequency (once per week maximum).' },
   ],
 };
@@ -266,16 +266,16 @@ export default function RosaceaGuideScreen() {
           <>
             {[
               {
-                title: 'Why tallow is well-suited for rosacea',
-                detail: "Grass-fed tallow contains no fragrance, no synthetic preservatives, no alcohol — the three most common rosacea triggers in skincare. Its biocompatible fatty acid profile means it doesn't trigger the immune response that foreign synthetic compounds do.",
+                title: 'Why a sebum-similar occlusive is well-suited for rosacea',
+                detail: "A single-ingredient occlusive contains no fragrance, no synthetic preservatives, no alcohol — the three most common rosacea triggers in skincare. Its biocompatible fatty acid profile means it doesn't trigger the immune response that foreign synthetic compounds do.",
               },
               {
                 title: 'Palmitoleic acid: anti-inflammatory',
-                detail: 'Tallow contains palmitoleic acid (5-8%), an omega-7 fatty acid with significant anti-inflammatory and antimicrobial properties. Applied to the skin, it actively reduces redness and supports the compromised barrier of rosacea skin.',
+                detail: 'Some animal-fat occlusives contain palmitoleic acid (5-8%), an omega-7 fatty acid with significant anti-inflammatory and antimicrobial properties. Applied to the skin, it actively reduces redness and supports the compromised barrier of rosacea skin.',
               },
               {
                 title: 'Zinc amplification with mineral SPF',
-                detail: 'For rosacea: apply tallow PM and use zinc oxide SPF AM. Tallow + zinc is an anti-inflammatory stack. Zinc oxide itself has mild anti-redness effects that stack with tallow\'s barrier repair.',
+                detail: 'For rosacea: apply an occlusive PM and use zinc oxide SPF AM. Occlusive + zinc is an anti-inflammatory stack. Zinc oxide itself has mild anti-redness effects that stack with the occlusive\'s barrier repair.',
               },
               {
                 title: 'How to introduce for rosacea skin',
@@ -283,11 +283,11 @@ export default function RosaceaGuideScreen() {
               },
               {
                 title: 'Demodex consideration',
-                detail: 'Demodex mites, which are elevated in rosacea, feed on human sebum. Tallow, being derived from animal fat, is not their preferred substrate. However, extremely heavy application on congested skin should be monitored. Most rosacea users find tallow in normal amounts does not worsen Demodex-related symptoms.',
+                detail: 'Demodex mites, which are elevated in rosacea, feed on human sebum. An animal-fat occlusive is not their preferred substrate. However, extremely heavy application on congested skin should be monitored. Most rosacea users find an occlusive in normal amounts does not worsen Demodex-related symptoms.',
               },
               {
                 title: 'Combined approach',
-                detail: 'Best results for rosacea: azelaic acid or niacinamide as the active treatment, tallow as the barrier support and occlusive. These are complementary mechanisms. Azelaic acid targets Demodex and inflammation; tallow repairs the barrier so actives can work without triggering further sensitivity.',
+                detail: 'Best results for rosacea: azelaic acid or niacinamide as the active treatment, a lipid-rich occlusive as the barrier support. These are complementary mechanisms. Azelaic acid targets Demodex and inflammation; the occlusive repairs the barrier so actives can work without triggering further sensitivity.',
               },
             ].map((item, i) => (
               <View key={i} style={styles.tallowCard}>

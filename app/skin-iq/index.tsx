@@ -20,10 +20,10 @@ type Question = {
 
 const QUESTIONS: Question[] = [
   {
-    question: 'What percentage of human sebum is oleic acid — the same fatty acid found in tallow?',
+    question: 'What percentage of human sebum is oleic acid — the same fatty acid that dominates sebum-similar occlusives?',
     options: ['~15%', '~30%', '~45%', '~60%'],
     correct: 2,
-    explanation: 'Human sebum contains ~45% oleic acid. Beef tallow also contains ~45% oleic acid — this structural similarity is why tallow absorbs so readily into skin and doesn\'t just sit on the surface.',
+    explanation: 'Human sebum contains ~45% oleic acid. Sebum-similar occlusives (e.g. beef-fat balms) also contain ~45% oleic acid — this structural similarity is why they absorb so readily into skin and don\'t just sit on the surface.',
     ingredient: 'Oleic Acid',
     difficulty: 'hard',
   },
@@ -66,7 +66,7 @@ const QUESTIONS: Question[] = [
     question: 'Which vitamin deficiency is most closely linked to dry, rough skin?',
     options: ['Vitamin C', 'Vitamin D', 'Vitamin A', 'Vitamin K'],
     correct: 2,
-    explanation: 'Vitamin A (retinol) is essential for skin cell turnover and barrier function. Deficiency leads to xerosis (dry, scaly skin) and follicular hyperkeratosis (rough "goosebump" texture). Tallow contains fat-soluble vitamins including Vitamin A.',
+    explanation: 'Vitamin A (retinol) is essential for skin cell turnover and barrier function. Deficiency leads to xerosis (dry, scaly skin) and follicular hyperkeratosis (rough "goosebump" texture). Many animal-fat occlusives contain fat-soluble vitamins including Vitamin A.',
     ingredient: 'Vitamin A',
     difficulty: 'hard',
   },
@@ -84,7 +84,7 @@ const QUESTIONS: Question[] = [
     difficulty: 'medium',
   },
   {
-    question: 'How is tallow fundamentally different from plant-based oils for skin?',
+    question: 'How is an animal-fat occlusive fundamentally different from plant-based oils for skin?',
     options: [
       'It has more antioxidants',
       'It is cheaper to produce',
@@ -92,7 +92,7 @@ const QUESTIONS: Question[] = [
       'It contains more water',
     ],
     correct: 2,
-    explanation: 'Animal tallow\'s fatty acid composition (saturated + monounsaturated) closely mirrors human sebum. Plant oils are predominantly polyunsaturated (linoleic acid) which oxidizes quickly and differs from skin\'s natural lipids.',
+    explanation: 'An animal-fat occlusive\'s fatty acid composition (saturated + monounsaturated) closely mirrors human sebum. Plant oils are predominantly polyunsaturated (linoleic acid) which oxidizes quickly and differs from skin\'s natural lipids.',
     difficulty: 'hard',
   },
   {

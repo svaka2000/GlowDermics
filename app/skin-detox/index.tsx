@@ -54,19 +54,19 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
       {
         name: 'Cold Turkey',
         dayRange: 'Days 1-3',
-        description: 'Stop everything except the absolute minimum. Give your skin no external signals except water and tallow.',
-        allowed: ['Lukewarm water rinse (no cleanser)', 'TallowDermics Balm morning and night', 'Plain zinc oxide SPF (morning only)', 'Plenty of water internally'],
+        description: 'Stop everything except the absolute minimum. Give your skin no external signals except water and a single occlusive.',
+        allowed: ['Lukewarm water rinse (no cleanser)', 'Occlusive balm morning and night', 'Plain zinc oxide SPF (morning only)', 'Plenty of water internally'],
         notAllowed: ['All serums', 'All actives', 'All exfoliants', 'All toners', 'Any makeup if possible', 'Hot showers'],
       },
       {
         name: 'Stabilization',
         dayRange: 'Days 4-7',
         description: 'Continue minimal approach. If skin is stable by day 4, add back one gentle cleanser in the evening only.',
-        allowed: ['Water rinse (AM)', 'Gentle oil or cream cleanser (PM only)', 'TallowDermics Balm', 'Zinc SPF'],
+        allowed: ['Water rinse (AM)', 'Gentle oil or cream cleanser (PM only)', 'Occlusive balm', 'Zinc SPF'],
         notAllowed: ['Actives', 'Exfoliants', 'Multiple products', 'Fragrance'],
       },
     ],
-    tallowRole: 'Tallow is the hero ingredient of this protocol. It provides barrier repair, anti-inflammatory CLA, and all necessary lipids — in a single, clean ingredient. It\'s the only "treatment" you need during the detox.',
+    tallowRole: 'A single-ingredient occlusive is the hero of this protocol. It provides barrier repair, anti-inflammatory CLA, and all necessary lipids — in one clean ingredient. It\'s the only "treatment" you need during the detox.',
   },
   {
     id: 'barrier-14',
@@ -83,18 +83,18 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         name: 'Emergency Rest',
         dayRange: 'Days 1-7',
         description: 'Complete barrier repair mode. No exceptions — skin is in recovery.',
-        allowed: ['Micellar water or water-only cleanse', 'TallowDermics Balm (twice daily, generously)', 'Mineral SPF only (zinc oxide)', 'Ceramide-based cream (optional, fragrance-free)'],
+        allowed: ['Micellar water or water-only cleanse', 'Occlusive balm (twice daily, generously)', 'Mineral SPF only (zinc oxide)', 'Ceramide-based cream (optional, fragrance-free)'],
         notAllowed: ['ALL actives (vitamin C, retinol, AHA, BHA, niacinamide)', 'Any exfoliation', 'Fragrance', 'Alcohol-based products', 'Foaming cleansers', 'Hot water'],
       },
       {
         name: 'Careful Rebuild',
         dayRange: 'Days 8-14',
         description: 'Slowly add back the gentlest possible ingredients if skin is responding well.',
-        allowed: ['Gentle pH-balanced cleanser (PM)', 'TallowDermics Balm', 'Zinc SPF', 'Niacinamide 4% (only if no reaction by day 10)'],
+        allowed: ['Gentle pH-balanced cleanser (PM)', 'Occlusive balm', 'Zinc SPF', 'Niacinamide 4% (only if no reaction by day 10)'],
         notAllowed: ['Retinol', 'AHA/BHA', 'Vitamin C', 'Benzoyl peroxide', 'Fragrance', 'Essential oils'],
       },
     ],
-    tallowRole: 'Tallow is the cornerstone of barrier repair. Its fatty acid profile fills the structural gaps in a damaged stratum corneum while CLA suppresses the inflammation that\'s preventing repair. Apply generously, multiple times daily in severe cases.',
+    tallowRole: 'A lipid-rich occlusive is the cornerstone of barrier repair. Its fatty acid profile fills the structural gaps in a damaged stratum corneum while CLA suppresses the inflammation that\'s preventing repair. Apply generously, multiple times daily in severe cases.',
   },
   {
     id: 'minimal-30',
@@ -111,8 +111,8 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         name: 'Foundation Week',
         dayRange: 'Days 1-7',
         description: 'Reduce to maximum 4 products total. No exceptions, no "just this one" additions.',
-        allowed: ['Cleanser (1 product)', 'TallowDermics Balm', 'SPF', 'One treatment serum (your most important one)'],
-        notAllowed: ['Toners', 'Essences', 'Multiple serums', 'Eye cream (tallow covers this)', 'Mask more than once'],
+        allowed: ['Cleanser (1 product)', 'Occlusive balm', 'SPF', 'One treatment serum (your most important one)'],
+        notAllowed: ['Toners', 'Essences', 'Multiple serums', 'Eye cream (the occlusive covers this)', 'Mask more than once'],
       },
       {
         name: 'Evaluation',
@@ -129,7 +129,7 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         notAllowed: ['Returning to your old full routine without analysis'],
       },
     ],
-    tallowRole: 'Challenge: can TallowDermics replace your moisturizer AND eye cream AND body lotion? Most users find it can. This challenge is a way to test whether their expensive multi-step routine is actually outperforming a single ancestral ingredient.',
+    tallowRole: 'Challenge: can a single occlusive replace your moisturizer AND eye cream AND body lotion? Most users find it can. This challenge tests whether an expensive multi-step routine actually outperforms one simple ingredient.',
   },
   ];
 }
@@ -246,7 +246,7 @@ export default function SkinDetox() {
 
           <View style={styles.tallowRoleCard}>
             <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-            <Text style={styles.tallowRoleTitle}>🌿 TallowDermics in This Protocol</Text>
+            <Text style={styles.tallowRoleTitle}>🌿 The Occlusive in This Protocol</Text>
             <Text style={styles.tallowRoleText}>{selectedProtocol.tallowRole}</Text>
           </View>
 
