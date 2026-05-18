@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { chatWithCoach } from '../../src/services/skinAnalysis';
@@ -450,8 +451,8 @@ function makeStyles(c: Palette) {
     borderWidth: 2, borderColor: c.bg,
   },
   headerText: { flex: 1 },
-  headerName: { fontSize: 16, fontWeight: '700', color: c.textPrimary },
-  headerRole: { fontSize: 11, color: c.textMuted },
+  headerName: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.3 },
+  headerRole: { fontFamily: fonts.body, fontSize: 10, fontWeight: '600', color: c.textMuted, letterSpacing: 1.4, textTransform: 'uppercase', marginTop: 2 },
   clearBtn: { padding: 8 },
   contextBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
@@ -464,8 +465,8 @@ function makeStyles(c: Palette) {
   intro: { alignItems: 'center', paddingVertical: 24, paddingHorizontal: 8 },
   introIcon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   introIconText: { fontSize: 22, color: c.white },
-  introTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, marginBottom: 8, textAlign: 'center' },
-  introSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 20, maxWidth: 300 },
+  introTitle: { fontFamily: fonts.display, fontSize: 26, fontWeight: '600', color: c.textPrimary, marginBottom: 10, textAlign: 'center', letterSpacing: 0.2, lineHeight: 32 },
+  introSub: { fontFamily: fonts.body, fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 20, maxWidth: 300, letterSpacing: 0.1 },
   starters: { width: '100%', gap: 8 },
   starterChip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
