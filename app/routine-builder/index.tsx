@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -196,7 +197,7 @@ Return ONLY valid JSON (no markdown):
     <View style={styles.root}>
       <SafeAreaView edges={['top']}>
         <Animated.View style={[styles.header, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-14, 0] }) }] }]}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+          <Pressable style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
             <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
           </Pressable>
           <View>
@@ -204,7 +205,7 @@ Return ONLY valid JSON (no markdown):
             <Text style={styles.headerSub}>AI-crafted just for you</Text>
           </View>
           {routine ? (
-            <Pressable style={styles.backBtn} onPress={handleShare}>
+            <Pressable style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Share" onPress={handleShare}>
               <Ionicons name="share-outline" size={20} color={colors.primary} />
             </Pressable>
           ) : (
@@ -302,7 +303,7 @@ Return ONLY valid JSON (no markdown):
 
             {/* Philosophy */}
             <View style={styles.philosophyCard}>
-              <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+              <LinearGradient colors={[colors.primary + '1F', colors.primary + '05']} style={StyleSheet.absoluteFill} />
               <Text style={styles.philosophyKey}>"{routine.keyPrinciple}"</Text>
               <Text style={styles.philosophyText}>{routine.philosophy}</Text>
             </View>
@@ -386,7 +387,7 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center', fontFamily: fonts.display },
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
@@ -398,7 +399,7 @@ function makeStyles(c: Palette) {
   prefLabel: { fontSize: 11, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: c.border, backgroundColor: c.bgElevated },
-  chipActive: { borderColor: c.primary, backgroundColor: 'rgba(196,98,45,0.15)' },
+  chipActive: { borderColor: c.primary, backgroundColor: c.primary + '26' },
   chipText: { fontSize: 12, color: c.textMuted },
   chipTextActive: { color: c.primary, fontWeight: '600' },
 
@@ -412,13 +413,13 @@ function makeStyles(c: Palette) {
   summaryChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: c.bgCard, borderRadius: 10, borderWidth: 1, borderColor: c.border, paddingHorizontal: 12, paddingVertical: 8, flex: 1, justifyContent: 'center' },
   summaryText: { fontSize: 12, color: c.textSecondary, fontWeight: '500', flex: 1 },
 
-  philosophyCard: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 16, gap: 8, marginBottom: 14 },
+  philosophyCard: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: c.primary + '33', padding: 16, gap: 8, marginBottom: 14 },
   philosophyKey: { fontSize: 15, fontWeight: '800', color: c.primary, fontStyle: 'italic' },
   philosophyText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   tabs: { flexDirection: 'row', gap: 6, marginBottom: 12 },
   tab: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: 'center', backgroundColor: c.bgCard, borderWidth: 1, borderColor: c.border },
-  tabActive: { backgroundColor: 'rgba(196,98,45,0.15)', borderColor: c.primary },
+  tabActive: { backgroundColor: c.primary + '26', borderColor: c.primary },
   tabText: { fontSize: 12, fontWeight: '600', color: c.textMuted },
   tabTextActive: { color: c.primary },
 

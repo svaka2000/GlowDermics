@@ -9,6 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 
 type WeatherStat = {
@@ -278,7 +279,7 @@ export default function SkinWeather() {
 
         {/* Skin advice */}
         <View style={styles.adviceCard}>
-          <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={[colors.primary + '1F', colors.primary + '05']} style={StyleSheet.absoluteFill} />
           <Ionicons name="bulb-outline" size={20} color={colors.gold} />
           <View style={{ flex: 1 }}>
             <Text style={styles.adviceLabel}>TODAY'S SKIN ADVICE</Text>
@@ -333,14 +334,14 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center', fontFamily: fonts.display },
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
   mainCard: { borderRadius: 24, overflow: 'hidden', padding: 28, gap: 8, marginBottom: 14, alignItems: 'center' },
   dateLabel: { fontSize: 10, fontWeight: '700', color: 'rgba(255,255,255,0.6)', letterSpacing: 1, textTransform: 'uppercase' },
   conditionEmoji: { fontSize: 64, marginVertical: 8 },
-  condition: { fontSize: 26, fontWeight: '900', color: c.white, textAlign: 'center' },
+  condition: { fontSize: 26, fontWeight: '900', color: c.white, textAlign: 'center', fontFamily: fonts.display },
   headline: { fontSize: 14, fontWeight: '600', color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginTop: 4 },
   summary: { fontSize: 13, color: 'rgba(255,255,255,0.8)', textAlign: 'center', lineHeight: 22, marginTop: 4 },
 
@@ -351,7 +352,7 @@ function makeStyles(c: Palette) {
   statUnit: { fontSize: 11, fontWeight: '600' },
   statLabel: { fontSize: 9, color: c.textMuted, fontWeight: '600', textAlign: 'center' },
 
-  adviceCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 14, marginBottom: 14 },
+  adviceCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: c.primary + '33', padding: 14, marginBottom: 14 },
   adviceLabel: { fontSize: 9, fontWeight: '800', color: c.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
   adviceText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 

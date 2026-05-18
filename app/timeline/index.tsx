@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry, SkinAnalysis } from '../../src/types';
 import {
@@ -89,6 +90,8 @@ export default function Timeline() {
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
                 <Ionicons name="arrow-back" size={20} color={colors.white} />
@@ -130,6 +133,8 @@ export default function Timeline() {
             <View style={styles.heroHeader}>
               <Pressable
                 style={styles.heroBackBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}
               >
                 <Ionicons name="arrow-back" size={20} color={colors.white} />
@@ -141,7 +146,7 @@ export default function Timeline() {
                   {elapsedDays > 0 ? ` · ${elapsedDays} day${elapsedDays !== 1 ? 's' : ''}` : ''}
                 </Text>
               </View>
-              <Pressable style={styles.heroShareBtn} onPress={handleShare}>
+              <Pressable style={styles.heroShareBtn} accessibilityRole="button" accessibilityLabel="Share" onPress={handleShare}>
                 <Ionicons name="share-outline" size={18} color={colors.white} />
               </Pressable>
             </View>
@@ -354,7 +359,7 @@ function makeStyles(c: Palette) {
     alignItems: 'center', justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4,
+    fontSize: 22, fontWeight: '900', color: c.white, letterSpacing: -0.4, fontFamily: fonts.display,
     textShadowColor: 'rgba(0,0,0,0.18)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
   },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2, fontWeight: '600' },
@@ -367,11 +372,11 @@ function makeStyles(c: Palette) {
   },
   emptyEmojiBox: {
     width: 84, height: 84, borderRadius: 42,
-    backgroundColor: 'rgba(196,98,45,0.10)',
+    backgroundColor: c.primary + '1A',
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 8,
   },
-  emptyTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, letterSpacing: -0.4 },
+  emptyTitle: { fontSize: 22, fontWeight: '800', color: c.textPrimary, letterSpacing: -0.4, fontFamily: fonts.display },
   emptySub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 21 },
 
   deltaRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -407,7 +412,7 @@ function makeStyles(c: Palette) {
 
   tipIcon: {
     width: 26, height: 26, borderRadius: 13,
-    backgroundColor: 'rgba(184,136,46,0.18)',
+    backgroundColor: c.gold + '2E',
     alignItems: 'center', justifyContent: 'center',
   },
   tipTitle: { fontSize: 12, fontWeight: '900', color: c.gold, letterSpacing: 0.4 },
@@ -416,8 +421,8 @@ function makeStyles(c: Palette) {
   quickLink: {
     flex: 1,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    backgroundColor: 'rgba(196,98,45,0.06)',
-    borderWidth: 1, borderColor: 'rgba(196,98,45,0.22)',
+    backgroundColor: c.primary + '0F',
+    borderWidth: 1, borderColor: c.primary + '38',
     borderRadius: 12,
     paddingVertical: 11,
   },
