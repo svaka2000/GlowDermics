@@ -18,7 +18,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Science', 'Stages', 'PM Timing', 'Optimise', 'Tallow PM'];
+const TABS = ['Science', 'Stages', 'PM Timing', 'Optimise', 'PM Occlusive'];
 
 const SLEEP_FACTS = [
   { fact: 'Skin repairs at 3× the rate during sleep', detail: 'Growth hormone (GH) is almost exclusively secreted during slow-wave sleep (SWS). GH triggers collagen synthesis, cell division, and tissue repair. The cellular repair rate during sleep is measurably 3× the waking rate.', icon: '🔬' },
@@ -63,11 +63,11 @@ const OPTIMISATIONS = [
 
 const TALLOW_PM = [
   { step: 1, action: 'Double cleanse', detail: 'First cleanse: cleansing balm or oil (removes sunscreen, makeup). Second cleanse: gentle pH-balanced gel. Do not skip the first cleanse if you wore SPF — it will not fully remove with gel alone.' },
-  { step: 2, action: 'Active treatment (optional)', detail: 'If using retinol, AHA, or BHA, apply now on dry skin. Wait 20–30 minutes. Do not apply tallow before actives — it creates a barrier that reduces penetration.' },
+  { step: 2, action: 'Active treatment (optional)', detail: 'If using retinol, AHA, or BHA, apply now on dry skin. Wait 20–30 minutes. Do not apply an occlusive before actives — it creates a barrier that reduces penetration.' },
   { step: 3, action: 'Serum (if using)', detail: 'Hydrating serums: hyaluronic acid, peptides, niacinamide. Apply on slightly damp skin for maximum HA uptake. Pat in gently — no dragging.' },
-  { step: 4, action: 'Tallow application', detail: 'Take a pea-sized amount of tallow. Warm between fingertips for 5 seconds (body heat melts it). Press gently into face. Concentrates where skin feels driest — cheeks, temples, around eyes, neck. Thin layer is enough — it is rich.' },
-  { step: 5, action: 'Timing to bed', detail: 'Aim to apply tallow 30–60 minutes before bed. This lets it sink in slightly before pillow contact. A silk pillow reduces transfer further. On nights with heavy tallow application (during barrier repair), apply 60 minutes before sleep.' },
-  { step: 6, action: 'No phone after tallow', detail: 'This is also the blue light cutoff window. Tallow is applied, wind-down begins. The two habits reinforce each other: PM skincare complete = screen time over = melatonin protected = better skin repair.' },
+  { step: 4, action: 'Occlusive application', detail: 'Take a pea-sized amount of a rich occlusive. Warm between fingertips for 5 seconds (body heat melts it). Press gently into face. Concentrate where skin feels driest — cheeks, temples, around eyes, neck. A thin layer is enough — it is rich.' },
+  { step: 5, action: 'Timing to bed', detail: 'Aim to apply the occlusive 30–60 minutes before bed. This lets it sink in slightly before pillow contact. A silk pillow reduces transfer further. On nights with heavy occlusive application (during barrier repair), apply 60 minutes before sleep.' },
+  { step: 6, action: 'No phone after the occlusive', detail: 'This is also the blue light cutoff window. The occlusive is applied, wind-down begins. The two habits reinforce each other: PM skincare complete = screen time over = melatonin protected = better skin repair.' },
 ];
 
 export default function SleepSkinScreen() {
@@ -184,8 +184,8 @@ export default function SleepSkinScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow PM Protocol</Text>
-              <Text style={styles.tallowHeroSub}>Aligned with the circadian window. Tallow applied at the right time traps water during peak TEWL, supports overnight repair, and primes skin for the growth hormone surge.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 PM Occlusive Protocol</Text>
+              <Text style={styles.tallowHeroSub}>Aligned with the circadian window. An occlusive applied at the right time traps water during peak TEWL, supports overnight repair, and primes skin for the growth hormone surge.</Text>
             </View>
             {TALLOW_PM.map((s, i) => (
               <View key={i} style={styles.pmStep}>

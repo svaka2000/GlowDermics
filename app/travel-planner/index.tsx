@@ -91,7 +91,7 @@ Traveler:
 - Climate: ${climateInfo?.label} (${climateInfo?.desc})
 - Trip duration: ${duration}
 
-Note: TallowDermics is their primary skincare brand — a premium grass-fed tallow balm that is their go-to moisturizer.
+Note: their go-to moisturizer is a rich occlusive balm (their primary barrier-repair product).
 
 Return this exact JSON:
 {
@@ -111,7 +111,7 @@ Return this exact JSON:
     {"step": "Step name", "why": "Cabin air is 20% humidity — what to do"}
   ],
   "adjustments": ["3-4 key adjustments from their normal routine specific to this destination"],
-  "tallowTip": "1-2 sentences on specifically how to use TallowDermics tallow balm for this climate",
+  "tallowTip": "1-2 sentences on specifically how to use a rich occlusive balm for this climate",
   "watchOut": ["2-3 common travel skincare mistakes specific to this climate/destination"]
 }
 
@@ -221,7 +221,7 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
               {[
                 { climate: '🏜️ Hot & Dry', tip: 'Low humidity causes 3x faster moisture loss. Layer humectants before your moisturizer.' },
                 { climate: '🌴 Hot & Humid', tip: 'Excess humidity triggers more oil and fungal issues. Simplify and go lighter.' },
-                { climate: '❄️ Cold', tip: 'Cold air is dry air. Your barrier works harder. Rich occlusives (like tallow) are essential.' },
+                { climate: '❄️ Cold', tip: 'Cold air is dry air. Your barrier works harder. Rich occlusives (balms) are essential.' },
                 { climate: '⛰️ Altitude', tip: 'UV intensity increases 10% every 1,000m. SPF needs to go higher at altitude.' },
               ].map((item, i) => (
                 <View key={i} style={styles.tipRow}>
@@ -332,10 +332,10 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
               ))}
             </View>
 
-            {/* Tallow tip */}
+            {/* Occlusive tip */}
             <View style={styles.tallowCard}>
               <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowTitle}>🌿 TallowDermics for {plan.climate}</Text>
+              <Text style={styles.tallowTitle}>🌿 Occlusive Tip for {plan.climate}</Text>
               <Text style={styles.tallowText}>{plan.tallowTip}</Text>
             </View>
 

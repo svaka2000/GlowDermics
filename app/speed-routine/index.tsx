@@ -28,12 +28,12 @@ function buildRoutines(Colors: ShimColors) {
     icon: '⚡',
     am: [
       { step: 'Splash with cool water', time: '30s', why: 'Removes overnight oil. Preserves the acid mantle (no cleanser stripping).' },
-      { step: 'Tallow balm — thin layer', time: '30s', why: 'Moisture seal and barrier protection in one step.' },
+      { step: 'Occlusive balm — thin layer', time: '30s', why: 'Moisture seal and barrier protection in one step.' },
       { step: 'SPF 30+ — face and neck', time: '45s', why: 'Non-negotiable. The most impactful anti-aging and anti-pore step.' },
     ],
     pm: [
       { step: 'Micellar water wipe (face, eyes)', time: '60s', why: 'No-rinse cleanser that removes most of the day without disrupting the microbiome.' },
-      { step: 'Tallow balm', time: '30s', why: 'Barrier repair and overnight nourishment.' },
+      { step: 'Occlusive balm', time: '30s', why: 'Barrier repair and overnight nourishment.' },
     ],
     note: 'Even on your worst day, these steps protect your investment. Skip SPF = 2-day setback. Skip PM cleanse = 3-day setback.',
   },
@@ -47,14 +47,14 @@ function buildRoutines(Colors: ShimColors) {
     am: [
       { step: 'Cool water rinse', time: '30s', why: 'Wakes up skin, removes overnight oil.' },
       { step: 'Niacinamide or Vitamin C serum (optional)', time: '30s', why: 'Quick antioxidant protection before SPF. Pat in, move on.' },
-      { step: 'Tallow balm', time: '45s', why: 'Moisturize and create a base for SPF.' },
+      { step: 'Occlusive balm', time: '45s', why: 'Moisturize and create a base for SPF.' },
       { step: 'SPF 30+', time: '45s', why: 'Applied last, always. Shake or swipe quickly.' },
     ],
     pm: [
       { step: 'Oil cleanse — 60 second massage', time: '90s', why: 'Breaks down SPF, makeup, pollution, sebum without stripping.' },
       { step: 'Quick water rinse (or cloth wipe)', time: '30s', why: 'Remove the emulsified oil.' },
       { step: 'BHA or niacinamide (skip if tired)', time: '30s', why: 'One active on most nights is better than skipping all nights.' },
-      { step: 'Tallow balm', time: '45s', why: 'Barrier seal before sleep.' },
+      { step: 'Occlusive balm', time: '45s', why: 'Barrier seal before sleep.' },
     ],
     note: 'This covers 85% of what a full routine achieves. The key is double cleansing PM — never skip that step even in the abbreviated version.',
   },
@@ -70,8 +70,8 @@ function buildRoutines(Colors: ShimColors) {
       { step: 'Hyaluronic acid serum (damp skin)', time: '30s', why: 'Hydration base while skin is still moist for maximum uptake.' },
       { step: 'Vitamin C serum (wait 30s)', time: '60s', why: 'Antioxidant protection, brightening, collagen support. AM-only.' },
       { step: 'Niacinamide (optional, after Vit C sets)', time: '30s', why: 'Sebum control, anti-redness, pore tightening.' },
-      { step: 'Tallow balm', time: '60s', why: 'Seal all layers in. Apply generously.' },
-      { step: 'SPF 30+', time: '45s', why: 'Last step always. Let tallow fully set first (30–60s).' },
+      { step: 'Occlusive balm', time: '60s', why: 'Seal all layers in. Apply generously.' },
+      { step: 'SPF 30+', time: '45s', why: 'Last step always. Let the occlusive fully set first (30–60s).' },
     ],
     pm: [
       { step: 'Oil cleanse — thorough 60–90s', time: '90s', why: 'Deep dissolve of SPF, pollution, sebum, makeup.' },
@@ -79,7 +79,7 @@ function buildRoutines(Colors: ShimColors) {
       { step: 'BHA or AHA (alternate nights)', time: '30s', why: 'Chemical exfoliation. BHA for oily/pores; AHA for texture/aging.' },
       { step: 'Wait 15–20 minutes', time: '20m', why: 'Let active penetrate and pH normalize before layering.' },
       { step: 'Peptide or retinol serum (alternate)', time: '30s', why: 'Alternate with exfoliant nights. Never on the same night.' },
-      { step: 'Tallow balm — generous layer', time: '60s', why: 'Final occlusive. Seal and repair overnight.' },
+      { step: 'Occlusive balm — generous layer', time: '60s', why: 'Final occlusive. Seal and repair overnight.' },
     ],
     note: 'This is the complete, sustainable routine. Every minute is doing work. Nothing redundant.',
   },
@@ -89,19 +89,19 @@ function buildRoutines(Colors: ShimColors) {
 const EMERGENCY_TIPS = [
   {
     situation: 'Slept with makeup on',
-    fix: 'Double cleanse AM instead. Don\'t punish — just reset. Apply extra tallow PM tonight.',
+    fix: 'Double cleanse AM instead. Don\'t punish — just reset. Apply extra occlusive PM tonight.',
   },
   {
     situation: 'Forgot SPF, already outside',
-    fix: 'Reapply when you can. Seek shade for the rest of the day. Apply antioxidant serum or tallow to reduce UV-triggered free radical damage.',
+    fix: 'Reapply when you can. Seek shade for the rest of the day. Apply antioxidant serum or a rich occlusive to reduce UV-triggered free radical damage.',
   },
   {
     situation: 'No products available (traveling)',
-    fix: 'Water rinse AM. Tallow or basic moisturizer PM. That\'s it — barrier protection is the priority. Skip all actives during travel disruption.',
+    fix: 'Water rinse AM. An occlusive or basic moisturizer PM. That\'s it — barrier protection is the priority. Skip all actives during travel disruption.',
   },
   {
     situation: 'Skin suddenly reactive/burning',
-    fix: 'Pause ALL actives for 3–5 days. Tallow only PM. Cool water AM. Let barrier recover before reintroducing anything.',
+    fix: 'Pause ALL actives for 3–5 days. Occlusive only PM. Cool water AM. Let barrier recover before reintroducing anything.',
   },
   {
     situation: 'Running very late, pick one thing',
@@ -109,7 +109,7 @@ const EMERGENCY_TIPS = [
   },
   {
     situation: 'Crashed into bed exhausted',
-    fix: 'Next time: keep micellar wipes by bedside. One wipe + one swipe of tallow is 90 seconds. Set it up so the lazy option is the right option.',
+    fix: 'Next time: keep micellar wipes by bedside. One wipe + one swipe of an occlusive is 90 seconds. Set it up so the lazy option is the right option.',
   },
 ];
 

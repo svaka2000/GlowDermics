@@ -55,8 +55,8 @@ function getWeatherReport(data: {
     conditionIcon = '⛈️';
     gradientColors = ['#1A1A2E', '#7C3AED'];
     headline = 'High stress + low hydration detected';
-    summary = 'Your skin is under pressure today. Prioritize hydration, skip actives, and apply extra tallow tonight.';
-    skinAdvice = 'Apply a thick layer of TallowDermics Balm before bed to rebuild barrier overnight.';
+    summary = 'Your skin is under pressure today. Prioritize hydration, skip actives, and apply extra occlusive tonight.';
+    skinAdvice = 'Apply a thick layer of a rich occlusive balm before bed to rebuild barrier overnight.';
   } else if (clarity < 55 || texture < 55) {
     condition = 'Cloudy Conditions';
     conditionIcon = '☁️';
@@ -91,7 +91,7 @@ function getWeatherReport(data: {
     gradientColors = ['#1E3A5F', '#0F4C75'];
     headline = 'Moderate stress affecting skin';
     summary = 'Elevated cortisol can increase oiliness and sensitivity. Use today to calm both mind and skin.';
-    skinAdvice = 'Cortisol spikes increase sebum production. A calming evening routine with tallow can counteract this.';
+    skinAdvice = 'Cortisol spikes increase sebum production. A calming evening routine with a rich occlusive can counteract this.';
   } else {
     condition = 'Mild & Steady';
     conditionIcon = '🌤️';
@@ -227,7 +227,7 @@ export default function SkinWeather() {
         '',
         `Today's Tip: ${report.skinAdvice}`,
         '',
-        '— Velumi AI × TallowDermics',
+        '— Velumi AI',
       ].join('\n'),
     });
   };

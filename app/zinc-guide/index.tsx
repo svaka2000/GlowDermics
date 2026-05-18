@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Why Zinc', 'Forms', 'For Acne', 'Topical Zinc', 'Tallow + Zinc'];
+const TABS = ['Why Zinc', 'Forms', 'For Acne', 'Topical Zinc', 'Zinc + Occlusive'];
 
 const ZINC_FACTS = [
   { fact: 'Zinc is involved in 300+ enzymatic reactions', detail: 'Zinc is one of the most essential trace minerals in human biology — a cofactor for over 300 enzymes across metabolism, immune function, DNA synthesis, and cell signalling. In skin specifically: collagen synthesis (required by prolyl hydroxylase and matrix metalloproteinase regulators), wound healing, sebaceous gland regulation, and immune defence all require zinc.', icon: '⚗️' },
@@ -55,11 +55,11 @@ const TOPICAL_ZINC = [
 ];
 
 const TALLOW_ZINC = [
-  { title: 'Tallow\'s zinc content', body: 'Grass-fed tallow contains trace amounts of zinc in its natural composition. While not a significant zinc source (a supplement delivers far more), the trace zinc contributes to its wound-healing and anti-inflammatory properties alongside the fatty acids and fat-soluble vitamins.' },
-  { title: 'Zinc + tallow for acne recovery', body: 'Oral zinc (30–50mg daily) for internal anti-inflammatory and sebum regulation, combined with tallow applied topically (barrier repair + palmitoleic acid antimicrobial + vitamin A cell turnover) addresses acne from both internal and external angles. These are complementary, not competing approaches.' },
-  { title: 'Post-acne scarring: zinc + tallow combination', body: 'Zinc accelerates wound healing from the inside (enzyme cofactor for collagen synthesis, cell migration). Tallow provides vitamin A (retinoid-like activity for skin cell renewal) and vitamin E (lipid antioxidant that reduces oxidative damage in healing tissue). For post-acne PIH and scarring: oral zinc + PM tallow addresses both healing speed and scar quality.' },
-  { title: 'Zinc for Malassezia + tallow cautiously', body: 'If Malassezia folliculitis (fungal acne) is suspected, zinc pyrithione treatment should come first. Tallow\'s fatty acids (C16–C18) are within Malassezia\'s preferred range, so tallow should be paused until Malassezia is cleared. Once cleared, zinc pyrithione maintenance can be used alongside tallow cautiously — as the antifungal environment reduces Malassezia regrowth risk.' },
-  { title: 'Protocol: zinc deficiency + skin problems', body: 'If you suspect zinc deficiency (poor wound healing, persistent acne, white spots on fingernails, poor taste/smell, hair thinning): supplement zinc bisglycinate 30mg daily with breakfast for 12 weeks. Add 1mg copper supplement. Maintain dietary zinc (oysters, beef) as ongoing maintenance. Add PM tallow for topical barrier and retinoid support.' },
+  { title: 'Zinc in animal-fat occlusives', body: 'Some animal-fat occlusives contain trace amounts of zinc in their natural composition. While not a significant zinc source (a supplement delivers far more), the trace zinc contributes to wound-healing and anti-inflammatory properties alongside the fatty acids and fat-soluble vitamins.' },
+  { title: 'Zinc + an occlusive for acne recovery', body: 'Oral zinc (30–50mg daily) for internal anti-inflammatory and sebum regulation, combined with a lipid-rich occlusive applied topically (barrier repair + palmitoleic acid antimicrobial + vitamin A cell turnover) addresses acne from both internal and external angles. These are complementary, not competing approaches.' },
+  { title: 'Post-acne scarring: zinc + occlusive combination', body: 'Zinc accelerates wound healing from the inside (enzyme cofactor for collagen synthesis, cell migration). A lipid-rich occlusive provides vitamin A (retinoid-like activity for skin cell renewal) and vitamin E (lipid antioxidant that reduces oxidative damage in healing tissue). For post-acne PIH and scarring: oral zinc + a PM occlusive addresses both healing speed and scar quality.' },
+  { title: 'Zinc for Malassezia + occlusives cautiously', body: 'If Malassezia folliculitis (fungal acne) is suspected, zinc pyrithione treatment should come first. Occlusive oils\' fatty acids (C16–C18) are within Malassezia\'s preferred range, so oil-based occlusives should be paused until Malassezia is cleared. Once cleared, zinc pyrithione maintenance can be used alongside an occlusive cautiously — as the antifungal environment reduces Malassezia regrowth risk.' },
+  { title: 'Protocol: zinc deficiency + skin problems', body: 'If you suspect zinc deficiency (poor wound healing, persistent acne, white spots on fingernails, poor taste/smell, hair thinning): supplement zinc bisglycinate 30mg daily with breakfast for 12 weeks. Add 1mg copper supplement. Maintain dietary zinc (oysters, beef) as ongoing maintenance. Add a PM occlusive for topical barrier and retinoid support.' },
 ];
 
 export default function ZincGuideScreen() {
@@ -177,8 +177,8 @@ export default function ZincGuideScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Zinc + Tallow</Text>
-              <Text style={styles.tallowHeroSub}>Zinc and tallow work from the inside and outside simultaneously — oral zinc for internal biology, tallow for topical barrier and vitamin delivery.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Zinc + an Occlusive</Text>
+              <Text style={styles.tallowHeroSub}>Zinc and a lipid-rich occlusive work from the inside and outside simultaneously — oral zinc for internal biology, the occlusive for topical barrier and vitamin delivery.</Text>
             </View>
             {TALLOW_ZINC.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

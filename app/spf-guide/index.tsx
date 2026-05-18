@@ -32,7 +32,7 @@ const TABS = [
   { id: 'types', label: 'Chemical vs Mineral', icon: '⚗️' },
   { id: 'application', label: 'How to Apply', icon: '🖐️' },
   { id: 'myths', label: 'Myths', icon: '💡' },
-  { id: 'tallow', label: 'SPF + Tallow', icon: '🌿' },
+  { id: 'tallow', label: 'SPF + Occlusive', icon: '🌿' },
 ];
 
 const BASICS = [
@@ -73,7 +73,7 @@ function buildSpfTypes(Colors: ReturnType<typeof shimColors>) {
     pros: ['Lightweight, invisible finish', 'No white cast', 'Easy to formulate with cosmetic actives', 'Works well under makeup'],
     cons: ['Some filters are endocrine disruptors (oxybenzone, octinoxate)', 'Can cause irritation for sensitive/rosacea skin', 'Requires 20–30 min before sun exposure to activate', 'Some are not reef-safe'],
     forSkinTypes: 'Oily, normal, combination skin that tolerates them. Avoid if sensitive to fragrance or reactive skin.',
-    tallowNote: 'Apply tallow BEFORE chemical SPF. Allow 60–90 seconds for tallow to absorb, then apply SPF on top. Chemical filters absorb differently if applied over heavy occlusive — test your stack for finish.',
+    tallowNote: 'Apply an occlusive BEFORE chemical SPF. Allow 60–90 seconds for it to absorb, then apply SPF on top. Chemical filters absorb differently if applied over a heavy occlusive — test your stack for finish.',
   },
   {
     type: 'Mineral (Physical) Filters',
@@ -84,7 +84,7 @@ function buildSpfTypes(Colors: ReturnType<typeof shimColors>) {
     pros: ['Stable in sunlight (no degradation)', 'Reef-safe (zinc oxide)', 'Safe for sensitive, rosacea, eczema skin', 'Immediate protection on application', 'Anti-inflammatory properties (zinc)'],
     cons: ['White cast on darker skin tones (especially titanium dioxide)', 'Heavier texture', 'Can pill under makeup', 'Less cosmetically elegant'],
     forSkinTypes: 'Sensitive, rosacea, eczema, and deeper skin tones who find transparent mineral formulas. Excellent for daily use.',
-    tallowNote: 'Mineral SPF is the ideal companion to tallow. Zinc oxide is anti-inflammatory — it amplifies tallow\'s barrier-repair, redness-reducing properties. Apply tallow → wait 60s → mineral SPF on top.',
+    tallowNote: 'Mineral SPF is the ideal companion to an occlusive. Zinc oxide is anti-inflammatory — it amplifies the occlusive\'s barrier-repair, redness-reducing properties. Apply the occlusive → wait 60s → mineral SPF on top.',
   },
   ];
 }
@@ -97,7 +97,7 @@ const APPLICATION_STEPS = [
   },
   {
     step: 'Apply as LAST skincare step (before makeup)',
-    detail: 'SPF goes after moisturizer. If using tallow, apply tallow, let it absorb 60 seconds, then SPF. Layering product over SPF dilutes and disrupts its UV-filtering film.',
+    detail: 'SPF goes after moisturizer. If using an occlusive, apply it, let it absorb 60 seconds, then SPF. Layering product over SPF dilutes and disrupts its UV-filtering film.',
   },
   {
     step: 'Include neck and the V of chest',
@@ -136,23 +136,23 @@ const MYTHS = [
 const TALLOW_SPF = [
   {
     title: 'The layering protocol',
-    detail: 'Tallow → 60 seconds absorption time → SPF. Never reverse this. Applying SPF first and tallow on top dilutes and disrupts the UV-filter film formation. Test your combo at home before relying on it outdoors.',
+    detail: 'An occlusive → 60 seconds absorption time → SPF. Never reverse this. Applying SPF first and the occlusive on top dilutes and disrupts the UV-filter film formation. Test your combo at home before relying on it outdoors.',
   },
   {
-    title: 'Tallow doesn\'t replace SPF',
-    detail: 'Tallow has no meaningful SPF value. Its benefits are barrier repair, nutrient delivery, and sebum compatibility. SPF protects against the UV damage that causes collagen breakdown — the mechanism tallow cannot address.',
+    title: 'An occlusive doesn\'t replace SPF',
+    detail: 'An occlusive has no meaningful SPF value. Its benefits are barrier repair, nutrient delivery, and sebum compatibility. SPF protects against the UV damage that causes collagen breakdown — the mechanism an occlusive cannot address.',
   },
   {
-    title: 'Mineral SPF is tallow\'s best partner',
-    detail: 'Zinc oxide (mineral SPF) shares anti-inflammatory properties with tallow. The combination of anti-inflammatory occlusives (tallow) + anti-inflammatory UV filter (zinc) is particularly beneficial for sensitive and rosacea-prone skin.',
+    title: 'Mineral SPF is an occlusive\'s best partner',
+    detail: 'Zinc oxide (mineral SPF) shares anti-inflammatory properties with lipid-rich occlusives. The combination of an anti-inflammatory occlusive + an anti-inflammatory UV filter (zinc) is particularly beneficial for sensitive and rosacea-prone skin.',
   },
   {
-    title: 'Evening: tallow without SPF',
-    detail: 'PM routine: no SPF needed. Apply tallow as the final step after all actives and serums. This is when tallow does its barrier repair work uninterrupted by UV filter formulation.',
+    title: 'Evening: occlusive without SPF',
+    detail: 'PM routine: no SPF needed. Apply the occlusive as the final step after all actives and serums. This is when it does its barrier repair work uninterrupted by UV filter formulation.',
   },
   {
-    title: 'Very oily skin: tallow + SPF finish',
-    detail: 'For oily skin types concerned about tallow adding shine under SPF, apply tallow only to dry/sensitive zones (cheeks, around eyes) and use your SPF over the full face. This controls shine while maintaining barrier support where needed.',
+    title: 'Very oily skin: occlusive + SPF finish',
+    detail: 'For oily skin types concerned about an occlusive adding shine under SPF, apply it only to dry/sensitive zones (cheeks, around eyes) and use your SPF over the full face. This controls shine while maintaining barrier support where needed.',
   },
 ];
 
@@ -243,7 +243,7 @@ export default function SPFGuideScreen() {
                   </View>
                 </View>
                 <View style={styles.tallowNoteCard}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Tallow Note</Text>
+                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
                   <Text style={styles.tallowNoteText}>{type.tallowNote}</Text>
                 </View>
               </View>

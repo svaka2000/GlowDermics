@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['Science', 'Forms', 'How to Use', 'Combinations', 'Tallow Stack'];
+const TABS = ['Science', 'Forms', 'How to Use', 'Combinations', 'Lipid Stack'];
 
 const VC_FACTS = [
   { fact: 'Vitamin C cannot be synthesised by humans', detail: 'Unlike most animals, humans lack the enzyme L-gulonolactone oxidase that converts glucose to ascorbic acid. We must obtain 100% of our vitamin C from diet or topicals. The skin has active transport mechanisms specifically to concentrate ascorbic acid in skin tissue.', icon: '🧬' },
@@ -55,7 +55,7 @@ function buildVcForms(Colors: ReturnType<typeof shimColors>) {
     stability: 'high',
     potency: 3,
     irritation: 'low',
-    bestFor: 'Dry skin, oil-preferring routines, layering with tallow',
+    bestFor: 'Dry skin, oil-preferring routines, layering with an occlusive',
     avoid: 'Nothing significant',
     note: 'Oil-soluble vitamin C ester. Penetrates the lipid-rich stratum corneum differently than water-soluble forms. Compatible with oil-based routines. Stable, comfortable, and effective at 3–5%.',
     color: Colors.gold,
@@ -94,7 +94,7 @@ function buildVcForms(Colors: ReturnType<typeof shimColors>) {
 }
 
 const HOW_TO_USE = [
-  { step: 1, title: 'Choose the right form for your skin', detail: 'Healthy, non-sensitive skin: start with 10% L-ascorbic acid and work up to 15–20%. Sensitive/compromised skin: begin with ascorbyl glucoside or SAP. Acne-prone: SAP specifically. Dry/oil-routine users: VC-IP for compatibility with oils and tallow.' },
+  { step: 1, title: 'Choose the right form for your skin', detail: 'Healthy, non-sensitive skin: start with 10% L-ascorbic acid and work up to 15–20%. Sensitive/compromised skin: begin with ascorbyl glucoside or SAP. Acne-prone: SAP specifically. Dry/oil-routine users: VC-IP for compatibility with oils and occlusive balms.' },
   { step: 2, title: 'Apply on dry skin in the AM', detail: 'Apply vitamin C serum on a dry, clean face. Pat on — do not rub. Wait 60–90 seconds before the next step. Morning application is best: (1) protects against UV-induced free radical damage during the day, (2) boosts SPF\'s antioxidant defence.' },
   { step: 3, title: 'Wait for full absorption', detail: 'Vitamin C needs to fully absorb before SPF is applied over it. Rushing this step = vitamin C trapped under SPF before penetrating, reducing efficacy. 60 seconds minimum, 3 minutes ideal.' },
   { step: 4, title: 'Layer SPF immediately after', detail: 'The vitamin C + SPF combination is synergistic. SPF reduces the photons reaching skin; vitamin C neutralises the free radicals from the photons that get through. The duo together provides dramatically more protection than either alone.' },
@@ -115,12 +115,12 @@ function buildCombinations(Colors: ReturnType<typeof shimColors>) {
 }
 
 const TALLOW_STACK = [
-  { title: 'VC-IP + Tallow: the oil-soluble pairing', body: 'Ascorbyl tetraisopalmitate (VC-IP) is oil-soluble — it disperses readily in fatty acids. A VC-IP serum applied before tallow means the vitamin C is carried deeper into the lipid-rich stratum corneum as the tallow integrates. This pairing works particularly well for dry and mature skin.' },
-  { title: 'Vitamin E in tallow regenerates vitamin C', body: 'Grass-fed tallow contains significant vitamin E (tocopherol). When topical vitamin C is applied before tallow, the vitamin E in the tallow helps regenerate spent vitamin C within the skin — creating the antioxidant recycling loop that makes C+E so effective.' },
-  { title: 'Vitamin A (retinol equivalent) in tallow + vitamin C', body: 'Tallow contains vitamin A (retinyl esters). Vitamin A and vitamin C work through complementary pathways: C stimulates collagen synthesis via prolyl hydroxylase cofactor activity; A (via RAR signalling) upregulates collagen gene expression. The combination addresses collagen from two angles.' },
-  { title: 'Application order', body: 'Apply water-soluble vitamin C serum first. Allow 60–90 seconds to absorb. Then apply tallow. The water-soluble serum sits in the aqueous phase; the tallow (lipid phase) goes over it and seals it in. This is the correct order — tallow before vitamin C would block water-soluble serum penetration.' },
-  { title: 'Tallow as buffer for LAA sensitivity', body: 'Some users find L-ascorbic acid too irritating alone. Applying a very thin layer of tallow first (as a semi-permeable barrier) and then LAA serum — the "modified sandwich" — reduces stinging while still allowing some vitamin C penetration. Less effective but more tolerable during barrier rebuilding.' },
-  { title: 'PM vs AM division', body: 'The optimal protocol: AM → vitamin C serum → SPF. PM → gentle cleanser → (retinol if using) → tallow. This keeps vitamin C in the antioxidant/UV-protection role and tallow in the overnight repair/barrier support role. Avoiding vitamin C PM reduces potential photosensitivity from any residual active on skin.' },
+  { title: 'VC-IP + an occlusive: the oil-soluble pairing', body: 'Ascorbyl tetraisopalmitate (VC-IP) is oil-soluble — it disperses readily in fatty acids. A VC-IP serum applied before an occlusive means the vitamin C is carried deeper into the lipid-rich stratum corneum as the occlusive integrates. This pairing works particularly well for dry and mature skin.' },
+  { title: 'Vitamin E in an occlusive regenerates vitamin C', body: 'Some lipid occlusives contain significant vitamin E (tocopherol). When topical vitamin C is applied before such an occlusive, its vitamin E helps regenerate spent vitamin C within the skin — creating the antioxidant recycling loop that makes C+E so effective.' },
+  { title: 'Vitamin A (retinol equivalent) in an occlusive + vitamin C', body: 'Some occlusives contain vitamin A (retinyl esters). Vitamin A and vitamin C work through complementary pathways: C stimulates collagen synthesis via prolyl hydroxylase cofactor activity; A (via RAR signalling) upregulates collagen gene expression. The combination addresses collagen from two angles.' },
+  { title: 'Application order', body: 'Apply water-soluble vitamin C serum first. Allow 60–90 seconds to absorb. Then apply the occlusive. The water-soluble serum sits in the aqueous phase; the occlusive (lipid phase) goes over it and seals it in. This is the correct order — an occlusive before vitamin C would block water-soluble serum penetration.' },
+  { title: 'An occlusive as buffer for LAA sensitivity', body: 'Some users find L-ascorbic acid too irritating alone. Applying a very thin layer of an occlusive first (as a semi-permeable barrier) and then LAA serum — the "modified sandwich" — reduces stinging while still allowing some vitamin C penetration. Less effective but more tolerable during barrier rebuilding.' },
+  { title: 'PM vs AM division', body: 'The optimal protocol: AM → vitamin C serum → SPF. PM → gentle cleanser → (retinol if using) → an occlusive. This keeps vitamin C in the antioxidant/UV-protection role and the occlusive in the overnight repair/barrier support role. Avoiding vitamin C PM reduces potential photosensitivity from any residual active on skin.' },
 ];
 
 export default function VitaminCScreen() {
@@ -256,8 +256,8 @@ export default function VitaminCScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Vitamin C + Tallow Stack</Text>
-              <Text style={styles.tallowHeroSub}>Vitamin C and tallow address skin health from complementary angles. Understanding how to sequence them unlocks the benefits of both without interference.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Vitamin C + Occlusive Stack</Text>
+              <Text style={styles.tallowHeroSub}>Vitamin C and a lipid-rich occlusive address skin health from complementary angles. Understanding how to sequence them unlocks the benefits of both without interference.</Text>
             </View>
             {TALLOW_STACK.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

@@ -86,7 +86,7 @@ User profile:
 - Sleep: ${lifestyle?.sleepHours || 7} hours/night
 - Weak skin metrics: ${weakMetrics || 'none identified'}
 
-Generate 7-9 supplements most relevant to this user. Include nutrients found naturally in ancestral foods (like tallow, organ meats, wild fish).
+Generate 7-9 supplements most relevant to this user. Include nutrients found naturally in whole foods (like organ meats, wild fish, leafy greens).
 
 Return ONLY valid JSON (no markdown):
 {
@@ -103,7 +103,7 @@ Return ONLY valid JSON (no markdown):
       "priority": "<high|medium|low — for this specific user's concerns>"
     }
   ],
-  "ancestralNote": "<2 sentences on how ancestral foods (tallow, organ meats, wild-caught fish) naturally provide these nutrients and why modern diets are deficient>",
+  "ancestralNote": "<2 sentences on how whole foods (organ meats, wild-caught fish, leafy greens) naturally provide these nutrients and why modern diets are deficient>",
   "topPick": "<name of the single most important supplement for this user and why — 2 sentences>",
   "caution": "<1 important caution about supplements that doesn't alarm users — e.g. consult doctor before starting, quality matters>"
 }`;
