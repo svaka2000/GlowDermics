@@ -13,6 +13,7 @@ import { Auth, AuthUser } from '../../src/services/auth';
 import { UserProfile } from '../../src/types';
 import { PremiumGate } from '../../src/components/PremiumGate';
 import { useColors, useTheme, ThemePreference } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import {
   requestNotificationPermission,
   scheduleRoutineReminder,
@@ -582,7 +583,7 @@ export default function Settings() {
             <Text style={styles.tdPromoSub}>Your AI skin coach — personalized analysis, routines, and progress tracking, grounded in dermatology.</Text>
             <View style={styles.tdPromoBtn}>
               <Text style={styles.tdPromoBtnText}>Visit velumi.ai</Text>
-              <Ionicons name="arrow-forward" size={12} color="#C4622D" />
+              <Ionicons name="arrow-forward" size={12} color={colors.primary} />
             </View>
           </View>
           <Text style={styles.tdPromoEmoji}>🌿</Text>
@@ -682,7 +683,7 @@ function makeStyles(c: Palette) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: c.bg },
     header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 },
-    headerTitle: { fontSize: 28, fontWeight: '800', color: c.textPrimary },
+    headerTitle: { fontSize: 28, fontWeight: '800', color: c.textPrimary, fontFamily: fonts.display },
     scroll: { paddingHorizontal: 16 },
     profileCard: {
       flexDirection: 'row', alignItems: 'center', gap: 14,
@@ -692,14 +693,14 @@ function makeStyles(c: Palette) {
     avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
     avatarText: { fontSize: 22, fontWeight: '800', color: '#FFFFFF' },
     profileInfo: { flex: 1 },
-    profileName: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
-    profileSub: { fontSize: 13, color: c.textMuted, marginTop: 2 },
+    profileName: { fontSize: 18, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
+    profileSub: { fontSize: 13, color: c.textMuted, marginTop: 2, fontFamily: fonts.body },
     statBadge: { alignItems: 'center' },
-    statNum: { fontSize: 22, fontWeight: '800', color: c.primary },
+    statNum: { fontSize: 22, fontWeight: '800', color: c.primary, fontFamily: fonts.display },
     statLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600', letterSpacing: 0.5 },
     section: { marginBottom: 24 },
     sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-    sectionTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
+    sectionTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 10, fontFamily: fonts.display },
     editBtn: { fontSize: 14, fontWeight: '600', color: c.primary },
     card: {
       backgroundColor: c.bgCard, borderRadius: 16,
@@ -741,7 +742,7 @@ function makeStyles(c: Palette) {
       borderRadius: 18, overflow: 'hidden', padding: 18, marginBottom: 24,
     },
     dnaEmoji: { fontSize: 28 },
-    dnaTitle: { fontSize: 17, fontWeight: '800', color: '#FFFFFF' },
+    dnaTitle: { fontSize: 17, fontWeight: '800', color: '#FFFFFF', fontFamily: fonts.display },
     dnaSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
     premiumBadge: {
       flexDirection: 'row', alignItems: 'center', gap: 3,
@@ -760,23 +761,23 @@ function makeStyles(c: Palette) {
     },
     tdPromoCard: {
       flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-      backgroundColor: '#FDF6EC', borderRadius: 18,
-      borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)',
+      backgroundColor: c.bgCard, borderRadius: 18,
+      borderWidth: 1, borderColor: c.border,
       padding: 20, marginBottom: 24,
     },
     tdPromoLeft: { flex: 1, paddingRight: 12 },
-    tdPromoEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 1.2, color: '#C4622D', textTransform: 'uppercase', marginBottom: 4 },
-    tdPromoHeading: { fontSize: 18, fontWeight: '800', color: '#3B1F0E', marginBottom: 6 },
-    tdPromoSub: { fontSize: 12, lineHeight: 17, color: 'rgba(59,31,14,0.6)', marginBottom: 12 },
+    tdPromoEyebrow: { fontSize: 9, fontWeight: '600', letterSpacing: 2, color: c.primary, textTransform: 'uppercase', marginBottom: 4, fontFamily: fonts.body },
+    tdPromoHeading: { fontSize: 18, fontWeight: '800', color: c.textPrimary, marginBottom: 6, fontFamily: fonts.display },
+    tdPromoSub: { fontSize: 12, lineHeight: 17, color: c.textSecondary, marginBottom: 12, fontFamily: fonts.body },
     tdPromoBtn: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-    tdPromoBtnText: { fontSize: 12, fontWeight: '700', color: '#C4622D', textDecorationLine: 'underline' },
+    tdPromoBtnText: { fontSize: 12, fontWeight: '700', color: c.primary, textDecorationLine: 'underline' },
     tdPromoEmoji: { fontSize: 36 },
     premiumCardIcon: {
       width: 40, height: 40, borderRadius: 12,
       backgroundColor: 'rgba(255,255,255,0.25)',
       alignItems: 'center', justifyContent: 'center',
     },
-    premiumCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff' },
+    premiumCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff', fontFamily: fonts.display },
     premiumCardSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   });
 }
