@@ -24,7 +24,7 @@ interface HubData {
   sleep: SleepSkinReport;
   uv: UVSkinReport;
   streak: StreakReport;
-  challenges: DailyChallengeReport;
+  challenges: DailyChallengeReport | null;
   forecast: ForecastReport;
   identity: SkinIdentity;
 }
@@ -46,7 +46,7 @@ export default function InsightsHub() {
       runSleepSkinAnalysis(),
       runUVSkinAnalysis(),
       runStreakAnalysis(),
-      runDailyChallengeAnalysis(),
+      runDailyChallengeAnalysis().catch(() => null),
       runSkinForecast(),
       runSkinIdentity(),
     ]).then(([analyses, sleep, uv, streak, challenges, forecast, identity]) => {
@@ -84,7 +84,7 @@ export default function InsightsHub() {
                 <Text style={styles.heroTitle}>Insights</Text>
                 <Text style={styles.heroSub}>
                   {data
-                    ? `${data.streak.totalActiveDays} active days · ${data.challenges.unlockedBadges.length} badges`
+                    ? `${data.streak.totalActiveDays} active days · ${data.challenges?.unlockedBadges.length ?? 0} badges`
                     : 'Loading your data…'}
                 </Text>
               </View>
@@ -175,6 +175,7 @@ export default function InsightsHub() {
               </View>
 
               {/* Daily quest summary */}
+              {data.challenges && (
               <View style={{ marginBottom: 14 }}>
                 <Card variant="elevated" padding={18}>
                   <View style={styles.streakRow}>
@@ -203,6 +204,7 @@ export default function InsightsHub() {
                   </View>
                 </Card>
               </View>
+              )}
 
               {/* 7-Day Forecast preview */}
               <View style={{ marginBottom: 14 }}>
@@ -396,7 +398,7 @@ function pickNextAction(data: HubData): string {
   if (data.uv.hasEnoughData && data.uv.correlationDamage < -0.4) {
     return 'Reapply SPF every 2 hours today — your UV exposure is measurably tracking down your skin score.';
   }
-  if (!data.challenges.primaryDone) {
+  if (data.challenges && !data.challenges.primaryDone) {
     return `Today's quest: ${data.challenges.primary.title} (+${data.challenges.primary.xp} XP).`;
   }
   if (data.latest && data.prev && data.latest.scores.overall < data.prev.scores.overall) {
