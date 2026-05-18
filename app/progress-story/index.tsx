@@ -72,6 +72,10 @@ export default function ProgressStoryScreen() {
               <Ionicons name="share-outline" size={18} color={c.white} />
               <Text style={styles.shareText}>Share my story</Text>
             </Pressable>
+            <Pressable style={styles.inviteBtn} onPress={() => router.push('/invite' as any)} accessibilityRole="button" accessibilityLabel="Invite a friend">
+              <Ionicons name="people-outline" size={18} color={c.primary} />
+              <Text style={styles.inviteBtnText}>Invite a friend</Text>
+            </Pressable>
             <Text style={styles.caption}>A premium recap of your skin journey, ready to share.</Text>
           </>
         ) : (
@@ -117,6 +121,8 @@ function makeStyles(c: Palette) {
       alignSelf: 'stretch',
     },
     shareText: { fontFamily: fonts.body, fontSize: 15, fontWeight: '700', color: c.white, letterSpacing: 0.4 },
+    inviteBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, alignSelf: 'stretch', marginTop: 12, borderWidth: 1, borderColor: c.borderStrong, borderRadius: 16, paddingVertical: 15 },
+    inviteBtnText: { fontFamily: fonts.body, fontSize: 15, fontWeight: '700', color: c.primary, letterSpacing: 0.4 },
     caption: { fontFamily: fonts.body, fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 14, letterSpacing: 0.1 },
     empty: { alignItems: 'center', paddingVertical: 56, paddingHorizontal: 12 },
     emptyEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase', marginBottom: 14 },
