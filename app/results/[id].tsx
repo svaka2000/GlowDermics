@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, Pressable, Image,
-  ActivityIndicator, Share, Linking, Animated, Easing,
+  ActivityIndicator, Share, Animated, Easing,
   useWindowDimensions,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -461,14 +461,6 @@ export default function Results() {
                         <Text style={styles.productName}>{rec.product.name}</Text>
                         <Text style={styles.productBrand}>{rec.product.brand}</Text>
                         <Text style={styles.productWhy}>{rec.product.why}</Text>
-                        {rec.product.isTallowDermics && (
-                          <Pressable
-                            style={styles.shopBtn}
-                            onPress={() => Linking.openURL('https://velumi.ai')}
-                          >
-                            <Text style={styles.shopBtnText}>Shop Velumi AI →</Text>
-                          </Pressable>
-                        )}
                       </View>
                     </View>
                   </View>

@@ -282,12 +282,6 @@ export default function TallowScience() {
           </Text>
         </View>
 
-        {/* CTA */}
-        <Pressable style={styles.cta} onPress={() => router.push('/product')}>
-          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
-          <Text style={styles.ctaText}>Explore Velumi AI →</Text>
-        </Pressable>
-
         <View style={{ height: 100 }} />
       </Animated.ScrollView>
     </View>

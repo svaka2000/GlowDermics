@@ -410,9 +410,6 @@ export default function DIYRecipes() {
           <Text style={styles.qualityText}>
             The quality of your base butter determines your results. Unrefined, cold-pressed shea and mango butters retain significantly higher levels of fat-soluble vitamins A, E, and F (essential fatty acids) and skin-soothing compounds than refined versions. These nutrients are what make a DIY balm effective.
           </Text>
-          <Pressable style={styles.qualityBtn} onPress={() => router.push('/product')}>
-            <Text style={styles.qualityBtnText}>Explore Velumi AI →</Text>
-          </Pressable>
         </View>
 
         <View style={{ height: 100 }} />

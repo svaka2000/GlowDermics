@@ -344,7 +344,7 @@ export default function Progress() {
             <Text style={[styles.activityNum, { color: colors.primary }]}>{history.length}</Text>
             <Text style={styles.activityLabel}>Scans</Text>
           </View>
-          <View style={[styles.activityCard, { borderColor: 'rgba(251,191,36,0.3)', backgroundColor: 'rgba(251,191,36,0.07)' }]}>
+          <View style={[styles.activityCard, { borderColor: 'rgba(183,155,110,0.3)', backgroundColor: 'rgba(183,155,110,0.07)' }]}>
             <Text style={[styles.activityNum, { color: colors.gold }]}>{routineStreak}🔥</Text>
             <Text style={styles.activityLabel}>Streak</Text>
           </View>

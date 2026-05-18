@@ -295,15 +295,14 @@ Return ONLY valid JSON (no markdown):
             </View>
 
             {/* Skin journey moment */}
-            <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
+            <View style={styles.tallowCard}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowLabel}>YOUR JOURNEY</Text>
                 <Text style={styles.tallowText}>{story.tallowMoment}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.6)" />
-            </Pressable>
+            </View>
 
             {/* Social caption preview */}
             <View style={styles.captionCard}>

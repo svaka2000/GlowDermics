@@ -10,7 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
 import { findDupes, DupeResult } from '../../src/services/dupeFinder';
-import { OutboundLink, AffiliateDisclosure } from '../../src/components/ui';
+import { AffiliateDisclosure } from '../../src/components/ui';
 
 const POPULAR = [
   { name: 'Drunk Elephant Protini', brand: 'Drunk Elephant' },
@@ -242,16 +242,6 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
             <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdNoteEyebrow}>VELUMI AI PERSPECTIVE</Text>
             <Text style={styles.tdNoteText}>{result.tallowDermicsNote}</Text>
-            <View style={{ marginTop: 12 }}>
-              <OutboundLink
-                productKey="cerave-moisturizing-cream"
-                context="dupes"
-                label="Shop a clean moisturizer"
-              />
-              <View style={{ marginTop: 8 }}>
-                <AffiliateDisclosure inline />
-              </View>
-            </View>
           </View>
         )}
 
