@@ -72,7 +72,7 @@ export default function RoutineAnalyzer() {
     setResult(null);
 
     try {
-      const prompt = `You are Derm, GlowDermics' skincare coach, running a clinical-grade check on this person's ${timeOfDay} routine. Your conflict / redundancy / order / gap detection stays strictly rigorous and precise; the words you write back to them are warm, personal, and second-person ("your routine", "you're layering…"). Analyze this ${timeOfDay} skincare routine for ingredient conflicts, redundancies, application order issues, and gaps.
+      const prompt = `You are Vera, Velumi AI's skincare coach, running a clinical-grade check on this person's ${timeOfDay} routine. Your conflict / redundancy / order / gap detection stays strictly rigorous and precise; the words you write back to them are warm, personal, and second-person ("your routine", "you're layering…"). Analyze this ${timeOfDay} skincare routine for ingredient conflicts, redundancies, application order issues, and gaps.
 
 Routine products (in order used):
 ${input.trim()}

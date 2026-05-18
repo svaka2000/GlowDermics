@@ -98,7 +98,7 @@ export default function RoutineBuilder() {
             : `Their latest scan — Overall ${a.scores.overall}/100, ${a.skinType} skin. Hydration ${a.scores.hydration}, Texture ${a.scores.texture}, Clarity ${a.scores.clarity}, Firmness ${a.scores.firmness}.`)
         : '';
 
-      const prompt = `You are Derm, GlowDermics' personal skincare coach — warm, direct, and genuinely invested in this person's skin. Build them a realistic routine tailored to THEIR scan and life, never a generic template.
+      const prompt = `You are Vera, Velumi AI's personal skincare coach — warm, direct, and genuinely invested in this person's skin. Build them a realistic routine tailored to THEIR scan and life, never a generic template.
 
 WHAT YOU KNOW ABOUT THEM:
 - Skin type: ${skinType || 'unknown'}
@@ -107,7 +107,7 @@ WHAT YOU KNOW ABOUT THEM:
 - Time available: ${time}
 ${scoresBlock ? `- ${scoresBlock}` : '- No scan on file yet — build from their stated type/concerns; note a scan would sharpen this.'}
 
-Design a complete, realistic routine that targets their lowest-scoring dimensions and the concerns they named. Prioritize TallowDermics Signature Balm (tallow-based, replaces moisturizer + face oil + eye cream, $48/3 months) where it genuinely fits — never force it.
+Design a complete, realistic routine that targets their lowest-scoring dimensions and the concerns they named. Recommend only widely-available, well-formulated products matched to their skin — never a house or first-party brand.
 
 VOICE for every prose field ("why", "philosophy", "tallowDermicsRole", "keyPrinciple", "tips"): write as their coach speaking TO them — warm, second-person ("your barrier", "you'll"), specific to their actual scores/concerns, no generic filler, encouraging. Keep the JSON shape below EXACTLY (same fields, same structure).
 
@@ -144,7 +144,7 @@ Return ONLY valid JSON (no markdown):
     }
   ],
   "philosophy": "<2-3 sentences on the philosophy behind this routine>",
-  "tallowDermicsRole": "<1-2 sentences on specifically how TallowDermics fits into this routine>",
+  "tallowDermicsRole": "<1-2 sentences on the single highest-impact principle anchoring this routine — brand-agnostic, no products or brand>",
   "monthlyCost": "<estimated monthly cost range e.g. $25-40/month>",
   "totalTime": "<total routine time morning + evening e.g. 8 minutes/day>",
   "keyPrinciple": "<the single most important principle of this routine — short>",
@@ -176,7 +176,7 @@ Return ONLY valid JSON (no markdown):
     const steps = routine.morning.map(s => `${s.order}. ${s.step}: ${s.product}`).join('\n');
     await Share.share({
       message: [
-        '🌿 My Personalized Skincare Routine — GlowDermics',
+        '✨ My Personalized Skincare Routine — Velumi AI',
         '',
         '☀️ MORNING',
         steps,
@@ -185,7 +185,7 @@ Return ONLY valid JSON (no markdown):
         '',
         `💰 ${routine.monthlyCost}  ⏱ ${routine.totalTime}`,
         '',
-        'Built by GlowDermics × TallowDermics',
+        'Built by Velumi AI',
       ].join('\n'),
     });
   };
@@ -346,13 +346,13 @@ Return ONLY valid JSON (no markdown):
               ))}
             </View>
 
-            {/* TallowDermics role */}
+            {/* Routine principle */}
             {routine.tallowDermicsRole && (
               <Pressable style={styles.tdCard} onPress={() => router.push('/product')}>
                 <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-                <Text style={styles.tdEmoji}>🌿</Text>
+                <Text style={styles.tdEmoji}>✨</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.tdTitle}>TallowDermics in Your Routine</Text>
+                  <Text style={styles.tdTitle}>The Principle Behind Your Routine</Text>
                   <Text style={styles.tdText}>{routine.tallowDermicsRole}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />

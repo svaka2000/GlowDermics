@@ -87,7 +87,7 @@ export default function SkinTrendReport() {
         return `${date}: mood=${j.mood}, tags=[${j.tags.join(', ')}], note="${j.note.slice(0, 80)}"`;
       }).join('\n');
 
-      const prompt = `You are GlowDermics AI trend analyst. Analyze this user's skin progress data and generate a detailed trend report.
+      const prompt = `You are Velumi AI's trend analyst. Analyze this user's skin progress data and generate a detailed trend report.
 
 User profile: ${profile ? `${profile.name}, ${profile.skinType} skin, concerns: ${profile.primaryConcerns.join(', ')}` : 'unknown'}
 

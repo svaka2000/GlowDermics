@@ -137,7 +137,7 @@ Return ONLY valid JSON (no markdown, no explanation):
   "topWins": ["<win 1>", "<win 2>"],
   "topRisks": ["<risk 1>", "<risk 2>"],
   "recommendations": ["<action 1>", "<action 2>", "<action 3>"],
-  "tallowNote": "<1 sentence connecting this to tallow-based skincare and TallowDermics>"
+  "tallowNote": "<1 brand-agnostic sentence with the single highest-impact anti-aging skincare tip for them — no products, no brand>"
 }`;
 
       const resp = await groq.chat.completions.create({
@@ -168,7 +168,7 @@ Return ONLY valid JSON (no markdown, no explanation):
     const gapStr = gap < 0 ? `${Math.abs(gap)} years YOUNGER` : gap > 0 ? `${gap} years older` : 'right on track';
     await Share.share({
       message: [
-        `🌿 My Skin Age Result — GlowDermics`,
+        `✨ My Skin Age Result — Velumi AI`,
         '',
         `Chronological Age: ${result.chronologicalAge}`,
         `Skin Biological Age: ${result.skinAge}`,
@@ -176,7 +176,7 @@ Return ONLY valid JSON (no markdown, no explanation):
         '',
         result.verdict,
         '',
-        'Powered by GlowDermics × TallowDermics',
+        'Powered by Velumi AI',
       ].join('\n'),
     });
   };
@@ -369,12 +369,12 @@ Return ONLY valid JSON (no markdown, no explanation):
               ))}
             </View>
 
-            {/* Tallow note */}
+            {/* Skin tip */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-              <Text style={styles.tallowEmoji}>🌿</Text>
+              <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>TallowDermics Insight</Text>
+                <Text style={styles.tallowTitle}>Your Skin Tip</Text>
                 <Text style={styles.tallowText}>{result.tallowNote}</Text>
               </View>
               <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />

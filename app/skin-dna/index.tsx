@@ -95,7 +95,7 @@ export default function SkinDNA() {
       const latestScore = history[0]?.overallScore;
       const trendDir = history.length >= 2 ? (history[0].overallScore > history[history.length - 1].overallScore ? 'improving' : 'declining') : 'new';
 
-      const prompt = `You are GlowDermics AI, generating a unique "Skin DNA" identity profile for a user. This should feel premium, personal, and insightful — like a dermatologist who knows them deeply.
+      const prompt = `You are Velumi AI, generating a unique "Skin DNA" identity profile for a user. This should feel premium, personal, and insightful — like a dermatologist who knows them deeply.
 
 User data:
 - Name: ${prof?.name || 'Unknown'}
@@ -140,10 +140,10 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"step": "<step>", "note": "<note>"},
     {"step": "<step>", "note": "<note>"}
   ],
-  "tallowFit": "<1-2 sentences: how TallowDermics tallow specifically fits or doesn't fit this skin DNA — be honest and specific>",
+  "tallowFit": "<1-2 brand-agnostic sentences: the skincare approach that best fits this skin DNA — honest and specific, no products or brand>",
   "growthAreas": ["<area where they can improve>", "<second area>", "<third area>"],
   "uniqueStrength": "<one sentence: what is genuinely working in their favor — something to feel good about>",
-  "shareCard": "<one shareable quote-style text for social media, max 140 chars — e.g. 'My skin DNA says I'm The Barrier Architect 🧱 — building my barrier one tallow layer at a time. #GlowDermics'>"
+  "shareCard": "<one shareable quote-style text for social media, max 140 chars — e.g. 'My skin DNA says I'm The Barrier Architect 🧱 — building a stronger barrier every day. #VelumiAI'>"
 }`;
 
       const response = await groq.chat.completions.create({
@@ -167,7 +167,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
 
   const handleShare = async () => {
     if (!dna) return;
-    await Share.share({ message: dna.shareCard + '\n\nDiscovered with GlowDermics × TallowDermics' });
+    await Share.share({ message: dna.shareCard + '\n\nDiscovered with Velumi AI' });
   };
 
   const lifecycleColor = (score: number) =>
@@ -290,9 +290,9 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                 </View>
                 <View style={styles.tallowCard}>
                   <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.05)']} style={StyleSheet.absoluteFill} />
-                  <Text style={styles.tallowEmoji}>🌿</Text>
+                  <Text style={styles.tallowEmoji}>✨</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.tallowTitle}>TallowDermics Fit</Text>
+                    <Text style={styles.tallowTitle}>Your Skin Fit</Text>
                     <Text style={styles.tallowText}>{dna.tallowFit}</Text>
                   </View>
                 </View>
