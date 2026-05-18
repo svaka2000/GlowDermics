@@ -25,11 +25,11 @@ const MAX_STORED_MESSAGES = 60;
 
 const STARTER_PROMPTS = [
   'What should I prioritize for my skin right now?',
-  'Is tallow good for oily skin?',
+  'What helps oily, shiny skin?',
   'How do I build a barrier-repair routine?',
   'What ingredients should I avoid?',
   'How long until I see results from a new routine?',
-  "What's the difference between tallow and regular moisturizer?",
+  'How do I choose the right moisturizer?',
 ];
 
 const QUICK_PROMPTS_BASE = [
@@ -37,7 +37,7 @@ const QUICK_PROMPTS_BASE = [
   { label: 'Best routine for me?', icon: '🌅' },
   { label: 'Ingredients to avoid?', icon: '⛔' },
   { label: 'When will I see results?', icon: '⏱️' },
-  { label: 'Why tallow?', icon: '🧪' },
+  { label: 'Barrier basics?', icon: '🧪' },
   { label: 'Morning vs evening?', icon: '☀️' },
   { label: 'Fix my barrier?', icon: '🛡️' },
 ];
@@ -259,13 +259,13 @@ export default function Coach() {
         <View style={styles.header}>
           <View style={styles.avatarWrap}>
             <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.avatar}>
-              <Text style={styles.avatarText}>D</Text>
+              <Text style={styles.avatarText}>V</Text>
             </LinearGradient>
             <View style={styles.onlineDot} />
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerName}>Derm</Text>
-            <Text style={styles.headerRole}>AI Skincare Coach · GlowDermics</Text>
+            <Text style={styles.headerName}>Vera</Text>
+            <Text style={styles.headerRole}>AI Skincare Coach · Velumi AI</Text>
           </View>
           {messages.length > 0 && (
             <Pressable accessibilityRole="button" accessibilityLabel="Clear conversation" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} onPress={confirmClear} style={styles.clearBtn}>
@@ -306,8 +306,8 @@ export default function Coach() {
               </Text>
               <Text style={styles.introSub}>
                 {analysis
-                  ? `I'm Derm — your personal skin coach. I've got your latest scan in front of me: ${analysis.scores.overall}/100, ${analysis.skinType} skin${analysis.concerns?.length ? `, with ${analysis.concerns.slice(0, 2).join(' & ')} as your main levers` : ''}. Ask me anything — I'll tailor it to you.`
-                  : "I'm Derm — your personal skin coach. Ask me anything about skincare, ingredients, or your routine. Run a quick scan and I'll tailor everything to your exact skin."}
+                  ? `I'm Vera — your personal skin coach. I've got your latest scan in front of me: ${analysis.scores.overall}/100, ${analysis.skinType} skin${analysis.concerns?.length ? `, with ${analysis.concerns.slice(0, 2).join(' & ')} as your main levers` : ''}. Ask me anything — I'll tailor it to you.`
+                  : "I'm Vera — your personal skin coach. Ask me anything about skincare, ingredients, or your routine. Run a quick scan and I'll tailor everything to your exact skin."}
               </Text>
               <View style={styles.starters}>
                 {STARTER_PROMPTS.map(p => (
@@ -332,7 +332,7 @@ export default function Coach() {
                 <View key={msg.id} style={[styles.msgRow, msg.role === 'user' && styles.msgRowUser]}>
                   {msg.role === 'assistant' && (
                     <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.msgAvatar}>
-                      <Text style={styles.msgAvatarText}>D</Text>
+                      <Text style={styles.msgAvatarText}>V</Text>
                     </LinearGradient>
                   )}
                   <View style={styles.bubbleWrap}>
@@ -354,7 +354,7 @@ export default function Coach() {
           {loading && (
             <View style={styles.msgRow}>
               <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.msgAvatar}>
-                <Text style={styles.msgAvatarText}>D</Text>
+                <Text style={styles.msgAvatarText}>V</Text>
               </LinearGradient>
               <View style={[styles.bubbleAssistant, styles.typingBubble]}>
                 <TypingDots />
@@ -404,7 +404,7 @@ export default function Coach() {
         <View style={[styles.inputBar, { paddingBottom: Platform.OS === 'web' ? 80 : Math.max(insets.bottom, 12) + 8 }]}>
           <TextInput
             style={styles.input}
-            placeholder="Ask Derm anything…"
+            placeholder="Ask Vera anything…"
             placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}

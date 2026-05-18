@@ -96,7 +96,7 @@ export default function Forecast() {
       const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
       const trend = scores.length >= 2 ? scores[0] - scores[scores.length - 1] : 0;
 
-      const prompt = `You are Derm, GlowDermics' personal skin coach (TallowDermics — a minimal, ancestral skincare brand). You're forecasting THIS person's next 90 days and talking straight to them — warm, specific, second person ("your skin", "you'll", "if you keep…"). Ground every line in their ACTUAL numbers below, be honest about what's holding them back, and make the path forward feel achievable, not clinical. No "N/A"/"no data" hedging — if something isn't logged yet, speak to it warmly and move on.
+      const prompt = `You are Vera, Velumi AI's personal skin coach. You're forecasting THIS person's next 90 days and talking straight to them — warm, specific, second person ("your skin", "you'll", "if you keep…"). Ground every line in their ACTUAL numbers below, be honest about what's holding them back, and make the path forward feel achievable, not clinical. No "N/A"/"no data" hedging — if something isn't logged yet, speak to it warmly and move on.
 
 User data:
 - Current overall skin score: ${history[0]?.overallScore ?? 'no scan logged yet'}/100
@@ -129,7 +129,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"action": "<fourth action, second person, concrete>", "impact": "<high|medium|low>", "timeframe": "<e.g. 6-8 weeks>"}
   ],
   "summary": "<2-3 warm sentences spoken directly TO them ('your skin', 'you') — an honest, motivating read of where their trajectory is heading and the one lever that matters most, citing their real numbers>",
-  "tallowNote": "<1 warm second-person sentence on how TallowDermics tallow balm fits THEIR specific journey — honest, not a hard sell>"
+  "tallowNote": "<1 warm second-person sentence with a brand-agnostic, high-impact skincare tip tailored to THEIR specific journey — honest, no products, no brand names>"
 }
 
 VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].action, summary, tallowNote); NOT to currentScore/score30/score60/score90 numbers, the trajectory/impact enums, or the timeframe labels, which stay exactly as specified: write every prose string in warm second person ("your skin", "you", "you'll"), grounded in the SPECIFIC numbers above — never generic, never "N/A"/"no data" hedging. Be honest about the risks but always make the path forward feel achievable. Keep every JSON field name, the shape, and the enum/number rules above EXACTLY.`;
@@ -342,12 +342,12 @@ VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].ac
               ))}
             </View>
 
-            {/* TallowDermics note */}
+            {/* Skin tip */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
               <LinearGradient colors={['rgba(196,98,45,0.18)', 'rgba(196,98,45,0.06)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>TallowDermics Fit</Text>
+                <Text style={styles.tallowTitle}>Your Skin Tip</Text>
                 <Text style={styles.tallowText}>{result.tallowNote}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.primary} />

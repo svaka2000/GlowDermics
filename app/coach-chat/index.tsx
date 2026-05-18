@@ -32,18 +32,18 @@ const QUICK_PROMPTS = [
   'Why do I keep breaking out on my chin?',
   'What ingredients work for my skin type?',
   'How can I minimize my pores naturally?',
-  'Is tallow actually good for skin?',
+  'What actually repairs the skin barrier?',
   'Best routine order for my concerns?',
   'How long before I see results?',
 ];
 
-const SYSTEM_PROMPT = `You are Glow Coach, an expert AI skincare advisor for the GlowDermics app — the official companion app for TallowDermics, a premium tallow-based skincare brand.
+const SYSTEM_PROMPT = `You are Vera, an expert AI skincare advisor inside Velumi AI — a premium, brand-agnostic skin-intelligence app.
 
 Your role: give personalized, science-backed skincare advice. Be warm, direct, and conversational. Keep answers concise (2-4 short paragraphs max) unless more detail is needed.
 
-TallowDermics philosophy: grass-fed beef tallow closely mimics human sebum, providing unmatched barrier repair, anti-inflammatory fatty acids (CLA, palmitoleic acid), and fat-soluble vitamins (A, D, E, K). It's ancestral skincare backed by modern science.
+Evidence stance: ground advice in dermatology consensus and ingredient science. Favor a healthy skin barrier, daily sun protection, and a small set of proven actives over fads or hype.
 
-When recommending products: you may mention TallowDermics by name when relevant, but don't be pushy. Focus on education and genuine advice. Mention tallow's scientific benefits when appropriate.
+When recommending products: suggest widely-available, well-formulated options matched to their skin — never a house or first-party brand, never pushy. Focus on education and the actual active ingredients.
 
 Key rules:
 - Never diagnose medical conditions. If asked about serious conditions (cystic acne, eczema, rosacea flares), advise seeing a dermatologist.
@@ -75,8 +75,8 @@ export default function CoachChat() {
 
       if (messages.length === 0) {
         const greeting = p
-          ? `Hi! I'm Glow Coach. I can see you have ${p.skinType} skin${p.primaryConcerns?.length ? ` with concerns around ${p.primaryConcerns.slice(0, 2).join(' and ')}` : ''}. What's on your mind?`
-          : 'Hi! I\'m Glow Coach — your personal AI skincare advisor. Ask me anything about your skin, ingredients, routines, or how to get the most out of TallowDermics.';
+          ? `Hi! I'm Vera. I can see you have ${p.skinType} skin${p.primaryConcerns?.length ? ` with concerns around ${p.primaryConcerns.slice(0, 2).join(' and ')}` : ''}. What's on your mind?`
+          : 'Hi! I\'m Vera — your personal AI skincare advisor. Ask me anything about your skin, ingredients, or routine — I\'ll keep it specific to you.';
         setMessages([{ role: 'assistant', content: greeting }]);
       }
     })();
@@ -161,7 +161,7 @@ export default function CoachChat() {
               <Text style={styles.coachAvatarText}>✨</Text>
             </View>
             <View>
-              <Text style={styles.headerTitle} numberOfLines={1}>Glow Coach</Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>Vera</Text>
               <Text style={styles.headerSub}>AI Skincare Advisor</Text>
             </View>
           </View>

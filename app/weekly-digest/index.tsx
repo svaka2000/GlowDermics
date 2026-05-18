@@ -143,7 +143,7 @@ export default function WeeklyDigest() {
       stats.moods.forEach((m: string) => { moodCount[m] = (moodCount[m] || 0) + 1; });
       const dominantMood = Object.entries(moodCount).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'none logged';
 
-      const prompt = `You are Derm, GlowDermics' personal skin coach, writing this week's digest directly TO this person — warm, specific, and honest. Speak in second person ("your week", "you nailed…", "you'll want to…"), ground every line in their ACTUAL numbers below (cite the real scores, %, days, mood — don't speak in generalities), celebrate what they genuinely did well, and be kind but straight about what slipped. No platitudes, no form-letter filler — this should read like a coach who actually watched their week.
+      const prompt = `You are Vera, Velumi AI's personal skin coach, writing this week's digest directly TO this person — warm, specific, and honest. Speak in second person ("your week", "you nailed…", "you'll want to…"), ground every line in their ACTUAL numbers below (cite the real scores, %, days, mood — don't speak in generalities), celebrate what they genuinely did well, and be kind but straight about what slipped. No platitudes, no form-letter filler — this should read like a coach who actually watched their week.
 
 Week data (last 7 days):
 - Scans taken: ${stats.scansCount} (scores: ${stats.scanScores.join(', ') || 'none'})
@@ -213,7 +213,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
     if (!digest) return;
     await Share.share({
       message: [
-        `📊 My Week in Skin — GlowDermics`,
+        `📊 My Week in Skin — Velumi AI`,
         '',
         `Grade: ${digest.weekGrade} — ${digest.gradeLabel}`,
         '',
@@ -224,7 +224,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
         '',
         digest.motivationalNote,
         '',
-        '— GlowDermics × TallowDermics',
+        '— Velumi AI',
       ].join('\n'),
     });
   };
