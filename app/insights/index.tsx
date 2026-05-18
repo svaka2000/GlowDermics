@@ -31,7 +31,7 @@ interface HubData {
 
 /**
  * Insights Hub — single screen surfacing every behavioral correlation
- * GlowDermics knows about your skin. Combines sleep × skin, UV × skin,
+ * Velumi AI knows about your skin. Combines sleep × skin, UV × skin,
  * streak gamification, daily quest stats, and biomarker tags into one
  * "what's going on with my skin this week" dashboard.
  */

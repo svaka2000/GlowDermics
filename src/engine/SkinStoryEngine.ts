@@ -220,7 +220,7 @@ export async function runSkinStories(): Promise<SkinStory[]> {
   if (ctx.totalActiveDays >= 30 && ctx.totalActiveDays % 30 === 0) {
     stories.push({
       id: 'member-milestone',
-      headline: `${ctx.totalActiveDays} active days on GlowDermics`,
+      headline: `${ctx.totalActiveDays} active days on Velumi AI`,
       subline: 'Keep tracking — long-term data unlocks deeper insights.',
       icon: 'calendar',
       accent: 'purple',

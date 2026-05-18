@@ -75,7 +75,7 @@ function buildChallenges(c: Palette): Challenge[] {
       'Start each morning with 2 glasses before anything else',
       'Carry a water bottle everywhere',
       'Set hourly reminders on your phone',
-      'Track in the GlowDermics water tracker',
+      'Track in the Velumi AI water tracker',
     ],
     color: ['#0F4C75', '#1B9AAA'],
     category: 'hydration',

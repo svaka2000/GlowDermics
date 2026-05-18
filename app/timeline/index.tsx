@@ -69,14 +69,14 @@ export default function Timeline() {
     if (!frames.length) return;
     const sign = overallDelta >= 0 ? '+' : '';
     const message = [
-      `My ${elapsedDays}-day skin transformation with GlowDermics 🌿`,
+      `My ${elapsedDays}-day skin transformation with Velumi AI 🌿`,
       '',
       `Started: ${oldest.score}/100`,
       `Now:     ${newest.score}/100  (${sign}${overallDelta} pts)`,
       '',
       `${frames.length} scans tracked`,
       '',
-      `#GlowDermics #SkinTransformation`,
+      `#Velumi AI #SkinTransformation`,
     ].join('\n');
     await Share.share({ message });
   };

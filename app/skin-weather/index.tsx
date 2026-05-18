@@ -227,7 +227,7 @@ export default function SkinWeather() {
         '',
         `Today's Tip: ${report.skinAdvice}`,
         '',
-        '— GlowDermics × TallowDermics',
+        '— Velumi AI × TallowDermics',
       ].join('\n'),
     });
   };

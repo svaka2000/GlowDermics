@@ -95,7 +95,7 @@ export default function Scan() {
       if (!permission?.granted) {
         const result = await requestPermission();
         if (!result.granted) {
-          Alert.alert('Camera Permission Needed', 'Go to Settings → GlowDermics → Camera and enable access, then try again.');
+          Alert.alert('Camera Permission Needed', 'Go to Settings → Velumi AI → Camera and enable access, then try again.');
           return;
         }
       }

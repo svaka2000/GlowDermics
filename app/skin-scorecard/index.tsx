@@ -139,7 +139,7 @@ export default function SkinScorecard() {
     const grade = getGradeFromScore(analysis.scores.overall, colors);
     const name = profile.name || 'I';
     const text = [
-      `🌿 GlowDermics Skin Scorecard`,
+      `🌿 Velumi AI Skin Scorecard`,
       ``,
       `${name}'s Skin Grade: ${grade.grade} (${grade.label})`,
       `Overall Score: ${analysis.scores.overall}/100`,
@@ -153,11 +153,11 @@ export default function SkinScorecard() {
       ``,
       `🔥 ${streak}-day streak`,
       ``,
-      `Track your skin journey with GlowDermics — AI-powered skincare that actually works.`,
+      `Track your skin journey with Velumi AI — AI-powered skincare that actually works.`,
     ].join('\n');
 
     try {
-      await Share.share({ message: text, title: 'My GlowDermics Skin Score' });
+      await Share.share({ message: text, title: 'My Velumi AI Skin Score' });
       setShared(true);
       setTimeout(() => setShared(false), 3000);
     } catch {}
@@ -439,7 +439,7 @@ export default function SkinScorecard() {
           <Pressable style={styles.communityCard} onPress={() => router.push('/community')}>
             <View style={{ flex: 1 }}>
               <Text style={styles.communityTitle}>See how you rank</Text>
-              <Text style={styles.communitySub}>Check your position in the GlowDermics leaderboard</Text>
+              <Text style={styles.communitySub}>Check your position in the Velumi AI leaderboard</Text>
             </View>
             <View style={styles.communityArrow}>
               <Ionicons name="trophy" size={20} color={colors.gold} />

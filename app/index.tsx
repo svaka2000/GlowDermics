@@ -276,7 +276,7 @@ export default function Index() {
         </View>
 
         <Animated.View style={nameStyle}>
-          <Text style={styles.appName}>GlowDermics</Text>
+          <Text style={styles.appName}>Velumi AI</Text>
         </Animated.View>
 
         <Animated.View style={taglineStyle}>

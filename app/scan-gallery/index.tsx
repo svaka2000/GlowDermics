@@ -53,7 +53,7 @@ export default function ScanGallery() {
     const latest = history[0];
     const delta = latest.overallScore - first.overallScore;
     const sign = delta > 0 ? '+' : '';
-    const message = `My skin journey with GlowDermics — ${history.length} scans tracked!\n\nFrom ${first.overallScore} → ${latest.overallScore} (${sign}${delta} points)\n\nTracking my skin health one scan at a time. 🌿\n#GlowDermics #Skincare #SkinHealth`;
+    const message = `My skin journey with Velumi AI — ${history.length} scans tracked!\n\nFrom ${first.overallScore} → ${latest.overallScore} (${sign}${delta} points)\n\nTracking my skin health one scan at a time. 🌿\n#Velumi AI #Skincare #SkinHealth`;
     await Share.share({ message });
   };
 

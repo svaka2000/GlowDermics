@@ -9,7 +9,7 @@ import { useColors } from '../../src/state/theme';
 const SECTIONS = [
   {
     title: '1. Information We Collect',
-    body: `GlowDermics collects only the data you provide directly within the app:
+    body: `Velumi AI collects only the data you provide directly within the app:
 
 • Skin photos taken for AI analysis (stored locally on your device)
 • Skin type, concerns, and goals you enter during onboarding
@@ -50,11 +50,11 @@ We do NOT:
 • Never leaves your device (except when sent to Groq for AI processing)
 • Is not backed up to our servers
 • Is deleted if you use the "Reset All Data" feature or uninstall the app
-• Is not accessible to GlowDermics or TallowDermics staff`,
+• Is not accessible to Velumi AI or TallowDermics staff`,
   },
   {
     title: '5. Children\'s Privacy',
-    body: `GlowDermics is not intended for users under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has used this app, please contact us and we will help them remove their data from their device.`,
+    body: `Velumi AI is not intended for users under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has used this app, please contact us and we will help them remove their data from their device.`,
   },
   {
     title: '6. Your Rights',
@@ -68,7 +68,7 @@ Since we don't store data on our servers, there is no account to delete or data 
   },
   {
     title: '7. Third-Party Services',
-    body: `GlowDermics integrates with:
+    body: `Velumi AI integrates with:
 
 • Groq AI (groq.com) — AI inference for skin analysis and coaching
 • Expo (expo.dev) — App development platform
@@ -77,11 +77,11 @@ TallowDermics (tallowdermics.com) — Referenced brand within the app. Visiting 
   },
   {
     title: '8. Changes to This Policy',
-    body: `We may update this Privacy Policy from time to time. We will notify you of significant changes through the app. Continued use of GlowDermics after changes constitutes your acceptance of the updated policy.`,
+    body: `We may update this Privacy Policy from time to time. We will notify you of significant changes through the app. Continued use of Velumi AI after changes constitutes your acceptance of the updated policy.`,
   },
   {
     title: '9. Contact',
-    body: `Questions about this Privacy Policy? Contact us through the GlowDermics support channel or via TallowDermics at tallowdermics.com.`,
+    body: `Questions about this Privacy Policy? Contact us through the Velumi AI support channel or via TallowDermics at tallowdermics.com.`,
   },
 ];
 
@@ -105,7 +105,7 @@ export default function Privacy() {
         <View style={styles.heroCard}>
           <Text style={styles.heroEmoji}>🔒</Text>
           <Text style={styles.heroTitle}>Your Privacy Matters</Text>
-          <Text style={styles.heroSub}>GlowDermics is designed privacy-first. Your skin data stays on your device.</Text>
+          <Text style={styles.heroSub}>Velumi AI is designed privacy-first. Your skin data stays on your device.</Text>
           <Text style={styles.heroDate}>Last updated: April 2026</Text>
         </View>
 

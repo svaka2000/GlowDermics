@@ -117,7 +117,7 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
       {
         name: 'Evaluation',
         dayRange: 'Days 8-21',
-        description: 'Note how skin looks and feels. Take weekly scans in GlowDermics to track objectively.',
+        description: 'Note how skin looks and feels. Take weekly scans in Velumi AI to track objectively.',
         allowed: ['Same 4 products from Week 1', 'One additional active IF essential (patch test first)'],
         notAllowed: ['Adding products "just to try"', 'Using facial tools excessively', 'Changing what\'s working'],
       },

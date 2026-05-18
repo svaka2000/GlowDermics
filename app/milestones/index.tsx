@@ -101,7 +101,7 @@ async function computeAchievements(): Promise<Achievement[]> {
       id: 'first_profile',
       emoji: '🌱',
       title: 'First Steps',
-      description: 'Created your GlowDermics profile',
+      description: 'Created your Velumi AI profile',
       unlocked: !!profile,
       category: 'scanning',
     },

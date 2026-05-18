@@ -37,7 +37,7 @@ export default function IdentityScreen() {
     try {
       await Share.share({
         title: 'My Skin Identity',
-        message: `I'm "${identity.persona}" on GlowDermics — Glow Score ${identity.glowScore}/100. ${identity.signature}`,
+        message: `I'm "${identity.persona}" on Velumi AI — Glow Score ${identity.glowScore}/100. ${identity.signature}`,
       });
     } catch {}
   };

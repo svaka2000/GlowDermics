@@ -118,7 +118,7 @@ export default function Settings() {
       router.replace('/(auth)/login' as any);
     };
     if (Platform.OS === 'web') {
-      if (window.confirm('Sign out of GlowDermics?')) await doLogout();
+      if (window.confirm('Sign out of Velumi AI?')) await doLogout();
     } else {
       Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
         { text: 'Cancel', style: 'cancel' },
@@ -315,7 +315,7 @@ export default function Settings() {
                 ? 'Follows your device setting. Toggle anytime.'
                 : preference === 'dark'
                 ? 'Warm marble inverted — night-friendly skincare reading.'
-                : 'Warm marble — the original GlowDermics palette.'}
+                : 'Warm marble — the original Velumi AI palette.'}
             </Text>
           </View>
         </View>
@@ -378,9 +378,9 @@ export default function Settings() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
           <View style={styles.card}>
-            <Row label="App" value="GlowDermics" />
+            <Row label="App" value="Velumi AI" />
             <Row label="Version" value="1.0.0" />
-            <Row label="Powered by" value="GlowDermics AI" />
+            <Row label="Powered by" value="Velumi AI AI" />
             <Row label="Brand" value="TallowDermics™" />
             <LinkRow icon="lock-closed-outline" label="Privacy Policy" onPress={() => router.push('/privacy')} last />
           </View>

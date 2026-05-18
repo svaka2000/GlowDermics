@@ -28,8 +28,8 @@ export function AffiliateDisclosure({ inline, firstParty }: AffiliateDisclosureP
   const styles = useMemo(() => makeStyles(colors), [colors]);
 
   const text = firstParty
-    ? 'TallowDermics is made by the team behind GlowDermics. Some links on this page are to our own products; others may earn us a commission. This never changes what we recommend.'
-    : 'GlowDermics may earn a commission when you buy through links on this page. This does not affect our recommendations.';
+    ? 'TallowDermics is made by the team behind Velumi AI. Some links on this page are to our own products; others may earn us a commission. This never changes what we recommend.'
+    : 'Velumi AI may earn a commission when you buy through links on this page. This does not affect our recommendations.';
 
   return (
     <View style={[inline ? styles.inline : styles.banner]}>

@@ -350,7 +350,7 @@ function Hero() {
         />
         <Ionicons name="diamond" size={28} color="#fff" />
       </Animated.View>
-      <Text style={styles.heroTitle}>Unlock GlowDermics Premium</Text>
+      <Text style={styles.heroTitle}>Unlock Velumi AI Premium</Text>
       <Text style={styles.heroSub}>
         Clinical-grade analysis, unlimited scans, and a coach trained on dermatology consensus.
       </Text>

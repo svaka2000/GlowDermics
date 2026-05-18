@@ -1,5 +1,5 @@
 /**
- * GlowDermics Design System v2
+ * Velumi AI Design System v2
  *
  * Single source of truth for typography, spacing, radii, shadows, and motion.
  * Pair with `colors.ts` for full design tokens.

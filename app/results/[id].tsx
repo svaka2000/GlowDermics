@@ -138,7 +138,7 @@ export default function Results() {
       `Skin Type: ${analysis.skinType ? analysis.skinType.charAt(0).toUpperCase() + analysis.skinType.slice(1) : '—'}`,
       analysis.strengths.length ? `Strengths: ${analysis.strengths.slice(0, 2).join(', ')}` : '',
       '',
-      'Powered by GlowDermics × TallowDermics',
+      'Powered by Velumi AI × TallowDermics',
       'tallowdermics.com',
     ].filter(Boolean).join('\n');
 

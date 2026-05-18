@@ -770,7 +770,7 @@ export default function Home() {
               </Text>
             </View>
             <Text style={styles.tipText}>"{dailyTip.tip}"</Text>
-            <Text style={styles.tipSource}>— GlowDermics Skin Science</Text>
+            <Text style={styles.tipSource}>— Velumi AI Skin Science</Text>
           </View>
         </View>
 

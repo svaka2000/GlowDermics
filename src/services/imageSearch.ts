@@ -69,7 +69,7 @@ export async function searchBeautyProducts(query: string, count = 5): Promise<Pr
 
   try {
     const url = `https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=${count}`;
-    const res = await fetch(url, { headers: { 'User-Agent': 'GlowDermics/1.0' } });
+    const res = await fetch(url, { headers: { 'User-Agent': 'Velumi AI/1.0' } });
     if (!res.ok) return [];
     const json = await res.json();
 
@@ -100,7 +100,7 @@ export async function searchFoodProducts(query: string, count = 5): Promise<Food
 
   try {
     const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=${count}`;
-    const res = await fetch(url, { headers: { 'User-Agent': 'GlowDermics/1.0' } });
+    const res = await fetch(url, { headers: { 'User-Agent': 'Velumi AI/1.0' } });
     if (!res.ok) return [];
     const json = await res.json();
 

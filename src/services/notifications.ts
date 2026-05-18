@@ -42,7 +42,7 @@ export async function scheduleRoutineReminder(hour = 8): Promise<void> {
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'GlowDermics',
+      title: 'Velumi AI',
       body: msg,
       sound: false,
     },

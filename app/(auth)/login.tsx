@@ -91,7 +91,7 @@ export default function Login() {
                 <Text style={styles.logoMark}>✦</Text>
               </LinearGradient>
             </View>
-            <Text style={styles.appName}>GlowDermics</Text>
+            <Text style={styles.appName}>Velumi AI</Text>
             <Text style={styles.tagline}>Your skin, decoded.</Text>
           </View>
 

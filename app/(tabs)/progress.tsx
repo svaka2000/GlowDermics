@@ -198,7 +198,7 @@ export default function Progress() {
           const handleShareTransformation = async () => {
             const sign = delta >= 0 ? '+' : '';
             await Share.share({
-              message: `My ${daysTracked}-day skin transformation with GlowDermics 🌿\n\nStarted: ${oldest.overallScore}/100\nNow: ${latest.overallScore}/100 (${sign}${delta} points)\n\n${history.length} scans · ${daysTracked} days tracked\n\n#GlowDermics #SkinTransformation #TallowDermics`,
+              message: `My ${daysTracked}-day skin transformation with Velumi AI 🌿\n\nStarted: ${oldest.overallScore}/100\nNow: ${latest.overallScore}/100 (${sign}${delta} points)\n\n${history.length} scans · ${daysTracked} days tracked\n\n#Velumi AI #SkinTransformation #TallowDermics`,
             });
           };
           return (
@@ -342,7 +342,7 @@ export default function Progress() {
             <View style={{ flex: 1 }}>
               <Text style={styles.streakMilestoneLabel}>MILESTONE UNLOCKED</Text>
               <Text style={styles.streakMilestoneTitle}>{routineStreak}-Day Streak!</Text>
-              <Text style={styles.streakMilestoneSub}>You're in the top {routineStreak >= 30 ? '5%' : '15%'} of GlowDermics users. Keep going.</Text>
+              <Text style={styles.streakMilestoneSub}>You're in the top {routineStreak >= 30 ? '5%' : '15%'} of Velumi AI users. Keep going.</Text>
             </View>
           </LinearGradient>
         )}
