@@ -50,7 +50,7 @@ We do NOT:
 • Never leaves your device (except when sent to Groq for AI processing)
 • Is not backed up to our servers
 • Is deleted if you use the "Reset All Data" feature or uninstall the app
-• Is not accessible to Velumi AI or TallowDermics staff`,
+• Is not accessible to Velumi AI staff`,
   },
   {
     title: '5. Children\'s Privacy',
@@ -71,9 +71,7 @@ Since we don't store data on our servers, there is no account to delete or data 
     body: `Velumi AI integrates with:
 
 • Groq AI (groq.com) — AI inference for skin analysis and coaching
-• Expo (expo.dev) — App development platform
-
-TallowDermics (tallowdermics.com) — Referenced brand within the app. Visiting their website is subject to TallowDermics' own Privacy Policy.`,
+• Expo (expo.dev) — App development platform`,
   },
   {
     title: '8. Changes to This Policy',
@@ -81,7 +79,7 @@ TallowDermics (tallowdermics.com) — Referenced brand within the app. Visiting 
   },
   {
     title: '9. Contact',
-    body: `Questions about this Privacy Policy? Contact us through the Velumi AI support channel or via TallowDermics at tallowdermics.com.`,
+    body: `Questions about this Privacy Policy? Contact us through the Velumi AI support channel.`,
   },
 ];
 

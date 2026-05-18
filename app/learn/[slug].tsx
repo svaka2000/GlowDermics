@@ -132,7 +132,7 @@ export default function ArticleDetail() {
             ))}
           </View>
 
-          {/* TallowDermics angle */}
+          {/* Skin-barrier angle */}
           {article.tallowDermicsAngle && (
             <View style={styles.tdCard}>
               <LinearGradient
@@ -140,7 +140,7 @@ export default function ArticleDetail() {
                 style={StyleSheet.absoluteFill}
               />
               <View style={styles.tdHeader}>
-                <Text style={styles.tdEyebrow}>TALLOWDERMICS</Text>
+                <Text style={styles.tdEyebrow}>SKIN BARRIER</Text>
               </View>
               <Text style={styles.tdBody}>{article.tallowDermicsAngle}</Text>
               <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>

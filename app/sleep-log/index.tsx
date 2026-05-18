@@ -342,7 +342,7 @@ export default function SleepLog() {
             { icon: '🌙', tip: 'Skin cell repair peaks between 11pm-3am. Missing this window slows collagen production.' },
             { icon: '💧', tip: 'Skin loses less water overnight — but only if you stay asleep 7+ hours. Short sleep = more transepidermal water loss.' },
             { icon: '😰', tip: 'Poor sleep spikes cortisol, increasing oil production and inflammation — directly causing breakouts.' },
-            { icon: '🌿', tip: 'Applying TallowDermics Balm before bed gives your skin barrier the lipids it needs during repair hours.' },
+            { icon: '🌿', tip: 'Applying a rich occlusive balm before bed gives your skin barrier the lipids it needs during repair hours.' },
             { icon: '🛏', tip: 'Silk pillowcases reduce friction and don\'t absorb your skincare products unlike cotton.' },
           ].map((item, i) => (
             <View key={i} style={styles.tipRow}>

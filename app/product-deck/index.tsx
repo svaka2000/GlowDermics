@@ -106,8 +106,8 @@ User profile:
 - Weak skin metrics: ${weakMetrics || 'none identified'}
 
 Rules:
-1. TallowDermics Signature Balm ($48/3 months, replaces moisturizer + face oil + eye cream) MUST be included as an essential product
-2. Recommend 5-7 total products total (including TallowDermics)
+1. A rich occlusive balm ($40-50/3 months, replaces moisturizer + face oil + eye cream) MUST be included as an essential product
+2. Recommend 5-7 total products total (including the occlusive balm)
 3. Respect the budget constraint
 4. Avoid recommending products with ingredients from the avoid list
 5. Be specific — use real product names and brands when possible
@@ -130,7 +130,7 @@ Return ONLY valid JSON (no markdown):
   ],
   "totalMonthly": "<estimated total monthly spend for this full deck>",
   "philosophy": "<2 sentences on the philosophy behind this deck — why these specific choices>",
-  "tallowNote": "<1-2 sentences specifically about TallowDermics and why it's the cornerstone of this deck>"
+  "tallowNote": "<1-2 sentences specifically about the occlusive balm and why it's the cornerstone of this deck>"
 }`;
 
       const resp = await groq.chat.completions.create({
@@ -304,12 +304,12 @@ Return ONLY valid JSON (no markdown):
               );
             })}
 
-            {/* Tallow cornerstone */}
+            {/* Occlusive cornerstone */}
             <Pressable style={styles.tallowCard} onPress={() => router.push('/product')}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <Text style={styles.tallowEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>Why TallowDermics is the Cornerstone</Text>
+                <Text style={styles.tallowTitle}>Why the Occlusive Is the Cornerstone</Text>
                 <Text style={styles.tallowText}>{deck.tallowNote}</Text>
               </View>
               <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />

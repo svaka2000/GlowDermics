@@ -271,7 +271,7 @@ export default function SkinScorecard() {
             {/* Card header */}
             <View style={styles.cardHeader}>
               <View>
-                <Text style={styles.cardBrand}>GLOWDERMICS</Text>
+                <Text style={styles.cardBrand}>VELUMI AI</Text>
                 <Text style={styles.cardTagline}>AI SKIN SCORECARD</Text>
               </View>
               <View style={styles.gradeBadge}>
@@ -344,7 +344,7 @@ export default function SkinScorecard() {
               <Text style={styles.cardDate}>
                 {new Date(analysis.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
               </Text>
-              <Text style={styles.cardDomain}>glowdermics.app</Text>
+              <Text style={styles.cardDomain}>velumi.ai</Text>
             </View>
           </View>
         </Animated.View>

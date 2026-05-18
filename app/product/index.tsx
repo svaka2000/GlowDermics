@@ -10,13 +10,13 @@ import { useColors } from '../../src/state/theme';
 const INGREDIENTS = [
   {
     number: '01',
-    name: 'Grass-Fed Beef Tallow',
+    name: 'Lipid-Rich Occlusive Base',
     emoji: '🥩',
     color: '#C8A070',
     tagline: 'The fatty acid profile your skin was built for',
     tags: ['BARRIER REPAIR', 'DEEP MOISTURE', 'VITAMINS A·D·E·K'],
-    science: "Tallow's fatty acid profile — stearic (28%), oleic (45%), palmitic (24%) — mirrors human sebum almost exactly. This is why it absorbs instead of sitting on the surface.",
-    why: "Conventional moisturizers use water as their base ingredient, which evaporates. Tallow doesn't evaporate — it integrates. Your skin biology hasn't changed in 10,000 years.",
+    science: "A sebum-similar occlusive's fatty acid profile — stearic (~28%), oleic (~45%), palmitic (~24%) — mirrors human sebum almost exactly. This is why it absorbs instead of sitting on the surface.",
+    why: "Conventional moisturizers use water as their base ingredient, which evaporates. A lipid-rich occlusive doesn't evaporate — it integrates. Your skin biology hasn't changed in 10,000 years.",
     facts: [
       'Oleic acid: 45% (matches human sebum)',
       'Stearic acid: 28% (skin-identical)',
@@ -105,7 +105,7 @@ export default function ProductShowcase() {
         {/* Hero */}
         <View style={styles.hero}>
           <LinearGradient colors={['rgba(196,98,45,0.2)', 'transparent']} style={styles.heroGlow} />
-          <Text style={styles.heroEyebrow}>TALLOWDERMICS™</Text>
+          <Text style={styles.heroEyebrow}>VELUMI AI</Text>
           <Text style={styles.heroTitle}>4 ingredients.{'\n'}Thousands of years{'\n'}of proof.</Text>
           <Text style={styles.heroSub}>
             Every ingredient chosen because your skin biology recognizes it — not because it sounds premium on a label.
@@ -180,7 +180,7 @@ export default function ProductShowcase() {
               <Text style={[styles.compCell, styles.compLabelCell]} />
               <View style={styles.compTDCol}>
                 <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.compTDHeader}>
-                  <Text style={styles.compTDHeaderText}>TallowDermics</Text>
+                  <Text style={styles.compTDHeaderText}>Velumi AI</Text>
                 </LinearGradient>
               </View>
               <Text style={[styles.compCell, styles.compTypicalHeader]}>Typical</Text>
@@ -198,18 +198,18 @@ export default function ProductShowcase() {
         {/* Philosophy */}
         <View style={styles.philosophyCard}>
           <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-          <Text style={styles.philosophyEyebrow}>THE TALLOWDERMICS PHILOSOPHY</Text>
+          <Text style={styles.philosophyEyebrow}>THE VELUMI AI PHILOSOPHY</Text>
           <Text style={styles.philosophyText}>
             "Modern skincare invented a problem — and then sold you the solution. Your skin doesn't need 30 ingredients. It needs the 4 it evolved with."
           </Text>
-          <Text style={styles.philosophyAttrib}>— TallowDermics</Text>
+          <Text style={styles.philosophyAttrib}>— Velumi AI</Text>
         </View>
 
         {/* CTA */}
         <Pressable style={styles.ctaBtn} onPress={() => router.push('/(tabs)/coach')}>
           <LinearGradient colors={[colors.primaryLight, colors.primary]} style={styles.ctaGrad}>
             <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.white} />
-            <Text style={styles.ctaText}>Ask Derm about these ingredients →</Text>
+            <Text style={styles.ctaText}>Ask Vera about these ingredients →</Text>
           </LinearGradient>
         </Pressable>
 

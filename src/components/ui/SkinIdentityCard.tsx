@@ -56,7 +56,7 @@ export function SkinIdentityCard({ identity }: Props) {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.heroTop}>
-          <Text style={styles.heroBrand}>GLOWDERMICS</Text>
+          <Text style={styles.heroBrand}>VELUMI AI</Text>
           <View style={styles.elementPill}>
             <Ionicons name={ELEMENT_ICON[identity.element]} size={11} color="#fff" />
             <Text style={styles.elementText}>{identity.element.toUpperCase()}</Text>
