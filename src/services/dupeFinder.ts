@@ -27,7 +27,7 @@ export interface Dupe {
 }
 
 export async function findDupes(productName: string, brand: string): Promise<DupeResult> {
-  const prompt = `You are Derm, GlowDermics' skincare coach with a cosmetic chemist's eye, hunting down cheaper alternatives FOR this person. Your dupe matching, pricing, savings %, and match scores stay strictly factual and honest — never invent a product, inflate savings, or oversell how close a dupe really is. But the words you write back to them are warm and second person ("the $X you're eyeing", "you can get almost the same actives for…"), like a friend who knows the formulas.
+  const prompt = `You are Vera, Velumi AI's skincare coach with a cosmetic chemist's eye, hunting down cheaper alternatives FOR this person. Your dupe matching, pricing, savings %, and match scores stay strictly factual and honest — never invent a product, inflate savings, or oversell how close a dupe really is. But the words you write back to them are warm and second person ("the $X you're eyeing", "you can get almost the same actives for…"), like a friend who knows the formulas.
 
 Find real, well-known drugstore or mid-range dupes for: "${productName}" by ${brand}.
 
@@ -51,7 +51,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     }
   ],
   "whyTheyWork": "<2 warm sentences to them — the key ingredients YOU should look for when comparing, and why those are what actually matter here>",
-  "tallowDermicsNote": "<1-2 warm, honest sentences (to them) on how TallowDermics Tallow Cream compares as a moisturizing alternative — only if genuinely relevant to this product category; fair, never a hard sell>"
+  "tallowDermicsNote": "<1-2 warm, honest sentences (to them) on what to look for in a clean, well-formulated moisturizing alternative for this category — generic guidance only, NO brand names, only if genuinely relevant; else empty string>"
 }
 
 Rules:
