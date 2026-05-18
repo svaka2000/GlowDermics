@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import {
   GlassHero, Card, Badge, Button, Section, StreakRing,
 } from '../../src/components/ui';
@@ -90,6 +91,18 @@ export default function StreakScreen() {
         </GlassHero>
 
         <View style={styles.content}>
+          <Pressable
+            style={styles.msCta}
+            onPress={() => router.push('/milestones-celebrate' as any)}
+            accessibilityRole="button"
+            accessibilityLabel="View your milestones"
+          >
+            <View style={styles.msCtaText}>
+              <Text style={styles.msCtaEyebrow}>YOUR STREAK LADDER</Text>
+              <Text style={styles.msCtaTitle}>Milestones</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+          </Pressable>
           {/* Hero ring card */}
           <Card variant="elevated" padding={18} style={{ alignItems: 'center', marginBottom: 14 }}>
             <View style={{ marginBottom: 14 }}>
@@ -390,6 +403,10 @@ function makeStyles(c: Palette) {
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.78)', marginTop: 2, fontWeight: '600' },
 
   content: { paddingHorizontal: 16 },
+  msCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16, marginBottom: 14 },
+  msCtaText: { flex: 1, gap: 3 },
+  msCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  msCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
 
   riskBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
