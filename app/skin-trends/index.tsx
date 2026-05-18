@@ -9,6 +9,7 @@ import { useColors } from '../../src/state/theme';
 import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { deriveSkinTrends, type SkinTrendsReport, type SkinTrendDim } from '../../src/engine/SkinTrendsEngine';
+import { deriveSkinInsights, type SkinInsightsReport } from '../../src/engine/SkinInsightsEngine';
 
 const SPARK_W = Math.max(120, Math.round(Dimensions.get('window').width) - 96);
 const SPARK_H = 44;
@@ -57,10 +58,36 @@ const DimCard = memo(function DimCard({ dim, c, styles }: { dim: SkinTrendDim; c
   );
 });
 
+const SynthesisCard = memo(function SynthesisCard({ insights, c, styles }: { insights: SkinInsightsReport; c: Palette; styles: ReturnType<typeof makeStyles> }) {
+  const multi = insights.window.scans >= 2;
+  const showChips = multi && (!!insights.topMover || (!!insights.topConcern && insights.topConcern.delta < 0));
+  return (
+    <View style={styles.synthCard}>
+      <Text style={styles.synthOverline}>WHAT&apos;S MOVING</Text>
+      <Text style={styles.synthHeadline}>{insights.headline}</Text>
+      {showChips ? (
+        <View style={styles.synthChips}>
+          {insights.topMover ? (
+            <View style={[styles.synthChip, { borderColor: c.scoreGood }]}>
+              <Text style={[styles.synthChipText, { color: c.scoreGood }]}>{insights.topMover.label} +{insights.topMover.delta}</Text>
+            </View>
+          ) : null}
+          {insights.topConcern && insights.topConcern.delta < 0 ? (
+            <View style={[styles.synthChip, { borderColor: c.gold }]}>
+              <Text style={[styles.synthChipText, { color: c.gold }]}>Focus · {insights.topConcern.label} {insights.topConcern.delta}</Text>
+            </View>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
+});
+
 export default function SkinTrendsScreen() {
   const c = useColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const [report, setReport] = useState<SkinTrendsReport | null>(null);
+  const [insights, setInsights] = useState<SkinInsightsReport | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -68,6 +95,8 @@ export default function SkinTrendsScreen() {
       Storage.getAnalyses().then((list) => {
         const result = deriveSkinTrends(Array.isArray(list) ? list : [], Date.now());
         if (alive) setReport(result);
+        const ins = deriveSkinInsights(Array.isArray(list) ? list : []);
+        if (alive) setInsights(ins);
       });
       return () => {
         alive = false;
@@ -110,6 +139,7 @@ export default function SkinTrendsScreen() {
           </View>
         ) : (
           <>
+            {insights ? <SynthesisCard insights={insights} c={c} styles={styles} /> : null}
             <Text style={styles.eyebrow}>YOUR TRENDS</Text>
             <Text style={styles.windowLine}>
               {report.window.scans} {report.window.scans === 1 ? 'scan' : 'scans'}
@@ -144,6 +174,12 @@ function makeStyles(c: Palette) {
     content: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40 },
     eyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase', marginBottom: 8 },
     windowLine: { fontFamily: fonts.body, fontSize: 13, color: c.textMuted, letterSpacing: 0.2, marginBottom: 18 },
+    synthCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 18 },
+    synthOverline: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase', marginBottom: 8 },
+    synthHeadline: { fontFamily: fonts.display, fontSize: 19, fontWeight: '600', color: c.textPrimary, lineHeight: 26, letterSpacing: 0.2 },
+    synthChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
+    synthChip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+    synthChipText: { fontFamily: fonts.body, fontSize: 12, fontWeight: '700', letterSpacing: 0.3 },
     card: {
       backgroundColor: c.bgCard,
       borderRadius: 16,
