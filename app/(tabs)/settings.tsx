@@ -194,7 +194,7 @@ export default function Settings() {
           </View>
         ) : (
           <Pressable style={styles.premiumCard} onPress={() => setShowPremiumGate(true)}>
-            <LinearGradient colors={['#F0C94A', '#D4A96A', '#C4622D']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            <LinearGradient colors={[colors.goldLight, colors.gold, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
             <View style={styles.premiumCardIcon}>
               <Ionicons name="star" size={18} color="#fff" />
             </View>

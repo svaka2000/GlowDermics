@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -486,8 +487,8 @@ function makeStyles(c: Palette) {
 
   headerGrad: { borderRadius: 0, paddingBottom: 16 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: 16, paddingBottom: 12 },
-  headerEyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 2 },
-  headerTitle: { fontSize: 28, fontWeight: '900', color: c.textPrimary },
+  headerEyebrow: { fontSize: 10, fontWeight: '600', letterSpacing: 2.4, color: c.primary, marginBottom: 2, textTransform: 'uppercase', fontFamily: fonts.body },
+  headerTitle: { fontSize: 28, fontWeight: '600', color: c.textPrimary, fontFamily: fonts.display },
   shareBtn: { borderRadius: 14, overflow: 'hidden' },
   shareBtnGrad: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9 },
   shareBtnText: { fontSize: 12, fontWeight: '700', color: '#fff' },
@@ -503,8 +504,8 @@ function makeStyles(c: Palette) {
     borderWidth: 1, borderColor: c.borderStrong,
     padding: 16,
   },
-  myRankLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, color: c.primary, marginBottom: 4 },
-  myRankNum: { fontSize: 32, fontWeight: '900', color: c.textPrimary },
+  myRankLabel: { fontSize: 9, fontWeight: '600', letterSpacing: 2, color: c.primary, marginBottom: 4, textTransform: 'uppercase', fontFamily: fonts.body },
+  myRankNum: { fontSize: 32, fontWeight: '600', color: c.textPrimary, fontFamily: fonts.display },
   myRankSub: { fontSize: 13, color: c.textSecondary, fontWeight: '500' },
   myRankDetail: { fontSize: 12, color: c.textMuted, marginTop: 2 },
 
@@ -521,8 +522,8 @@ function makeStyles(c: Palette) {
 
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
-  sectionSub: { fontSize: 11, color: c.textMuted },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
+  sectionSub: { fontSize: 11, color: c.textMuted, fontFamily: fonts.body },
 
   card: {
     backgroundColor: c.bgCard, borderRadius: 18,
@@ -563,9 +564,9 @@ function makeStyles(c: Palette) {
   },
   challengeTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
   challengeEmoji: { fontSize: 28 },
-  challengeTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  challengeTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
   challengeStats: { fontSize: 11, color: c.textMuted, marginTop: 3 },
-  hotBadge: { backgroundColor: 'rgba(196,98,45,0.15)', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  hotBadge: { backgroundColor: c.primary + '15', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   hotBadgeText: { fontSize: 8, fontWeight: '800', color: c.primary },
   challengeBarWrap: { height: 6, backgroundColor: c.bgElevated, borderRadius: 3, marginBottom: 10, overflow: 'hidden' },
   challengeBarFill: { height: 6, backgroundColor: c.primary, borderRadius: 3 },
@@ -582,11 +583,11 @@ function makeStyles(c: Palette) {
     padding: 16, marginBottom: 12,
   },
   tipTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  tipSkinBadge: { backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4 },
+  tipSkinBadge: { backgroundColor: c.primary + '14', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4 },
   tipSkinText: { fontSize: 10, fontWeight: '700', color: c.primary },
   tipLikes: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   tipLikesText: { fontSize: 12, color: c.textSecondary, fontWeight: '600' },
-  tipText: { fontSize: 14, color: c.textPrimary, lineHeight: 22, fontStyle: 'italic', marginBottom: 12 },
+  tipText: { fontSize: 14, color: c.textPrimary, lineHeight: 22, fontStyle: 'italic', marginBottom: 12, fontFamily: fonts.body },
   tipFooter: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   tipAuthorDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: c.primaryLight, alignItems: 'center', justifyContent: 'center' },
   tipAuthorDotText: { fontSize: 11, fontWeight: '700', color: '#fff' },
@@ -609,7 +610,7 @@ function makeStyles(c: Palette) {
   winnerBadge: { fontSize: 22 },
   winnerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   winnerAvatarText: { fontSize: 17, fontWeight: '800', color: '#fff' },
-  winnerName: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  winnerName: { fontSize: 15, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
   winnerCity: { fontSize: 11, color: c.textMuted, marginBottom: 2 },
   winnerAchievement: { fontSize: 12, color: c.primary, fontWeight: '600' },
 
@@ -618,8 +619,8 @@ function makeStyles(c: Palette) {
     borderWidth: 1, borderColor: c.borderStrong,
     padding: 20, marginTop: 8,
   },
-  couldYouTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary, marginBottom: 8 },
-  couldYouSub: { fontSize: 13, color: c.textSecondary, lineHeight: 20, marginBottom: 14 },
+  couldYouTitle: { fontSize: 16, fontWeight: '800', color: c.textPrimary, marginBottom: 8, fontFamily: fonts.display },
+  couldYouSub: { fontSize: 13, color: c.textSecondary, lineHeight: 20, marginBottom: 14, fontFamily: fonts.body },
   couldYouBtn: { backgroundColor: c.primary, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
   couldYouBtnText: { fontSize: 13, fontWeight: '700', color: '#fff' },
 
@@ -627,7 +628,7 @@ function makeStyles(c: Palette) {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     borderRadius: 20, overflow: 'hidden', padding: 20, marginBottom: 16,
   },
-  inviteTitle: { fontSize: 16, fontWeight: '800', color: '#fff', marginBottom: 4 },
+  inviteTitle: { fontSize: 16, fontWeight: '800', color: '#fff', marginBottom: 4, fontFamily: fonts.display },
   inviteSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
   inviteIcon: {
     width: 48, height: 48, borderRadius: 24,
