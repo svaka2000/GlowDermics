@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { SkinAnalysis } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -493,7 +494,7 @@ function makeStyles(c: Palette) {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 14,
   },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+  headerTitle: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.3 },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   shareBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(196,98,45,0.12)', borderRadius: 20 },
   scroll: { paddingBottom: 40 },
@@ -510,9 +511,9 @@ function makeStyles(c: Palette) {
   },
   heroMetaTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   heroLeft: { flex: 1 },
-  heroBadge: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 4 },
-  heroDate: { fontSize: 12, color: c.textMuted },
-  heroInsights: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
+  heroBadge: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, marginBottom: 6, textTransform: 'uppercase' },
+  heroDate: { fontFamily: fonts.body, fontSize: 12, color: c.textMuted, letterSpacing: 0.2 },
+  heroInsights: { fontFamily: fonts.body, fontSize: 14, color: c.textSecondary, lineHeight: 22, letterSpacing: 0.1 },
   row: { flexDirection: 'row', gap: 12, marginHorizontal: 16, marginBottom: 16 },
   halfCard: {
     flex: 1, backgroundColor: c.bgCard, borderRadius: 16,
@@ -531,7 +532,7 @@ function makeStyles(c: Palette) {
     marginHorizontal: 16, marginBottom: 16, backgroundColor: c.bgCard,
     borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 20,
   },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: c.textPrimary, marginBottom: 16 },
+  cardTitle: { fontFamily: fonts.display, fontSize: 19, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2, marginBottom: 16 },
   deltaBanner: {
     marginTop: 12, backgroundColor: c.bgElevated, borderRadius: 12,
     padding: 10, gap: 6, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
