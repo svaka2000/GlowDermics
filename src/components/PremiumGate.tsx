@@ -355,6 +355,12 @@ function Hero() {
       <Text style={styles.heroSub}>
         Clinical-grade analysis, unlimited scans, and a coach trained on dermatology consensus.
       </Text>
+      <View style={styles.whyWrap}>
+        <Text style={styles.whyEyebrow}>WHY UPGRADE</Text>
+        <View style={styles.whyRow}><Ionicons name="infinite" size={15} color={Colors.gold} /><Text style={styles.whyText}>Unlimited clinical-grade scans — track every change</Text></View>
+        <View style={styles.whyRow}><Ionicons name="git-compare-outline" size={15} color={Colors.gold} /><Text style={styles.whyText}>A routine that adapts to your skin every week</Text></View>
+        <View style={styles.whyRow}><Ionicons name="analytics-outline" size={15} color={Colors.gold} /><Text style={styles.whyText}>Full 16-dimension trends + before / after</Text></View>
+      </View>
     </View>
   );
 }
@@ -651,6 +657,10 @@ const styles = StyleSheet.create({
     paddingVertical: 17,
   },
   ctaText: { fontFamily: fonts.body, fontSize: 15, fontWeight: '700', color: '#fff', letterSpacing: 0.6 },
+  whyWrap: { marginTop: 16, gap: 8, alignSelf: 'stretch', paddingHorizontal: 8 },
+  whyEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: Colors.gold, textTransform: 'uppercase', textAlign: 'center', marginBottom: 2 },
+  whyRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  whyText: { fontFamily: fonts.body, fontSize: 13, color: Colors.textSecondary, lineHeight: 19, letterSpacing: 0.1, flex: 1 },
 
   dismissBtn: { alignItems: 'center', paddingVertical: 10, marginTop: 4 },
   dismissText: { fontSize: 13, color: Colors.textMuted, fontWeight: '600' },
