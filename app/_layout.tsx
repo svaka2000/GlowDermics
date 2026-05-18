@@ -89,6 +89,7 @@ function RootContent() {
           <Stack.Screen name="first-scan/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-trends/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="before-after/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="invite/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="privacy/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="stress-log/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-iq/index" options={{ animation: 'slide_from_right' }} />
