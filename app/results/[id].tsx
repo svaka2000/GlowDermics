@@ -138,8 +138,8 @@ export default function Results() {
       `Skin Type: ${analysis.skinType ? analysis.skinType.charAt(0).toUpperCase() + analysis.skinType.slice(1) : '—'}`,
       analysis.strengths.length ? `Strengths: ${analysis.strengths.slice(0, 2).join(', ')}` : '',
       '',
-      'Powered by Velumi AI × TallowDermics',
-      'tallowdermics.com',
+      'Powered by Velumi AI',
+      'velumi.ai',
     ].filter(Boolean).join('\n');
 
     await Share.share({ message });
@@ -454,7 +454,7 @@ export default function Results() {
                         {rec.product.isTallowDermics && (
                           <View style={styles.tdBadge}>
                             <LinearGradient colors={[colors.primaryLight, colors.primary]} style={StyleSheet.absoluteFill} />
-                            <Text style={styles.tdBadgeText}>✦ TallowDermics</Text>
+                            <Text style={styles.tdBadgeText}>✦ Velumi Pick</Text>
                           </View>
                         )}
                         <Text style={styles.productName}>{rec.product.name}</Text>
@@ -463,9 +463,9 @@ export default function Results() {
                         {rec.product.isTallowDermics && (
                           <Pressable
                             style={styles.shopBtn}
-                            onPress={() => Linking.openURL('https://tallowdermics.com')}
+                            onPress={() => Linking.openURL('https://velumi.ai')}
                           >
-                            <Text style={styles.shopBtnText}>Shop TallowDermics →</Text>
+                            <Text style={styles.shopBtnText}>Shop Velumi AI →</Text>
                           </Pressable>
                         )}
                       </View>

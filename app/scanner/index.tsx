@@ -309,10 +309,10 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
           </View>
         </View>
 
-        {/* TallowDermics comparison */}
+        {/* Ingredient-philosophy comparison */}
         <View style={styles.tdCompareCard}>
           <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-          <Text style={styles.tdCompareEyebrow}>TALLOWDERMICS COMPARISON</Text>
+          <Text style={styles.tdCompareEyebrow}>INGREDIENT PHILOSOPHY</Text>
           <Text style={styles.tdCompareText}>{report.tallowDermicsComparison}</Text>
         </View>
 

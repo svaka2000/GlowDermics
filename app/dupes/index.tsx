@@ -236,20 +236,20 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
           </View>
         ))}
 
-        {/* TallowDermics note */}
+        {/* Skin-barrier note */}
         {result.tallowDermicsNote && (
           <View style={styles.tdNote}>
             <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.04)']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.tdNoteEyebrow}>TALLOWDERMICS PERSPECTIVE</Text>
+            <Text style={styles.tdNoteEyebrow}>VELUMI AI PERSPECTIVE</Text>
             <Text style={styles.tdNoteText}>{result.tallowDermicsNote}</Text>
             <View style={{ marginTop: 12 }}>
               <OutboundLink
-                productKey="tallowdermics-signature-balm"
+                productKey="cerave-moisturizing-cream"
                 context="dupes"
-                label="Shop the TallowDermics Balm"
+                label="Shop a clean moisturizer"
               />
               <View style={{ marginTop: 8 }}>
-                <AffiliateDisclosure inline firstParty />
+                <AffiliateDisclosure inline />
               </View>
             </View>
           </View>
