@@ -368,7 +368,7 @@ function PageWelcome({
         </Animated.View>
 
         <Animated.View style={headStyle}>
-          <Text style={styles.eyebrow}>WELCOME TO GLOWDERMICS</Text>
+          <Text style={styles.eyebrow}>WELCOME TO VELUMI AI</Text>
           <Text style={styles.heading}>Your skin,{'\n'}decoded.</Text>
         </Animated.View>
 
@@ -570,7 +570,7 @@ function PageCoachAndAge({ isActive, screenW }: { isActive: boolean; screenW: nu
             <Ionicons name="sparkles" size={14} color={Colors.white} />
           </View>
           <View style={styles.bubbleBody}>
-            <Text style={styles.bubbleSpeaker}>Derm</Text>
+            <Text style={styles.bubbleSpeaker}>Vera</Text>
             <Text style={styles.bubbleText}>
               Your hydration is at 68 — bumping it 10pts with HA + ceramides should lift
               radiance and pore visibility too. Want a routine?

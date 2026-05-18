@@ -283,7 +283,7 @@ export default function Index() {
           <Text style={styles.tagline}>Your skin, decoded.</Text>
         </Animated.View>
 
-        <Animated.Text style={[styles.brand, brandStyle]}>By TallowDermics™</Animated.Text>
+        <Animated.Text style={[styles.brand, brandStyle]}>AI-powered skin analysis</Animated.Text>
       </View>
 
       <Animated.View style={[styles.barWrap, barWrapStyle]}>

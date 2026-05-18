@@ -229,12 +229,12 @@ export default function Routine() {
           </View>
         )}
 
-        {/* TallowDermics tip */}
+        {/* Routine tip */}
         <View style={styles.tipCard}>
           <LinearGradient colors={['rgba(196,98,45,0.12)', 'rgba(196,98,45,0.04)']} style={styles.tipGrad}>
-            <Text style={styles.tipEyebrow}>TALLOWDERMICS TIP</Text>
+            <Text style={styles.tipEyebrow}>ROUTINE TIP</Text>
             <Text style={styles.tipText}>
-              Apply TallowDermics Tallow Cream as your moisturizing step — morning and evening. Its oleic acid profile absorbs deeply without clogging pores.
+              Apply your moisturizer as the final hydrating step — morning and evening. Choose an emollient that absorbs without leaving a heavy, pore-clogging film.
             </Text>
           </LinearGradient>
         </View>

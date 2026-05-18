@@ -46,14 +46,14 @@ async function setWaterToday(glasses: number): Promise<void> {
 
 const SKIN_TIPS = [
   { tip: 'Less is more. A 2-step routine done consistently beats a 10-step routine done once a week.', tag: 'ROUTINE' },
-  { tip: "Your skin barrier needs fat, not water. That's why tallow outperforms every water-based moisturizer.", tag: 'SCIENCE' },
+  { tip: 'Your skin barrier is built on lipids, not water — occlusives and emollients lock moisture in where humectants alone cannot.', tag: 'SCIENCE' },
   { tip: 'SPF is the only anti-aging ingredient with decades of clinical proof behind it. Use it daily.', tag: 'PROTECTION' },
   { tip: 'Changing products too often is one of the top causes of sensitive skin. Give products 4-6 weeks.', tag: 'PATIENCE' },
   { tip: 'Dehydrated skin produces more oil to compensate. If you have oily skin, you might just need more moisture.', tag: 'HYDRATION' },
   { tip: "Your skin renews itself every 28 days. That's how long it takes to actually see results from a new product.", tag: 'TIMELINE' },
   { tip: 'Manuka honey is antibacterial without stripping your microbiome. Regular honey lacks the MGO compound.', tag: 'INGREDIENTS' },
   { tip: 'Pillowcases harbour bacteria and oils. Change yours every 3-4 days for clearer skin — overnight.', tag: 'LIFESTYLE' },
-  { tip: "Tallow's oleic acid content (45%) nearly matches human sebum. It absorbs, not just sits.", tag: 'SCIENCE' },
+  { tip: "Oleic-acid-rich facial oils absorb readily — their fatty-acid profile is close to your skin's own sebum.", tag: 'SCIENCE' },
   { tip: 'The longer an ingredient list, the more chances for irritation. Minimal formulas win long-term.', tag: 'FORMULATION' },
 ];
 
@@ -158,7 +158,7 @@ export default function Home() {
     try {
       const CHALLENGE_KEY = 'gd_active_challenge';
       const CHALLENGES_MAP: Record<string, { title: string; emoji: string; duration: number }> = {
-        'tallow-30': { title: '30-Day Tallow Switch', emoji: '🌿', duration: 30 },
+        'tallow-30': { title: '30-Day Barrier Reset', emoji: '🌿', duration: 30 },
         'full-routine-21': { title: '21-Day Routine Reset', emoji: '🌅', duration: 21 },
         'hydration-14': { title: '14-Day Glow Hydration', emoji: '💧', duration: 14 },
         'minimal-7': { title: '7-Day Minimal Routine', emoji: '✨', duration: 7 },
@@ -790,8 +790,8 @@ export default function Home() {
 
         {/* Brand strip */}
         <View style={styles.brandStrip}>
-          <Text style={styles.brandEyebrow}>POWERED BY TALLOWDERMICS SCIENCE</Text>
-          <Text style={styles.brandTagline}>4 ingredients. Ancestral wisdom. Zero synthetic fillers.</Text>
+          <Text style={styles.brandEyebrow}>POWERED BY VELUMI AI</Text>
+          <Text style={styles.brandTagline}>AI skin analysis. Dermatology-grounded. Personalized to you.</Text>
         </View>
 
         <View style={{ height: 100 }} />

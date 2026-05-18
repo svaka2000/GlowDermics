@@ -380,19 +380,19 @@ export default function Settings() {
           <View style={styles.card}>
             <Row label="App" value="Velumi AI" />
             <Row label="Version" value="1.0.0" />
-            <Row label="Powered by" value="Velumi AI AI" />
-            <Row label="Brand" value="TallowDermics™" />
+            <Row label="Powered by" value="Velumi AI" />
+            <Row label="Brand" value="Velumi AI" />
             <LinkRow icon="lock-closed-outline" label="Privacy Policy" onPress={() => router.push('/privacy')} last />
           </View>
         </View>
 
         {/* Links */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>TallowDermics</Text>
+          <Text style={styles.sectionTitle}>Velumi AI</Text>
           <View style={styles.card}>
-            <LinkRow icon="globe-outline" label="Visit tallowdermics.com" onPress={() => {
-              if (Platform.OS === 'web') window.open('https://tallowdermics.com', '_blank');
-              else Linking.openURL('https://tallowdermics.com');
+            <LinkRow icon="globe-outline" label="Visit velumi.ai" onPress={() => {
+              if (Platform.OS === 'web') window.open('https://velumi.ai', '_blank');
+              else Linking.openURL('https://velumi.ai');
             }} />
             <LinkRow icon="leaf-outline" label="The Formula — 4 Ingredients" onPress={() => router.push('/product')} />
             <LinkRow icon="book-outline" label="The Journal" onPress={() => router.push('/journal')} last />
@@ -469,9 +469,9 @@ export default function Settings() {
             <LinkRow icon="fitness-outline" label="Supplement Guide" onPress={() => router.push('/supplements')} />
             <LinkRow icon="hand-left-outline" label="Guided Facial" onPress={() => router.push('/guided-facial')} />
             <LinkRow icon="partly-sunny-outline" label="Skin Weather Report" onPress={() => router.push('/skin-weather')} />
-            <LinkRow icon="chatbubble-ellipses-outline" label="Glow Coach — AI Chat" onPress={() => router.push('/coach-chat')} />
+            <LinkRow icon="chatbubble-ellipses-outline" label="Vera — AI Chat" onPress={() => router.push('/coach-chat')} />
             <LinkRow icon="water-outline" label="Gua Sha Guide" onPress={() => router.push('/gua-sha')} />
-            <LinkRow icon="flask-outline" label="DIY Tallow Recipes" onPress={() => router.push('/diy-recipes')} />
+            <LinkRow icon="flask-outline" label="DIY Skincare Recipes" onPress={() => router.push('/diy-recipes')} />
             <LinkRow icon="book-outline" label="Skin Glossary" onPress={() => router.push('/glossary')} />
             <LinkRow icon="trophy-outline" label="Baumann Skin Type Test" onPress={() => router.push('/baumann-test')} />
             <LinkRow icon="document-text-outline" label="Monthly Skin Report" onPress={() => router.push('/skin-report')} />
@@ -480,7 +480,7 @@ export default function Settings() {
             <LinkRow icon="restaurant-outline" label="Face Food Guide" onPress={() => router.push('/face-food')} />
             <LinkRow icon="sync-outline" label="Active Rotation Schedule" onPress={() => router.push('/active-rotation')} />
             <LinkRow icon="search-outline" label="Label Reading Guide" onPress={() => router.push('/label-guide')} />
-            <LinkRow icon="flask-outline" label="The Science of Tallow" onPress={() => router.push('/tallow-science')} />
+            <LinkRow icon="flask-outline" label="The Science of Skin Barrier" onPress={() => router.push('/tallow-science')} />
             <LinkRow icon="leaf-outline" label="Minimal Routine Builder" onPress={() => router.push('/minimal-routine')} />
             <LinkRow icon="water-outline" label="Skin Detox Protocols" onPress={() => router.push('/skin-detox')} />
             <LinkRow icon="radio-button-off-outline" label="Pore Guide" onPress={() => router.push('/pore-guide')} />
@@ -564,24 +564,24 @@ export default function Settings() {
           )}
         </View>
 
-        {/* TallowDermics promo */}
+        {/* Velumi AI promo */}
         <Pressable
           style={styles.tdPromoCard}
           onPress={() => {
             if (Platform.OS === 'web') {
-              window.open('https://tallowdermics.com', '_blank');
+              window.open('https://velumi.ai', '_blank');
             } else {
               const { Linking } = require('react-native');
-              Linking.openURL('https://tallowdermics.com');
+              Linking.openURL('https://velumi.ai');
             }
           }}
         >
           <View style={styles.tdPromoLeft}>
-            <Text style={styles.tdPromoEyebrow}>MADE BY THE SAME TEAM</Text>
-            <Text style={styles.tdPromoHeading}>TallowDermics</Text>
-            <Text style={styles.tdPromoSub}>Ancestral skincare. Grass-fed tallow, five clean ingredients. The product that inspired this app.</Text>
+            <Text style={styles.tdPromoEyebrow}>AI SKINCARE, PERSONALIZED</Text>
+            <Text style={styles.tdPromoHeading}>Velumi AI</Text>
+            <Text style={styles.tdPromoSub}>Your AI skin coach — personalized analysis, routines, and progress tracking, grounded in dermatology.</Text>
             <View style={styles.tdPromoBtn}>
-              <Text style={styles.tdPromoBtnText}>Shop the Balm</Text>
+              <Text style={styles.tdPromoBtnText}>Visit velumi.ai</Text>
               <Ionicons name="arrow-forward" size={12} color="#C4622D" />
             </View>
           </View>

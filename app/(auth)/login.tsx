@@ -185,7 +185,7 @@ export default function Login() {
           </Pressable>
 
           {/* Brand note */}
-          <Text style={styles.brandNote}>By TallowDermics™ · Science-backed ancestral skincare</Text>
+          <Text style={styles.brandNote}>Velumi AI · AI-powered, dermatology-grounded skincare</Text>
         </SafeAreaView>
       </ScrollView>
     </KeyboardAvoidingView>

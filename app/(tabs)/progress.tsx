@@ -198,7 +198,7 @@ export default function Progress() {
           const handleShareTransformation = async () => {
             const sign = delta >= 0 ? '+' : '';
             await Share.share({
-              message: `My ${daysTracked}-day skin transformation with Velumi AI 🌿\n\nStarted: ${oldest.overallScore}/100\nNow: ${latest.overallScore}/100 (${sign}${delta} points)\n\n${history.length} scans · ${daysTracked} days tracked\n\n#Velumi AI #SkinTransformation #TallowDermics`,
+              message: `My ${daysTracked}-day skin transformation with Velumi AI 🌿\n\nStarted: ${oldest.overallScore}/100\nNow: ${latest.overallScore}/100 (${sign}${delta} points)\n\n${history.length} scans · ${daysTracked} days tracked\n\n#VelumiAI #SkinTransformation #SkincareJourney`,
             });
           };
           return (
