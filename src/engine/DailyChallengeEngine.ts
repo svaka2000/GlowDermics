@@ -148,7 +148,7 @@ function pickToday(date: string): { primary: DailyChallenge; bonus: DailyChallen
   const primary = CHALLENGES[h % CHALLENGES.length];
   // Pick a bonus that's a different category to add variety.
   const candidatesByCat = CHALLENGES.filter(c => c.category !== primary.category);
-  const bonus = candidatesByCat[(h >> 8) % candidatesByCat.length];
+  const bonus = candidatesByCat[(h >>> 8) % candidatesByCat.length];
   return { primary, bonus };
 }
 
