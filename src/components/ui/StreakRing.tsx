@@ -69,15 +69,15 @@ export function StreakRing({
   // Color tiers by streak length.
   const tier =
     currentStreak >= 60
-      ? { from: '#FBBF24', to: '#DC2626' }   // gold → fire-red (legendary)
+      ? { from: palette.goldLight, to: '#DC2626' }   // champagne → fire-red (legendary)
       : currentStreak >= 30
-      ? { from: '#F0C94A', to: '#E8834A' }   // gold → terracotta (lunar cycle)
+      ? { from: palette.goldLight, to: palette.gold }   // champagne → gold (lunar cycle)
       : currentStreak >= 14
-      ? { from: '#E8834A', to: '#C4622D' }   // terracotta gradient (fortnight)
+      ? { from: palette.gold, to: palette.primary }   // gold → taupe (fortnight)
       : currentStreak >= 7
-      ? { from: '#E08250', to: '#A04D24' }   // primary gradient (week+)
+      ? { from: palette.gold, to: palette.primaryDark }   // gold → deep taupe (week+)
       : currentStreak >= 3
-      ? { from: '#FBBF24', to: '#C4622D' }   // gold→terracotta (spark)
+      ? { from: palette.goldLight, to: palette.primary }   // champagne → taupe (spark)
       : { from: '#0EA5E9', to: '#0284C7' };  // sky blue (just starting)
 
   const targetFraction = Math.min(1, currentStreak / nextMilestone);

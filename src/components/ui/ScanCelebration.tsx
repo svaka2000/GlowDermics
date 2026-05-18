@@ -44,7 +44,7 @@ interface Props {
 const PARTICLE_COUNT = 24;
 
 const PARTICLE_HUES = [
-  '#C4622D', '#E89A4D', '#D4A96A', '#1F8A6F', '#5DC4A4',
+  '#B79B6E', '#D8C29A', '#8A7860', '#1F8A6F', '#5DC4A4',
   '#3B5673', '#9B5BA8', '#C683CE', '#F08161', '#F5E6CB',
 ];
 
@@ -277,7 +277,7 @@ function makeStyles(c: Palette) {
     eyebrow: {
       fontSize: 11,
       fontWeight: '900',
-      color: '#D4A96A',
+      color: c.gold,
       letterSpacing: 3,
       marginBottom: 14,
     },
