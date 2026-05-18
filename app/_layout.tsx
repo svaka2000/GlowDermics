@@ -46,7 +46,6 @@ function RootContent() {
           <Stack.Screen name="scanner/index" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="dupes/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="goals/index" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="product/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="learn/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="learn/[slug]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="journal/index" options={{ animation: 'slide_from_right' }} />
