@@ -19,6 +19,7 @@ import { ScoreRing } from '../../src/components/ScoreRing';
 import { ScoreBar } from '../../src/components/ScoreBar';
 import { GlassHero, Card, SkinStoryStrip, GlowPulse, ScanReel, StreakSaver, DailyAffirmation } from '../../src/components/ui';
 import { runSkinStories, SkinStory } from '../../src/engine/SkinStoryEngine';
+import { deriveProactiveNudge, type ProactiveNudge } from '../../src/engine/ProactiveNudgeEngine';
 
 const WATER_KEY = 'gd_water';
 const WATER_GOAL = 8;
@@ -85,6 +86,7 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeChallenge, setActiveChallenge] = useState<{ title: string; emoji: string; daysComplete: number; duration: number; todayDone: boolean } | null>(null);
   const [stories, setStories] = useState<SkinStory[]>([]);
+  const [nudge, setNudge] = useState<ProactiveNudge | null>(null);
 
   // Entrance animations
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -197,6 +199,13 @@ export default function Home() {
   };
 
   useFocusEffect(useCallback(() => { load(); }, []));
+  useFocusEffect(useCallback(() => {
+    let alive = true;
+    Promise.all([Storage.getAnalyses(), Storage.getFullRoutineLog(), Storage.getStreak()]).then(([a, r, s]) => {
+      if (alive) setNudge(deriveProactiveNudge(Array.isArray(a) ? a : [], Array.isArray(r) ? r : [], typeof s === 'number' ? s : 0, Date.now()));
+    });
+    return () => { alive = false; };
+  }, []));
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -789,6 +798,25 @@ export default function Home() {
 
         </Animated.View>
 
+        {nudge && (
+          <Pressable
+            style={styles.pnBanner}
+            onPress={() => { if (nudge.cta) router.push(nudge.cta.route as any); }}
+            accessibilityRole="button"
+            accessibilityLabel="Skin insight"
+          >
+            <Text style={styles.pnEyebrow}>SINCE YOUR LAST SCAN</Text>
+            <Text style={styles.pnHeadline}>{nudge.headline}</Text>
+            <Text style={styles.pnBody}>{nudge.body}</Text>
+            {nudge.cta && (
+              <View style={styles.pnCtaRow}>
+                <Text style={styles.pnCtaText}>{nudge.cta.label}</Text>
+                <Ionicons name="chevron-forward" size={16} color={colors.primary} />
+              </View>
+            )}
+          </Pressable>
+        )}
+
         <Pressable
           style={styles.firstScanCta}
           onPress={() => router.push('/first-scan' as any)}
@@ -934,6 +962,12 @@ function makeStyles(c: Palette) {
   firstScanCtaText: { flex: 1, gap: 3 },
   firstScanCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
   firstScanCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
+  pnBanner: { marginHorizontal: 20, marginTop: 8, marginBottom: 4, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 18, gap: 6 },
+  pnEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  pnHeadline: { fontFamily: fonts.display, fontSize: 19, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
+  pnBody: { fontFamily: fonts.body, fontSize: 14, color: c.textSecondary, lineHeight: 21, letterSpacing: 0.1 },
+  pnCtaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
+  pnCtaText: { fontFamily: fonts.body, fontSize: 13, fontWeight: '700', color: c.primary, letterSpacing: 0.3 },
 
   checkInCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
