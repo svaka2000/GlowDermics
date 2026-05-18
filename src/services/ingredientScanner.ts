@@ -46,7 +46,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     { "skinType": "Sensitive", "compatible": <true|false>, "note": "<optional short second-person note — what it means for YOUR skin>" },
     { "skinType": "Normal", "compatible": <true|false>, "note": "<optional short second-person note — what it means for YOUR skin>" }
   ],
-  "tallowDermicsComparison": "<2 warm, honest sentences (to them) on this product's overall ingredient philosophy — is it a focused, well-formulated formula or padded with needless fillers? Generic and fair, NO brand names>"
+  "formulationComparison": "<2 warm, honest sentences (to them) on this product's overall ingredient philosophy — is it a focused, well-formulated formula or padded with needless fillers? Generic and fair, NO brand names>"
 }
 
 Rules:
@@ -56,7 +56,7 @@ Rules:
 - If image doesn't contain an ingredient list, return safetyScore 0 and summary explaining the issue
 - Be honest and specific — this is health information
 
-VOICE — applies ONLY to the prose strings (summary, flagged[].reason, flagged[].commonlyFoundIn, beneficial[].benefit, skinCompatibility[].note, tallowDermicsComparison); NOT to safetyScore/totalIngredients/naturalPercent numbers, the verdict/severity enums, the compatible booleans, the skinType labels, or the Rules above — those stay strictly clinical and EXACT: write the prose in warm second person ("this product", "your skin", "you'll want to"), specific to THIS label, no generic filler. CRITICAL SAFETY: warmth must NEVER soften a real risk — for any high-severity flag or an "Avoid"/"Use Caution" verdict, be blunt and direct about the danger; the kindness is in the tone, never in downplaying. Keep every JSON field name, the shape, the enums/numbers, and the Rules above EXACTLY.`;
+VOICE — applies ONLY to the prose strings (summary, flagged[].reason, flagged[].commonlyFoundIn, beneficial[].benefit, skinCompatibility[].note, formulationComparison); NOT to safetyScore/totalIngredients/naturalPercent numbers, the verdict/severity enums, the compatible booleans, the skinType labels, or the Rules above — those stay strictly clinical and EXACT: write the prose in warm second person ("this product", "your skin", "you'll want to"), specific to THIS label, no generic filler. CRITICAL SAFETY: warmth must NEVER soften a real risk — for any high-severity flag or an "Avoid"/"Use Caution" verdict, be blunt and direct about the danger; the kindness is in the tone, never in downplaying. Keep every JSON field name, the shape, the enums/numbers, and the Rules above EXACTLY.`;
 
   let messages: any[];
 
@@ -104,6 +104,6 @@ VOICE — applies ONLY to the prose strings (summary, flagged[].reason, flagged[
     flagged: Array.isArray(parsed.flagged) ? parsed.flagged : [],
     beneficial: Array.isArray(parsed.beneficial) ? parsed.beneficial : [],
     skinCompatibility: Array.isArray(parsed.skinCompatibility) ? parsed.skinCompatibility : [],
-    tallowDermicsComparison: parsed.tallowDermicsComparison || '',
+    formulationComparison: parsed.formulationComparison || '',
   };
 }

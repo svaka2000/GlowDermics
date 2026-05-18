@@ -12,7 +12,7 @@ export interface DupeResult {
   keyIngredients: string[];
   dupes: Dupe[];
   whyTheyWork: string;
-  tallowDermicsNote: string;
+  formulationNote: string;
 }
 
 export interface Dupe {
@@ -51,7 +51,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     }
   ],
   "whyTheyWork": "<2 warm sentences to them — the key ingredients YOU should look for when comparing, and why those are what actually matter here>",
-  "tallowDermicsNote": "<1-2 warm, honest sentences (to them) on what to look for in a clean, well-formulated moisturizing alternative for this category — generic guidance only, NO brand names, only if genuinely relevant; else empty string>"
+  "formulationNote": "<1-2 warm, honest sentences (to them) on what to look for in a clean, well-formulated moisturizing alternative for this category — generic guidance only, NO brand names, only if genuinely relevant; else empty string>"
 }
 
 Rules:
@@ -62,7 +62,7 @@ Rules:
 - If the product is already budget-friendly (under $20), note that in dupes with matchScore 95+ for similar products
 - If no good dupes exist, provide the closest alternatives with low matchScore and explain why
 
-VOICE — applies ONLY to the prose strings (differences, whyTheyWork, tallowDermicsNote); NOT to originalProduct/originalBrand/estimatedPrice/keyIngredients/savingsPercent/matchScore/sharedIngredients/whereToBuy or the Rules above — those stay strictly factual and EXACT: write the prose in warm second person ("the product you're searching", "you'll", "what you give up"), specific to THIS product, no generic filler. CRITICAL ACCURACY: warmth must NEVER inflate savings, invent a product, or oversell how close a dupe is — the savings %, match scores, prices, and the "don't oversell / only real products / exactly 3 dupes" Rules stay honest and exact. Keep every JSON field name, the shape, the numbers/enums, and the Rules above EXACTLY.`;
+VOICE — applies ONLY to the prose strings (differences, whyTheyWork, formulationNote); NOT to originalProduct/originalBrand/estimatedPrice/keyIngredients/savingsPercent/matchScore/sharedIngredients/whereToBuy or the Rules above — those stay strictly factual and EXACT: write the prose in warm second person ("the product you're searching", "you'll", "what you give up"), specific to THIS product, no generic filler. CRITICAL ACCURACY: warmth must NEVER inflate savings, invent a product, or oversell how close a dupe is — the savings %, match scores, prices, and the "don't oversell / only real products / exactly 3 dupes" Rules stay honest and exact. Keep every JSON field name, the shape, the numbers/enums, and the Rules above EXACTLY.`;
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',

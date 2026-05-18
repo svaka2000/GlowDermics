@@ -7,7 +7,7 @@ export type Article = {
   hero: string; // emoji
   sections: { heading?: string; body: string }[];
   keyTakeaways: string[];
-  tallowDermicsAngle?: string;
+  editorialAngle?: string;
 };
 
 export const ARTICLES: Article[] = [
@@ -46,7 +46,7 @@ export const ARTICLES: Article[] = [
       'Rebuilding the barrier takes 4–6 weeks of consistent care',
       'Skin pH should stay between 4.5 and 5.5',
     ],
-    tallowDermicsAngle: 'Velumi AI\'s barrier guidance centers on lipid repair — not a temporary fix. Oleic- and stearic-acid-rich occlusives feed the lipid matrix your barrier is built from.',
+    editorialAngle: 'Velumi AI\'s barrier guidance centers on lipid repair — not a temporary fix. Oleic- and stearic-acid-rich occlusives feed the lipid matrix your barrier is built from.',
   },
   {
     slug: 'tallow-vs-moisturizers',
@@ -87,7 +87,7 @@ export const ARTICLES: Article[] = [
       'Biocompatible ingredients integrate into skin chemistry; inert ones just coat it',
       'Anhydrous formulas skip preservatives — fewer ingredients, less irritation',
     ],
-    tallowDermicsAngle: 'Velumi AI favours anhydrous, barrier-first formulas: no water, no preservatives, no silicones — minimal ingredients that work with your skin\'s biology, not around it.',
+    editorialAngle: 'Velumi AI favours anhydrous, barrier-first formulas: no water, no preservatives, no silicones — minimal ingredients that work with your skin\'s biology, not around it.',
   },
   {
     slug: 'minimalist-skincare',
@@ -124,7 +124,7 @@ export const ARTICLES: Article[] = [
       'The 10-step routine was a marketing invention, not a dermatological recommendation',
       'Fewer products = fewer chances for sensitization',
     ],
-    tallowDermicsAngle: 'A minimal-ingredient philosophy by conviction, not convenience — short ingredient lists you can pronounce, the kind your great-grandmother could identify.',
+    editorialAngle: 'A minimal-ingredient philosophy by conviction, not convenience — short ingredient lists you can pronounce, the kind your great-grandmother could identify.',
   },
   {
     slug: 'reading-ingredients',
@@ -201,7 +201,7 @@ export const ARTICLES: Article[] = [
       'Comedogenic ratings are based on outdated, unreliable rabbit ear testing',
       'Niacinamide (4–5%) has the strongest evidence for regulating sebum',
     ],
-    tallowDermicsAngle: 'Oleic-acid-dominant occlusives penetrate rather than sit. Many people with oily skin report normalization of sebum production after 4–6 weeks — consistent with the feedback-loop theory.',
+    editorialAngle: 'Oleic-acid-dominant occlusives penetrate rather than sit. Many people with oily skin report normalization of sebum production after 4–6 weeks — consistent with the feedback-loop theory.',
   },
   {
     slug: 'the-28-day-rule',
@@ -274,7 +274,7 @@ export const ARTICLES: Article[] = [
       'The shift to synthetic ingredients was economic, not clinical',
       'Modern dermatology is returning to barrier-focused, lipid-rich formulations',
     ],
-    tallowDermicsAngle: 'Velumi AI is part of this return — a modern, barrier-first interpretation of time-tested skincare, built on the ingredients with the deepest record of efficacy and safety.',
+    editorialAngle: 'Velumi AI is part of this return — a modern, barrier-first interpretation of time-tested skincare, built on the ingredients with the deepest record of efficacy and safety.',
   },
   {
     slug: 'spf-guide',

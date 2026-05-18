@@ -314,7 +314,7 @@ function IngredientResults({ report, onReset }: { report: IngredientReport; onRe
         <View style={styles.tdCompareCard}>
           <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.tdCompareEyebrow}>INGREDIENT PHILOSOPHY</Text>
-          <Text style={styles.tdCompareText}>{report.tallowDermicsComparison}</Text>
+          <Text style={styles.tdCompareText}>{report.formulationComparison}</Text>
         </View>
 
         <Pressable style={styles.scanAgainBtn} onPress={onReset}>

@@ -237,11 +237,11 @@ function DupeResults({ result, onBack, onNewSearch }: { result: DupeResult; onBa
         ))}
 
         {/* Skin-barrier note */}
-        {result.tallowDermicsNote && (
+        {result.formulationNote && (
           <View style={styles.tdNote}>
             <LinearGradient colors={['rgba(138,120,96,0.1)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdNoteEyebrow}>VELUMI AI PERSPECTIVE</Text>
-            <Text style={styles.tdNoteText}>{result.tallowDermicsNote}</Text>
+            <Text style={styles.tdNoteText}>{result.formulationNote}</Text>
           </View>
         )}
 

@@ -97,7 +97,7 @@ type Result = {
   analysis: string;
   topRecommendations: string[];
   routineSuggestion: string;
-  tallowDermicsFit: string;
+  approachFit: string;
 };
 
 export default function SkinQuiz() {
@@ -179,7 +179,7 @@ Reference the specific things they told you ("the midday shine you mentioned", "
   "analysis": "<3-4 warm sentences spoken directly TO them ('your skin', 'you're showing') that read their actual answers back, name what it means, and end on the one thing to focus on first>",
   "topRecommendations": ["<3 specific, actionable recommendations tied to their answers, second-person — no generic advice>"],
   "routineSuggestion": "<2-3 warm, second-person sentences describing the simple routine that fits them>",
-  "tallowDermicsFit": "<1-2 honest sentences spoken to them: a brand-agnostic takeaway on what skincare approach best suits their specific profile — never overclaim, no products, no brand>"
+  "approachFit": "<1-2 honest sentences spoken to them: a brand-agnostic takeaway on what skincare approach best suits their specific profile — never overclaim, no products, no brand>"
 }`;
 
       const response = await groq.chat.completions.create({
@@ -269,7 +269,7 @@ Reference the specific things they told you ("the midday shine you mentioned", "
             <View style={styles.tdCard}>
               <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
               <Text style={styles.tdEyebrow}>INGREDIENT FIT</Text>
-              <Text style={styles.tdText}>{result.tallowDermicsFit}</Text>
+              <Text style={styles.tdText}>{result.approachFit}</Text>
               <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
                 <Text style={styles.tdCtaText}>Explore the formula →</Text>
               </Pressable>

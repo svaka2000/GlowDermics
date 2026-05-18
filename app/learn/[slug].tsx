@@ -51,7 +51,7 @@ export default function ArticleDetail() {
   }
 
   const tagColor = TAG_COLORS[article.tag] || colors.primary;
-  const relatedArticles = ARTICLES.filter(a => a.slug !== article.slug && (a.tag === article.tag || a.tallowDermicsAngle)).slice(0, 2);
+  const relatedArticles = ARTICLES.filter(a => a.slug !== article.slug && (a.tag === article.tag || a.editorialAngle)).slice(0, 2);
 
   return (
     <View style={styles.root}>
@@ -133,7 +133,7 @@ export default function ArticleDetail() {
           </View>
 
           {/* Skin-barrier angle */}
-          {article.tallowDermicsAngle && (
+          {article.editorialAngle && (
             <View style={styles.tdCard}>
               <LinearGradient
                 colors={['rgba(138,120,96,0.15)', 'rgba(138,120,96,0.05)']}
@@ -142,7 +142,7 @@ export default function ArticleDetail() {
               <View style={styles.tdHeader}>
                 <Text style={styles.tdEyebrow}>SKIN BARRIER</Text>
               </View>
-              <Text style={styles.tdBody}>{article.tallowDermicsAngle}</Text>
+              <Text style={styles.tdBody}>{article.editorialAngle}</Text>
               <Pressable style={styles.tdCta} onPress={() => router.push('/product')}>
                 <Text style={styles.tdCtaText}>Learn about the formula →</Text>
               </Pressable>

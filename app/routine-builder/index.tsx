@@ -37,7 +37,7 @@ type BuiltRoutine = {
   evening: RoutineStep[];
   weekly: RoutineStep[];
   philosophy: string;
-  tallowDermicsRole: string;
+  keyPrincipleNote: string;
   monthlyCost: string;
   totalTime: string;
   keyPrinciple: string;
@@ -110,7 +110,7 @@ ${scoresBlock ? `- ${scoresBlock}` : '- No scan on file yet — build from their
 
 Design a complete, realistic routine that targets their lowest-scoring dimensions and the concerns they named. Recommend only widely-available, well-formulated products matched to their skin — never a house or first-party brand.
 
-VOICE for every prose field ("why", "philosophy", "tallowDermicsRole", "keyPrinciple", "tips"): write as their coach speaking TO them — warm, second-person ("your barrier", "you'll"), specific to their actual scores/concerns, no generic filler, encouraging. Keep the JSON shape below EXACTLY (same fields, same structure).
+VOICE for every prose field ("why", "philosophy", "keyPrincipleNote", "keyPrinciple", "tips"): write as their coach speaking TO them — warm, second-person ("your barrier", "you'll"), specific to their actual scores/concerns, no generic filler, encouraging. Keep the JSON shape below EXACTLY (same fields, same structure).
 
 Return ONLY valid JSON (no markdown):
 {
@@ -145,7 +145,7 @@ Return ONLY valid JSON (no markdown):
     }
   ],
   "philosophy": "<2-3 sentences on the philosophy behind this routine>",
-  "tallowDermicsRole": "<1-2 sentences on the single highest-impact principle anchoring this routine — brand-agnostic, no products or brand>",
+  "keyPrincipleNote": "<1-2 sentences on the single highest-impact principle anchoring this routine — brand-agnostic, no products or brand>",
   "monthlyCost": "<estimated monthly cost range e.g. $25-40/month>",
   "totalTime": "<total routine time morning + evening e.g. 8 minutes/day>",
   "keyPrinciple": "<the single most important principle of this routine — short>",
@@ -348,13 +348,13 @@ Return ONLY valid JSON (no markdown):
             </View>
 
             {/* Routine principle */}
-            {routine.tallowDermicsRole && (
+            {routine.keyPrincipleNote && (
               <Pressable style={styles.tdCard} onPress={() => router.push('/product')}>
                 <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
                 <Text style={styles.tdEmoji}>✨</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.tdTitle}>The Principle Behind Your Routine</Text>
-                  <Text style={styles.tdText}>{routine.tallowDermicsRole}</Text>
+                  <Text style={styles.tdText}>{routine.keyPrincipleNote}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.7)" />
               </Pressable>

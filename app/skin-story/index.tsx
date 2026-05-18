@@ -30,7 +30,7 @@ type SkinStory = {
   biggestWin: string;
   currentChapter: string;
   nextChapter: string;
-  tallowMoment: string;
+  journeyMoment: string;
   socialCaption: string;
   highlights: SkylightMoment[];
   ts: number;
@@ -143,7 +143,7 @@ Return ONLY valid JSON (no markdown):
   "biggestWin": "<their single biggest achievement in this journey — be specific with numbers>",
   "currentChapter": "<1 sentence on where they are right now in their journey>",
   "nextChapter": "<1 sentence on what comes next — what they should be building toward>",
-  "tallowMoment": "<1 brand-agnostic, encouraging sentence with a meaningful takeaway about their skin journey — no products, no brand>",
+  "journeyMoment": "<1 brand-agnostic, encouraging sentence with a meaningful takeaway about their skin journey — no products, no brand>",
   "socialCaption": "<a short, shareable Instagram-style caption for their journey — 2-3 sentences, include relevant emojis>",
   "highlights": [
     { "label": "Days tracking", "value": "${s.daysTracking}", "emoji": "📅" },
@@ -182,7 +182,7 @@ Return ONLY valid JSON (no markdown):
         `📊 My Skin Journey Stats:`,
         ...story.highlights.map(h => `${h.emoji} ${h.label}: ${h.value}`),
         '',
-        `✨ ${story.tallowMoment}`,
+        `✨ ${story.journeyMoment}`,
         '',
         '— Tracked with Velumi AI',
         'velumi.ai',
@@ -300,7 +300,7 @@ Return ONLY valid JSON (no markdown):
               <Text style={styles.tallowEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tallowLabel}>YOUR JOURNEY</Text>
-                <Text style={styles.tallowText}>{story.tallowMoment}</Text>
+                <Text style={styles.tallowText}>{story.journeyMoment}</Text>
               </View>
             </View>
 

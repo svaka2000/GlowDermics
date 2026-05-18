@@ -25,5 +25,5 @@ export interface IngredientReport {
   flagged: FlaggedIngredient[];
   beneficial: BeneficialIngredient[];
   skinCompatibility: SkinCompatibility[];
-  tallowDermicsComparison: string;
+  formulationComparison: string;
 }
