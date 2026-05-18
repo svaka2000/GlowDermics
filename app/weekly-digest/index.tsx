@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import Groq from 'groq-sdk';
 
@@ -47,7 +48,7 @@ function buildGradeColors(c: Palette): Record<string, string> {
 
 const GRADE_BG: Record<string, string> = {
   'A+': 'rgba(74,222,128,0.15)', A: 'rgba(74,222,128,0.12)', 'B+': 'rgba(134,239,172,0.12)',
-  B: 'rgba(134,239,172,0.10)', 'C+': 'rgba(212,169,106,0.12)', C: 'rgba(212,169,106,0.10)',
+  B: 'rgba(134,239,172,0.10)', 'C+': 'rgba(183,155,110,0.12)', C: 'rgba(183,155,110,0.10)',
   D: 'rgba(252,165,165,0.12)', F: 'rgba(248,113,113,0.12)',
 };
 
@@ -253,7 +254,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
       }}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
+            <Pressable style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
               <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
             </Pressable>
             <View>
@@ -261,7 +262,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
               <Text style={styles.headerSub}>{weekLabel()}</Text>
             </View>
             {digest ? (
-              <Pressable style={styles.backBtn} onPress={handleShare}>
+              <Pressable style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Share" onPress={handleShare}>
                 <Ionicons name="share-outline" size={20} color={colors.primary} />
               </Pressable>
             ) : (
@@ -279,7 +280,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
 
         {loading && (
           <View style={styles.loadingCard}>
-            <LinearGradient colors={['rgba(196,98,45,0.1)', 'rgba(196,98,45,0.02)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[colors.primary + '1A', colors.primary + '05']} style={StyleSheet.absoluteFill} />
             <ActivityIndicator color={colors.primary} />
             <Text style={styles.loadingText}>Analyzing your week...</Text>
           </View>
@@ -300,8 +301,8 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
         {digest && !loading && (
           <>
             {/* Grade hero */}
-            <View style={[styles.gradeCard, { backgroundColor: GRADE_BG[digest.weekGrade] ?? 'rgba(196,98,45,0.1)' }]}>
-              <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+            <View style={[styles.gradeCard, { backgroundColor: GRADE_BG[digest.weekGrade] ?? colors.primary + '1A' }]}>
+              <LinearGradient colors={[colors.primary + '14', 'transparent']} style={StyleSheet.absoluteFill} />
               <View style={styles.gradeLeft}>
                 <Text style={styles.gradeWeek}>{weekLabel()}</Text>
                 <Text style={[styles.gradeNum, { color: GRADE_COLORS[digest.weekGrade] ?? colors.primary }]}>{digest.weekGrade}</Text>
@@ -351,7 +352,7 @@ VOICE — applies to the prose strings ONLY (gradeLabel, narrative, bestHabit, b
               const trend = trendIcon(digest.skinTrend);
               return (
                 <View style={styles.trendCard}>
-                  <LinearGradient colors={['rgba(196,98,45,0.08)', 'transparent']} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={[colors.primary + '14', 'transparent']} style={StyleSheet.absoluteFill} />
                   <Ionicons name={trend.name} size={26} color={trend.color} />
                   <View style={{ flex: 1 }}>
                     <Text style={styles.trendLabel}>
@@ -435,39 +436,39 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.bgCard, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.border },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: c.textPrimary, textAlign: 'center', fontFamily: fonts.display },
   headerSub: { fontSize: 12, color: c.textMuted, textAlign: 'center', marginTop: 2 },
   scroll: { paddingHorizontal: 16 },
 
-  loadingCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(196,98,45,0.2)', padding: 32, alignItems: 'center', gap: 14, marginBottom: 14 },
+  loadingCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.primary + '33', padding: 32, alignItems: 'center', gap: 14, marginBottom: 14 },
   loadingText: { fontSize: 14, color: c.textSecondary },
 
   noDataCard: { alignItems: 'center', paddingVertical: 48, gap: 12 },
   noDataEmoji: { fontSize: 48 },
-  noDataTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary },
+  noDataTitle: { fontSize: 18, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
   noDataSub: { fontSize: 13, color: c.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280 },
   generateBtn: { borderRadius: 14, overflow: 'hidden', height: 50, paddingHorizontal: 32, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
   generateBtnText: { fontSize: 15, fontWeight: '700', color: c.white },
 
   card: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: c.textPrimary, fontFamily: fonts.display },
   cardSub: { fontSize: 11, color: c.textMuted, marginTop: -8 },
 
   gradeCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   gradeLeft: { gap: 2 },
-  gradeWeek: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase' },
-  gradeNum: { fontSize: 56, fontWeight: '900', lineHeight: 64 },
+  gradeWeek: { fontSize: 10, fontWeight: '600', color: c.textMuted, letterSpacing: 2, textTransform: 'uppercase', fontFamily: fonts.body },
+  gradeNum: { fontSize: 56, fontWeight: '900', lineHeight: 64, fontFamily: fonts.display },
   gradeLabel: { fontSize: 14, fontWeight: '600', color: c.textSecondary },
   gradeStats: { gap: 16 },
   gradeStat: { alignItems: 'center' },
   gradeStatNum: { fontSize: 20, fontWeight: '800' },
   gradeStatLabel: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
 
-  narrativeText: { fontSize: 14, color: c.textSecondary, lineHeight: 22 },
+  narrativeText: { fontSize: 14, color: c.textSecondary, lineHeight: 22, fontFamily: fonts.body },
   highlightRow: { gap: 0 },
   highlightItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingVertical: 10 },
   highlightIcon: { fontSize: 18 },
-  highlightLabel: { fontSize: 10, fontWeight: '700', color: c.textMuted, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 },
+  highlightLabel: { fontSize: 10, fontWeight: '600', color: c.textMuted, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2, fontFamily: fonts.body },
   highlightText: { fontSize: 13, color: c.textSecondary, lineHeight: 18 },
 
   trendCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: c.border, padding: 14, marginBottom: 14 },
@@ -486,7 +487,7 @@ function makeStyles(c: Palette) {
   focusHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   focusAction: { fontSize: 13, fontWeight: '600', color: c.textPrimary, flex: 1 },
   focusImpact: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  focusImpactText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
+  focusImpactText: { fontSize: 9, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.body },
   focusWhy: { fontSize: 12, color: c.textMuted, lineHeight: 18 },
 
   motCard: { borderRadius: 16, overflow: 'hidden', padding: 18, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
