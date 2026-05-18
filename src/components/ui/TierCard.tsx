@@ -55,7 +55,7 @@ interface TierCardProps {
 
 const DEFAULT_GRADIENTS: Record<string, [string, string, string?]> = {
   free: ['#F0EAE3', '#E5DCD0'],
-  premium: ['#E8834A', '#C4622D', '#9E4D22'],
+  premium: ['#D8C29A', '#B79B6E', '#8A7860'],
   ultra: ['#0F1F33', '#0A1426', '#0E1B30'],
 };
 

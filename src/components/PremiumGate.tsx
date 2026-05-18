@@ -265,7 +265,7 @@ export function PremiumGate({ visible, onClose, feature, reason }: PremiumGatePr
                   ? ['#A6A29A', '#73706B']
                   : selected === 'ultra'
                   ? ['#0F1F33', '#1A2A44']
-                  : ['#F0C94A', '#E8834A', '#C4622D']
+                  : [Colors.goldLight, Colors.gold, Colors.primary]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -344,7 +344,7 @@ function Hero() {
       <Animated.View style={[styles.heroHalo, haloStyle]} pointerEvents="none" />
       <Animated.View style={[styles.heroIcon, iconStyle]}>
         <LinearGradient
-          colors={['#F0C94A', '#E8834A', '#C4622D']}
+          colors={[Colors.goldLight, Colors.gold, Colors.primary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -453,7 +453,7 @@ export function PremiumBanner({ onUpgrade, message }: { onUpgrade: () => void; m
   return (
     <Pressable style={styles.banner} onPress={onUpgrade}>
       <LinearGradient
-        colors={['rgba(212,169,106,0.18)', 'rgba(196,98,45,0.10)']}
+        colors={[Colors.gold + '2E', Colors.primary + '1A']}
         style={StyleSheet.absoluteFill}
       />
       <View style={styles.bannerStar}>
@@ -462,7 +462,7 @@ export function PremiumBanner({ onUpgrade, message }: { onUpgrade: () => void; m
       <Text style={styles.bannerText}>{message}</Text>
       <View style={styles.bannerBtn}>
         <LinearGradient
-          colors={['#F0C94A', '#E8834A', '#C4622D']}
+          colors={[Colors.goldLight, Colors.gold, Colors.primary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
-    shadowColor: '#C4622D',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.45,
     shadowRadius: 18,
     shadowOffset: { width: 0, height: 8 },
@@ -561,12 +561,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(196,98,45,0.08)',
+    backgroundColor: Colors.primary + '14',
     borderRadius: 12,
     padding: 11,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.20)',
+    borderColor: Colors.primary + '33',
   },
   reasonText: { fontSize: 12, color: Colors.textSecondary, flex: 1, fontWeight: '600' },
 
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: 'rgba(196,98,45,0.10)',
+    backgroundColor: Colors.primary + '1A',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     marginTop: 14,
-    shadowColor: '#C4622D',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.35,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 6 },
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.30)',
+    borderColor: Colors.primary + '4D',
     padding: 12,
     marginBottom: 16,
   },
@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 10,
-    backgroundColor: 'rgba(212,169,106,0.25)',
+    backgroundColor: Colors.gold + '40',
     alignItems: 'center',
     justifyContent: 'center',
   },
