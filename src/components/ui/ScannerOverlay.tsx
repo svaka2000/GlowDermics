@@ -212,7 +212,7 @@ export function ScannerOverlay({
         ]}
       >
         <LinearGradient
-          colors={['transparent', 'rgba(212,168,74,0.8)', 'transparent']}
+          colors={['transparent', 'rgba(183,155,110,0.8)', 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFillObject}
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(196,98,45,0.45)',
+    borderColor: 'rgba(138,120,96,0.45)',
   },
   badgeDot: {
     width: 7,

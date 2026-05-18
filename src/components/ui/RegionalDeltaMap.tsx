@@ -133,7 +133,7 @@ export function RegionalDeltaMap({ before, after, width = 280 }: RegionalDeltaMa
         <Path d="M140 150 L134 195 Q140 200 146 195 Z" fill="rgba(28,24,20,0.10)" />
         <Path
           d="M120 232 Q140 240 160 232 Q150 248 140 248 Q130 248 120 232 Z"
-          fill="rgba(196,98,45,0.45)"
+          fill="rgba(138,120,96,0.45)"
         />
 
         {regionDeltas.map(r => {

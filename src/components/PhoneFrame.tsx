@@ -31,7 +31,7 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
       />
 
       {/* Decorative ambient glows */}
-      <View style={[styles.glow, { top: -100, left: -80, width: 500, height: 500, backgroundColor: 'rgba(196,98,45,0.06)' }]} />
+      <View style={[styles.glow, { top: -100, left: -80, width: 500, height: 500, backgroundColor: 'rgba(138,120,96,0.06)' }]} />
       <View style={[styles.glow, { bottom: -80, right: -60, width: 400, height: 400, backgroundColor: 'rgba(100,60,200,0.05)' }]} />
 
       {/* Grid lines */}

@@ -343,7 +343,7 @@ export function RegionalSkinMap({
         {/* Lips */}
         <Path
           d="M118 236 Q140 244 162 236 Q151 252 140 252 Q129 252 118 236 Z"
-          fill="rgba(196,98,45,0.42)"
+          fill="rgba(138,120,96,0.42)"
         />
 
         {/* Severity heatmap — entirely contained within the face outline. */}

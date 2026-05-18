@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', position: 'relative',
   },
   todayCell: {
-    backgroundColor: 'rgba(196,98,45,0.08)',
+    backgroundColor: 'rgba(138,120,96,0.08)',
     borderRadius: 8,
   },
   dayNum: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
