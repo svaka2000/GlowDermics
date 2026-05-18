@@ -789,6 +789,19 @@ export default function Home() {
 
         </Animated.View>
 
+        <Pressable
+          style={styles.firstScanCta}
+          onPress={() => router.push('/first-scan' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Start your first scan"
+        >
+          <View style={styles.firstScanCtaText}>
+            <Text style={styles.firstScanCtaEyebrow}>GET STARTED</Text>
+            <Text style={styles.firstScanCtaTitle}>Start your first scan</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+        </Pressable>
+
         {/* Brand strip */}
         <View style={styles.brandStrip}>
           <Text style={styles.brandEyebrow}>POWERED BY VELUMI AI</Text>
@@ -917,6 +930,10 @@ function makeStyles(c: Palette) {
   emptyQuizText: { fontSize: 13, color: c.primary, fontWeight: '600' },
   brandEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
   brandTagline: { fontFamily: fonts.display, fontSize: 13, color: c.textSecondary, textAlign: 'center', letterSpacing: 0.2, lineHeight: 19 },
+  firstScanCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 20, marginTop: 8, marginBottom: 4, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16 },
+  firstScanCtaText: { flex: 1, gap: 3 },
+  firstScanCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  firstScanCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
 
   checkInCta: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
