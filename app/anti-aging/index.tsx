@@ -31,7 +31,7 @@ const TABS = [
   { id: 'pillars', label: 'Pillars', icon: '🏛️' },
   { id: 'actives', label: 'Key Actives', icon: '⚗️' },
   { id: 'lifestyle', label: 'Lifestyle', icon: '🌿' },
-  { id: 'tallow', label: 'Tallow Approach', icon: '✨' },
+  { id: 'tallow', label: 'Barrier Layer', icon: '✨' },
 ];
 
 const AGING_SCIENCE = [
@@ -93,7 +93,7 @@ function buildPillars(Colors: ReturnType<typeof shimColors>) {
     color: Colors.blue,
     icon: '🛡️',
     detail: 'A compromised barrier accelerates aging — it cannot retain moisture, which magnifies the appearance of fine lines. It cannot prevent pollutant penetration. Barrier repair is the foundation everything else builds on.',
-    action: 'Ceramide moisturizer or tallow-based occlusive PM. Apply on damp skin to lock in moisture.',
+    action: 'Ceramide moisturizer or a lipid-rich occlusive PM. Apply on damp skin to lock in moisture.',
   },
   {
     pillar: 'Collagen Synthesis Support',
@@ -320,33 +320,33 @@ export default function AntiAgingScreen() {
           <>
             <View style={styles.tallowIntro}>
               <Text style={styles.tallowIntroText}>
-                Tallow is not a single-solution anti-aging product — it's a foundational barrier ingredient that makes the entire anti-aging stack more effective. Here's how.
+                A strong lipid barrier is not a single-solution anti-aging fix — it's the foundation that makes the entire anti-aging stack more effective. Here's how.
               </Text>
             </View>
             {[
               {
                 title: 'Fat-soluble vitamins delivered in biocompatible form',
-                detail: "Tallow contains vitamins A, D, E, and K2 in their fat-soluble, bioavailable forms. Vitamin A (retinol precursor) supports cell turnover. Vitamin E is a lipophilic antioxidant. Vitamin K2 supports skin elasticity. These come packaged in a fatty acid matrix the skin recognizes.",
+                detail: "Lipid-rich occlusives can deliver fat-soluble vitamins A, D, E, and K2 in bioavailable forms. Vitamin A (a retinol precursor) supports cell turnover, vitamin E is a lipophilic antioxidant, and vitamin K2 supports skin elasticity — carried in a fatty-acid matrix the skin recognizes.",
               },
               {
                 title: 'Retinol buffer on active nights',
-                detail: 'Applied after retinol (15–20 minute wait), tallow buffers irritation and accelerates the barrier repair between retinol nights. This allows you to maintain retinol consistency without the barrier burnout that causes most people to quit.',
+                detail: 'Applied after retinol (15–20 minute wait), an occlusive moisturiser buffers irritation and speeds barrier repair between retinol nights. This lets you keep retinol consistency without the barrier burnout that makes most people quit.',
               },
               {
                 title: 'Collagen support via barrier integrity',
-                detail: 'A compromised barrier allows collagen-degrading metalloproteinases (MMPs) to reach the dermis more easily. By maintaining barrier integrity with tallow, you protect collagen from breakdown that occurs not just from UV, but from a damaged barrier.',
+                detail: 'A compromised barrier allows collagen-degrading metalloproteinases (MMPs) to reach the dermis more easily. By maintaining barrier integrity with a lipid-rich occlusive, you protect collagen from breakdown that occurs not just from UV, but from a damaged barrier.',
               },
               {
                 title: 'CLA and anti-inflammatory action',
-                detail: 'Grass-fed tallow contains conjugated linoleic acid (CLA), which has demonstrated anti-inflammatory and potentially anti-glycation effects in research. Reduced inflammation directly slows the inflammaging process.',
+                detail: 'Some animal-fat occlusives contain conjugated linoleic acid (CLA), which shows anti-inflammatory and potentially anti-glycation effects in research. Lower inflammation directly slows the inflammaging process.',
               },
               {
-                title: 'Ancestral anti-aging context',
-                detail: "Humans have used animal fats on skin for tens of thousands of years. The molecular compatibility isn't accidental — it's evolutionary. The skin's protective sebum closely matches tallow, making it the most compatible exogenous fat available.",
+                title: 'Lipid compatibility with skin',
+                detail: "Occlusive lipids whose fatty-acid profile is close to human sebum integrate readily into the skin's own lipid layer — which is why sebum-similar oils tend to feel compatible and absorb well.",
               },
               {
-                title: 'The anti-aging stack with tallow',
-                detail: 'AM: Vitamin C → tallow (thin) → mineral SPF. PM: double cleanse → retinol → 20 min wait → tallow (generous, as buffer + occlusive). This stack addresses all 6 pillars simultaneously.',
+                title: 'The anti-aging stack with an occlusive',
+                detail: 'AM: vitamin C → a thin occlusive → mineral SPF. PM: double cleanse → retinol → 20 min wait → a generous occlusive (buffer + moisture seal). This stack addresses all 6 pillars simultaneously.',
               },
             ].map((item, i) => (
               <View key={i} style={styles.tallowCard}>

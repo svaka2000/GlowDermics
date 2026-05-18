@@ -295,7 +295,7 @@ export default function HydrationTracker() {
           <Text style={styles.cardTitle}>Hydration & Skin Science</Text>
           {[
             { icon: '💧', tip: 'Skin is ~64% water. Even mild dehydration (1-2%) reduces elasticity and increases fine lines.' },
-            { icon: '🌿', tip: 'Tallow\'s fatty acids work best when skin is well-hydrated — water plumps cells, lipids seal moisture in.' },
+            { icon: '🌿', tip: 'Occlusive lipids work best when skin is well-hydrated — water plumps cells, then a lipid layer seals the moisture in.' },
             { icon: '☕', tip: 'Caffeine is mildly diuretic. For every coffee, add an extra glass of water to compensate.' },
             { icon: '🥒', tip: 'Eat your water — cucumber, celery, watermelon, and lettuce are 90-95% water and count toward hydration.' },
             { icon: '🌙', tip: 'Drink a glass of water before bed. Your skin loses moisture overnight — pre-loading helps.' },

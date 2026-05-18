@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['Science', 'Cleanser Types', 'Double Cleanse', 'pH', 'Tallow Cleansing'];
+const TABS = ['Science', 'Cleanser Types', 'Double Cleanse', 'pH', 'Oil Cleansing'];
 
 const CLEANSING_SCIENCE = [
   { fact: 'The goal of cleansing is selective removal', detail: 'Effective cleansing removes: sunscreen, makeup, airborne pollution particles, excess sebum, and dead skin cell debris. It should NOT remove: the skin\'s Natural Moisturising Factor (NMF), the acid mantle, beneficial skin microbiome, or barrier lipids. Most standard cleansers do not make this distinction.', icon: '🎯' },
@@ -98,11 +98,11 @@ const PH_GUIDE = [
 ];
 
 const TALLOW_CLEANSING = [
-  { title: 'Tallow as a cleansing oil: the original method', body: 'Oil cleansing with tallow predates modern surfactant cleansers by millennia. Tallow applied to dry skin, massaged for 60 seconds, then wiped with a warm damp cloth removes makeup, SPF, and excess sebum effectively via lipid-lipid affinity. It is the original "cleansing balm." Many TallowDermics users use a thin layer of tallow as their PM first cleanse.' },
-  { title: 'OCM (Oil Cleansing Method) with tallow', body: 'Apply a pea-sized amount of tallow to dry skin. Massage for 60–90 seconds. Take a warm-hot damp cloth (not hot) and hold it over the face for 10 seconds (steam effect opens pores). Wipe gently. Follow with a gentle water-based second cleanse or just rinse with warm water if skin is clear.' },
-  { title: 'Preserves the acid mantle', body: 'Tallow cleansing maintains a near-neutral to slightly acidic pH environment. Unlike soap-based or SLS cleansers that spike skin pH to 9–11, tallow cleansing does not significantly shift the acid mantle. The microbiome and barrier enzymes remain functional throughout the cleansing process.' },
-  { title: 'For sensitive skin: tallow-only cleansing', body: 'For severely compromised or reactive skin, tallow as the sole cleanser (wiped away with warm damp cloth, no surfactant second cleanse) is a viable protocol. The skin gets cleansed without any surfactant exposure. This is the most barrier-gentle cleansing method available. Recommended during barrier repair protocols.' },
-  { title: 'What tallow cleansing does NOT remove', body: 'Tallow cleansing effectively removes oil-soluble soil (makeup, SPF, sebum). It does not effectively remove heavy-duty waterproof makeup or pollution particles as well as a proper micellar or gentle surfactant second cleanse. For days with heavy SPF (outdoor activities), follow with a gentle pH-balanced second cleanse.' },
+  { title: 'Oil cleansing: the original method', body: 'Oil cleansing predates modern surfactant cleansers by millennia. An occlusive oil or balm applied to dry skin, massaged for 60 seconds, then wiped with a warm damp cloth removes makeup, SPF, and excess sebum effectively via lipid-lipid affinity. It is the original "cleansing balm" — many people use a thin layer as their PM first cleanse.' },
+  { title: 'OCM (Oil Cleansing Method)', body: 'Apply a pea-sized amount of a cleansing oil or balm to dry skin. Massage for 60–90 seconds. Hold a warm-hot (not hot) damp cloth over the face for 10 seconds (a gentle steam effect), then wipe gently. Follow with a gentle water-based second cleanse, or just rinse with warm water if skin is clear.' },
+  { title: 'Preserves the acid mantle', body: 'Oil cleansing maintains a near-neutral to slightly acidic pH environment. Unlike soap- or SLS-based cleansers that spike skin pH to 9–11, it does not significantly shift the acid mantle. The microbiome and barrier enzymes stay functional throughout the cleansing process.' },
+  { title: 'For sensitive skin: oil-only cleansing', body: 'For severely compromised or reactive skin, an oil or balm as the sole cleanser (wiped away with a warm damp cloth, no surfactant second cleanse) is a viable protocol. Skin gets cleansed without any surfactant exposure — the most barrier-gentle cleansing method available. Recommended during barrier repair protocols.' },
+  { title: 'What oil cleansing does NOT remove', body: 'Oil cleansing effectively removes oil-soluble soil (makeup, SPF, sebum). It does not remove heavy-duty waterproof makeup or pollution particles as well as a proper micellar or gentle surfactant second cleanse. For days with heavy SPF (outdoor activities), follow with a gentle pH-balanced second cleanse.' },
 ];
 
 export default function CleansingGuideScreen() {
@@ -231,8 +231,8 @@ export default function CleansingGuideScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Cleansing with Tallow</Text>
-              <Text style={styles.tallowHeroSub}>Tallow is the original cleansing agent. Oil cleansing with tallow predates modern skincare chemistry — and for good reason.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Oil Cleansing</Text>
+              <Text style={styles.tallowHeroSub}>Oil is the original cleansing agent. Oil cleansing predates modern skincare chemistry — and for good reason.</Text>
             </View>
             {TALLOW_CLEANSING.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

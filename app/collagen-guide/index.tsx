@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Collagen Science', 'Types', 'What Destroys It', 'Build It', 'Tallow & Collagen'];
+const TABS = ['Collagen Science', 'Types', 'What Destroys It', 'Build It', 'Lipids & Collagen'];
 
 const COLLAGEN_SCIENCE = [
   { fact: 'Collagen is 75% of the dry weight of skin', detail: 'The dermis is predominantly collagen — a fibrous protein network that provides tensile strength, volume, and structural support to the skin. Without adequate collagen density and cross-linking, skin cannot maintain its firmness and resistance to mechanical deformation.', icon: '🏗️' },
@@ -44,7 +44,7 @@ const DESTROYERS = [
   { destroyer: 'Smoking', mechanism: 'Cigarette smoke generates massive free radical burden that depletes vitamin C (needed for collagen synthesis) and directly activates MMP-mediated collagen breakdown. Also causes hypoxia in dermal tissue, impairing fibroblast function.', prevention: 'Cessation. No topical intervention compensates for smoking at any meaningful level.', severity: 'critical', icon: '🚬' },
   { destroyer: 'Cortisol / chronic stress', mechanism: 'Cortisol directly inhibits collagen synthesis in fibroblasts. Chronic stress = chronically elevated cortisol = reduced collagen production rate. Also increases oxidative stress, worsening MMP activation.', prevention: 'Stress management. Sleep. Exercise reduces cortisol. Adaptogenic herbs (ashwagandha) show modest cortisol-reducing effects.', severity: 'high', icon: '😰' },
   { destroyer: 'Nutritional deficiency', mechanism: 'Vitamin C deficiency prevents hydroxyproline formation → structurally weak collagen that breaks down easily. Copper deficiency impairs lysyl oxidase (cross-linking enzyme) → weak, uncrosslinked collagen fibres. Zinc deficiency slows procollagen synthesis.', prevention: 'Adequate dietary vitamin C (bell peppers, citrus), copper (organ meats, oysters, shellfish), zinc (oysters, beef).', severity: 'high', icon: '🥗' },
-  { destroyer: 'Over-exfoliation and barrier damage', mechanism: 'Repeated disruption of the stratum corneum triggers chronic inflammatory signalling that activates MMPs in the dermis. Paradoxically, too much exfoliation (especially with strong acids) generates the same MMP activation as UV — destroying the collagen the exfoliation is meant to help reveal.', prevention: 'Limit exfoliation frequency. Barrier repair with tallow or ceramide moisturiser after each exfoliation session.', severity: 'moderate', icon: '⚗️' },
+  { destroyer: 'Over-exfoliation and barrier damage', mechanism: 'Repeated disruption of the stratum corneum triggers chronic inflammatory signalling that activates MMPs in the dermis. Paradoxically, too much exfoliation (especially with strong acids) generates the same MMP activation as UV — destroying the collagen the exfoliation is meant to help reveal.', prevention: 'Limit exfoliation frequency. Barrier repair with a lipid-rich or ceramide moisturiser after each exfoliation session.', severity: 'moderate', icon: '⚗️' },
 ];
 
 const BUILD_IT = [
@@ -68,11 +68,11 @@ const BUILD_IT = [
 ];
 
 const TALLOW_COLLAGEN = [
-  { title: 'Vitamin A (retinyl esters): the gentle collagen stimulant', body: 'Tallow contains vitamin A in retinyl ester form — the same basic form as cosmetic retinol, but at lower activity. In skin, retinyl esters convert to retinol, then to retinoic acid (the active form). The conversion is slow and mild — producing retinoid receptor activation without the irritation of higher-concentration retinol formulations. Applied PM, tallow delivers gentle daily retinoid stimulation for collagen gene upregulation.' },
-  { title: 'Tallow\'s amino acids support the collagen substrate pool', body: 'Natural tallow contains small amounts of free amino acids, including glycine and proline — two of the most abundant amino acids in collagen. While dietary provision of these amino acids is more significant than topical (given penetration limits), the combination of topical retinoid-like activity + amino acid substrate support from a single ingredient is unique to animal-fat skincare.' },
-  { title: 'Zinc in tallow supports collagen synthesis enzymes', body: 'Grass-fed tallow contains zinc (though in modest concentrations compared to a zinc supplement). Zinc is a cofactor for multiple metalloenzymes involved in collagen synthesis — including collagenase inhibitor proteins that regulate collagen breakdown. The zinc, combined with copper (in smaller amounts in tallow), provides essential trace mineral cofactors.' },
-  { title: 'Barrier integrity enables retinoid and peptide efficacy', body: 'Collagen-stimulating actives (retinol, vitamin C, peptides) must penetrate the stratum corneum to reach fibroblasts in the dermis. A compromised barrier reduces this penetration. Tallow\'s barrier-repairing function — by restoring the three-lipid system of the stratum corneum — indirectly improves the efficacy of collagen-stimulating actives applied to the skin.' },
-  { title: 'Recommended collagen protocol with tallow', body: 'AM: vitamin C serum → SPF (prevents collagen breakdown via MMP inhibition). PM: retinol serum (on dry skin, 20 min) → tallow (vitamin A + E, barrier repair). Weekly: collagen peptide supplement (10–20g) + dietary vitamin C and copper-rich foods. This covers topical stimulation, topical protection, and dietary substrate provision simultaneously.' },
+  { title: 'Vitamin A (retinyl esters): the gentle collagen stimulant', body: 'Some lipid occlusives contain vitamin A in retinyl-ester form — the same basic form as cosmetic retinol, but at lower activity. In skin, retinyl esters convert to retinol, then to retinoic acid (the active form). The conversion is slow and mild — producing retinoid-receptor activation without the irritation of higher-concentration retinol formulations. Applied PM, such an occlusive provides gentle daily retinoid stimulation for collagen gene upregulation.' },
+  { title: 'Amino acids that support the collagen substrate pool', body: 'Some natural animal-fat occlusives contain small amounts of free amino acids, including glycine and proline — two of the most abundant amino acids in collagen. Dietary intake matters more than topical (penetration limits), but pairing topical retinoid-like activity with amino-acid substrate support in one ingredient is a useful combination.' },
+  { title: 'Trace minerals support collagen synthesis enzymes', body: 'Some animal-fat occlusives contain modest amounts of zinc (far less than a zinc supplement). Zinc is a cofactor for several metalloenzymes in collagen synthesis — including collagenase-inhibitor proteins that regulate collagen breakdown. With small amounts of copper, this provides useful trace-mineral cofactors.' },
+  { title: 'Barrier integrity enables retinoid and peptide efficacy', body: 'Collagen-stimulating actives (retinol, vitamin C, peptides) must penetrate the stratum corneum to reach fibroblasts in the dermis. A compromised barrier reduces this penetration. A lipid occlusive\'s barrier-repairing function — by restoring the three-lipid system of the stratum corneum — indirectly improves the efficacy of collagen-stimulating actives applied to the skin.' },
+  { title: 'Recommended collagen protocol', body: 'AM: vitamin C serum → SPF (prevents collagen breakdown via MMP inhibition). PM: retinol serum (on dry skin, 20 min) → a lipid-rich occlusive (vitamin A + E, barrier repair). Weekly: collagen peptide supplement (10–20g) + dietary vitamin C and copper-rich foods. This covers topical stimulation, topical protection, and dietary substrate provision simultaneously.' },
 ];
 
 export default function CollagenGuideScreen() {
@@ -215,8 +215,8 @@ export default function CollagenGuideScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow & Collagen</Text>
-              <Text style={styles.tallowHeroSub}>Tallow contributes to collagen health through vitamin A (retinoid-like activity), barrier support (enabling active penetration), and trace mineral cofactors.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Lipids & Collagen</Text>
+              <Text style={styles.tallowHeroSub}>Lipid-rich occlusives can support collagen health through vitamin A (retinoid-like activity), barrier support (enabling active penetration), and trace-mineral cofactors.</Text>
             </View>
             {TALLOW_COLLAGEN.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

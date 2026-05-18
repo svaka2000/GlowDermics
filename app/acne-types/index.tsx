@@ -34,7 +34,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Never squeeze — pushes debris deeper and causes inflammatory acne',
     ],
     triggers: ['Heavy, comedogenic oils', 'Insufficient cleansing', 'High sebum production'],
-    tallowNote: 'Tallow on comedone-prone skin: apply after BHA exfoliation (not before). Give BHA 20+ minutes to act, then a thin layer of tallow seals in the cleared pore area.',
+    tallowNote: 'Occlusives on comedone-prone skin: apply after BHA exfoliation (not before). Give BHA 20+ minutes to act, then a thin layer of a non-comedogenic occlusive seals in the cleared pore area.',
   },
   {
     type: 'Inflammatory Acne (Papules and Pustules)',
@@ -51,7 +51,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Never pop — spreads bacteria, causes scarring and PIH',
     ],
     triggers: ['Propionibacterium/Cutibacterium acnes overgrowth', 'Comedone progression', 'Immune response'],
-    tallowNote: 'Apply tallow around (not on) active pustules. Its palmitoleic acid is antimicrobial. Use as a recovery layer on healing papules to support barrier and reduce PIH formation.',
+    tallowNote: 'Apply emollients around (not on) active pustules. Fatty acids such as palmitoleic acid have mild antimicrobial activity. Use a light recovery layer on healing papules to support the barrier and reduce PIH formation.',
   },
   {
     type: 'Cystic Acne',
@@ -68,7 +68,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Absolutely no extraction — permanent scarring risk',
     ],
     triggers: ['Androgens (testosterone/DHT)', 'Severe C. acnes infection', 'Genetic predisposition'],
-    tallowNote: 'Tiny amount of tallow directly on healing (not active) cyst PM. Vitamin A in tallow supports healing. Vitamin E and K2 reduce the post-cyst mark. Do not apply over active inflamed cysts.',
+    tallowNote: 'A tiny amount of a barrier-repair occlusive directly on healing (not active) cysts PM. Vitamin A supports healing; vitamins E and K2 help fade the post-cyst mark. Do not apply over active inflamed cysts.',
   },
   {
     type: 'Hormonal Acne',
@@ -86,7 +86,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Dermatologist: spironolactone, combined OCP, or retinoids',
     ],
     triggers: ['Androgens', 'Progesterone spike in luteal phase', 'Cortisol → androgen conversion', 'PCOS'],
-    tallowNote: 'See the Hormonal Acne Guide for full details. Tallow\'s vitamin A content supports turnover of hormonal spots. Apply as spot treatment PM on healing zones.',
+    tallowNote: 'See the Hormonal Acne Guide for full details. A vitamin-A-containing occlusive supports turnover of hormonal spots. Apply as a spot treatment PM on healing zones.',
   },
   {
     type: 'Fungal Acne (Malassezia Folliculitis)',
@@ -103,7 +103,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Dermatologist if severe — oral antifungals',
     ],
     triggers: ['Humidity and heat', 'Occlusive non-mineral oils', 'Antibiotic use', 'Sweating'],
-    tallowNote: 'Important: Malassezia feeds on specific fatty acids — C12–C24 chain lengths. Tallow\'s primary acids (oleic C18, stearic C18, palmitic C16) are within the Malassezia-feedable range. If you suspect fungal acne, test tallow very cautiously or avoid temporarily until the infection is cleared.',
+    tallowNote: 'Important: Malassezia feeds on specific fatty acids — C12–C24 chain lengths. Most occlusive oils and animal fats (oleic C18, stearic C18, palmitic C16) fall within the Malassezia-feedable range. If you suspect fungal acne, patch-test any oil-based occlusive very cautiously, or avoid it until the infection is cleared.',
   },
   {
     type: 'Mechanical Acne (Acne Mechanica)',
@@ -121,7 +121,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Breathable skincare products in affected areas',
     ],
     triggers: ['Friction', 'Pressure', 'Heat + occlusion', 'Masks', 'Sports equipment'],
-    tallowNote: 'Tallow under masks or tight clothing can worsen occlusion-related acne. Use tallow only on clean, non-occluded skin. Avoid in areas where fabric presses against skin for extended periods.',
+    tallowNote: 'Heavy occlusives under masks or tight clothing can worsen occlusion-related acne. Use them only on clean, non-occluded skin. Avoid areas where fabric presses against skin for extended periods.',
   },
   {
     type: 'Body Acne',
@@ -139,7 +139,7 @@ function buildAcneTypes(Colors: ShimColors) {
       'Loose, breathable clothing',
     ],
     triggers: ['Post-exercise sweat', 'Tight clothing', 'Heavy conditioner or shampoo runoff', 'Not showering immediately after exercise'],
-    tallowNote: 'Tallow works well on body acne in remission (not active inflammatory acne). Apply after BHA-treated body skin on recovery days. Particularly effective on dry back and shoulder areas prone to both acne and dryness.',
+    tallowNote: 'Emollient occlusives work well on body acne in remission (not active inflammatory acne). Apply after BHA-treated body skin on recovery days. Particularly helpful on dry back and shoulder areas prone to both acne and dryness.',
   },
   ];
 }
@@ -220,7 +220,7 @@ export default function AcneTypesScreen() {
                 ))}
 
                 <View style={[styles.tallowNote, { borderColor: Colors.primary + '44' }]}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Tallow Note</Text>
+                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
                   <Text style={styles.tallowNoteText}>{type.tallowNote}</Text>
                 </View>
               </View>
