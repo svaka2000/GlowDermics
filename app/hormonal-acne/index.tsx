@@ -32,7 +32,7 @@ const TABS = [
   { id: 'cycle', label: 'Cycle Guide', icon: '🌙' },
   { id: 'diet', label: 'Diet & Supplements', icon: '🌿' },
   { id: 'skincare', label: 'Skincare Protocol', icon: '🧴' },
-  { id: 'tallow', label: 'Tallow Approach', icon: '✨' },
+  { id: 'tallow', label: 'Barrier Approach', icon: '✨' },
 ];
 
 const SIGNS = [
@@ -52,7 +52,7 @@ function buildCyclePhases(Colors: ReturnType<typeof shimColors>) {
     icon: '🔴',
     hormones: 'Estrogen and progesterone both low',
     skin: 'Often clearer than the week before, but sensitive and easily irritated. May have residual breakouts from the luteal phase.',
-    skincare: 'Gentle, nourishing routine. Skip actives if skin is reactive. Heavy tallow application — skin is thirsty. Reduce inflammation-triggering products.',
+    skincare: 'Gentle, nourishing routine. Skip actives if skin is reactive. Apply a rich occlusive generously — skin is thirsty. Reduce inflammation-triggering products.',
     diet: 'Anti-inflammatory foods: omega-3, turmeric, ginger. Reduce salt (reduces bloating that affects lymphatic drainage). Warm foods support circulation.',
   },
   {
@@ -79,7 +79,7 @@ function buildCyclePhases(Colors: ReturnType<typeof shimColors>) {
     icon: '🩷',
     hormones: 'Progesterone high, estrogen declining, androgen activity peaks',
     skin: 'Hormonal acne appears here. Sebum production peaks. Skin may look dull and congested. Inflammation heightened.',
-    skincare: 'Daily BHA on affected zones. Spot treatment with niacinamide or tallow + zinc. Increase anti-inflammatory actives. Do NOT over-exfoliate — barrier is more vulnerable now. Sleep is critical.',
+    skincare: 'Daily BHA on affected zones. Spot treatment with niacinamide or a zinc-containing occlusive. Increase anti-inflammatory actives. Do NOT over-exfoliate — barrier is more vulnerable now. Sleep is critical.',
     diet: 'Strict low-glycemic for this week. Reduce dairy and alcohol. Spearmint tea 2× daily. Increase zinc, magnesium, B6. Reduce inflammatory omega-6 oils.',
   },
   ];
@@ -124,7 +124,7 @@ const SKINCARE_STEPS = [
   { step: 'Niacinamide 10% AM', detail: 'Reduces sebum production, anti-inflammatory, reduces post-acne redness. Safe for all skin types and won\'t interfere with other actives when applied correctly.' },
   { step: 'Benzoyl Peroxide (spot, not all-over)', detail: 'For active cysts only. 2.5% is as effective as 10% with far less irritation. Apply as a spot treatment, not a wash.' },
   { step: 'Retinol 2–3× per week (follicular phase)', detail: 'Stimulates cell turnover to prevent comedone formation. Reduces post-acne marks. Use during follicular phase when skin tolerates actives best.' },
-  { step: 'Barrier repair on non-active nights', detail: 'Recovery is as important as treatment. Use tallow or ceramide moisturizer to prevent the transepidermal water loss that worsens inflammation.' },
+  { step: 'Barrier repair on non-active nights', detail: 'Recovery is as important as treatment. Use a lipid-rich or ceramide moisturizer to prevent the transepidermal water loss that worsens inflammation.' },
   { step: 'SPF every morning', detail: 'UV damage worsens post-acne hyperpigmentation significantly. Hormonal acne leaves marks that take months to fade without SPF protection.' },
   { step: 'Avoid: harsh scrubs, pore strips, extracting', detail: 'Physical manipulation of deep cystic acne spreads bacteria, worsens inflammation, and causes permanent scarring. Never extract deep hormonal spots.' },
 ];
@@ -253,36 +253,36 @@ export default function HormonalAcneScreen() {
         {activeTab === 'tallow' && (
           <>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow for Hormonal Acne</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Barrier Support for Hormonal Acne</Text>
               <Text style={styles.tallowHeroText}>
-                Tallow is not a cure for hormonal acne — the root cause is internal (hormones). But it plays a specific and important supporting role in managing it.
+                A lipid-rich occlusive is not a cure for hormonal acne — the root cause is internal (hormones). But it plays a specific and important supporting role in managing it.
               </Text>
             </View>
             {[
               {
                 title: 'Barrier repair between breakouts',
-                detail: 'Hormonal acne treatments (BHA, benzoyl peroxide, retinol) are necessary but harsh. Tallow applied on non-active nights restores the barrier that treatments deplete, allowing you to stay consistent without sensitizing.',
+                detail: 'Hormonal acne treatments (BHA, benzoyl peroxide, retinol) are necessary but harsh. A lipid-rich occlusive applied on non-active nights restores the barrier that treatments deplete, allowing you to stay consistent without sensitizing.',
               },
               {
                 title: 'Spot treatment for healing cysts',
-                detail: "Apply a tiny amount of tallow directly to a healing cyst PM. Its palmitoleic acid has antimicrobial properties; its fatty acids reduce inflammation and support faster healing. Don't apply to active open lesions.",
+                detail: "Apply a tiny amount of a barrier occlusive directly to a healing cyst PM. Its palmitoleic acid has antimicrobial properties; its fatty acids reduce inflammation and support faster healing. Don't apply to active open lesions.",
               },
               {
                 title: 'Vitamin A gentle cell turnover',
-                detail: "Tallow's fat-soluble Vitamin A provides gentle retinoid-like cell turnover without the irritation. On recovery nights when you're not using active retinol, tallow maintains mild cellular renewal.",
+                detail: "A vitamin-A-containing occlusive provides gentle retinoid-like cell turnover without the irritation. On recovery nights when you're not using active retinol, it maintains mild cellular renewal.",
               },
               {
                 title: 'Post-inflammation mark fading',
-                detail: 'Vitamin E and K2 in tallow support healing of post-inflammatory hyperpigmentation (PIH) — the dark marks left after hormonal spots resolve. Combined with SPF, tallow applied to fading marks accelerates their disappearance.',
+                detail: 'Vitamin E and K2 in some lipid occlusives support healing of post-inflammatory hyperpigmentation (PIH) — the dark marks left after hormonal spots resolve. Combined with SPF, an occlusive applied to fading marks accelerates their disappearance.',
               },
               {
                 title: 'What to watch — purging on oily skin',
-                detail: 'Some oily/acne-prone users purge when first using tallow. Start with 2–3 applications per week, increasing slowly. Apply over niacinamide (which buffers sebum production) for best results. Purging typically resolves within 3–4 weeks as skin adapts.',
+                detail: 'Some oily/acne-prone users purge when first using a rich occlusive. Start with 2–3 applications per week, increasing slowly. Apply over niacinamide (which buffers sebum production) for best results. Purging typically resolves within 3–4 weeks as skin adapts.',
                 caution: true,
               },
               {
-                title: 'The protocol: actives and tallow together',
-                detail: 'Night 1: BHA → wait → tallow. Night 2: niacinamide → retinol → wait → tallow. Night 3: tallow only (recovery). This cycling approach maximizes treatment while protecting barrier integrity.',
+                title: 'The protocol: actives and an occlusive together',
+                detail: 'Night 1: BHA → wait → occlusive. Night 2: niacinamide → retinol → wait → occlusive. Night 3: occlusive only (recovery). This cycling approach maximizes treatment while protecting barrier integrity.',
               },
             ].map((item, i) => (
               <View key={i} style={[styles.tallowPoint, item.caution && { borderColor: Colors.gold + '55' }]}>

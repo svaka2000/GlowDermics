@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['Biology', 'Shaving Science', 'Common Issues', 'Routine', 'Tallow for Men'];
+const TABS = ['Biology', 'Shaving Science', 'Common Issues', 'Routine', 'Barrier Care'];
 
 const BIOLOGY = [
   {
@@ -116,7 +116,7 @@ function buildIssues(Colors: ReturnType<typeof shimColors>) {
     approach: [
       'Seborrhoeic dermatitis (fungal — Malassezia) is the most common cause of beard flaking',
       'Ketoconazole shampoo 1–2× per week on beard area, leave on 5 minutes before rinsing',
-      'Beard oil with anti-inflammatory fatty acids (jojoba, tallow) reduces follicular irritation',
+      'Beard oil with anti-inflammatory fatty acids (jojoba, marula) reduces follicular irritation',
       'Never scratch — mechanical trauma worsens the inflammatory cycle',
     ],
   },
@@ -138,7 +138,7 @@ function buildIssues(Colors: ReturnType<typeof shimColors>) {
     approach: [
       'Drop to once-daily cleansing in cold/dry conditions — over-cleansing is a primary cause',
       'Switch to cream cleanser or oil cleanser in winter months',
-      'Layer humectant (hyaluronic acid) then occlusive (tallow, shea) to trap moisture',
+      'Layer humectant (hyaluronic acid) then occlusive (a balm or shea) to trap moisture',
       'Shower in lukewarm water — hot showers strip the acid mantle and strip natural oils',
     ],
   },
@@ -329,40 +329,40 @@ export default function MensSkin() {
           </View>
         )}
 
-        {/* TALLOW FOR MEN */}
+        {/* BARRIER CARE FOR MEN */}
         {activeTab === 4 && (
           <View style={{ gap: 14 }}>
             <View style={[styles.card, { borderColor: Colors.primary }]}>
-              <Text style={[styles.cardTitle, { color: Colors.primary, marginBottom: 8 }]}>Why Tallow Works for Male Skin</Text>
+              <Text style={[styles.cardTitle, { color: Colors.primary, marginBottom: 8 }]}>Why a Lipid-Rich Occlusive Works for Male Skin</Text>
               <Text style={styles.para}>
-                Male skin produces more sebum, has a thicker dermis, and is subjected to daily mechanical trauma from shaving. Tallow's saturated fat composition — closest to human sebum of any animal or plant fat — means it integrates rather than sits on top. It provides exactly what overproduced sebum cannot: the fat-soluble vitamins and phospholipids that support collagen production, barrier repair, and anti-inflammation.
+                Male skin produces more sebum, has a thicker dermis, and is subjected to daily mechanical trauma from shaving. A sebum-similar occlusive's saturated-fat composition — close to human sebum — means it integrates rather than sits on top. It provides what overproduced sebum cannot: the fat-soluble vitamins and phospholipids that support collagen production, barrier repair, and anti-inflammation.
               </Text>
             </View>
             {[
               {
                 title: 'Post-Shave Application',
                 color: Colors.teal,
-                detail: 'Tallow is one of the best post-shave balms available. Applied within 60 seconds of shaving, its fatty acids — particularly oleic acid — immediately penetrate the freshly exfoliated stratum corneum and begin barrier reconstruction. The vitamin A content supports rapid cell turnover to repair razor-induced micro-abrasions.',
+                detail: 'A lipid-rich occlusive balm is one of the best post-shave options available. Applied within 60 seconds of shaving, its fatty acids — particularly oleic acid — immediately penetrate the freshly exfoliated stratum corneum and begin barrier reconstruction. The vitamin A content supports rapid cell turnover to repair razor-induced micro-abrasions.',
               },
               {
                 title: 'Beard Skin Conditioning',
                 color: Colors.gold,
-                detail: 'The skin beneath a beard is chronically under-moisturised, as the beard itself absorbs sebum before it can reach the skin. Tallow penetrates the beard hair shaft and reaches the skin surface, conditioning both the beard and preventing the follicular dryness that causes beard itch and flaking.',
+                detail: 'The skin beneath a beard is chronically under-moisturised, as the beard itself absorbs sebum before it can reach the skin. A lightweight oil or balm penetrates the beard hair shaft and reaches the skin surface, conditioning both the beard and preventing the follicular dryness that causes beard itch and flaking.',
               },
               {
                 title: 'Oil Control Counter-intuitively',
                 color: Colors.blue,
-                detail: 'Applying oil to oily skin seems wrong, but sebum overproduction is often the skin\'s response to barrier damage and perceived dryness. Providing the correct fatty acids — palmitic acid and oleic acid — signals to sebaceous glands that the barrier is intact and oil production can normalise. Tallow provides these specific fatty acids.',
+                detail: 'Applying oil to oily skin seems wrong, but sebum overproduction is often the skin\'s response to barrier damage and perceived dryness. Providing the correct fatty acids — palmitic acid and oleic acid — signals to sebaceous glands that the barrier is intact and oil production can normalise. A sebum-similar occlusive provides these specific fatty acids.',
               },
               {
                 title: 'No Synthetic Fragrance',
                 color: Colors.green,
-                detail: 'Most men\'s skincare products use heavy synthetic fragrances — one of the most common contact allergens and a major driver of contact dermatitis. Tallow used unfragranced or with essential oils is far less likely to trigger sensitivity, particularly important on post-shave barrier-compromised skin.',
+                detail: 'Most men\'s skincare products use heavy synthetic fragrances — one of the most common contact allergens and a major driver of contact dermatitis. A fragrance-free single-ingredient occlusive is far less likely to trigger sensitivity, particularly important on post-shave barrier-compromised skin.',
               },
               {
                 title: 'Vitamin D3 Support',
                 color: Colors.primary,
-                detail: 'Male skin\'s higher collagen density is maintained partly by adequate vitamin D3. Tallow contains cholecalciferol (D3), which plays a role in keratinocyte differentiation and immune modulation of the skin. Most men are D3-deficient — topical D3 through tallow provides direct skin-level support.',
+                detail: 'Male skin\'s higher collagen density is maintained partly by adequate vitamin D3. Some animal-fat occlusives contain cholecalciferol (D3), which plays a role in keratinocyte differentiation and immune modulation of the skin. Most men are D3-deficient — topical D3 through such an occlusive provides direct skin-level support.',
               },
             ].map(p => (
               <View key={p.title} style={[styles.card, { borderLeftWidth: 3, borderLeftColor: p.color }]}>

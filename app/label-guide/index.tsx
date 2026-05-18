@@ -110,7 +110,7 @@ export default function LabelGuide() {
           </Text>
           {[
             { point: 'Water dilutes actives', detail: 'A cream with 70% water and 2% vitamin C has much less vitamin C than a concentrate.' },
-            { point: 'Anhydrous products are inherently safer', detail: 'TallowDermics tallow balm contains zero water — no preservatives needed, longer shelf life, higher active concentration.' },
+            { point: 'Anhydrous products are inherently safer', detail: 'A water-free balm contains zero water — no preservatives needed, longer shelf life, higher active concentration.' },
             { point: 'Emulsifiers disrupt barrier', detail: 'Mixing water and oil requires emulsifiers — some strip the skin\'s own lipid barrier over time.' },
             { point: '"Water" by any name', detail: 'Aqua, eau, water — it\'s the same. Also: aloe vera juice is mostly water, as is rose water, cucumber extract.' },
           ].map((item, i) => (
@@ -200,13 +200,13 @@ export default function LabelGuide() {
               <Text style={[styles.compCell, styles.compHeaderText]}>Better Choice</Text>
             </View>
             {[
-              ['Mineral oil (petrolatum)', 'Tallow / plant waxes'],
+              ['Mineral oil (petrolatum)', 'Plant waxes / butters'],
               ['Synthetic fragrance', 'Essential oils or fragrance-free'],
               ['PEG emulsifiers', 'Natural emulsifiers (lecithin)'],
               ['Chemical UV filters', 'Zinc oxide / titanium dioxide'],
               ['Synthetic preservatives', 'Vitamin E, rosemary extract'],
               ['Sodium lauryl sulfate', 'Coco-glucoside, decyl glucoside'],
-              ['Silicones (dimethicone)', 'Natural oils (jojoba, squalane, tallow)'],
+              ['Silicones (dimethicone)', 'Natural oils (jojoba, squalane, marula)'],
             ].map(([conv, better], i) => (
               <View key={i} style={styles.compRow}>
                 <Text style={[styles.compCell, { color: colors.scorePoor }]}>{conv}</Text>
@@ -264,9 +264,9 @@ export default function LabelGuide() {
 
         <View style={styles.tallowCard}>
           <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-          <Text style={styles.tallowTitle}>🌿 Why TallowDermics Is Different</Text>
+          <Text style={styles.tallowTitle}>🌿 Why Anhydrous Balms Are Different</Text>
           <Text style={styles.tallowText}>
-            TallowDermics Balm ingredient list: Grass-fed Beef Tallow, Beeswax, Calendula. That's it. No water means no preservatives. No synthetic emulsifiers. No fragrance. No fillers. The ingredient list is the entire formula.
+            A minimal anhydrous balm's ingredient list can be as short as: a single plant or animal fat, beeswax, and calendula. That's it. No water means no preservatives. No synthetic emulsifiers. No fragrance. No fillers. The ingredient list is the entire formula.
           </Text>
         </View>
 

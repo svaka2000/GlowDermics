@@ -23,7 +23,7 @@ const TABS = [
   { id: 'actives', label: 'Treatments', icon: '⚗️' },
   { id: 'routine', label: 'Protocol', icon: '📋' },
   { id: 'myths', label: 'Myths', icon: '💡' },
-  { id: 'tallow', label: 'Tallow Role', icon: '🌿' },
+  { id: 'tallow', label: 'Barrier Role', icon: '🌿' },
 ];
 
 function buildTypes(Colors: ReturnType<typeof shimColors>) {
@@ -88,7 +88,7 @@ const ACTIVES = [
     howToUse: '10–20% AM, before SPF. Allow 30s to absorb. Stable in low pH.',
     bestFor: ['PIH', 'Sun spots', 'General brightening'],
     evidence: 'strong',
-    tallowStack: 'Apply Vitamin C → wait 60s → thin tallow → SPF.',
+    tallowStack: 'Apply Vitamin C → wait 60s → a thin occlusive → SPF.',
   },
   {
     name: 'Niacinamide',
@@ -96,7 +96,7 @@ const ACTIVES = [
     howToUse: '5–10%, AM and PM. Well-tolerated by all skin types.',
     bestFor: ['PIH', 'General brightening', 'Skin tone evening'],
     evidence: 'strong',
-    tallowStack: 'Apply niacinamide → 30s → tallow on top (tallow doesn\'t interfere with niacinamide\'s mechanism).',
+    tallowStack: 'Apply niacinamide → 30s → an occlusive on top (it doesn\'t interfere with niacinamide\'s mechanism).',
   },
   {
     name: 'Azelaic Acid',
@@ -104,7 +104,7 @@ const ACTIVES = [
     howToUse: '10–20% AM or PM. Prescription strength 20% requires dermatologist. Start low and increase.',
     bestFor: ['PIH', 'Melasma', 'Rosacea-related redness'],
     evidence: 'strong',
-    tallowStack: 'Good combination — azelaic acid reduces PIH trigger, tallow reduces the inflammation that causes it.',
+    tallowStack: 'Good combination — azelaic acid reduces the PIH trigger, an occlusive reduces the inflammation that causes it.',
   },
   {
     name: 'Tranexamic Acid',
@@ -112,7 +112,7 @@ const ACTIVES = [
     howToUse: '2–5% topical, AM and PM. Also available as oral supplement (off-label, require physician).',
     bestFor: ['Melasma', 'PIH', 'Overall brightening'],
     evidence: 'strong',
-    tallowStack: 'Can be layered under tallow. Tranexamic → tallow → SPF AM routine.',
+    tallowStack: 'Can be layered under an occlusive. Tranexamic → occlusive → SPF AM routine.',
   },
   {
     name: 'Alpha Arbutin',
@@ -120,7 +120,7 @@ const ACTIVES = [
     howToUse: '2%, AM or PM. Well-tolerated and can be used daily.',
     bestFor: ['PIH', 'Sun spots', 'Sensitive skin brightening'],
     evidence: 'moderate',
-    tallowStack: 'Alpha arbutin → tallow. No interaction issues.',
+    tallowStack: 'Alpha arbutin → occlusive. No interaction issues.',
   },
   {
     name: 'Kojic Acid',
@@ -128,7 +128,7 @@ const ACTIVES = [
     howToUse: '1–4%, AM or PM. Can be irritating at high concentration — introduce slowly.',
     bestFor: ['Melasma', 'Sun spots'],
     evidence: 'moderate',
-    tallowStack: 'Can be applied before tallow. Note: may not be well-tolerated by rosacea-prone skin.',
+    tallowStack: 'Can be applied before an occlusive. Note: may not be well-tolerated by rosacea-prone skin.',
   },
   {
     name: 'Retinoids (Vitamin A)',
@@ -136,7 +136,7 @@ const ACTIVES = [
     howToUse: 'PM only, skin cycling (2× per week). See Retinol Guide.',
     bestFor: ['Sun spots', 'PIH', 'Combined anti-aging + brightening'],
     evidence: 'strong',
-    tallowStack: 'Retinol → 20 min wait → tallow as buffer and occlusive.',
+    tallowStack: 'Retinol → 20 min wait → an occlusive as buffer and seal.',
   },
   {
     name: 'SPF 30+ (Broad Spectrum)',
@@ -144,7 +144,7 @@ const ACTIVES = [
     howToUse: 'Every morning, last step, adequate amount.',
     bestFor: ['All types — prevention and maintenance'],
     evidence: 'critical — without it nothing else works',
-    tallowStack: 'Tallow → SPF. Non-negotiable.',
+    tallowStack: 'Occlusive → SPF. Non-negotiable.',
   },
 ];
 
@@ -153,14 +153,14 @@ const PROTOCOL = {
     { step: 'Gentle cleanser', note: 'Fragrance-free, pH 5–5.5. Start clean.' },
     { step: 'Vitamin C serum (10–20%)', note: 'Apply on slightly damp skin. Wait 30–60 seconds.' },
     { step: 'Niacinamide (5–10%)', note: 'After Vitamin C has set. Wait 30 seconds between.' },
-    { step: 'Thin tallow layer', note: 'Lock in serums, barrier support before SPF.' },
+    { step: 'Thin occlusive layer', note: 'Lock in serums, barrier support before SPF.' },
     { step: 'SPF 50 broad spectrum', note: 'Most important step of all. 2-finger rule.' },
   ],
   pm: [
     { step: 'Double cleanse', note: 'Oil cleanse → gentle cleanser. Remove SPF completely — incomplete removal leaves UV filters on skin overnight.' },
     { step: 'Tranexamic acid or alpha arbutin (optional)', note: 'Brightening active PM option. Alternate with retinol nights.' },
     { step: 'Retinol (2–3× per week)', note: 'Accelerates shedding of pigmented cells. Wait 15–20 min, then proceed.' },
-    { step: 'Generous tallow layer', note: 'Barrier repair, occlusive, vitamin A delivery. The foundation of the PM routine.' },
+    { step: 'Generous occlusive layer', note: 'Barrier repair, occlusive, vitamin A delivery. The foundation of the PM routine.' },
   ],
 };
 
@@ -263,7 +263,7 @@ export default function HyperpigmentationScreen() {
                 <Text style={styles.activeSubLabel}>How to Use</Text>
                 <Text style={styles.activeDetail}>{active.howToUse}</Text>
                 <View style={styles.tallowStackCard}>
-                  <Text style={styles.tallowStackLabel}>🌿 Tallow Stack</Text>
+                  <Text style={styles.tallowStackLabel}>🌿 Occlusive Stack</Text>
                   <Text style={styles.tallowStackText}>{active.tallowStack}</Text>
                 </View>
               </View>
@@ -319,24 +319,24 @@ export default function HyperpigmentationScreen() {
 
         {activeTab === 'tallow' && [
           {
-            title: 'Tallow for post-acne marks (PIH)',
-            detail: "Apply tallow directly to healing acne spots PM. Palmitoleic acid reduces the inflammation that triggers melanin overproduction. Vitamin K2 supports vascular healing. Early application (while spot is still healing) reduces PIH formation significantly compared to doing nothing.",
+            title: 'Occlusives for post-acne marks (PIH)',
+            detail: "Apply a lipid-rich occlusive directly to healing acne spots PM. Palmitoleic acid reduces the inflammation that triggers melanin overproduction. Vitamin K2 supports vascular healing. Early application (while the spot is still healing) reduces PIH formation significantly compared to doing nothing.",
           },
           {
             title: 'Vitamin A for pigmentation',
-            detail: "Tallow's fat-soluble Vitamin A promotes gentle cell turnover — pigmented epidermal cells shed at a slightly accelerated rate. Not as potent as synthetic retinol, but the gentle daily action compounds over months without the irritation that causes people to stop.",
+            detail: "A fat-soluble Vitamin A occlusive promotes gentle cell turnover — pigmented epidermal cells shed at a slightly accelerated rate. Not as potent as synthetic retinol, but the gentle daily action compounds over months without the irritation that causes people to stop.",
           },
           {
             title: 'Barrier protection for active treatments',
-            detail: "Brightening actives (Vitamin C, azelaic acid) require an intact barrier to work effectively. Tallow maintains that barrier, allowing you to use brightening actives consistently without triggering inflammation-induced MORE pigmentation.",
+            detail: "Brightening actives (Vitamin C, azelaic acid) require an intact barrier to work effectively. A lipid occlusive maintains that barrier, letting you use brightening actives consistently without triggering inflammation-induced MORE pigmentation.",
           },
           {
             title: 'SPF layering is essential',
-            detail: "Apply tallow → 60 seconds → SPF 50. Without SPF, UV undoes pigmentation progress daily. Tallow + SPF is the non-negotiable pairing for any pigmentation protocol. SPF alone without tallow leads to barrier compromise over time from dry SPF formulas.",
+            detail: "Apply an occlusive → 60 seconds → SPF 50. Without SPF, UV undoes pigmentation progress daily. Occlusive + SPF is the non-negotiable pairing for any pigmentation protocol. SPF alone without a barrier layer leads to barrier compromise over time from dry SPF formulas.",
           },
           {
-            title: 'Tallow does not cause PIH',
-            detail: "Some oils and occlusives can trigger breakouts that then cause PIH. Tallow's sebum-compatible profile minimizes comedogenic risk. However, if you are purging initially, be extra diligent with SPF during this period as any inflammation from purging can leave marks.",
+            title: 'A sebum-similar occlusive does not cause PIH',
+            detail: "Some oils and occlusives can trigger breakouts that then cause PIH. A sebum-compatible occlusive minimizes comedogenic risk. However, if you are purging initially, be extra diligent with SPF during this period as any inflammation from purging can leave marks.",
           },
         ].map((item, i) => (
           <View key={i} style={styles.tallowPoint}>

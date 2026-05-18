@@ -21,7 +21,7 @@ const TABS = [
   { id: 'basics', label: 'What Is It?', icon: '🔬' },
   { id: 'disruptors', label: 'What Harms It', icon: '⚠️' },
   { id: 'supporters', label: 'What Helps It', icon: '✅' },
-  { id: 'tallow', label: 'Tallow & Microbiome', icon: '🌿' },
+  { id: 'tallow', label: 'Lipids & Microbiome', icon: '🌿' },
 ];
 
 const BASICS = [
@@ -155,27 +155,27 @@ const SUPPORTERS = [
 const TALLOW_MICROBIOME = [
   {
     title: 'Biocompatibility = microbiome compatibility',
-    detail: 'Tallow\'s fatty acid profile matches human sebum so closely that beneficial bacteria recognize it as native material. They can continue their symbiotic activity on tallow-moisturized skin in ways they cannot on petrolatum or synthetic silicones.',
+    detail: 'A sebum-similar occlusive\'s fatty acid profile matches human sebum so closely that beneficial bacteria recognise it as native material. They can continue their symbiotic activity on such occlusive-moisturised skin in ways they cannot on petrolatum or synthetic silicones.',
   },
   {
     title: 'No synthetic preservatives',
-    detail: 'Properly rendered grass-fed tallow does not require preservatives. Most conventional moisturizers contain phenoxyethanol or parabens — antimicrobials that continuously suppress the skin microbiome. Clean tallow is preservative-free by nature.',
+    detail: 'A properly rendered single-ingredient animal-fat occlusive does not require preservatives. Most conventional moisturizers contain phenoxyethanol or parabens — antimicrobials that continuously suppress the skin microbiome. A clean single-ingredient occlusive is preservative-free by nature.',
   },
   {
     title: 'Fatty acids as prebiotic nutrients',
-    detail: 'Oleic, stearic, and palmitic acids in tallow serve as nutrient sources for beneficial skin bacteria. Think of them as prebiotics for the skin surface — feeding the protective microbiome rather than starving it.',
+    detail: 'Oleic, stearic, and palmitic acids in lipid-rich occlusives serve as nutrient sources for beneficial skin bacteria. Think of them as prebiotics for the skin surface — feeding the protective microbiome rather than starving it.',
   },
   {
     title: 'Supports the acid mantle',
-    detail: 'Tallow is slightly acidic (pH ~5.0), matching the optimal bacterial habitat. Applying it after cleansing helps restore acid mantle pH that alkaline cleansers or hard water may have raised.',
+    detail: 'Many fat-based occlusives are slightly acidic (pH ~5.0), matching the optimal bacterial habitat. Applying one after cleansing helps restore acid mantle pH that alkaline cleansers or hard water may have raised.',
   },
   {
     title: 'Vitamin A and antimicrobial peptides',
-    detail: 'Vitamin A (present in tallow) supports keratinocyte production of antimicrobial peptides — the skin\'s own innate immune defense that keeps pathogenic bacteria in check without broad-spectrum elimination.',
+    detail: 'Vitamin A (present in some lipid occlusives) supports keratinocyte production of antimicrobial peptides — the skin\'s own innate immune defence that keeps pathogenic bacteria in check without broad-spectrum elimination.',
   },
   {
     title: 'The purging phenomenon explained',
-    detail: 'Some users experience a purging period (weeks 1–3) when switching to tallow. This may reflect the microbiome rebalancing as protective strains re-establish over previously synthetic-moisturized skin. It typically resolves as diversity returns.',
+    detail: 'Some users experience a purging period (weeks 1–3) when switching to a rich occlusive. This may reflect the microbiome rebalancing as protective strains re-establish over previously synthetic-moisturised skin. It typically resolves as diversity returns.',
     note: true,
   },
 ];
@@ -284,7 +284,7 @@ export default function MicrobiomeScreen() {
           <>
             <View style={styles.tallowIntro}>
               <Text style={styles.tallowIntroText}>
-                Tallow is uniquely aligned with the skin microbiome's needs — not by accident, but because both evolved alongside each other over millions of years of human development.
+                Sebum-similar occlusives are well aligned with the skin microbiome's needs — because their lipid profile closely matches the skin's own sebum.
               </Text>
             </View>
             {TALLOW_MICROBIOME.map((item, i) => (

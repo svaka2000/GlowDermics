@@ -17,7 +17,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Science', 'Molecular Weights', 'Common Mistakes', 'Layering', 'With Tallow'];
+const TABS = ['Science', 'Molecular Weights', 'Common Mistakes', 'Layering', 'With Occlusives'];
 
 const HA_FACTS = [
   { fact: 'HA can hold 1,000× its weight in water', detail: 'Hyaluronic acid is a glycosaminoglycan — a polysaccharide that is naturally present in the skin, joints, and eyes. Each molecule can bind up to 1,000× its weight in water, making it one of the most effective humectants known. In the dermis, HA forms a gel-like matrix that maintains hydration and volume.', icon: '💧' },
@@ -79,7 +79,7 @@ function buildMolecularWeights(Colors: ShimColors) {
 }
 
 const MISTAKES = [
-  { mistake: 'Applying HA to dry skin in dry conditions', fix: 'Always apply HA to damp skin (immediately after cleansing, while skin still has some moisture). If your environment is dry, seal immediately with an occlusive (tallow, moisturiser) within 30 seconds.', icon: '❌' },
+  { mistake: 'Applying HA to dry skin in dry conditions', fix: 'Always apply HA to damp skin (immediately after cleansing, while skin still has some moisture). If your environment is dry, seal immediately with an occlusive (a balm or moisturiser) within 30 seconds.', icon: '❌' },
   { mistake: 'Not sealing HA with an occlusive', fix: 'HA draws and holds water — but it needs to be locked in. Without an occlusive layer over it, the water HA attracted will simply evaporate, taking additional skin moisture with it. Always follow HA with a moisturiser or oil.', icon: '❌' },
   { mistake: 'Expecting HA to "replace" lost facial volume', fix: 'Topical HA stays in the stratum corneum. The volume loss from aging is in the dermis and fat layer. Only injectable HA fillers or dermal HA boosters reach this depth. Topical HA improves surface hydration and texture — not volume.', icon: '❌' },
   { mistake: 'Using HA only in summer', fix: 'HA is most important in dry conditions — which typically means winter (heating, low humidity) and air-conditioned environments. Year-round use is ideal. In summer with higher humidity, the occlusive-sealing step becomes slightly less critical.', icon: '❌' },
@@ -92,16 +92,16 @@ const LAYERING = [
   { step: 2, action: 'Toner / mist (optional)', detail: 'If using a hydrating toner or facial mist, apply now. This adds an extra aqueous layer for HA to bind. Particularly useful in dry climates.', timing: '30 sec after cleanse' },
   { step: 3, action: 'Hyaluronic Acid Serum', detail: 'Apply to damp skin. Pat gently — do not rub. Allow it to spread and absorb. The damp surface ensures HA has water to bind to immediately rather than drawing from deeper skin.', timing: 'While damp' },
   { step: 4, action: 'Active Serums (if using)', detail: 'Vitamin C, niacinamide, peptides — apply after HA. These are also water-based and can sit in the hydrated layer created by HA.', timing: '60 sec after HA' },
-  { step: 5, action: 'Moisturiser (if using)', detail: 'Cream or lotion helps seal in the HA layer. If using tallow, this can replace the moisturiser step.', timing: '60-90 sec' },
-  { step: 6, action: 'Tallow / Occlusive', detail: 'The critical sealing step. Apply tallow or another occlusive to trap all the moisture and active ingredients underneath. This is what converts HA from a potential dehydrator to a genuine hydrator.', timing: 'Last step PM' },
+  { step: 5, action: 'Moisturiser (if using)', detail: 'Cream or lotion helps seal in the HA layer. If using a rich occlusive balm, this can replace the moisturiser step.', timing: '60-90 sec' },
+  { step: 6, action: 'Occlusive seal', detail: 'The critical sealing step. Apply a balm or another occlusive to trap all the moisture and active ingredients underneath. This is what converts HA from a potential dehydrator to a genuine hydrator.', timing: 'Last step PM' },
 ];
 
 const TALLOW_NOTES = [
-  { title: 'Why tallow and HA are complementary, not redundant', body: 'Tallow is lipid-based (occlusive). HA is water-based (humectant). These mechanisms are not the same — they are complementary. HA draws water into the surface layers; tallow prevents that water from evaporating. Used together they address hydration from both angles: attract and retain.' },
-  { title: 'The correct application sequence', body: 'HA must go on first — it is water-soluble and needs direct contact with the skin surface. Apply HA to damp skin, allow 60 seconds, then apply tallow over. The tallow acts as the occlusive seal that converts the HA from a humectant into a sustained hydrator.' },
-  { title: 'Tallow\'s own glycerin content adds humectant action', body: 'Natural tallow (especially from grass-fed sources) contains glycerin (glycerol), a humectant that binds water similarly to HA. Combined, you get a lipid occlusive + built-in humectant from the tallow, on top of the aqueous HA layer beneath. Multi-layer hydration system.' },
-  { title: 'For very dry skin: HA + tallow is the stack', body: 'For clinical-level dry skin (TEWL-impaired, eczema, atopic dermatitis, desert environments), the most effective protocol is: damp skin → HA serum (30 seconds) → tallow applied generously → sleep. Wake to noticeably different skin. The tallow occlusion is what makes HA effective in true dehydration.' },
-  { title: 'Eye area: both together work well', body: 'The eye area has fewer sebaceous glands and thinner skin. It dehydrates faster and shows volume loss earlier. Low-MW HA serum (for depth) patted around the eye area, followed by a pea-sized amount of tallow gently pressed (not rubbed) around the orbital bone is the most effective natural eye anti-aging protocol.' },
+  { title: 'Why an occlusive and HA are complementary, not redundant', body: 'A lipid occlusive is lipid-based. HA is water-based (humectant). These mechanisms are not the same — they are complementary. HA draws water into the surface layers; the occlusive prevents that water from evaporating. Used together they address hydration from both angles: attract and retain.' },
+  { title: 'The correct application sequence', body: 'HA must go on first — it is water-soluble and needs direct contact with the skin surface. Apply HA to damp skin, allow 60 seconds, then apply the occlusive over. It acts as the seal that converts the HA from a humectant into a sustained hydrator.' },
+  { title: 'Some occlusives\' glycerin content adds humectant action', body: 'Some natural fat-based occlusives contain glycerin (glycerol), a humectant that binds water similarly to HA. Combined, you get a lipid occlusive + a built-in humectant, on top of the aqueous HA layer beneath. A multi-layer hydration system.' },
+  { title: 'For very dry skin: HA + an occlusive is the stack', body: 'For clinical-level dry skin (TEWL-impaired, eczema, atopic dermatitis, desert environments), the most effective protocol is: damp skin → HA serum (30 seconds) → a lipid-rich occlusive applied generously → sleep. Wake to noticeably different skin. The occlusion is what makes HA effective in true dehydration.' },
+  { title: 'Eye area: both together work well', body: 'The eye area has fewer sebaceous glands and thinner skin. It dehydrates faster and shows volume loss earlier. Low-MW HA serum (for depth) patted around the eye area, followed by a pea-sized amount of a gentle occlusive pressed (not rubbed) around the orbital bone is the most effective natural eye anti-aging protocol.' },
 ];
 
 export default function HyaluronicAcidScreen() {
@@ -237,8 +237,8 @@ export default function HyaluronicAcidScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 HA + Tallow: The Hydration System</Text>
-              <Text style={styles.tallowHeroSub}>Humectant + occlusive = attract and retain. This is the principle of the most effective hydration protocols, and HA with tallow is the natural skincare version.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 HA + Occlusive: The Hydration System</Text>
+              <Text style={styles.tallowHeroSub}>Humectant + occlusive = attract and retain. This is the principle behind the most effective hydration protocols — HA with a lipid-rich occlusive is the natural skincare version.</Text>
             </View>
             {TALLOW_NOTES.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

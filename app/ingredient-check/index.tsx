@@ -50,8 +50,8 @@ const EXAMPLE_PRODUCTS = [
     ingredients: 'Water, Retinol, Glycolic Acid, Salicylic Acid, Niacinamide, Dimethicone, Fragrance',
   },
   {
-    label: 'TallowDermics Balm',
-    ingredients: 'Grass-fed Beef Tallow, Manuka Honey, Organic Olive Oil, Calendula Extract',
+    label: 'Grass-Fed Balm',
+    ingredients: 'Grass-fed Beef Fat, Manuka Honey, Organic Olive Oil, Calendula Extract',
   },
 ];
 
@@ -221,7 +221,7 @@ If no conflicts exist, return an empty conflicts array. Same for synergies and r
                 onPress={() => { setProductA(pair.a); setProductB(pair.b); }}
               >
                 <Text style={styles.quickChipText}>
-                  {i === 0 ? 'Retinol vs Vitamin C' : i === 1 ? 'Niacinamide + Ceramides' : 'Tallow vs HA Serum'}
+                  {i === 0 ? 'Retinol vs Vitamin C' : i === 1 ? 'Niacinamide + Ceramides' : 'Balm vs HA Serum'}
                 </Text>
               </Pressable>
             ))}

@@ -113,7 +113,7 @@ function buildSeverityColor(c: Palette): Record<ConflictSeverity, string> {
 
 const PRESET_AM = 'AM: gentle cleanser, vitamin C serum, niacinamide, moisturizer, SPF 50';
 const PRESET_PM = 'PM: oil cleanser, salicylic acid 2%, retinol 0.5%, ceramide moisturizer';
-const PRESET_RECOVERY = 'PM recovery: hyaluronic acid serum, peptide serum, tallow cream';
+const PRESET_RECOVERY = 'PM recovery: hyaluronic acid serum, peptide serum, occlusive balm';
 
 export default function IngredientConflictsScreen() {
   const colors = useColors();
