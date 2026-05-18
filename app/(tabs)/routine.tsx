@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { SkinAnalysis } from '../../src/types';
 import { HabitCalendar } from '../../src/components/HabitCalendar';
@@ -123,6 +124,19 @@ export default function Routine() {
       </Animated.View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        <Pressable
+          style={styles.adaptiveCta}
+          onPress={() => router.push('/adaptive-routine' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Open your Adaptive Routine"
+        >
+          <View style={styles.adaptiveCtaText}>
+            <Text style={styles.adaptiveCtaEyebrow}>TUNED TO YOUR SKIN</Text>
+            <Text style={styles.adaptiveCtaTitle}>Adaptive Routine</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+        </Pressable>
 
         {/* Streak row */}
         <View style={styles.streakRow}>
@@ -262,6 +276,10 @@ function makeStyles(c: Palette) {
   headerTitle: { fontSize: 28, fontWeight: '800', color: c.textPrimary },
   headerSub: { fontSize: 13, color: c.textMuted, marginTop: 4 },
   scroll: { paddingHorizontal: 16 },
+  adaptiveCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16, marginBottom: 16 },
+  adaptiveCtaText: { flex: 1, gap: 3 },
+  adaptiveCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  adaptiveCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
   emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
