@@ -130,7 +130,7 @@ export function GlassHero({
 
       {/* Diagonal accent gradient — adds richness */}
       <LinearGradient
-        colors={['rgba(212,168,74,0.30)', 'transparent']}
+        colors={[colors.gold + '4D', 'transparent']}
         start={{ x: 1, y: 0 }}
         end={{ x: 0, y: 0.7 }}
         style={StyleSheet.absoluteFillObject}
@@ -148,7 +148,7 @@ export function GlassHero({
           </Animated.View>
           <Animated.View style={[styles.blob, styles.blob2, blob2Style]}>
             <LinearGradient
-              colors={['rgba(184,136,46,0.40)', 'rgba(184,136,46,0)']}
+              colors={[colors.gold + '66', colors.gold + '00']}
               style={{ flex: 1, borderRadius: 200 }}
             />
           </Animated.View>
