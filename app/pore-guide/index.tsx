@@ -34,7 +34,7 @@ function buildSections(Colors: ReturnType<typeof shimColors>) {
     { id: 'causes', title: 'What Enlarges Pores', icon: '⚠️', color: Colors.red },
     { id: 'treatments', title: 'Treatments That Work', icon: '✅', color: Colors.green },
     { id: 'habits', title: 'Daily Habits', icon: '📅', color: Colors.primary },
-    { id: 'tallow', title: "Tallow's Role", icon: '🌿', color: Colors.purple },
+    { id: 'tallow', title: "Occlusive's Role", icon: '🌿', color: Colors.purple },
   ];
 }
 
@@ -216,19 +216,19 @@ const HABITS = [
 const TALLOW_PORE = [
   {
     point: 'Biocompatible, non-comedogenic fat profile',
-    detail: "Grass-fed tallow's fatty acid profile closely mirrors human sebum — primarily oleic and stearic acid. This means it does not trigger the clogging response that foreign oils do.",
+    detail: "A sebum-similar occlusive's fatty acid profile closely mirrors human sebum — primarily oleic and stearic acid. This means it does not trigger the clogging response that foreign oils do.",
   },
   {
     point: 'Sebum regulation, not addition',
-    detail: "When the barrier is intact, the skin signals it doesn't need to produce excess sebum. Tallow helps repair the barrier, reducing the overproduction that causes pore-stretching oil buildup.",
+    detail: "When the barrier is intact, the skin signals it doesn't need to produce excess sebum. A lipid-rich occlusive helps repair the barrier, reducing the overproduction that causes pore-stretching oil buildup.",
   },
   {
     point: 'Vitamin A supports cell turnover',
-    detail: 'Tallow contains fat-soluble Vitamin A (retinol precursors), which promotes gentle cell turnover that helps keep pore openings clear — without the irritation of synthetic retinoids.',
+    detail: 'Some lipid occlusives contain fat-soluble Vitamin A (retinol precursors), which promotes gentle cell turnover that helps keep pore openings clear — without the irritation of synthetic retinoids.',
   },
   {
     point: 'Less stripping = less rebound oil',
-    detail: "Harsh synthetic cleansers strip the acid mantle and trigger rebound oil production. Tallow-based cleansing methods preserve barrier integrity, breaking the strip→overcompensate→clog cycle.",
+    detail: "Harsh synthetic cleansers strip the acid mantle and trigger rebound oil production. Gentle oil-cleansing methods preserve barrier integrity, breaking the strip→overcompensate→clog cycle.",
   },
   {
     point: 'What to watch',
@@ -391,9 +391,9 @@ export default function PoreGuideScreen() {
               colors={['#C4622D22', '#0A0A0F']}
               style={styles.tallowHero}
             >
-              <Text style={styles.tallowHeroTitle}>Tallow & Pore Health</Text>
+              <Text style={styles.tallowHeroTitle}>Occlusives & Pore Health</Text>
               <Text style={styles.tallowHeroSub}>
-                How grass-fed tallow fits into a pore-conscious routine — and what to watch out for.
+                How a lipid-rich occlusive fits into a pore-conscious routine — and what to watch out for.
               </Text>
             </LinearGradient>
             {TALLOW_PORE.map((item, i) => (
@@ -410,7 +410,7 @@ export default function PoreGuideScreen() {
             ))}
             <View style={styles.tallowConclusion}>
               <Text style={styles.conclusionText}>
-                Bottom line: Tallow is not inherently pore-clogging when sourced well and used on a clean, BHA-maintained skin barrier.
+                Bottom line: a sebum-similar occlusive is not inherently pore-clogging when chosen well and used on a clean, BHA-maintained skin barrier.
                 It works best as a finishing moisturizer after your actives — not as a heavy occlusive on congested skin.
               </Text>
             </View>
@@ -579,7 +579,7 @@ function makeStyles(c: Palette) {
   freqText: { color: Colors.primary, fontSize: 10, fontWeight: '700' },
   habitDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
 
-  // Tallow
+  // Occlusive
   tallowHero: {
     borderRadius: 16, padding: 20, marginBottom: 16,
     borderWidth: 1, borderColor: Colors.primary + '33',

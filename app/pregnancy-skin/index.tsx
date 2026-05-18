@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['Avoid', 'Safe Ingredients', 'Skin Changes', 'Routine', 'Tallow in Pregnancy'];
+const TABS = ['Avoid', 'Safe Ingredients', 'Skin Changes', 'Routine', 'Barrier in Pregnancy'];
 
 function buildAvoidIngredients(Colors: ReturnType<typeof shimColors>) {
   return [
@@ -41,7 +41,7 @@ function buildSafeIngredients(Colors: ReturnType<typeof shimColors>) {
   { ingredient: 'Mineral SPF (zinc oxide, titanium dioxide)', safety: 'Safe', note: 'Physical UV filters that sit on top of skin rather than penetrating. No systemic absorption of the active UV-blocking compounds. The only SPF category fully endorsed for pregnancy use.', icon: '☀️', color: Colors.teal },
   { ingredient: 'Ceramides and barrier lipids', safety: 'Safe', note: 'Naturally occurring skin barrier components. Topical ceramide formulations have no systemic concerns. Highly recommended for barrier support during pregnancy when skin is stretched and more reactive.', icon: '🛡️', color: Colors.green },
   { ingredient: 'Centella asiatica (Cica)', safety: 'Generally accepted', note: 'Plant extract with wound healing and anti-inflammatory properties. Commonly used for stretch mark prevention during pregnancy. Topical application generally considered safe — not classified as a concern.', icon: '🌿', color: Colors.green },
-  { ingredient: 'Vitamin E (tocopherol)', safety: 'Safe', note: 'Topical vitamin E is antioxidant and non-irritating. No pregnancy concerns with topical application. Supports the skin during rapid stretching. Found naturally in grass-fed tallow.', icon: '🌻', color: Colors.green },
+  { ingredient: 'Vitamin E (tocopherol)', safety: 'Safe', note: 'Topical vitamin E is antioxidant and non-irritating. No pregnancy concerns with topical application. Supports the skin during rapid stretching. Found naturally in many plant and animal fats.', icon: '🌻', color: Colors.green },
   ];
 }
 
@@ -66,16 +66,16 @@ const PREGNANCY_ROUTINE = {
     { step: 1, action: 'Double cleanse (if wearing SPF)', note: 'Oil cleanser first to remove mineral SPF thoroughly.' },
     { step: 2, action: 'Azelaic acid 10–15% (2–3×/week)', note: 'Safest retinoid replacement for acne and pigmentation during pregnancy. FDA category B.' },
     { step: 3, action: 'Niacinamide serum', note: 'Continued melasma management.' },
-    { step: 4, action: 'Barrier moisturiser — tallow or ceramide cream', note: 'Occlusive support. Extra application on stretching areas: abdomen, hips, thighs.' },
+    { step: 4, action: 'Barrier moisturiser — a lipid-rich balm or ceramide cream', note: 'Occlusive support. Extra application on stretching areas: abdomen, hips, thighs.' },
   ],
 };
 
 const TALLOW_PREGNANCY = [
-  { title: 'Is tallow safe during pregnancy?', body: 'Yes — grass-fed tallow is one of the safest skincare ingredients during pregnancy. It contains no synthetic chemicals, no retinoids (in the prescription sense), no endocrine disruptors, and no high-risk preservatives. It is essentially rendered fat from grass-fed cattle — the same type of fat humans have eaten for hundreds of thousands of years.' },
-  { title: 'Vitamin A in tallow: the retinoid question', body: 'Tallow contains vitamin A in retinyl ester form. The concern with retinoids in pregnancy relates to HIGH systemic doses (oral isotretinoin is severely teratogenic). Topical vitamin A as retinyl esters (not retinoic acid) at the concentrations in food and natural skincare is in a fundamentally different category. The vitamin A in tallow is the same form found in liver, butter, and egg yolks — foods eaten safely throughout pregnancy for millennia. No evidence exists linking topical retinyl esters from tallow to adverse pregnancy outcomes.' },
-  { title: 'Stretch mark prevention: tallow twice daily', body: 'Start stretch mark prevention early — ideally from week 12. Apply tallow twice daily to the abdomen, hips, breasts, and inner thighs. The occlusive barrier and lipid content maintains skin suppleness and elasticity. Pair with centella asiatica cream on alternating applications. Consistent twice-daily application from early second trimester is more effective than intensive application starting in the third trimester when stretching is already rapid.' },
-  { title: 'Barrier support for reactive pregnancy skin', body: 'Pregnancy immune modulation can make skin reactive to previously tolerated ingredients. Tallow, with its minimal ingredient list and bioidentical lipid profile, is unlikely to be a new sensitiser. For women whose skin has suddenly become reactive during pregnancy, switching to tallow as the sole moisturiser often helps — removing potential sensitising ingredients from complex formulations.' },
-  { title: 'Postpartum skin repair', body: 'After delivery, hormone levels drop rapidly, causing the opposite skin effects: potential dryness, dull skin, increased TEWL, and hair shedding. Tallow in the postpartum period supports barrier recovery. As retinoid use can resume postpartum (with OB guidance on breastfeeding considerations), the retinol → tallow PM routine can be reintroduced in the weeks following delivery.' },
+  { title: 'Are lipid-rich occlusives safe during pregnancy?', body: 'Yes — a single-ingredient lipid-rich occlusive is one of the safest skincare options during pregnancy. It contains no synthetic chemicals, no retinoids (in the prescription sense), no endocrine disruptors, and no high-risk preservatives. A rendered animal-fat balm is essentially the same type of fat humans have eaten for hundreds of thousands of years.' },
+  { title: 'Vitamin A in occlusives: the retinoid question', body: 'Some animal-fat occlusives contain vitamin A in retinyl ester form. The concern with retinoids in pregnancy relates to HIGH systemic doses (oral isotretinoin is severely teratogenic). Topical vitamin A as retinyl esters (not retinoic acid) at the concentrations in food and natural skincare is in a fundamentally different category. This is the same form found in liver, butter, and egg yolks — foods eaten safely throughout pregnancy for millennia. No evidence links topical retinyl esters from food-grade fats to adverse pregnancy outcomes.' },
+  { title: 'Stretch mark prevention: an occlusive twice daily', body: 'Start stretch mark prevention early — ideally from week 12. Apply a lipid-rich occlusive twice daily to the abdomen, hips, breasts, and inner thighs. The occlusive barrier and lipid content maintains skin suppleness and elasticity. Pair with centella asiatica cream on alternating applications. Consistent twice-daily application from early second trimester is more effective than intensive application starting in the third trimester when stretching is already rapid.' },
+  { title: 'Barrier support for reactive pregnancy skin', body: 'Pregnancy immune modulation can make skin reactive to previously tolerated ingredients. A minimal single-ingredient occlusive, with its bioidentical lipid profile, is unlikely to be a new sensitiser. For women whose skin has suddenly become reactive during pregnancy, switching to a single-ingredient occlusive as the sole moisturiser often helps — removing potential sensitising ingredients from complex formulations.' },
+  { title: 'Postpartum skin repair', body: 'After delivery, hormone levels drop rapidly, causing the opposite skin effects: potential dryness, dull skin, increased TEWL, and hair shedding. A lipid-rich occlusive in the postpartum period supports barrier recovery. As retinoid use can resume postpartum (with OB guidance on breastfeeding considerations), the retinol → occlusive PM routine can be reintroduced in the weeks following delivery.' },
 ];
 
 export default function PregnancySkinScreen() {
@@ -204,8 +204,8 @@ export default function PregnancySkinScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow During Pregnancy</Text>
-              <Text style={styles.tallowHeroSub}>Tallow is among the safest skincare choices during pregnancy — minimal ingredients, no synthetic actives, and a biological profile compatible with the skin it is applied to.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Occlusives During Pregnancy</Text>
+              <Text style={styles.tallowHeroSub}>A single-ingredient lipid-rich occlusive is among the safest skincare choices during pregnancy — minimal ingredients, no synthetic actives, and a biological profile compatible with the skin it is applied to.</Text>
             </View>
             {TALLOW_PREGNANCY.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

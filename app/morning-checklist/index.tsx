@@ -40,7 +40,7 @@ interface Step {
 
 const DEFAULT_AM_STEPS: Step[] = [
   { id: 'am1', label: 'Rinse face with cool water', time: 'AM', icon: '💧' },
-  { id: 'am2', label: 'Apply tallow balm / moisturizer', time: 'AM', icon: '🌿' },
+  { id: 'am2', label: 'Apply occlusive balm / moisturizer', time: 'AM', icon: '🌿' },
   { id: 'am3', label: 'Apply SPF 30+', time: 'AM', icon: '☀️' },
   { id: 'am4', label: 'Drink a glass of water', time: 'AM', icon: '🥤' },
   { id: 'am5', label: 'Take supplements (if any)', time: 'AM', icon: '💊' },
@@ -50,7 +50,7 @@ const DEFAULT_PM_STEPS: Step[] = [
   { id: 'pm1', label: 'Remove makeup / SPF (oil cleanse)', time: 'PM', icon: '🧴' },
   { id: 'pm2', label: 'Gentle cleanser', time: 'PM', icon: '🫧' },
   { id: 'pm3', label: 'Active treatment (BHA / retinol / etc)', time: 'PM', icon: '⚗️' },
-  { id: 'pm4', label: 'Tallow balm / moisturizer', time: 'PM', icon: '🌿' },
+  { id: 'pm4', label: 'Occlusive balm / moisturizer', time: 'PM', icon: '🌿' },
   { id: 'pm5', label: 'Eye cream (if using)', time: 'PM', icon: '👁️' },
 ];
 

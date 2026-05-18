@@ -38,14 +38,14 @@ interface Oil {
 
 const OILS: Oil[] = [
   {
-    name: 'Grass-Fed Tallow',
+    name: 'Grass-Fed Beef Fat',
     comedogenic: 1,
     keyFattyAcids: 'Oleic (40%), Stearic (25%), Palmitic (25%), CLA, Palmitoleic',
     bestFor: ['dry', 'sensitive', 'mature', 'eczema', 'normal'],
     avoid: [],
     benefits: "Bioidentical to human sebum. Contains fat-soluble vitamins A, D, E, K2. Full barrier repair. Absorbs like skin's own oil.",
     layering: 'last',
-    tallowNote: 'Our hero ingredient. Use as the final occlusive step. All other oils are layered before tallow.',
+    tallowNote: 'The richest occlusive here. Use as the final step — all other oils are layered before it.',
   },
   {
     name: 'Squalane',
@@ -152,7 +152,7 @@ const LAYERING_ORDER = [
   { order: 1, type: 'Water-based serums/treatments', example: 'Hyaluronic acid, niacinamide, BHA', principle: 'Smallest molecule → largest. Always apply on damp skin.' },
   { order: 2, type: 'Lightweight oils (first layer)', example: 'Squalane, hemp seed', principle: 'Thin, fast-absorbing oils penetrate before heavier ones seal them out.' },
   { order: 3, type: 'Medium oils (main nourishment)', example: 'Jojoba, argan, rosehip', principle: 'Your primary oil layer for skin type-specific benefits.' },
-  { order: 4, type: 'Heavy occlusives / balms', example: 'Tallow, coconut oil (body)', principle: 'Seal everything in. Nothing penetrates after this layer.' },
+  { order: 4, type: 'Heavy occlusives / balms', example: 'Beef-fat balm, coconut oil (body)', principle: 'Seal everything in. Nothing penetrates after this layer.' },
 ];
 
 const comedogenicColor = (c: number, Colors: ReturnType<typeof shimColors>) => {
@@ -237,7 +237,7 @@ export default function OilGuideScreen() {
             {filteredOils.map((oil, i) => (
               <TouchableOpacity
                 key={i}
-                style={[styles.oilCard, oil.name === 'Grass-Fed Tallow' && { borderColor: Colors.primary + '66' }]}
+                style={[styles.oilCard, oil.name === 'Grass-Fed Beef Fat' && { borderColor: Colors.primary + '66' }]}
                 onPress={() => setExpandedOil(expandedOil === oil.name ? null : oil.name)}
                 activeOpacity={0.8}
               >
@@ -245,7 +245,7 @@ export default function OilGuideScreen() {
                   <View style={{ flex: 1 }}>
                     <View style={styles.oilNameRow}>
                       <Text style={styles.oilName}>{oil.name}</Text>
-                      {oil.name === 'Grass-Fed Tallow' && <Text style={styles.heroBadge}>★ HERO</Text>}
+                      {oil.name === 'Grass-Fed Beef Fat' && <Text style={styles.heroBadge}>★ HERO</Text>}
                     </View>
                     <Text style={styles.oilFatty}>{oil.keyFattyAcids}</Text>
                   </View>
@@ -318,7 +318,7 @@ export default function OilGuideScreen() {
                 • Always apply to slightly damp skin — water provides a substrate{'\n'}
                 • A drop or two is enough — more doesn't mean better{'\n'}
                 • Wait 30–60 seconds between layers{'\n'}
-                • Apply tallow last, always{'\n'}
+                • Apply the richest occlusive last, always{'\n'}
                 • Don't mix actives (BHA, retinol) with oils directly — apply actives first, wait, then oil{'\n'}
                 • Oils do not hydrate — they seal. Always hydrate first.
               </Text>
@@ -342,7 +342,7 @@ export default function OilGuideScreen() {
               ))}
             </ScrollView>
             {filteredOils.sort((a, b) => a.comedogenic - b.comedogenic).map((oil, i) => (
-              <View key={i} style={[styles.typeOilCard, oil.name === 'Grass-Fed Tallow' && { borderColor: Colors.primary + '55' }]}>
+              <View key={i} style={[styles.typeOilCard, oil.name === 'Grass-Fed Beef Fat' && { borderColor: Colors.primary + '55' }]}>
                 <View style={styles.typeOilLeft}>
                   <Text style={styles.typeOilName}>{oil.name}</Text>
                   <Text style={styles.typeOilBenefits}>{oil.benefits.split('.')[0]}.</Text>

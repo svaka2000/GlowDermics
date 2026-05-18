@@ -43,10 +43,10 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     evening: [
       { step: 1, name: 'Double Cleanse', product: 'Oil cleanser → gentle foam', howTo: 'Massage oil cleanser for 1 min to dissolve SPF/sebum. Follow with gentle foam cleanser.', timeSeconds: 120, isTallowDermics: false },
       { step: 2, name: 'BHA (2-3x/week)', product: 'Salicylic acid 2%', howTo: 'Apply to entire face. Wait 10 min before next step. Skip on off nights.', timeSeconds: 60, isTallowDermics: false },
-      { step: 3, name: 'Tallow Spot Treatment', product: 'TallowDermics Balm (tiny amount)', howTo: 'Apply just a rice-grain amount to dry areas or healing breakouts. CLA reduces inflammation.', timeSeconds: 30, isTallowDermics: true },
+      { step: 3, name: 'Occlusive Spot Treatment', product: 'Occlusive balm (tiny amount)', howTo: 'Apply just a rice-grain amount to dry areas or healing breakouts. CLA reduces inflammation.', timeSeconds: 30, isTallowDermics: true },
     ],
     weeklyExtra: 'Gentle clay mask (kaolin) once per week to deep clean pores without stripping',
-    whyItWorks: 'Morning water-only rinse prevents the over-strip/over-produce oil cycle. Niacinamide directly suppresses sebocyte activity. Evening BHA penetrates oil-filled pores. Tallow spot-treats without adding oil to the T-zone.',
+    whyItWorks: 'Morning water-only rinse prevents the over-strip/over-produce oil cycle. Niacinamide directly suppresses sebocyte activity. Evening BHA penetrates oil-filled pores. The occlusive spot-treats without adding oil to the T-zone.',
     totalMorningTime: '2-3 minutes',
     totalEveningTime: '4-5 minutes',
   },
@@ -56,15 +56,15 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     morning: [
       { step: 1, name: 'Water splash', product: 'Lukewarm water', howTo: 'Splash, but don\'t towel dry completely — apply next step on damp skin.', timeSeconds: 30, isTallowDermics: false },
       { step: 2, name: 'Hyaluronic Acid', product: 'HA serum (multiple molecular weights)', howTo: '4-5 drops on still-damp skin. The water helps HA draw moisture into cells.', timeSeconds: 45, isTallowDermics: false },
-      { step: 3, name: 'Seal with Tallow', product: 'TallowDermics Balm', howTo: 'Warm a pea-sized amount in palms, press gently onto face. This seals all the moisture in.', timeSeconds: 60, isTallowDermics: true },
-      { step: 4, name: 'SPF', product: 'Moisturizing SPF 30+', howTo: 'Mineral SPF over tallow. Look for SPFs with ceramides or hyaluronic acid.', timeSeconds: 45, isTallowDermics: false },
+      { step: 3, name: 'Seal with an Occlusive', product: 'Occlusive balm', howTo: 'Warm a pea-sized amount in palms, press gently onto face. This seals all the moisture in.', timeSeconds: 60, isTallowDermics: true },
+      { step: 4, name: 'SPF', product: 'Moisturizing SPF 30+', howTo: 'Mineral SPF over the occlusive. Look for SPFs with ceramides or hyaluronic acid.', timeSeconds: 45, isTallowDermics: false },
     ],
     evening: [
       { step: 1, name: 'Gentle cleanse', product: 'Cream or oil cleanser — no foam/gel', howTo: 'Massage for 60 seconds, rinse with lukewarm water. Pat dry — don\'t rub.', timeSeconds: 90, isTallowDermics: false },
-      { step: 2, name: 'Tallow Moisture Layer', product: 'TallowDermics Balm (generous)', howTo: 'Apply generously while skin is still slightly damp. No need for serum tonight — tallow provides everything.', timeSeconds: 60, isTallowDermics: true },
+      { step: 2, name: 'Occlusive Moisture Layer', product: 'Occlusive balm (generous)', howTo: 'Apply generously while skin is still slightly damp. No need for serum tonight — the occlusive provides everything.', timeSeconds: 60, isTallowDermics: true },
     ],
     weeklyExtra: 'Gentle lactic acid (10%) mask once per week to remove dead cells that prevent moisture absorption',
-    whyItWorks: 'The HA + tallow stack on damp skin is the most efficient dry skin routine possible: HA pulls water into cells, tallow locks it in with an occlusive seal. No unnecessary steps that could further compromise the barrier.',
+    whyItWorks: 'The HA + occlusive stack on damp skin is the most efficient dry skin routine possible: HA pulls water into cells, the occlusive locks it in with a lipid seal. No unnecessary steps that could further compromise the barrier.',
     totalMorningTime: '3 minutes',
     totalEveningTime: '3 minutes',
   },
@@ -74,16 +74,16 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     morning: [
       { step: 1, name: 'Gentle cleanser', product: 'Low-pH gel cleanser', howTo: 'Full face cleanse, 30 seconds. Rinse thoroughly.', timeSeconds: 45, isTallowDermics: false },
       { step: 2, name: 'Niacinamide', product: 'Niacinamide 5-10%', howTo: 'Apply all over. Niacinamide regulates oil in T-zone while hydrating cheeks.', timeSeconds: 45, isTallowDermics: false },
-      { step: 3, name: 'Balanced moisture', product: 'Lightweight gel moisturizer', howTo: 'All over. If cheeks feel tight, add a tiny dot of tallow on cheek bones only.', timeSeconds: 45, isTallowDermics: false },
+      { step: 3, name: 'Balanced moisture', product: 'Lightweight gel moisturizer', howTo: 'All over. If cheeks feel tight, add a tiny dot of an occlusive on cheek bones only.', timeSeconds: 45, isTallowDermics: false },
       { step: 4, name: 'SPF', product: 'SPF 30-50', howTo: 'Full coverage. Mineral SPF is less likely to clog T-zone pores.', timeSeconds: 30, isTallowDermics: false },
     ],
     evening: [
       { step: 1, name: 'Cleanse', product: 'Same morning cleanser or micellar water', howTo: '45-second cleanse. Focus on T-zone where product and oil accumulate.', timeSeconds: 60, isTallowDermics: false },
       { step: 2, name: 'Targeted serum', product: 'Retinol (2-3x/week) or skip', howTo: 'Apply only where needed. Skip if skin is irritated.', timeSeconds: 60, isTallowDermics: false },
-      { step: 3, name: 'Zone moisturize', product: 'Gel on T-zone, TallowDermics on cheeks/dry areas', howTo: 'Use different amounts in different zones. Tallow goes on dry cheeks/under-eye only.', timeSeconds: 60, isTallowDermics: true },
+      { step: 3, name: 'Zone moisturize', product: 'Gel on T-zone, an occlusive on cheeks/dry areas', howTo: 'Use different amounts in different zones. The occlusive goes on dry cheeks/under-eye only.', timeSeconds: 60, isTallowDermics: true },
     ],
     weeklyExtra: 'BHA (salicylic 2%) on T-zone only, once per week',
-    whyItWorks: 'Niacinamide is the perfect combination skin ingredient — it reduces oil in oily zones while improving barrier in dry zones. Tallow is used strategically only on dry areas where its rich lipids are actually needed.',
+    whyItWorks: 'Niacinamide is the perfect combination skin ingredient — it reduces oil in oily zones while improving barrier in dry zones. A rich occlusive is used strategically only on dry areas where its lipids are actually needed.',
     totalMorningTime: '3 minutes',
     totalEveningTime: '3-4 minutes',
   },
@@ -92,15 +92,15 @@ const FIXED_ROUTINES: Record<string, MinimalRoutine> = {
     philosophy: 'Sensitive skin needs fewer ingredients, not more. The #1 rule: if skin is reacting, remove things — don\'t add more.',
     morning: [
       { step: 1, name: 'Water rinse', product: 'Room temperature water only', howTo: 'No cleansers in AM. They disrupt the barrier\'s overnight repair work.', timeSeconds: 30, isTallowDermics: false },
-      { step: 2, name: 'Tallow barrier seal', product: 'TallowDermics Balm', howTo: 'Warm 2-3 drops in palms, press gently. Its CLA and fatty acids calm inflammation and seal the barrier.', timeSeconds: 60, isTallowDermics: true },
-      { step: 3, name: 'Mineral SPF', product: 'Zinc oxide SPF 30+, fragrance-free', howTo: 'Over tallow. Zinc is physically reflective — no chemical reaction with skin.', timeSeconds: 45, isTallowDermics: false },
+      { step: 2, name: 'Occlusive barrier seal', product: 'Occlusive balm', howTo: 'Warm 2-3 drops in palms, press gently. Its CLA and fatty acids calm inflammation and seal the barrier.', timeSeconds: 60, isTallowDermics: true },
+      { step: 3, name: 'Mineral SPF', product: 'Zinc oxide SPF 30+, fragrance-free', howTo: 'Over the occlusive. Zinc is physically reflective — no chemical reaction with skin.', timeSeconds: 45, isTallowDermics: false },
     ],
     evening: [
       { step: 1, name: 'Oil cleanse', product: 'Fragrance-free cleansing oil or micellar water', howTo: 'Gentle massage, 60 sec. Rinse with lukewarm water. No foam — foam cleaners are alkaline.', timeSeconds: 90, isTallowDermics: false },
-      { step: 2, name: 'Tallow balm', product: 'TallowDermics Balm (generous)', howTo: 'Generous application on still-damp skin. This is your serum, moisturizer, and barrier seal in one step.', timeSeconds: 60, isTallowDermics: true },
+      { step: 2, name: 'Occlusive balm', product: 'Occlusive balm (generous)', howTo: 'Generous application on still-damp skin. This is your serum, moisturizer, and barrier seal in one step.', timeSeconds: 60, isTallowDermics: true },
     ],
     weeklyExtra: 'Nothing — keep it minimal. If skin is stable, try a fragrance-free ceramide mask once per week.',
-    whyItWorks: 'Every additional ingredient is a potential trigger. This routine has 3 evening ingredients total — none of which are known sensitizers. Tallow\'s near-identical match to human sebum means the skin recognizes it and doesn\'t react defensively.',
+    whyItWorks: 'Every additional ingredient is a potential trigger. This routine has 3 evening ingredients total — none of which are known sensitizers. A sebum-similar occlusive\'s near-identical match to human sebum means the skin recognises it and doesn\'t react defensively.',
     totalMorningTime: '2 minutes',
     totalEveningTime: '3 minutes',
   },
@@ -150,7 +150,7 @@ export default function MinimalRoutine() {
 Rules:
 - Max 3 steps morning, max 3 steps evening
 - Each step under 60 seconds
-- At least one step must use TallowDermics (a grass-fed beef tallow balm) where appropriate
+- At least one step must use a rich occlusive balm where appropriate
 - Focus on efficacy per step, not number of steps
 - No actives stacking
 

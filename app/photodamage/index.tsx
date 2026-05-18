@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['UV Science', 'Damage Types', 'Reversal', 'Prevention Stack', 'Tallow Role'];
+const TABS = ['UV Science', 'Damage Types', 'Reversal', 'Prevention Stack', 'Barrier Role'];
 
 const UV_SCIENCE = [
   { title: 'UVA vs UVB: completely different damage mechanisms', detail: 'UVB (290–320nm): burns. Causes direct DNA damage (CPD — cyclobutane pyrimidine dimers) in the epidermis. Peaks at midday. Blocked by glass. Causes immediate erythema (redness) and delayed tanning. UVA (320–400nm): ages. Penetrates to the dermis. Causes oxidative damage, collagen breakdown via MMP activation, and indirect DNA damage. Constant throughout daylight hours. Penetrates glass and clouds. 95% of UV reaching Earth is UVA.', icon: '☀️' },
@@ -43,7 +43,7 @@ const REVERSAL = [
   { ingredient: 'Vitamin C (L-ascorbic acid)', priority: 'first-line', mechanism: 'Inhibits melanin synthesis (fades pigmentation), stimulates collagen synthesis (cofactor for prolyl hydroxylase), neutralises free radicals from existing UV exposure. Directly reverses oxidative photodamage.', protocol: '10–20% LAA applied AM before SPF. Results in pigmentation at 8–12 weeks, collagen benefit at 3–6 months.', icon: '🍊' },
   { ingredient: 'Niacinamide', priority: 'first-line', mechanism: 'Inhibits melanosome transfer (reduces pigmentation), stimulates ceramide synthesis, assists DNA repair via NAD+ pathway, reduces MMP activity. Complements retinoid and vitamin C protocols.', protocol: '5% applied AM and/or PM. Well tolerated. Results at 8–12 weeks for pigmentation.', icon: '💊' },
   { ingredient: 'AHA chemical exfoliants', priority: 'second-line', mechanism: 'Accelerates shedding of pigmented surface cells, improves texture, increases product penetration by removing corneocyte buildup. Indirect support for reversal actives.', protocol: 'Glycolic acid 8–12% PM 2–3× weekly. Or mandelic acid for sensitive skin. Always SPF next morning.', icon: '⚗️' },
-  { ingredient: 'Antioxidant combination', priority: 'second-line', mechanism: 'Vitamin C + vitamin E + ferulic acid neutralise existing free radical damage and prevent further oxidative damage from UV. The C+E+ferulic combo provides 8× the UV protection of vitamin C alone.', protocol: 'Vitamin C serum with vitamin E and ferulic acid applied AM. Or vitamin E from tallow PM side of the equation.', icon: '🛡️' },
+  { ingredient: 'Antioxidant combination', priority: 'second-line', mechanism: 'Vitamin C + vitamin E + ferulic acid neutralise existing free radical damage and prevent further oxidative damage from UV. The C+E+ferulic combo provides 8× the UV protection of vitamin C alone.', protocol: 'Vitamin C serum with vitamin E and ferulic acid applied AM. Or vitamin E from a lipid-rich occlusive on the PM side of the equation.', icon: '🛡️' },
   { ingredient: 'SPF (prevention/arrest)', priority: 'essential', mechanism: 'Prevents ongoing new photodamage that continuously counteracts reversal actives. Without consistent SPF, every reversal product is working against an accumulating UV burden. SPF stops the damage from progressing.', protocol: 'Mineral SPF 30–50 daily, every day, including winter. Reapply every 2 hours if outdoors. This is the highest-leverage single intervention for photoaging.', icon: '🌟' },
 ];
 
@@ -54,15 +54,15 @@ const PREVENTION_STACK = [
   { time: 'AM', step: 4, product: 'SPF Reapplication every 2hrs (outdoors)', role: 'SPF degrades with UV exposure and sweating', critical: true },
   { time: 'PM', step: 1, product: 'Gentle cleanser', role: 'Remove oxidised sebum, pollution, and SPF', critical: true },
   { time: 'PM', step: 2, product: 'Retinoid (retinol or tretinoin)', role: 'Collagen synthesis, cell turnover, DNA repair', critical: false },
-  { time: 'PM', step: 3, product: 'Tallow', role: 'Barrier support, vitamin A/E/D delivery, antioxidant protection', critical: false },
+  { time: 'PM', step: 3, product: 'Occlusive', role: 'Barrier support, vitamin A/E/D delivery, antioxidant protection', critical: false },
 ];
 
 const TALLOW_ROLE = [
-  { title: 'Vitamin E — the forgotten photoprotective antioxidant', body: 'Tallow from grass-fed cattle contains significant vitamin E (tocopherol). In the skin, vitamin E is the primary lipid-phase antioxidant — it neutralises free radicals within the lipid bilayer of the stratum corneum, where UV generates them. Applied before bed, tallow replenishes the vitamin E reserves depleted by daytime UV exposure.' },
-  { title: 'Vitamin A as a gentle retinoid equivalent', body: 'Tallow contains vitamin A in the form of retinyl esters — a gentle precursor to the active retinoid retinoic acid. While not as potent as prescription tretinoin, retinyl esters from food-sourced tallow provide gentle cell turnover stimulation and support the epidermal renewal processes that counteract photoaging.' },
-  { title: 'Barrier repair supports reversal active efficacy', body: 'Photoaged skin has a compromised barrier — chronic UV exposure degrades barrier lipids and impairs NMF synthesis. A compromised barrier reduces the efficacy of reversal actives like retinoids and vitamin C (they must penetrate through the barrier to reach target cells). Tallow, by restoring barrier integrity, improves the penetration and efficacy of other photoaging treatments.' },
-  { title: 'PM antioxidant coverage vs AM vitamin C', body: 'Vitamin C is the AM antioxidant (active during UV exposure). Tallow with its vitamin E content provides PM antioxidant coverage when the skin is in active repair mode. These two antioxidants are complementary: vitamin C (water-soluble, AM) and vitamin E (lipid-soluble in tallow, PM) cover both the aqueous and lipid phases of the skin\'s antioxidant system.' },
-  { title: 'Tallow does not replace SPF', body: 'Critical point: tallow has no meaningful SPF. It is not a sun protection agent. The tallow role in photoaging prevention is entirely in the PM: antioxidant support, barrier repair, and vitamin delivery. The photoprotection strategy is vitamin C + SPF in the AM. These are complementary, non-competing roles.' },
+  { title: 'Vitamin E — the forgotten photoprotective antioxidant', body: 'Some animal-fat occlusives contain significant vitamin E (tocopherol). In the skin, vitamin E is the primary lipid-phase antioxidant — it neutralises free radicals within the lipid bilayer of the stratum corneum, where UV generates them. Applied before bed, a vitamin-E-rich occlusive replenishes the reserves depleted by daytime UV exposure.' },
+  { title: 'Vitamin A as a gentle retinoid equivalent', body: 'Some lipid occlusives contain vitamin A as retinyl esters — a gentle precursor to the active retinoid retinoic acid. While not as potent as prescription tretinoin, retinyl esters provide gentle cell turnover stimulation and support the epidermal renewal processes that counteract photoaging.' },
+  { title: 'Barrier repair supports reversal active efficacy', body: 'Photoaged skin has a compromised barrier — chronic UV exposure degrades barrier lipids and impairs NMF synthesis. A compromised barrier reduces the efficacy of reversal actives like retinoids and vitamin C (they must penetrate through the barrier to reach target cells). A lipid occlusive, by restoring barrier integrity, improves the penetration and efficacy of other photoaging treatments.' },
+  { title: 'PM antioxidant coverage vs AM vitamin C', body: 'Vitamin C is the AM antioxidant (active during UV exposure). A vitamin-E-rich occlusive provides PM antioxidant coverage when the skin is in active repair mode. These two antioxidants are complementary: vitamin C (water-soluble, AM) and vitamin E (lipid-soluble, PM) cover both the aqueous and lipid phases of the skin\'s antioxidant system.' },
+  { title: 'An occlusive does not replace SPF', body: 'Critical point: an occlusive has no meaningful SPF. It is not a sun protection agent. Its role in photoaging prevention is entirely in the PM: antioxidant support, barrier repair, and vitamin delivery. The photoprotection strategy is vitamin C + SPF in the AM. These are complementary, non-competing roles.' },
 ];
 
 export default function PhotodamageScreen() {
@@ -195,8 +195,8 @@ export default function PhotodamageScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Tallow in Photoaging Prevention</Text>
-              <Text style={styles.tallowHeroSub}>Tallow plays a specific PM role in the photodamage strategy — not as sun protection, but as the antioxidant and barrier recovery partner that supports daytime SPF.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Occlusives in Photoaging Prevention</Text>
+              <Text style={styles.tallowHeroSub}>A lipid-rich occlusive plays a specific PM role in the photodamage strategy — not as sun protection, but as the antioxidant and barrier-recovery partner that supports daytime SPF.</Text>
             </View>
             {TALLOW_ROLE.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

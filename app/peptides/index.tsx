@@ -18,7 +18,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['What Are Peptides', 'Types', 'Top Peptides', 'How to Use', 'Tallow & Peptides'];
+const TABS = ['What Are Peptides', 'Types', 'Top Peptides', 'How to Use', 'Lipids & Peptides'];
 
 const INTRO_FACTS = [
   { fact: 'Peptides are short chains of amino acids', detail: 'Amino acids linked in sequences of 2–50 form peptides. The skin\'s most important structural proteins — collagen (triple helix), elastin, and fibronectin — are all made from specific amino acid sequences. Peptides signal cells and act as building blocks.', icon: '🔗' },
@@ -89,11 +89,11 @@ const HOW_TO_USE = [
 ];
 
 const TALLOW_PEPTIDES = [
-  { title: 'Tallow provides amino acid building blocks', body: 'Tallow from grass-fed beef contains a range of amino acids — the building blocks that cells use to construct peptides and proteins (including collagen). While topical amino acid delivery is less efficient than peptide delivery, the fat-soluble vitamins in tallow (A, D, E, K2) support the cellular machinery that synthesises these proteins.' },
-  { title: 'Tallow as the delivery vehicle for lipid-modified peptides', body: 'Palmitoyl-prefixed peptides (Matrixyl, GHK-Cu palmitoylated forms) have a fatty acid attached specifically to improve stratum corneum penetration. Applying these peptides over a thin layer of tallow creates a lipid-rich environment that may further aid the penetration of these oil-adapted peptides.' },
-  { title: 'Recommended stack: peptide serum → tallow', body: 'Apply peptide serum first (water-soluble, needs direct skin contact). Allow 90 seconds to absorb. Apply a thin layer of tallow to seal in the serum layer, add vitamin A/E/D, and provide overnight barrier support. The tallow does not block the already-absorbed serum.' },
-  { title: 'GHK-Cu + Tallow: wound healing synergy', body: 'GHK-Cu is a carrier peptide that promotes wound healing via VEGF upregulation and collagen stimulation. Tallow provides vitamin K2 (supports skin healing and reduces bruising/discolouration) and vitamin A (promotes epithelial cell renewal). The two support recovery through distinct but complementary pathways.' },
-  { title: 'Avoid peptide breakdown: timing with acids', body: 'If using AHAs or BHAs in your PM routine, apply the acid first, wait 30 minutes, then peptide serum, then tallow. This prevents the low-pH environment of the acid from potentially hydrolyzing peptide bonds before the peptide has a chance to penetrate.' },
+  { title: 'Animal-fat occlusives provide amino acid building blocks', body: 'Some animal-fat occlusives contain a range of amino acids — the building blocks cells use to construct peptides and proteins (including collagen). While topical amino acid delivery is less efficient than peptide delivery, the fat-soluble vitamins (A, D, E, K2) support the cellular machinery that synthesises these proteins.' },
+  { title: 'An occlusive as the delivery vehicle for lipid-modified peptides', body: 'Palmitoyl-prefixed peptides (Matrixyl, GHK-Cu palmitoylated forms) have a fatty acid attached specifically to improve stratum corneum penetration. Applying these peptides over a thin layer of a lipid occlusive creates a lipid-rich environment that may further aid the penetration of these oil-adapted peptides.' },
+  { title: 'Recommended stack: peptide serum → occlusive', body: 'Apply peptide serum first (water-soluble, needs direct skin contact). Allow 90 seconds to absorb. Apply a thin layer of an occlusive to seal in the serum layer, add vitamin A/E/D, and provide overnight barrier support. The occlusive does not block the already-absorbed serum.' },
+  { title: 'GHK-Cu + an occlusive: wound healing synergy', body: 'GHK-Cu is a carrier peptide that promotes wound healing via VEGF upregulation and collagen stimulation. A vitamin-rich occlusive provides vitamin K2 (supports skin healing and reduces bruising/discolouration) and vitamin A (promotes epithelial cell renewal). The two support recovery through distinct but complementary pathways.' },
+  { title: 'Avoid peptide breakdown: timing with acids', body: 'If using AHAs or BHAs in your PM routine, apply the acid first, wait 30 minutes, then peptide serum, then an occlusive. This prevents the low-pH environment of the acid from potentially hydrolyzing peptide bonds before the peptide has a chance to penetrate.' },
 ];
 
 export default function PeptidesScreen() {
@@ -238,8 +238,8 @@ export default function PeptidesScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Peptides + Tallow</Text>
-              <Text style={styles.tallowHeroSub}>Tallow and peptides work through complementary pathways. Peptides signal collagen production; tallow provides barrier support and fat-soluble vitamins that enable the cellular machinery to respond.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Peptides + an Occlusive</Text>
+              <Text style={styles.tallowHeroSub}>A lipid-rich occlusive and peptides work through complementary pathways. Peptides signal collagen production; the occlusive provides barrier support and fat-soluble vitamins that enable the cellular machinery to respond.</Text>
             </View>
             {TALLOW_PEPTIDES.map((p, i) => (
               <View key={i} style={styles.tallowCard}>

@@ -18,7 +18,7 @@ function shimColors(c: Palette) {
 }
 type ShimColors = ReturnType<typeof shimColors>;
 
-const TABS = ['Science', 'Benefits', 'How to Use', 'Combinations', 'Tallow Stack'];
+const TABS = ['Science', 'Benefits', 'How to Use', 'Combinations', 'Lipid Stack'];
 
 const SCIENCE_FACTS = [
   { fact: 'Niacinamide is vitamin B3 — a water-soluble essential nutrient', detail: 'Also called nicotinamide. Unlike retinol (vitamin A) and vitamin C, niacinamide is a B vitamin — stable, non-irritating, and effective across a wide pH range (4–8). It does not require a specific acidic environment to work. This makes it one of the most formulation-friendly actives in skincare.', icon: '🧪' },
@@ -60,11 +60,11 @@ function buildCombinations(Colors: ShimColors) {
 }
 
 const TALLOW_STACK = [
-  { title: 'Niacinamide before tallow: the correct order', body: 'Niacinamide is water-soluble — it must contact the aqueous phase of skin before any occlusive is applied. Apply niacinamide serum on clean skin, allow 60–90 seconds, then apply tallow. Applying tallow first would block niacinamide penetration.' },
-  { title: 'Complementary barrier mechanisms', body: 'Niacinamide stimulates ceramide synthesis (internal barrier building). Tallow provides the three barrier lipids directly (external barrier support). These two mechanisms address barrier repair from both directions: tallow fills gaps now; niacinamide rebuilds the infrastructure to maintain them long-term.' },
-  { title: 'Niacinamide\'s sebum reduction + tallow\'s non-comedogenic profile', body: 'A common concern: will tallow make oily skin worse? Niacinamide\'s sebum-reducing effect reduces this risk by lowering sebaceous gland activity. Applied together, niacinamide reduces the sebum that could interact with topical oils, while tallow provides barrier support without adding comedogenic risk to properly applied skin.' },
-  { title: 'Anti-aging stack: niacinamide + tallow\'s vitamins', body: 'For anti-aging: niacinamide upregulates collagen production and assists DNA repair. Tallow contributes vitamin A (retinyl ester form — gentle retinoid activity), vitamin E (antioxidant, lipid protection), and vitamin D (skin immune modulation). The combination addresses multiple aging pathways simultaneously.' },
-  { title: 'PM protocol recommendation', body: 'PM: cleanser → niacinamide serum (60 sec) → (retinol if using, then 20 min wait) → tallow. This sequence allows niacinamide to penetrate, lets retinol absorb if using, and finishes with tallow as the overnight occlusive barrier support. Comprehensive, well-ordered, layered correctly.' },
+  { title: 'Niacinamide before the occlusive: the correct order', body: 'Niacinamide is water-soluble — it must contact the aqueous phase of skin before any occlusive is applied. Apply niacinamide serum on clean skin, allow 60–90 seconds, then apply the occlusive. Applying the occlusive first would block niacinamide penetration.' },
+  { title: 'Complementary barrier mechanisms', body: 'Niacinamide stimulates ceramide synthesis (internal barrier building). A lipid-rich occlusive provides the three barrier lipids directly (external barrier support). These two mechanisms address barrier repair from both directions: the occlusive fills gaps now; niacinamide rebuilds the infrastructure to maintain them long-term.' },
+  { title: 'Niacinamide\'s sebum reduction + a non-comedogenic occlusive', body: 'A common concern: will a rich occlusive make oily skin worse? Niacinamide\'s sebum-reducing effect lowers this risk by reducing sebaceous gland activity. Applied together, niacinamide reduces the sebum that could interact with topical oils, while a sebum-similar occlusive provides barrier support without adding comedogenic risk to properly applied skin.' },
+  { title: 'Anti-aging stack: niacinamide + an occlusive\'s vitamins', body: 'For anti-aging: niacinamide upregulates collagen production and assists DNA repair. A vitamin-rich occlusive contributes vitamin A (retinyl ester form — gentle retinoid activity), vitamin E (antioxidant, lipid protection), and vitamin D (skin immune modulation). The combination addresses multiple aging pathways simultaneously.' },
+  { title: 'PM protocol recommendation', body: 'PM: cleanser → niacinamide serum (60 sec) → (retinol if using, then 20 min wait) → an occlusive. This sequence allows niacinamide to penetrate, lets retinol absorb if using, and finishes with the occlusive as overnight barrier support. Comprehensive, well-ordered, layered correctly.' },
 ];
 
 export default function NiacinamideScreen() {
@@ -190,8 +190,8 @@ export default function NiacinamideScreen() {
         {activeTab === 4 && (
           <View>
             <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Niacinamide + Tallow</Text>
-              <Text style={styles.tallowHeroSub}>Niacinamide and tallow address barrier repair from opposite directions — one builds infrastructure, the other fills gaps. Together they are more complete than either alone.</Text>
+              <Text style={styles.tallowHeroTitle}>🌿 Niacinamide + an Occlusive</Text>
+              <Text style={styles.tallowHeroSub}>Niacinamide and a lipid-rich occlusive address barrier repair from opposite directions — one builds infrastructure, the other fills gaps. Together they are more complete than either alone.</Text>
             </View>
             {TALLOW_STACK.map((p, i) => (
               <View key={i} style={styles.tallowCard}>
