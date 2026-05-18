@@ -47,7 +47,7 @@ export interface AffiliateLink {
   /** When false, OutboundLink renders disabled / falls back to a generic search. */
   enabled: boolean;
   /**
-   * True when this is a first-party product (TallowDermics). Not an affiliate
+   * True when this is a first-party product (made in-house). Not an affiliate
    * relationship — it's self-promotion and must be disclosed differently
    * (see AffiliateDisclosure / playbook §5).
    */
@@ -112,16 +112,6 @@ export const EMBEDDED_LINK_TABLE: Record<string, AffiliateLink> = {
     url: 'https://www.amazon.com/s?k=eltamd+uv+clear+spf+46',
     category: 'spf',
     enabled: true,
-  },
-  'tallowdermics-signature-balm': {
-    productKey: 'tallowdermics-signature-balm',
-    brand: 'TallowDermics',
-    productName: 'Signature Tallow Balm',
-    network: 'direct',
-    url: 'https://tallowdermics.com/products/signature-balm',
-    category: 'moisturizer',
-    enabled: true,
-    firstParty: true,
   },
 };
 

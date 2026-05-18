@@ -24,7 +24,7 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h
 /** Where the live table is hosted. Override via env without an app rebuild. */
 const REMOTE_TABLE_URL =
   process.env.EXPO_PUBLIC_AFFILIATE_TABLE_URL ||
-  'https://r2.glowdermics.com/affiliate-links.json';
+  'https://r2.velumi.ai/affiliate-links.json';
 
 let memoryTable: Record<string, AffiliateLink> | null = null;
 let refreshing = false;

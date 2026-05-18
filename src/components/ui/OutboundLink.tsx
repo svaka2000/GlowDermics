@@ -32,7 +32,7 @@ const NETWORK_STORE_LABEL: Record<string, string> = {
   rakuten: 'the store',
   cj: 'the store',
   awin: 'the store',
-  direct: 'TallowDermics',
+  direct: 'the store',
 };
 
 interface OutboundLinkProps {

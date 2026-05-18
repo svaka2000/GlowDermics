@@ -8,7 +8,7 @@
  * scanner results, learn articles, AI chat.
  *
  * `firstParty` switches the copy to a material-connection disclosure for
- * TallowDermics (self-promotion, not an affiliate relationship).
+ * first-party products (self-promotion, not an affiliate relationship).
  */
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
@@ -19,7 +19,7 @@ import { useColors } from '../../state/theme';
 interface AffiliateDisclosureProps {
   /** Compact inline style vs. full-width banner. Default: banner. */
   inline?: boolean;
-  /** Use the TallowDermics material-connection wording instead. */
+  /** Use the first-party material-connection wording instead. */
   firstParty?: boolean;
 }
 
@@ -28,7 +28,7 @@ export function AffiliateDisclosure({ inline, firstParty }: AffiliateDisclosureP
   const styles = useMemo(() => makeStyles(colors), [colors]);
 
   const text = firstParty
-    ? 'TallowDermics is made by the team behind Velumi AI. Some links on this page are to our own products; others may earn us a commission. This never changes what we recommend.'
+    ? 'Some links on this page are to products we make ourselves; others may earn us a commission. This never changes what we recommend.'
     : 'Velumi AI may earn a commission when you buy through links on this page. This does not affect our recommendations.';
 
   return (

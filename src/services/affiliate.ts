@@ -3,7 +3,7 @@
  *
  * Per AFFILIATE_PLAYBOOK.md §3.2–§3.4:
  *  - Every outbound click goes through the redirect domain
- *    `go.glowdermics.com/p/<productKey>?ctx=<context>&u=<userBucket>` so the
+ *    `go.velumi.ai/p/<productKey>?ctx=<context>&u=<userBucket>` so the
  *    Worker can hot-swap merchants, log the click before the cookie drops, and
  *    embed the right per-network SubID.
  *  - Buy-intent links open with `Linking.openURL` (system browser) — NOT
@@ -30,13 +30,13 @@ export type ClickContext =
 
 const REDIRECT_BASE =
   process.env.EXPO_PUBLIC_AFFILIATE_REDIRECT_BASE ||
-  'https://go.glowdermics.com';
+  'https://go.velumi.ai';
 
 const BUCKET_KEY = 'gd_user_bucket_v1';
 const CLICK_QUEUE_KEY = 'gd_affiliate_click_queue_v1';
 const CLICK_ENDPOINT =
   process.env.EXPO_PUBLIC_AFFILIATE_CLICK_ENDPOINT ||
-  'https://analytics.glowdermics.com/click';
+  'https://analytics.velumi.ai/click';
 
 let cachedBucket: string | null = null;
 
