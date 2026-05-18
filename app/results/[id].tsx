@@ -478,6 +478,19 @@ export default function Results() {
           </View>
         )}
 
+        <Pressable
+          style={styles.progressStoryCta}
+          onPress={() => router.push('/progress-story' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="View your Progress Story"
+        >
+          <View style={styles.progressStoryTextWrap}>
+            <Text style={styles.progressStoryEyebrow}>SHARE YOUR JOURNEY</Text>
+            <Text style={styles.progressStoryTitle}>View your Progress Story</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+        </Pressable>
+
         <View style={{ height: 100 }} />
         </Animated.View>
       </ScrollView>
@@ -533,6 +546,10 @@ function makeStyles(c: Palette) {
     borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 20,
   },
   cardTitle: { fontFamily: fonts.display, fontSize: 19, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2, marginBottom: 16 },
+  progressStoryCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 4, marginBottom: 8, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16 },
+  progressStoryTextWrap: { flex: 1, gap: 3 },
+  progressStoryEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  progressStoryTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
   deltaBanner: {
     marginTop: 12, backgroundColor: c.bgElevated, borderRadius: 12,
     padding: 10, gap: 6, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
