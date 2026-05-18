@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as FileSystem from 'expo-file-system';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { scanIngredients } from '../../src/services/ingredientScanner';
 import { IngredientReport } from '../../src/types/ingredients';
 
@@ -333,15 +334,15 @@ function makeStyles(c: Palette) {
   analyzingTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, textAlign: 'center', marginBottom: 10 },
   analyzingSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: c.textPrimary },
+  headerTitle: { fontFamily: fonts.display, fontSize: 18, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.3 },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
   hero: { alignItems: 'center', paddingVertical: 32, position: 'relative' },
   heroGlow: { position: 'absolute', top: 0, left: '5%', right: '5%', height: 100, borderRadius: 50 },
   heroIconWrap: { borderRadius: 26, overflow: 'hidden', marginBottom: 20 },
   heroIconGrad: { width: 84, height: 84, alignItems: 'center', justifyContent: 'center', borderRadius: 26 },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: c.textPrimary, textAlign: 'center', marginBottom: 10 },
-  heroSub: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 320 },
+  heroTitle: { fontFamily: fonts.display, fontSize: 28, fontWeight: '600', color: c.textPrimary, textAlign: 'center', marginBottom: 12, letterSpacing: 0.2, lineHeight: 34 },
+  heroSub: { fontFamily: fonts.body, fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 320, letterSpacing: 0.1 },
   howCard: { backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.border, padding: 18, marginBottom: 24, gap: 12 },
   howTitle: { fontSize: 14, fontWeight: '700', color: c.textPrimary, marginBottom: 4 },
   howRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -390,7 +391,7 @@ function makeStyles(c: Palette) {
   compatBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   compatBadgeText: { fontSize: 11, fontWeight: '700' },
   tdCompareCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: c.borderStrong, padding: 18, marginBottom: 16 },
-  tdCompareEyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: c.primary, marginBottom: 8 },
+  tdCompareEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, marginBottom: 8, textTransform: 'uppercase' },
   tdCompareText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   scanAgainBtn: { alignItems: 'center', paddingVertical: 16 },
   scanAgainText: { fontSize: 15, fontWeight: '600', color: c.primary },
