@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Palette } from '../../src/constants/colors';
 import { useColors } from '../../src/state/theme';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { ScanHistoryEntry } from '../../src/types';
 import { ScoreRing } from '../../src/components/ScoreRing';
@@ -155,6 +156,19 @@ export default function Progress() {
             </Animated.View>
           </SafeAreaView>
         </GlassHero>
+
+        <Pressable
+          style={styles.trendsCta}
+          onPress={() => router.push('/skin-trends' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="View your skin trends"
+        >
+          <View style={styles.trendsCtaText}>
+            <Text style={styles.trendsCtaEyebrow}>EVERY DIMENSION, OVER TIME</Text>
+            <Text style={styles.trendsCtaTitle}>Skin Trends</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
+        </Pressable>
 
         {/* XP / Level card */}
         {(() => {
@@ -735,6 +749,10 @@ function makeStyles(c: Palette) {
   heroScoreNum: { fontSize: 26, fontWeight: '900', color: c.white, letterSpacing: -0.5 },
   heroScoreLabel: { fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: '900', letterSpacing: 1.4 },
   scroll: { paddingBottom: 40 },
+  trendsCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 16, backgroundColor: c.bgCard, borderRadius: 18, borderWidth: 1, borderColor: c.borderStrong, paddingHorizontal: 18, paddingVertical: 16 },
+  trendsCtaText: { flex: 1, gap: 3 },
+  trendsCtaEyebrow: { fontFamily: fonts.body, fontSize: 11, fontWeight: '600', letterSpacing: 2.4, color: c.primary, textTransform: 'uppercase' },
+  trendsCtaTitle: { fontFamily: fonts.display, fontSize: 17, fontWeight: '600', color: c.textPrimary, letterSpacing: 0.2 },
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
   emptyTitle: { fontSize: 20, fontWeight: '700', color: c.textPrimary, marginBottom: 10 },
