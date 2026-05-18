@@ -21,6 +21,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Colors } from '../../src/constants/colors';
+import { fonts } from '../../src/constants/typography';
 import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { UserProfile, RegionalFinding } from '../../src/types';
@@ -745,26 +746,31 @@ const styles = StyleSheet.create({
   pageContent: { flex: 1, paddingHorizontal: 28, paddingTop: 24, paddingBottom: 12 },
 
   eyebrow: {
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 2,
+    fontFamily: fonts.body,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2.4,
     color: Colors.primary,
-    marginBottom: 12,
+    marginBottom: 14,
+    textTransform: 'uppercase',
   },
   heading: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontFamily: fonts.display,
+    fontSize: 34,
+    fontWeight: '600',
     color: Colors.white,
-    lineHeight: 38,
-    letterSpacing: -0.6,
-    marginBottom: 12,
+    lineHeight: 41,
+    letterSpacing: 0.2,
+    marginBottom: 14,
   },
   sub: {
+    fontFamily: fonts.body,
     fontSize: 15,
     color: 'rgba(255,255,255,0.62)',
-    lineHeight: 22,
+    lineHeight: 23,
     fontWeight: '500',
     marginBottom: 22,
+    letterSpacing: 0.1,
   },
 
   /* Page 1 — welcome */
@@ -791,11 +797,13 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
   welcomeTagline: {
+    fontFamily: fonts.body,
     fontSize: 15,
     color: 'rgba(255,255,255,0.62)',
-    lineHeight: 22,
+    lineHeight: 23,
     fontWeight: '500',
     marginBottom: 28,
+    letterSpacing: 0.1,
   },
   welcomeInputWrap: { gap: 6 },
   welcomeInput: {
@@ -951,5 +959,5 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 12,
   },
-  nextText: { fontSize: 14, fontWeight: '800', color: Colors.white, letterSpacing: -0.1 },
+  nextText: { fontFamily: fonts.body, fontSize: 14, fontWeight: '700', color: Colors.white, letterSpacing: 0.4 },
 });
