@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -37,7 +37,7 @@ function sparkPoints(spark: number[]): string {
     .join(' ');
 }
 
-function DimCard({ dim, c, styles }: { dim: SkinTrendDim; c: Palette; styles: ReturnType<typeof makeStyles> }) {
+const DimCard = memo(function DimCard({ dim, c, styles }: { dim: SkinTrendDim; c: Palette; styles: ReturnType<typeof makeStyles> }) {
   const single = dim.spark.length < 2;
   const deltaColor = single ? c.textMuted : dim.delta >= 0 ? c.scoreGood : c.gold;
   const deltaLabel = single ? 'Baseline' : `${dim.delta > 0 ? '+' : ''}${dim.delta}`;
@@ -55,7 +55,7 @@ function DimCard({ dim, c, styles }: { dim: SkinTrendDim; c: Palette; styles: Re
       </Svg>
     </View>
   );
-}
+});
 
 export default function SkinTrendsScreen() {
   const c = useColors();
@@ -104,7 +104,7 @@ export default function SkinTrendsScreen() {
             <Text style={styles.emptySub}>
               Run a few scans over time and Velumi AI will chart how every dimension of your skin moves.
             </Text>
-            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scan' as any)} accessibilityRole="button">
+            <Pressable style={styles.emptyBtn} onPress={() => router.push('/scan' as any)} accessibilityRole="button" accessibilityLabel="Take a scan">
               <Text style={styles.emptyBtnText}>Take a scan</Text>
             </Pressable>
           </View>
