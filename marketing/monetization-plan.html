@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Velumi AI — Monetization & Launch Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #F7F3EC; --bg-card: #FFFFFF; --bg-elev: #EFE9DF; --bg-sheet: #FBF8F2;
+  --ink: #2B2722; --ink-2: rgba(43,39,34,.66); --ink-3: rgba(43,39,34,.40); --ink-4: rgba(43,39,34,.18);
+  --primary: #8A7860; --primary-l: #A89A86; --primary-d: #665845;
+  --gold: #B79B6E; --gold-l: #D8C29A;
+  --good: #6FB58F; --warn: #C8923E; --bad: #C75D4A;
+  --border: rgba(43,39,34,.08); --border-strong: rgba(138,120,96,.28);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --r: 14px; --r-lg: 22px;
+  --shadow: 0 1px 2px rgba(43,39,34,.05), 0 14px 38px rgba(43,39,34,.07);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.55;
+  -webkit-font-smoothing: antialiased; padding-bottom: 80px;
+}
+a { color: var(--primary); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 140ms; }
+a:hover { border-color: var(--primary); }
+
+/* Hero */
+.hero {
+  padding: clamp(50px,7vw,90px) clamp(24px,5vw,72px) clamp(30px,4vw,60px);
+  max-width: 1100px; margin: 0 auto;
+}
+.eyebrow {
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;
+  color: var(--gold); margin: 0 0 14px;
+}
+.title {
+  font-family: var(--serif); font-size: clamp(40px,5.5vw,72px); line-height: 1.0;
+  font-weight: 500; letter-spacing: -0.005em; margin: 0 0 18px;
+}
+.title em { font-style: italic; color: var(--primary); }
+.lede { font-size: clamp(15px,1.2vw,18px); color: var(--ink-2); max-width: 50ch; margin: 0 0 28px; }
+
+/* Sticky progress */
+.sticky-bar {
+  position: sticky; top: 0; z-index: 30; background: rgba(247,243,236,.85);
+  backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.sticky-inner {
+  max-width: 1100px; margin: 0 auto; padding: 14px clamp(24px,5vw,72px);
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.progress-wrap { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 6px; }
+.progress-label {
+  font-size: 11px; letter-spacing: 2px; color: var(--ink-3); font-weight: 600;
+  text-transform: uppercase; display: flex; justify-content: space-between;
+}
+.progress-label b { font-family: var(--serif); font-size: 14px; color: var(--ink); letter-spacing: 1px; }
+.progress-track { background: var(--border); height: 5px; border-radius: 4px; overflow: hidden; }
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary-l), var(--gold));
+  width: 0%; transition: width 480ms cubic-bezier(.2,.7,.2,1); border-radius: 4px;
+}
+.filters { display: inline-flex; gap: 8px; background: var(--bg-card); padding: 4px; border-radius: 999px; border: 1px solid var(--border); }
+.chip {
+  font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: none;
+  background: transparent; color: var(--ink-2); cursor: pointer; transition: all 160ms;
+  font-family: inherit;
+}
+.chip.on { background: var(--ink); color: #fff; }
+.chip:hover:not(.on) { background: var(--bg-elev); color: var(--ink); }
+
+/* Sections */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(24px,5vw,72px); }
+.section {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: clamp(24px,3vw,40px); margin-bottom: 22px; box-shadow: var(--shadow);
+  transition: opacity 240ms;
+}
+.section.complete { opacity: 0.55; }
+.section.complete .sect-title em { opacity: 0.5; }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.sect-number {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  color: var(--gold); letter-spacing: 3px; font-weight: 500;
+  display: block; margin-bottom: 4px;
+}
+.sect-title {
+  font-family: var(--serif); font-size: clamp(24px,3vw,38px); font-weight: 500;
+  line-height: 1.1; letter-spacing: -0.003em; color: var(--ink); margin: 0;
+}
+.sect-title em { font-style: italic; color: var(--primary); }
+.sect-progress {
+  font-family: var(--serif); font-size: 14px; color: var(--ink-3); letter-spacing: 1px;
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.sect-progress b { color: var(--ink); font-size: 18px; }
+.sect-sub { font-size: 14px; color: var(--ink-2); max-width: 60ch; margin: 8px 0 22px; }
+
+/* Items */
+.item {
+  display: grid; grid-template-columns: 28px 1fr; align-items: start; gap: 14px;
+  padding: 16px 0; border-top: 1px solid var(--border);
+  transition: opacity 200ms;
+}
+.item:last-child { padding-bottom: 0; }
+.item.done .item-title { text-decoration: line-through; color: var(--ink-3); }
+.item.done .item-desc, .item.done .item-meta { color: var(--ink-3); }
+.item.done .check { background: var(--good); border-color: var(--good); }
+.item.done .check::after { opacity: 1; transform: scale(1); }
+
+/* hide done items when filter is on */
+body.filter-remaining .item.done { display: none; }
+body.filter-completed .item:not(.done) { display: none; }
+
+.check {
+  appearance: none; -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: 1px;
+  border: 1.5px solid var(--border-strong); background: var(--bg-card);
+  border-radius: 6px; cursor: pointer; position: relative;
+  transition: all 180ms cubic-bezier(.3,.7,.3,1);
+}
+.check::after {
+  content: ''; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: scale(0) rotate(45deg);
+  opacity: 0; transition: opacity 160ms 60ms, transform 200ms cubic-bezier(.2,1.5,.4,1) 40ms;
+}
+.check:hover { border-color: var(--primary); }
+.check:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.item-body { font-size: 14.5px; }
+.item-title {
+  font-weight: 600; color: var(--ink); margin: 0 0 4px; line-height: 1.35;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.tag {
+  display: inline-block; font-size: 9.5px; letter-spacing: 1.4px;
+  font-weight: 700; padding: 3px 8px; border-radius: 4px;
+  text-transform: uppercase; vertical-align: middle;
+}
+.tag-block { background: rgba(199,93,74,.13); color: var(--bad); }
+.tag-polish { background: rgba(111,181,143,.18); color: var(--good); }
+.tag-money { background: rgba(183,155,110,.22); color: var(--gold); }
+.tag-code { background: rgba(138,120,96,.18); color: var(--primary); }
+
+.item-desc { font-size: 13.5px; color: var(--ink-2); margin: 0 0 8px; line-height: 1.55; max-width: 70ch; }
+.item-meta { font-size: 12px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 14px; }
+.item-meta b { font-weight: 600; color: var(--ink-2); }
+.item-meta code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--bg-elev); padding: 2px 6px; border-radius: 4px;
+  font-size: 11.5px; color: var(--ink);
+}
+.item-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  border-bottom: 1px solid currentColor; padding-bottom: 1px;
+}
+.item-link::after { content: '↗'; font-size: 11px; }
+
+/* Bottom CTA */
+.finish-card {
+  background: var(--ink); color: var(--bg); border-radius: var(--r-lg);
+  padding: clamp(40px,5vw,72px); margin: 50px auto 0; max-width: 1100px;
+  text-align: center;
+}
+.finish-card .title { color: var(--bg); }
+.finish-card .lede { color: rgba(247,243,236,.6); margin-left: auto; margin-right: auto; }
+.finish-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold); color: var(--ink); border: none;
+  padding: 16px 32px; border-radius: 999px;
+  font-family: inherit; font-weight: 600; font-size: 16px;
+  letter-spacing: 0.2px; cursor: pointer; margin-top: 16px;
+  transition: transform 160ms, background 160ms;
+}
+.finish-cta:hover { background: var(--gold-l); transform: translateY(-1px); }
+.finish-cta:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.finish-state { font-family: var(--serif); font-size: 16px; font-style: italic; color: rgba(247,243,236,.6); margin-top: 12px; }
+
+/* Reset button */
+.reset-link {
+  position: fixed; bottom: 16px; right: 16px;
+  font-size: 11px; color: var(--ink-3); background: rgba(255,255,255,.7);
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+  cursor: pointer; backdrop-filter: blur(6px);
+}
+.reset-link:hover { color: var(--bad); border-color: var(--bad); }
+
+.hint {
+  background: rgba(183,155,110,.10); border: 1px solid rgba(183,155,110,.28);
+  border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--ink-2);
+  margin: 14px 0 0;
+}
+
+@media (max-width: 720px) {
+  .item { grid-template-columns: 24px 1fr; gap: 10px; }
+  .sticky-inner { padding: 12px 18px; }
+  .filters { order: 2; width: 100%; justify-content: space-between; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="eyebrow">Pre-launch playbook · v1</p>
+  <h1 class="title">Velumi <em>monetization plan.</em></h1>
+  <p class="lede">Click every link, drop the file in the folder the row specifies, tick the box. When the bar hits 100% you say <b>ready</b> and we ship. Progress saves locally — close the tab anytime.</p>
+</header>
+
+<div class="sticky-bar">
+  <div class="sticky-inner">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Overall progress</span>
+        <b><span id="done-count">0</span> / <span id="total-count">0</span></b>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="filters">
+      <button class="chip on" data-filter="all">All</button>
+      <button class="chip" data-filter="remaining">Remaining</button>
+      <button class="chip" data-filter="completed">Done</button>
+    </div>
+  </div>
+</div>
+
+<main class="container" id="main">
+
+<!-- ─── Sections rendered by JS below ─── -->
+
+</main>
+
+<section class="finish-card" id="finish-card">
+  <p class="eyebrow" style="color: var(--gold-l);">When everything is ticked</p>
+  <h2 class="title" id="finish-title">Almost there.</h2>
+  <p class="lede" id="finish-sub">Tick every box, then come back here.</p>
+  <button class="finish-cta" id="finish-btn" disabled>Type "ready" to me</button>
+  <p class="finish-state" id="finish-state">Keep going — <span id="remaining-count">…</span> items to go.</p>
+</section>
+
+<button class="reset-link" onclick="if(confirm('Wipe all progress on this device?')){localStorage.removeItem('velumi-plan');location.reload();}">↻ Reset progress</button>
+
+<script>
+const PLAN = [
+  {
+    id: "brand",
+    n: "I",
+    title: "Brand <em>identity.</em>",
+    sub: "The mark, the icon, the splash. Replace every Expo default with Velumi artwork before anything else — these block App Store submission.",
+    items: [
+      { tag: "block", title: "Save the Velumi brand mark you generated", desc: "Drop the V + face-profile + constellation PNG from earlier into the project. Once it's there, every VelumiWordmark useLogo site auto-renders it (onboarding, first-scan, etc.) — no code changes needed.", drop: "assets/velumi-logo.png", meta: "≥512×512 PNG, transparent bg" },
+      { tag: "block", title: "Generate the 1024×1024 master app icon", desc: "Take the brand mark, pad it inside a warm ivory (#F7F3EC) square so it fills ~70% of the canvas. iOS auto-rounds corners — do not pre-round.", link: "https://expo-assets-generator.vercel.app/", linkLabel: "Expo Assets Generator", drop: "assets/icon.png", meta: "1024×1024 PNG, no transparency" },
+      { tag: "block", title: "Generate the adaptive icon foreground (Android)", desc: "Same brand mark, transparent background, inside the inner 66% safe zone. Background color goes in app.json (#F7F3EC).", drop: "assets/adaptive-icon.png", meta: "1024×1024 PNG, transparent" },
+      { tag: "block", title: "Generate the splash icon", desc: "Same artwork as adaptive icon. Background color set in app.json splash.backgroundColor.", drop: "assets/splash-icon.png", meta: "1024×1024 PNG, transparent" },
+      { tag: "block", title: "Generate the web favicon", desc: "Just the V or spark — 48×48 is too small for the full wordmark. Trim down before export.", drop: "assets/favicon.png", meta: "48×48 PNG" },
+      { tag: "polish", title: "Create a 1200×630 Open Graph image", desc: "Shows up when the marketing landing is shared on iMessage, Slack, Twitter. Use Canva or Figma — brand mark + 'Skincare intelligence, in 30 seconds.' tagline on the ivory bg.", link: "https://www.canva.com/templates/?query=open+graph", linkLabel: "Canva OG templates", drop: "marketing/assets/og.png", meta: "1200×630 PNG" },
+      { tag: "polish", title: "Save the wordmark as SVG (vector) for press", desc: "When journalists / partners ask for a press kit, they want SVG. Open the PNG in any vector editor (Inkscape free, or Figma) and trace + export.", drop: "assets/press/velumi-wordmark.svg", meta: "Scalable vector" },
+      { tag: "polish", title: "Save a dark-mode variant of the brand mark", desc: "For when the wordmark renders on dark hero cards (refined night palette). Should be ivory on transparent.", drop: "assets/velumi-logo-dark.png", meta: "Same size as light version" },
+    ],
+  },
+
+  {
+    id: "fonts",
+    n: "II",
+    title: "Typefaces <em>installed.</em>",
+    sub: "Currently the app falls back to Georgia/serif because no binary font is loaded. The marketing landing already uses Cormorant Garamond — let's match.",
+    items: [
+      { tag: "block", title: "Install Inter for body text", desc: "Inter ships with 9 weights, all OFL-licensed. We need 400/500/600/700.", link: "https://www.npmjs.com/package/@expo-google-fonts/inter", linkLabel: "@expo-google-fonts/inter", meta: "Run: npx expo install @expo-google-fonts/inter expo-font" },
+      { tag: "block", title: "Install Cormorant Garamond for display", desc: "The serif used on the marketing landing — needs to also be in the app for visual continuity.", link: "https://www.npmjs.com/package/@expo-google-fonts/cormorant-garamond", linkLabel: "@expo-google-fonts/cormorant-garamond", meta: "Run: npx expo install @expo-google-fonts/cormorant-garamond" },
+      { tag: "code", title: "Confirm install — say ready and I'll wire useFonts()", desc: "Once both packages are in package.json, I'll add the useFonts hook to app/_layout.tsx and gate the splash on font load. ~5 lines of code. You don't touch the codebase.", meta: "Auto-handled by me on ready" },
+    ],
+  },
+
+  {
+    id: "illustrations",
+    n: "III",
+    title: "Editorial <em>illustrations.</em>",
+    sub: "10 SVGs for onboarding pages + empty states. unDraw lets you recolor before download — set the hex to #8A7860 (Velumi taupe) at the top of the unDraw page first.",
+    hint: "Workflow per illustration: (1) open the unDraw link, (2) change color picker at top to <b>#8A7860</b>, (3) search the query, (4) click SVG to download, (5) rename to the filename in the row, (6) move to assets/illustrations/.",
+    items: [
+      { tag: "block", title: "Sixteen-dimension explainer", desc: "Page 2 of onboarding — explains why Velumi scores 16 separate dimensions.", link: "https://undraw.co/search?term=skincare", linkLabel: "unDraw — search 'analyze'", drop: "assets/illustrations/onboarding-dimensions.svg" },
+      { tag: "block", title: "Regional skin map", desc: "Page 3 of onboarding — shows how Velumi maps findings to face regions.", link: "https://undraw.co/search?term=face%20recognition", linkLabel: "unDraw — search 'face_recognition'", drop: "assets/illustrations/onboarding-regional.svg" },
+      { tag: "block", title: "Coach + age moment", desc: "Page 4 of onboarding — introduces Vera, the AI coach.", link: "https://undraw.co/search?term=conversation", linkLabel: "unDraw — search 'conversation'", drop: "assets/illustrations/onboarding-coach.svg" },
+      { tag: "block", title: "First-scan invitation", desc: "Page 5 of onboarding — encourages the user to take their first selfie.", link: "https://undraw.co/search?term=selfie", linkLabel: "unDraw — search 'selfie'", drop: "assets/illustrations/onboarding-firstscan.svg" },
+      { tag: "block", title: "Forecast empty state", desc: "app/forecast/index.tsx renders 'no scan data yet' — needs an illustration.", link: "https://undraw.co/search?term=predictions", linkLabel: "unDraw — search 'predictions'", drop: "assets/illustrations/empty-forecast.svg" },
+      { tag: "block", title: "Skin-story empty state", desc: "app/skin-story/index.tsx — 'Your story hasn't started yet'.", link: "https://undraw.co/search?term=story", linkLabel: "unDraw — search 'story'", drop: "assets/illustrations/empty-story.svg" },
+      { tag: "block", title: "Journal empty state", desc: "app/journal/index.tsx — first journal entry prompt.", link: "https://undraw.co/search?term=journal", linkLabel: "unDraw — search 'journal'", drop: "assets/illustrations/empty-journal.svg" },
+      { tag: "block", title: "Morning-checklist empty state", desc: "app/morning-checklist/index.tsx — first ritual setup.", link: "https://undraw.co/search?term=morning", linkLabel: "unDraw — search 'morning'", drop: "assets/illustrations/empty-checklist.svg" },
+      { tag: "block", title: "Expiry-tracker empty state", desc: "app/expiry-tracker/index.tsx — 'nothing tracked yet'.", link: "https://undraw.co/search?term=calendar", linkLabel: "unDraw — search 'calendar'", drop: "assets/illustrations/empty-expiry.svg" },
+      { tag: "block", title: "Product-shelf empty state", desc: "app/products/index.tsx — 'your shelf is empty'.", link: "https://undraw.co/search?term=shelf", linkLabel: "unDraw — search 'products'", drop: "assets/illustrations/empty-shelf.svg" },
+    ],
+  },
+
+  {
+    id: "animations",
+    n: "IV",
+    title: "Lottie <em>animations.</em>",
+    sub: "Two animations dramatically improve perceived quality — face-scan loop + success checkmark. Both are free commercial via Lottie Simple License.",
+    items: [
+      { tag: "block", title: "Install lottie-react-native", desc: "One npm package. Adds Lottie playback to the Expo runtime.", link: "https://www.npmjs.com/package/lottie-react-native", linkLabel: "lottie-react-native", meta: "Run: npx expo install lottie-react-native" },
+      { tag: "block", title: "Download face-scan animation", desc: "Plays while AI analyzes the photo (currently 2–4 seconds of dead air). In the LottieFiles editor, change stroke color to #8A7860 before download.", link: "https://lottiefiles.com/free-animations/face-scan", linkLabel: "LottieFiles — face scan free", drop: "assets/animations/face-scan.json", meta: "Lottie JSON or .lottie format" },
+      { tag: "block", title: "Download success-checkmark animation", desc: "Plays on scan complete + paywall conversion + routine step done. Same recolor procedure.", link: "https://lottiefiles.com/free-animations/success-check", linkLabel: "LottieFiles — success check", drop: "assets/animations/success-check.json" },
+      { tag: "polish", title: "Download onboarding swipe animation", desc: "Subtle motion behind the 5-page swipe carousel. Pick anything from this collection.", link: "https://lottiefiles.com/free-animations/onboarding", linkLabel: "LottieFiles — onboarding category", drop: "assets/animations/onboarding-ambient.json" },
+      { tag: "code", title: "Confirm download — say ready and I wire LottieView", desc: "Once the JSONs are in assets/animations/, I'll swap the placeholder Reanimated views for LottieView source={require(...)} on scan + success surfaces.", meta: "Auto-handled by me on ready" },
+    ],
+  },
+
+  {
+    id: "textures",
+    n: "V",
+    title: "Textures &amp; <em>noise.</em>",
+    sub: "Sub-1KB SVG noise overlaid on the ivory background turns a flat surface into something that reads as 'editorial print'. This is the single biggest polish-per-effort win.",
+    items: [
+      { tag: "block", title: "Generate the ivory noise SVG", desc: "Use the nnnoise generator. Settings: base #F7F3EC, noise frequency 0.65, opacity 0.45, monochrome, output SVG (~1 KB).", link: "https://www.fffuel.co/nnnoise/", linkLabel: "nnnoise SVG generator", drop: "assets/textures/noise-ivory.svg", meta: "≤2 KB recommended" },
+      { tag: "polish", title: "Download a paper-grain JPG for premium surfaces", desc: "Optional — applied behind the paywall and skin-report screens for an 'Aesop print catalog' feel. Convert to webp for smaller bundle.", link: "https://everytexture.com/everytexture-com-stock-paper-texture-00025/", linkLabel: "everytexture.com paper texture 25", drop: "assets/textures/paper-grain.webp" },
+      { tag: "code", title: "Confirm download — I overlay the noise layer", desc: "On ready, I'll drop a low-opacity ImageBackground noise layer across the home + onboarding + paywall surfaces.", meta: "Auto-handled by me on ready" },
+    ],
+  },
+
+  {
+    id: "affiliate-a",
+    n: "VI",
+    title: "Affiliate signups <em>— Tier A.</em>",
+    sub: "Day-one approvals (no traffic threshold). After each signup, paste your tag into .env.local using the env key shown. Restart Expo and every product link in the app is monetized.",
+    items: [
+      { tag: "money", title: "Amazon Associates (US)", desc: "Biggest catalog. 3% on beauty, 10% on luxury beauty. Cookie 24h. Most app installs will end up clicking an Amazon link — start here.", link: "https://affiliate-program.amazon.com/", linkLabel: "Amazon Associates signup", meta: "Env: EXPO_PUBLIC_AMAZON_TAG=yourtag-20" },
+      { tag: "money", title: "Impact (Radius)", desc: "Runs CeraVe, La Roche-Posay (L'Oréal house), Glossier, plus 30+ indie brands. One signup, then apply to each brand inside the dashboard.", link: "https://app.impact.com/secure/signup.ihtml?ref=publisher", linkLabel: "Impact publisher signup", meta: "Env: EXPO_PUBLIC_IMPACT_PUBLISHER_ID" },
+      { tag: "money", title: "Skimlinks (catch-all)", desc: "Auto-monetises ANY retail link in your app if the direct programs aren't approved yet. Easiest 'set and forget'. ~7% beauty avg.", link: "https://skimlinks.com/publishers/sign-up", linkLabel: "Skimlinks signup", meta: "Env: EXPO_PUBLIC_SKIMLINKS_PUB_ID" },
+      { tag: "money", title: "Awin US (incl. ShareASale catalog)", desc: "Awin absorbed ShareASale's US accounts — Etsy, Glossier-adjacent, indie skincare brands.", link: "https://www.awin.com/us/publishers", linkLabel: "Awin US publisher signup", meta: "Env: EXPO_PUBLIC_AWIN_AFF_ID" },
+      { tag: "money", title: "CJ Affiliate (Commission Junction)", desc: "Ulta Beauty + drugstore brands + iHerb live here. 2–10% range.", link: "https://signup.cj.com/member/signup/publisher/", linkLabel: "CJ publisher signup", meta: "Env: EXPO_PUBLIC_CJ_PUB_ID" },
+      { tag: "money", title: "Rakuten Advertising", desc: "Required for Sephora (5–10% on most lines) and Walgreens. Most prestige beauty lives here — premium positioning fits Velumi.", link: "https://rakutenadvertising.com/join-us/publisher/", linkLabel: "Rakuten Advertising signup", meta: "Env: EXPO_PUBLIC_RAKUTEN_PUB_ID" },
+      { tag: "money", title: "ShareASale (legacy account)", desc: "Some niche indie brands (Paula's Choice, Herbivore Botanicals) still live here. 5–20%.", link: "https://www.shareasale.com/info/affiliates/", linkLabel: "ShareASale signup", meta: "Env: EXPO_PUBLIC_SHAREASALE_AFF_ID" },
+    ],
+  },
+
+  {
+    id: "affiliate-b",
+    n: "VII",
+    title: "Affiliate signups <em>— Tier B.</em>",
+    sub: "Apply once Tier A is approved and you have some app installs (most ask for 'publisher website' or audience size). These are the higher-payout, longer-approval programs.",
+    items: [
+      { tag: "money", title: "Sephora (via Rakuten)", desc: "Apply through Rakuten after approval. 5–10% on prestige lines — pairs perfectly with Velumi brand positioning.", link: "https://www.sephora.com/beauty/affiliates", linkLabel: "Sephora affiliate landing" },
+      { tag: "money", title: "Ulta Beauty (via CJ)", desc: "Drugstore + prestige in one. Apply through CJ after CJ account is approved.", link: "https://www.ulta.com/company/affiliate-program/", linkLabel: "Ulta affiliate" },
+      { tag: "money", title: "Glossier (via Impact)", desc: "High AOV, premium audience overlap. Apply through Impact.", link: "https://www.glossier.com/affiliate-program", linkLabel: "Glossier affiliate" },
+      { tag: "money", title: "Paula's Choice (via ShareASale)", desc: "Clinically credible (BHA, retinoids). ~7% commission, strong conversion.", link: "https://www.paulaschoice.com/affiliates.html", linkLabel: "Paula's Choice affiliate" },
+      { tag: "money", title: "iHerb (via CJ)", desc: "International + supplement crossover. Up to 10%.", link: "https://www.iherb.com/info/affiliateprogram", linkLabel: "iHerb affiliate" },
+      { tag: "money", title: "Drunk Elephant (via Sephora link)", desc: "Routed through your Sephora link — no separate signup needed once Sephora is approved." },
+    ],
+  },
+
+  {
+    id: "direct-brands",
+    n: "VIII",
+    title: "Direct brand <em>partnerships.</em>",
+    sub: "These don't run public affiliate programs but have done creator deals. DM the founder on Instagram, or email partnerships@. Template provided in docs/VELUMI_LAUNCH_LINKS.md §1 Tier C.",
+    items: [
+      { tag: "money", title: "Augustinus Bader DM", desc: "$300+ AOV — even 5% is meaningful. Email partnerships@augustinusbader.com with the template, mention Velumi's premium positioning.", link: "https://augustinusbader.com/contact", linkLabel: "Augustinus Bader contact" },
+      { tag: "money", title: "Tata Harper DM", desc: "Clean luxury — exact Velumi target. Founder Tata is active on Instagram.", link: "https://www.instagram.com/tataharperskincare/", linkLabel: "Tata Harper Instagram" },
+      { tag: "money", title: "Aesop outreach", desc: "Aesop rarely does affiliate. Long shot — but a brand-fit content collaboration is worth the email.", link: "https://www.aesop.com/us/contact-us", linkLabel: "Aesop contact" },
+      { tag: "money", title: "U Beauty outreach", desc: "Premium serum brand. Sometimes does direct deals.", link: "https://www.ubeauty.com/contact", linkLabel: "U Beauty contact" },
+      { tag: "money", title: "Necessaire DM", desc: "Minimal aesthetic matches Velumi. Sephora carries them too — if you can't get direct, use Sephora.", link: "https://www.instagram.com/necessaire/", linkLabel: "Necessaire Instagram" },
+      { tag: "money", title: "Youth To The People DM", desc: "Vegan, premium-DTC. Sephora carries them too.", link: "https://www.instagram.com/youthtothepeople/", linkLabel: "YTTP Instagram" },
+      { tag: "money", title: "Krave Beauty DM", desc: "Liah Yoo's brand — barrier-first, exact Velumi philosophy alignment. She replies to founder DMs personally.", link: "https://www.instagram.com/kravebeauty/", linkLabel: "Krave Beauty Instagram" },
+    ],
+  },
+
+  {
+    id: "env",
+    n: "IX",
+    title: "Wire your tags <em>into the app.</em>",
+    sub: "Once you have any tag from §VI/VII, paste it into the .env.local file (gitignored — your tags never leave your machine).",
+    items: [
+      { tag: "block", title: "Create .env.local from the template", desc: "There's an .env.example in the project root listing every key. Copy it to .env.local and start filling in tags as you get approved.", drop: "~/GlowDermics/.env.local", meta: "Run: cp .env.example .env.local" },
+      { tag: "code", title: "Paste your Amazon tag", desc: "First and easiest one — Amazon Associates typically approves within 24h.", meta: "Line in .env.local: EXPO_PUBLIC_AMAZON_TAG=yourname-20" },
+      { tag: "code", title: "Paste your Skimlinks pub ID", desc: "Even one ID here makes EVERY non-Amazon link in the app monetized as a fallback.", meta: "Line: EXPO_PUBLIC_SKIMLINKS_PUB_ID=12345" },
+      { tag: "code", title: "Restart Expo to pick up the new env", desc: "EXPO_PUBLIC_ vars are inlined at bundle time. Restart the dev server after editing .env.local.", meta: "Run: npx expo start --clear" },
+    ],
+  },
+
+  {
+    id: "domain",
+    n: "X",
+    title: "Domain <em>name.</em>",
+    sub: "Buy the domain today even if you don't deploy for weeks. Squatters scrape product launches.",
+    items: [
+      { tag: "block", title: "Buy velumi.ai (premium TLD, ~$120/yr)", desc: "Best fit for the brand name. Check at Cloudflare Registrar — they sell at-cost (no markup).", link: "https://www.cloudflare.com/products/registrar/", linkLabel: "Cloudflare Registrar" },
+      { tag: "polish", title: "Or grab getvelumi.com (~$12/yr) as backup", desc: "If .ai is taken or too pricey. Less premium but cheaper.", link: "https://www.namecheap.com/", linkLabel: "Namecheap" },
+      { tag: "polish", title: "Lock down velumi.co + .app", desc: "Defensive registration. ~$20 total. Squatters can't ransom them later.", link: "https://www.cloudflare.com/products/registrar/", linkLabel: "Cloudflare Registrar" },
+      { tag: "polish", title: "Set up email forwarding (hello@velumi.ai → your Gmail)", desc: "Cloudflare Email Routing is free. You'll need hello@ for App Store + partnerships from day one.", link: "https://www.cloudflare.com/products/email-routing/", linkLabel: "Cloudflare Email Routing" },
+    ],
+  },
+
+  {
+    id: "hosting",
+    n: "XI",
+    title: "Deploy the marketing <em>landing.</em>",
+    sub: "The marketing/ folder is static — drop it anywhere. Vercel is fastest, Cloudflare Pages is most generous on free tier.",
+    items: [
+      { tag: "block", title: "Sign up for Vercel (free)", desc: "Connects to your GitHub. Deploys on every push. Free tier covers 100GB bandwidth.", link: "https://vercel.com/signup", linkLabel: "Vercel signup" },
+      { tag: "block", title: "Or Cloudflare Pages (free, more generous)", desc: "Unlimited bandwidth on free tier. Slightly slower DX than Vercel but cheaper at scale.", link: "https://pages.cloudflare.com/", linkLabel: "Cloudflare Pages" },
+      { tag: "block", title: "Connect the GlowDermics repo, root marketing/", desc: "Set build command: (empty). Output directory: marketing. Frame buster + cache headers handled automatically.", meta: "After signup, point the project at the marketing/ directory" },
+      { tag: "block", title: "Connect velumi.ai DNS to the host", desc: "Vercel/Cloudflare provide DNS records to add at the registrar. Takes 5 minutes + DNS propagation (~10 min).", meta: "Add CNAME or A records per host instructions" },
+      { tag: "polish", title: "Set up a redirect: getvelumi.com → velumi.ai", desc: "If you bought the backup domain. Done at the registrar in 1 click.", meta: "Cloudflare → Rules → Page Rules → 301 redirect" },
+      { tag: "polish", title: "Force HTTPS + HSTS", desc: "One toggle in Cloudflare. Required for credibility (and for App Store privacy policy URL).", meta: "Cloudflare → SSL/TLS → Edge → Full (strict)" },
+    ],
+  },
+
+  {
+    id: "legal",
+    n: "XII",
+    title: "Privacy policy &amp; <em>terms.</em>",
+    sub: "App Store WILL reject the build without a public privacy policy URL. Affiliate networks require one too. Don't skip.",
+    items: [
+      { tag: "block", title: "Generate a privacy policy via Termly", desc: "Free generator. Answer 10 questions, get a hosted URL or downloadable HTML. Covers GDPR, CCPA, COPPA.", link: "https://termly.io/products/privacy-policy-generator/", linkLabel: "Termly privacy policy generator" },
+      { tag: "block", title: "Generate Terms of Service via Termly", desc: "Same generator, separate document. Required for App Store + Stripe (when you take payments).", link: "https://termly.io/products/terms-and-conditions-generator/", linkLabel: "Termly ToS generator" },
+      { tag: "block", title: "Host both at velumi.ai/privacy and /terms", desc: "Drop the generated HTML into marketing/privacy.html and marketing/terms.html. Or paste the Termly hosted URLs into the marketing footer.", drop: "marketing/privacy.html + marketing/terms.html" },
+      { tag: "block", title: "Update marketing footer + App Store listing with the URLs", desc: "Footer of marketing/index.html has placeholder #. Replace with /privacy and /terms.", meta: "Edit marketing/index.html footer links" },
+      { tag: "polish", title: "Add an explicit Affiliate Disclosure page", desc: "Required by FTC for affiliate links in the US. Termly has a generator for this too.", link: "https://termly.io/products/disclaimer-generator/", linkLabel: "Termly disclosure generator", drop: "marketing/affiliate-disclosure.html" },
+      { tag: "polish", title: "Cookie banner (for marketing landing only)", desc: "Required in EU/UK if you add Google Analytics. Termly has a free banner widget.", link: "https://termly.io/products/cookie-consent-manager/", linkLabel: "Termly cookie banner" },
+    ],
+  },
+
+  {
+    id: "app-store",
+    n: "XIII",
+    title: "App Store Connect <em>listing.</em>",
+    sub: "12 fields, plus screenshots. Allow 2 hours. The review takes ~24h after submission.",
+    items: [
+      { tag: "block", title: "Apple Developer Program account ($99/yr)", desc: "Required to ship to App Store + TestFlight. Personal account works for solo dev; LLC is cleaner for tax.", link: "https://developer.apple.com/programs/enroll/", linkLabel: "Apple Developer enrollment" },
+      { tag: "block", title: "Create app record in App Store Connect", desc: "After your developer account is active. Bundle ID must match app.json (com.velumi.app).", link: "https://appstoreconnect.apple.com/", linkLabel: "App Store Connect" },
+      { tag: "block", title: "App name + subtitle", desc: "Name: 'Velumi AI' (or 'Velumi: AI Skincare'). Subtitle (30 char): 'Skincare intelligence, in 30 seconds.'", meta: "Both fields editable post-submission" },
+      { tag: "block", title: "Keywords (100 char total)", desc: "Comma-separated, no spaces between. Suggested: skincare,beauty,ai,skin,analysis,routine,acne,wrinkle,glow,dermatology", meta: "Don't include 'Velumi' — Apple infers app name automatically" },
+      { tag: "block", title: "Description (4000 char)", desc: "Lead with the 30-second AI analysis hook. Mirror the marketing landing copy. Include feature list.", meta: "Use the marketing landing copy as a starting point" },
+      { tag: "block", title: "Take 5 iPhone 6.7\" screenshots from the running app", desc: "1290×2796 PNG. Capture: onboarding welcome, scan flow, results, regimen, coach. Use device-frame Figma template if possible.", link: "https://www.figma.com/community/file/1124042280912039755", linkLabel: "Figma screenshot generator", drop: "Upload via App Store Connect" },
+      { tag: "block", title: "Privacy URL", desc: "Paste the velumi.ai/privacy URL from §XII.", meta: "Field in App Store Connect → App Information" },
+      { tag: "block", title: "Support URL", desc: "Could just be a mailto: link to hello@velumi.ai initially. Or a contact form on the marketing site.", meta: "Field in App Store Connect" },
+      { tag: "block", title: "Marketing URL", desc: "The velumi.ai landing.", meta: "Field in App Store Connect" },
+      { tag: "block", title: "Age rating (4+)", desc: "Walk through the rating questionnaire — Velumi has no objectionable content, should rate 4+.", meta: "App Store Connect → App Information → Age Rating" },
+      { tag: "block", title: "App Category: Health &amp; Fitness > Beauty", desc: "Primary: Health & Fitness. Secondary: Lifestyle. Beauty isn't a top-level category — Lifestyle gets you discovery in beauty searches.", meta: "Choose during submission" },
+      { tag: "polish", title: "App Preview video (30 sec)", desc: "Optional but boosts conversion by ~25%. Screen-record a scan flow + results sweep, edit in iMovie.", meta: "1080p, 30s max, .mov or .m4v" },
+    ],
+  },
+
+  {
+    id: "testflight",
+    n: "XIV",
+    title: "TestFlight <em>build.</em>",
+    sub: "Get the app into 100 beta testers' hands before public launch. EAS Build handles the iOS provisioning headache.",
+    items: [
+      { tag: "block", title: "Sign in to EAS (Expo's build service)", desc: "Free tier covers 30 builds/month — plenty.", link: "https://expo.dev/accounts", linkLabel: "Expo / EAS account", meta: "Run: npx eas login" },
+      { tag: "block", title: "Run an iOS preview build", desc: "Builds an .ipa you can install on physical devices and submit to TestFlight.", meta: "Run: npx eas build -p ios --profile preview" },
+      { tag: "block", title: "Submit the build to TestFlight", desc: "EAS does the upload to App Store Connect. Takes ~10 min after build finishes.", meta: "Run: npx eas submit -p ios --latest" },
+      { tag: "polish", title: "Invite 25 beta testers via TestFlight", desc: "Add internal testers (your contacts) first. Add external testers via the public TestFlight link once Apple approves the build.", meta: "App Store Connect → TestFlight → external testers" },
+      { tag: "polish", title: "Collect feedback for a week", desc: "Pin a simple Tally form (free) for tester feedback. Iterate before public release.", link: "https://tally.so/", linkLabel: "Tally form builder" },
+    ],
+  },
+
+  {
+    id: "social",
+    n: "XV",
+    title: "Social <em>handles.</em>",
+    sub: "Grab the username on every platform today even if you don't post for weeks. Squatters scrape product launches and ransom handles.",
+    items: [
+      { tag: "money", title: "Instagram @velumi.ai", desc: "Beauty audience lives here. Post the brand mark + 1 launch teaser. Use Linktree (free) for bio link until the App Store URL is live.", link: "https://www.instagram.com/accounts/signup/", linkLabel: "Instagram signup" },
+      { tag: "money", title: "TikTok @velumiai", desc: "Skincare TikTok is enormous. Even an empty handle is worth grabbing.", link: "https://www.tiktok.com/signup", linkLabel: "TikTok signup" },
+      { tag: "money", title: "X / Twitter @velumi_ai", desc: "Best for product launches + Product Hunt amplification.", link: "https://twitter.com/i/flow/signup", linkLabel: "X signup" },
+      { tag: "polish", title: "Threads @velumi.ai", desc: "Auto-created from Instagram — but verify the handle reserved.", link: "https://www.threads.net/", linkLabel: "Threads" },
+      { tag: "polish", title: "YouTube — Velumi AI", desc: "Skincare YouTube has massive search volume. Even empty channel is a placeholder.", link: "https://www.youtube.com/create_channel", linkLabel: "YouTube channel" },
+      { tag: "polish", title: "LinkedIn company page", desc: "Required for B2B partnerships, dermatologist collabs, press.", link: "https://www.linkedin.com/company/setup/new/", linkLabel: "LinkedIn company setup" },
+      { tag: "polish", title: "Pinterest @velumiai", desc: "Skincare visual search — slow burn but compounds.", link: "https://www.pinterest.com/business/create/", linkLabel: "Pinterest Business" },
+      { tag: "polish", title: "Reddit account u/velumi_ai (for community engagement only)", desc: "r/SkincareAddiction has 2M+ members. Don't shill — engage genuinely, link only when relevant.", link: "https://www.reddit.com/register", linkLabel: "Reddit signup" },
+    ],
+  },
+
+  {
+    id: "email",
+    n: "XVI",
+    title: "Email capture <em>+ list.</em>",
+    sub: "The marketing landing has a waitlist form (client-side only right now). Wire it to a real list provider so you can email beta invites later.",
+    items: [
+      { tag: "block", title: "Sign up for Beehiiv (free tier)", desc: "Best for indie launches. Free up to 2.5k subs. Beats Mailchimp + Substack at this stage.", link: "https://www.beehiiv.com/", linkLabel: "Beehiiv signup" },
+      { tag: "polish", title: "Or ConvertKit free tier (up to 1k subs)", desc: "More creator-focused. Slightly better automation. Free up to 1k.", link: "https://convertkit.com/pricing", linkLabel: "ConvertKit free tier" },
+      { tag: "code", title: "I'll wire the marketing waitlist form to the provider", desc: "Once you have the Beehiiv/ConvertKit form action URL, I swap the placeholder action= in marketing/index.html (5 char change).", meta: "Auto-handled by me on ready" },
+    ],
+  },
+
+  {
+    id: "analytics",
+    n: "XVII",
+    title: "Analytics &amp; <em>tracking.</em>",
+    sub: "Know what's actually working post-launch. Privacy-respecting > intrusive.",
+    items: [
+      { tag: "polish", title: "Plausible (privacy-respecting, $9/mo)", desc: "EU-friendly, no cookie banner needed. Best for marketing landing.", link: "https://plausible.io/", linkLabel: "Plausible Analytics" },
+      { tag: "polish", title: "Or Google Analytics 4 (free)", desc: "If you want zero cost and can deal with the cookie banner. Standard for marketers.", link: "https://analytics.google.com/", linkLabel: "GA4" },
+      { tag: "money", title: "PostHog (free tier — for the APP, not marketing)", desc: "In-app event tracking. Free up to 1M events/mo. Critical for understanding which features drive paywall conversion.", link: "https://posthog.com/", linkLabel: "PostHog" },
+      { tag: "polish", title: "App Store Connect Analytics (free, built-in)", desc: "Apple's first-party analytics for installs, retention, revenue. Activate once your build is in TestFlight.", meta: "App Store Connect → Trends" },
+    ],
+  },
+
+  {
+    id: "payments",
+    n: "XVIII",
+    title: "Payments <em>(if you charge).</em>",
+    sub: "Skip if you're free-only. If you have a paywall, Stripe + RevenueCat are the path.",
+    items: [
+      { tag: "money", title: "Stripe account", desc: "For web payments (marketing landing, if you sell anything direct). Free to set up, ~2.9% + 30c per txn.", link: "https://dashboard.stripe.com/register", linkLabel: "Stripe signup" },
+      { tag: "money", title: "RevenueCat free tier", desc: "Manages App Store / Play Store IAP subscriptions. Free up to $10k MTR. Spares you 1000+ lines of receipt-validation code.", link: "https://www.revenuecat.com/", linkLabel: "RevenueCat" },
+      { tag: "polish", title: "Decide free vs paid tier strategy", desc: "Current app has a PremiumGate + TierCard components — wire them once you've picked pricing. Recommend $4.99/mo or $39/yr free trial.", meta: "Decision, not action" },
+    ],
+  },
+
+  {
+    id: "press",
+    n: "XIX",
+    title: "Press <em>kit.</em>",
+    sub: "When TechCrunch / The Cut / Allure reaches out, send them the kit instead of scrambling. Build it now.",
+    items: [
+      { tag: "polish", title: "Founder bio (200 words)", desc: "Plain-text bio. Why you built Velumi. What's the differentiator vs Skin Bliss / Charm. Drop into press/founder-bio.txt.", drop: "marketing/press/founder-bio.txt" },
+      { tag: "polish", title: "Product one-pager (PDF)", desc: "1-page PDF — brand mark, tagline, 3 product screenshots, key stats, contact. Built in Canva or Figma in 20 min.", drop: "marketing/press/velumi-one-pager.pdf" },
+      { tag: "polish", title: "Brand asset zip (logo + wordmark + colors)", desc: "Logo SVG + PNG + the warm ivory / taupe / champagne hex codes. Zip and drop.", drop: "marketing/press/velumi-brand-kit.zip" },
+      { tag: "polish", title: "10 high-res app screenshots", desc: "From the running app, 1290×2796 PNG. Same set as App Store, no device frames.", drop: "marketing/press/screenshots/" },
+      { tag: "polish", title: "Add /press route to marketing landing", desc: "Link from footer. Lists everything above + contact. I'll add the page on ready.", meta: "Auto-handled by me on ready" },
+    ],
+  },
+
+  {
+    id: "seo",
+    n: "XX",
+    title: "SEO <em>basics.</em>",
+    sub: "Three minutes of work each. Compound returns over years.",
+    items: [
+      { tag: "polish", title: "Add a sitemap.xml to marketing/", desc: "Lists every public URL. Helps Google index the landing.", drop: "marketing/sitemap.xml" },
+      { tag: "polish", title: "Add robots.txt", desc: "Allows Google crawl, blocks AI scrapers if you want. I'll write this on ready.", drop: "marketing/robots.txt" },
+      { tag: "polish", title: "Submit the marketing site to Google Search Console", desc: "Free. Tells Google your site exists + tracks search performance.", link: "https://search.google.com/search-console", linkLabel: "Google Search Console" },
+      { tag: "polish", title: "Submit to Bing Webmaster Tools", desc: "Bing powers DuckDuckGo + ChatGPT search. Worth the 3-minute submission.", link: "https://www.bing.com/webmasters", linkLabel: "Bing Webmaster" },
+      { tag: "polish", title: "Verify OG image renders in iMessage + Slack", desc: "Once velumi.ai is live, paste the URL into iMessage + Slack to confirm the OG preview shows. If broken, the OG image path in marketing/index.html is wrong.", link: "https://www.opengraph.xyz/", linkLabel: "OG preview tester" },
+      { tag: "polish", title: "Run Lighthouse on the marketing landing", desc: "Target: 95+ on all four axes. Already optimised; just verify.", link: "https://pagespeed.web.dev/", linkLabel: "PageSpeed Insights" },
+    ],
+  },
+
+  {
+    id: "launch-day",
+    n: "XXI",
+    title: "Launch-day <em>amplifiers.</em>",
+    sub: "Schedule these for the day TestFlight goes public (or the day the App Store build is approved).",
+    items: [
+      { tag: "money", title: "Product Hunt launch", desc: "Schedule for a Tuesday or Wednesday — best volume. PH requires a teaser page 1 week in advance.", link: "https://www.producthunt.com/posts/new", linkLabel: "Product Hunt — new post" },
+      { tag: "money", title: "Hacker News 'Show HN'", desc: "Post at ~9am PT for max US daytime traffic. Title format: 'Show HN: Velumi AI – clinical-grade skin analysis from a selfie'.", link: "https://news.ycombinator.com/submit", linkLabel: "HN submit" },
+      { tag: "money", title: "r/SkincareAddiction soft-post", desc: "Make sure you have karma from genuine comments first. Lead with the science, not the app — link in comments only.", link: "https://www.reddit.com/r/SkincareAddiction/", linkLabel: "r/SkincareAddiction" },
+      { tag: "money", title: "Indie Hackers launch post", desc: "Small but high-quality founder audience. Good for early feedback.", link: "https://www.indiehackers.com/post/create", linkLabel: "Indie Hackers" },
+      { tag: "polish", title: "Email the Beehiiv/ConvertKit waitlist", desc: "Once TestFlight is open: 'Velumi is live — here's your TestFlight invite.'", meta: "Send after launch confirmation" },
+    ],
+  },
+
+  {
+    id: "ready",
+    n: "XXII",
+    title: "Type <em>ready.</em>",
+    sub: "When every section above is at 100%, come back here. The button below will tell you exactly what to message me.",
+    items: [
+      { tag: "block", title: "All asset rows ticked", desc: "Brand identity, fonts installed, illustrations downloaded, animations downloaded, textures generated." },
+      { tag: "block", title: "At least Amazon Associates + Skimlinks tags pasted into .env.local", desc: "These two cover ~85% of likely product clicks. The other affiliate networks can be added incrementally." },
+      { tag: "block", title: "Domain + hosting alive at velumi.ai", desc: "Marketing landing reachable publicly. Privacy + Terms hosted." },
+      { tag: "block", title: "TestFlight build submitted to Apple", desc: "Doesn't need to be approved — submitted is enough. Approval happens in parallel while we polish." },
+      { tag: "block", title: "Type \"ready\" to me", desc: "I spend the next several hours: wiring useFonts, swapping placeholder logos to your art, plugging Lottie into scan + success, dropping illustrations into the 10 empty states, applying noise overlay to hero surfaces, wiring the waitlist form to your email provider, screenshotting App Store assets from the running app, and writing the launch-day Product Hunt + HN copy. Then we ship." },
+    ],
+  },
+];
+
+// ──────────── Render ────────────
+const main = document.getElementById('main');
+const stored = JSON.parse(localStorage.getItem('velumi-plan') || '{}');
+let total = 0, done = 0;
+
+PLAN.forEach(section => {
+  const secEl = document.createElement('section');
+  secEl.className = 'section';
+  secEl.id = 'sec-' + section.id;
+
+  let sectDone = 0;
+  section.items.forEach((_, i) => { if (stored[section.id + '-' + i]) sectDone++; });
+  total += section.items.length;
+  done += sectDone;
+
+  secEl.innerHTML = `
+    <div class="section-head">
+      <div>
+        <span class="sect-number">PART ${section.n}</span>
+        <h2 class="sect-title">${section.title}</h2>
+      </div>
+      <span class="sect-progress"><b><span class="sect-done">${sectDone}</span></b> / ${section.items.length}</span>
+    </div>
+    <p class="sect-sub">${section.sub}</p>
+    ${section.hint ? `<div class="hint">${section.hint}</div>` : ''}
+    <div class="item-list"></div>
+  `;
+
+  const list = secEl.querySelector('.item-list');
+  section.items.forEach((it, i) => {
+    const key = section.id + '-' + i;
+    const isDone = !!stored[key];
+
+    const tagMap = {
+      block: '<span class="tag tag-block">Blocking</span>',
+      polish: '<span class="tag tag-polish">Polish</span>',
+      money: '<span class="tag tag-money">Monetize</span>',
+      code: '<span class="tag tag-code">I do it</span>',
+    };
+
+    const itemEl = document.createElement('label');
+    itemEl.className = 'item' + (isDone ? ' done' : '');
+    itemEl.innerHTML = `
+      <input type="checkbox" class="check" data-key="${key}" ${isDone ? 'checked' : ''} />
+      <div class="item-body">
+        <p class="item-title">${it.title} ${tagMap[it.tag] || ''}</p>
+        <p class="item-desc">${it.desc}</p>
+        <div class="item-meta">
+          ${it.link ? `<a class="item-link" href="${it.link}" target="_blank" rel="noopener">${it.linkLabel || 'Open link'}</a>` : ''}
+          ${it.drop ? `<span><b>Drop:</b> <code>${it.drop}</code></span>` : ''}
+          ${it.meta ? `<span>${it.meta}</span>` : ''}
+        </div>
+      </div>
+    `;
+    list.appendChild(itemEl);
+  });
+
+  if (sectDone === section.items.length) secEl.classList.add('complete');
+  main.appendChild(secEl);
+});
+
+// ──────────── State + interactivity ────────────
+function updateProgress() {
+  document.getElementById('done-count').textContent = done;
+  document.getElementById('total-count').textContent = total;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('remaining-count').textContent = total - done;
+
+  const btn = document.getElementById('finish-btn');
+  const state = document.getElementById('finish-state');
+  const title = document.getElementById('finish-title');
+  const sub = document.getElementById('finish-sub');
+  if (done >= total) {
+    btn.disabled = false;
+    btn.textContent = '✓ Type "ready" to Claude now';
+    state.textContent = 'You did the work. I do the next 4 hours.';
+    title.innerHTML = 'You\'re <em>ready.</em>';
+    sub.textContent = 'Switch back to the Claude Code chat and type the word "ready". I take it from here.';
+  } else {
+    btn.disabled = true;
+    const pct = Math.round((done / total) * 100);
+    btn.textContent = `${pct}% — keep going`;
+    state.innerHTML = `Keep going — <span id="remaining-count">${total - done}</span> items to go.`;
+  }
+}
+
+document.addEventListener('change', (e) => {
+  if (!e.target.classList.contains('check')) return;
+  const key = e.target.dataset.key;
+  const sectId = key.split('-').slice(0, -1).join('-');
+  const checked = e.target.checked;
+  if (checked) {
+    stored[key] = 1;
+    done++;
+  } else {
+    delete stored[key];
+    done--;
+  }
+  localStorage.setItem('velumi-plan', JSON.stringify(stored));
+
+  const itemEl = e.target.closest('.item');
+  itemEl.classList.toggle('done', checked);
+
+  // Section progress
+  const sec = document.getElementById('sec-' + sectId);
+  if (sec) {
+    const sectionDef = PLAN.find(p => p.id === sectId);
+    const sectDone = sectionDef.items.filter((_, i) => stored[sectId + '-' + i]).length;
+    sec.querySelector('.sect-done').textContent = sectDone;
+    sec.classList.toggle('complete', sectDone === sectionDef.items.length);
+  }
+
+  updateProgress();
+});
+
+// Filters
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    document.body.classList.remove('filter-remaining', 'filter-completed');
+    if (chip.dataset.filter === 'remaining') document.body.classList.add('filter-remaining');
+    if (chip.dataset.filter === 'completed') document.body.classList.add('filter-completed');
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>
