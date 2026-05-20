@@ -46,7 +46,7 @@ function getWeatherReport(data: {
   // Determine main condition
   let condition = 'Clear Skies';
   let conditionIcon = '☀️';
-  let gradientColors: [string, string] = ['#1E3A5F', '#2563EB'];
+  let gradientColors: [string, string] = [c.primary, c.gold];
   let headline = '';
   let summary = '';
   let skinAdvice = '';
@@ -54,21 +54,21 @@ function getWeatherReport(data: {
   if (stressLevel >= 4 && hydration < 60) {
     condition = 'Skin Storm Alert';
     conditionIcon = '⛈️';
-    gradientColors = ['#1A1A2E', '#7C3AED'];
+    gradientColors = [c.wrinkles, c.acne];
     headline = 'High stress + low hydration detected';
     summary = 'Your skin is under pressure today. Prioritize hydration, skip actives, and apply extra occlusive tonight.';
     skinAdvice = 'Apply a thick layer of a rich occlusive balm before bed to rebuild barrier overnight.';
   } else if (clarity < 55 || texture < 55) {
     condition = 'Cloudy Conditions';
     conditionIcon = '☁️';
-    gradientColors = ['#374151', '#6B7280'];
+    gradientColors = [c.pores, c.texture];
     headline = 'Congestion risk — skin needs clearing';
     summary = 'Some texture or clarity concerns detected. A gentle weekly cleanse and consistent routine will help.';
     skinAdvice = 'Try the Weekly Deep Cleanse facial this week and ensure you\'re completing your evening routine.';
   } else if (hydration >= 75 && clarity >= 75 && stressLevel <= 2 && water >= 6) {
     condition = 'Golden Hour';
     conditionIcon = '🌟';
-    gradientColors = [c.primaryDark, '#B79B6E'];
+    gradientColors = [c.primaryDark, c.gold];
     headline = 'Peak skin conditions today';
     summary = 'You\'re hydrated, calm, and consistent. Your skin is glowing and primed to absorb everything you give it.';
     skinAdvice = 'Perfect day to take a skin scan — your scores will be at their best right now.';
@@ -82,14 +82,14 @@ function getWeatherReport(data: {
   } else if (water < 4) {
     condition = 'Dry Conditions';
     conditionIcon = '🏜️';
-    gradientColors = ['#92400E', '#D97706'];
+    gradientColors = [c.firmness, c.evenness];
     headline = 'Dehydration risk — drink up';
     summary = 'Low water intake is showing in your skin. Internal hydration is as important as topical hydration.';
     skinAdvice = 'Aim for 8 glasses today and apply extra moisturizer to compensate for internal dryness.';
   } else if (stressLevel >= 3) {
     condition = 'Breezy but Unsettled';
     conditionIcon = '🌬️';
-    gradientColors = ['#1E3A5F', '#0F4C75'];
+    gradientColors = [c.barrierHealth, c.hydration];
     headline = 'Moderate stress affecting skin';
     summary = 'Elevated cortisol can increase oiliness and sensitivity. Use today to calm both mind and skin.';
     skinAdvice = 'Cortisol spikes increase sebum production. A calming evening routine with a rich occlusive can counteract this.';

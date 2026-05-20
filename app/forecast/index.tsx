@@ -27,7 +27,7 @@ type ForecastResult = {
   risks: string[];
   actions: { action: string; impact: 'high' | 'medium' | 'low'; timeframe: string }[];
   summary: string;
-  tallowNote: string;
+  veraNote: string;
 };
 
 function getScoreColor(score: number, c: Palette): string {
@@ -129,10 +129,10 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"action": "<fourth action, second person, concrete>", "impact": "<high|medium|low>", "timeframe": "<e.g. 6-8 weeks>"}
   ],
   "summary": "<2-3 warm sentences spoken directly TO them ('your skin', 'you') — an honest, motivating read of where their trajectory is heading and the one lever that matters most, citing their real numbers>",
-  "tallowNote": "<1 warm second-person sentence with a brand-agnostic, high-impact skincare tip tailored to THEIR specific journey — honest, no products, no brand names>"
+  "veraNote": "<1 warm second-person sentence with a brand-agnostic, high-impact skincare tip tailored to THEIR specific journey — honest, no products, no brand names>"
 }
 
-VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].action, summary, tallowNote); NOT to currentScore/score30/score60/score90 numbers, the trajectory/impact enums, or the timeframe labels, which stay exactly as specified: write every prose string in warm second person ("your skin", "you", "you'll"), grounded in the SPECIFIC numbers above — never generic, never "N/A"/"no data" hedging. Be honest about the risks but always make the path forward feel achievable. Keep every JSON field name, the shape, and the enum/number rules above EXACTLY.`;
+VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].action, summary, veraNote); NOT to currentScore/score30/score60/score90 numbers, the trajectory/impact enums, or the timeframe labels, which stay exactly as specified: write every prose string in warm second person ("your skin", "you", "you'll"), grounded in the SPECIFIC numbers above — never generic, never "N/A"/"no data" hedging. Be honest about the risks but always make the path forward feel achievable. Keep every JSON field name, the shape, and the enum/number rules above EXACTLY.`;
 
       const response = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
@@ -343,12 +343,12 @@ VOICE — applies to the prose strings ONLY (keyDrivers[], risks[], actions[].ac
             </View>
 
             {/* Skin tip */}
-            <View style={styles.tallowCard}>
+            <View style={styles.veraCard}>
               <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowEmoji}>🌿</Text>
+              <Text style={styles.veraEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>Your Skin Tip</Text>
-                <Text style={styles.tallowText}>{result.tallowNote}</Text>
+                <Text style={styles.veraTitle}>Your Skin Tip</Text>
+                <Text style={styles.veraText}>{result.veraNote}</Text>
               </View>
             </View>
 
@@ -458,15 +458,15 @@ function makeStyles(c: Palette) {
   timeframePill: { backgroundColor: c.bgCard, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: c.border },
   timeframeText: { fontSize: 10, color: c.textMuted, fontWeight: '600' },
 
-  tallowCard: {
+  veraCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginBottom: 14,
   },
-  tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  veraEmoji: { fontSize: 24 },
+  veraTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  veraText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   regenBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,

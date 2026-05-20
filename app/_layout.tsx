@@ -108,7 +108,7 @@ function RootContent() {
           <Stack.Screen name="face-food/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="active-rotation/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="label-guide/index" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="tallow-science/index" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="skin-fats-science/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="minimal-routine/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="skin-detox/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="pore-guide/index" options={{ animation: 'slide_from_right' }} />

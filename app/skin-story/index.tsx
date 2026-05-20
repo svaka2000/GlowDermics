@@ -295,12 +295,12 @@ Return ONLY valid JSON (no markdown):
             </View>
 
             {/* Skin journey moment */}
-            <View style={styles.tallowCard}>
+            <View style={styles.veraCard}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-              <Text style={styles.tallowEmoji}>✨</Text>
+              <Text style={styles.veraEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowLabel}>YOUR JOURNEY</Text>
-                <Text style={styles.tallowText}>{story.journeyMoment}</Text>
+                <Text style={styles.veraLabel}>YOUR JOURNEY</Text>
+                <Text style={styles.veraText}>{story.journeyMoment}</Text>
               </View>
             </View>
 
@@ -385,10 +385,10 @@ function makeStyles(c: Palette) {
   chapterStatusLabel: { fontSize: 9, fontWeight: '800', color: c.textMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
   chapterStatusText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
-  tallowEmoji: { fontSize: 24 },
-  tallowLabel: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.6)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
-  tallowText: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
+  veraCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
+  veraEmoji: { fontSize: 24 },
+  veraLabel: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.6)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 },
+  veraText: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
 
   captionCard: { backgroundColor: c.bgCard, borderRadius: 16, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, marginBottom: 14 },
   captionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },

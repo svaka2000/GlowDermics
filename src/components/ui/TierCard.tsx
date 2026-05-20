@@ -166,7 +166,7 @@ export function TierCard({
           {recommended && eyebrow && (
             <Animated.View style={[styles.eyebrowWrap, eyebrowShimmerStyle]}>
               <LinearGradient
-                colors={['#D8C29A', '#F59E0B']}
+                colors={[palette.goldLight, palette.gold]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={StyleSheet.absoluteFill}
