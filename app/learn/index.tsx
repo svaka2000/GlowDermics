@@ -12,16 +12,18 @@ import { ARTICLES } from '../../src/data/articles';
 
 const TAGS = ['ALL', 'SKIN SCIENCE', 'INGREDIENTS', 'GUIDE', 'PHILOSOPHY', 'SKIN TYPE', 'TIMELINE', 'HISTORY', 'PROTECTION'];
 
-const TAG_COLORS: Record<string, string> = {
-  'SKIN SCIENCE': '#4ADE80',
-  'INGREDIENTS': '#60A5FA',
-  'GUIDE': '#8A7860',
-  'PHILOSOPHY': '#B79B6E',
-  'SKIN TYPE': '#6B85A8',
-  'TIMELINE': '#F59E0B',
-  'HISTORY': '#FB923C',
-  'PROTECTION': '#38BDF8',
-};
+function tagColors(c: Palette): Record<string, string> {
+  return {
+    'SKIN SCIENCE': c.scoreGood,
+    'INGREDIENTS': c.hydration,
+    'GUIDE': c.primary,
+    'PHILOSOPHY': c.gold,
+    'SKIN TYPE': c.darkCircles,
+    'TIMELINE': c.evenness,
+    'HISTORY': c.firmness,
+    'PROTECTION': c.barrierHealth,
+  };
+}
 
 export default function Learn() {
   const colors = useColors();
@@ -84,7 +86,7 @@ export default function Learn() {
             </View>
             <Text style={styles.featuredHero}>{featured.hero}</Text>
             <View style={styles.tagPill}>
-              <Text style={[styles.tagPillText, { color: TAG_COLORS[featured.tag] || colors.primary }]}>{featured.tag}</Text>
+              <Text style={[styles.tagPillText, { color: tagColors(colors)[featured.tag] || colors.primary }]}>{featured.tag}</Text>
             </View>
             <Text style={styles.featuredTitle}>{featured.title}</Text>
             <Text style={styles.featuredSubtitle}>{featured.subtitle}</Text>
@@ -128,8 +130,8 @@ export default function Learn() {
                   <Text style={styles.articleHero}>{article.hero}</Text>
                 </View>
                 <View style={styles.articleCardBody}>
-                  <View style={[styles.articleTagPill, { backgroundColor: (TAG_COLORS[article.tag] || colors.primary) + '18' }]}>
-                    <Text style={[styles.articleTagText, { color: TAG_COLORS[article.tag] || colors.primary }]}>{article.tag}</Text>
+                  <View style={[styles.articleTagPill, { backgroundColor: (tagColors(colors)[article.tag] || colors.primary) + '18' }]}>
+                    <Text style={[styles.articleTagText, { color: tagColors(colors)[article.tag] || colors.primary }]}>{article.tag}</Text>
                   </View>
                   <Text style={styles.articleTitle} numberOfLines={2}>{article.title}</Text>
                   <Text style={styles.articleSubtitle} numberOfLines={2}>{article.subtitle}</Text>

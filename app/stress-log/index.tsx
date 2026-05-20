@@ -270,7 +270,7 @@ export default function StressLog() {
             { icon: '⚡', tip: 'Cortisol (stress hormone) increases oil production, leading to breakouts' },
             { icon: '💧', tip: 'High stress disrupts the skin barrier, causing water loss and dehydration' },
             { icon: '🌙', tip: 'Sleep deprivation spikes cortisol and reduces skin repair at night' },
-            { icon: '🌿', tip: 'Tallow-based moisturizers help restore the lipid barrier stressed skin loses' },
+            { icon: '🌿', tip: 'A rich occlusive balm helps restore the lipid barrier stressed skin loses' },
           ].map((item, i) => (
             <View key={i} style={styles.scienceRow}>
               <Text style={styles.scienceIcon}>{item.icon}</Text>

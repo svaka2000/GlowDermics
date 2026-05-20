@@ -34,7 +34,7 @@ type SkinAgeResult = {
   topWins: string[];
   topRisks: string[];
   recommendations: string[];
-  tallowNote: string;
+  barrierNote: string;
   ts: number;
   chronologicalAge: number;
 };
@@ -137,7 +137,7 @@ Return ONLY valid JSON (no markdown, no explanation):
   "topWins": ["<win 1>", "<win 2>"],
   "topRisks": ["<risk 1>", "<risk 2>"],
   "recommendations": ["<action 1>", "<action 2>", "<action 3>"],
-  "tallowNote": "<1 brand-agnostic sentence with the single highest-impact anti-aging skincare tip for them — no products, no brand>"
+  "barrierNote": "<1 brand-agnostic sentence with the single highest-impact anti-aging skincare tip for them — no products, no brand>"
 }`;
 
       const resp = await groq.chat.completions.create({
@@ -370,12 +370,12 @@ Return ONLY valid JSON (no markdown, no explanation):
             </View>
 
             {/* Skin tip */}
-            <View style={styles.tallowCard}>
+            <View style={styles.barrierCard}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-              <Text style={styles.tallowEmoji}>✨</Text>
+              <Text style={styles.barrierEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>Your Skin Tip</Text>
-                <Text style={styles.tallowText}>{result.tallowNote}</Text>
+                <Text style={styles.barrierTitle}>Your Skin Tip</Text>
+                <Text style={styles.barrierText}>{result.barrierNote}</Text>
               </View>
             </View>
 
@@ -473,10 +473,10 @@ function makeStyles(c: Palette) {
   recNumText: { fontSize: 12, fontWeight: '800', color: c.primary },
   recText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 12 },
-  tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 3 },
-  tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
+  barrierCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 12 },
+  barrierEmoji: { fontSize: 24 },
+  barrierTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 3 },
+  barrierText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
 
   rescanCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 14, marginBottom: 14 },
   rescanTitle: { fontSize: 14, fontWeight: '600', color: c.textPrimary },

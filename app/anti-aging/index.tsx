@@ -31,7 +31,7 @@ const TABS = [
   { id: 'pillars', label: 'Pillars', icon: '🏛️' },
   { id: 'actives', label: 'Key Actives', icon: '⚗️' },
   { id: 'lifestyle', label: 'Lifestyle', icon: '🌿' },
-  { id: 'tallow', label: 'Barrier Layer', icon: '✨' },
+  { id: 'occlusive', label: 'Barrier Layer', icon: '✨' },
 ];
 
 const AGING_SCIENCE = [
@@ -316,10 +316,10 @@ export default function AntiAgingScreen() {
           </View>
         ))}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
-            <View style={styles.tallowIntro}>
-              <Text style={styles.tallowIntroText}>
+            <View style={styles.barrierIntro}>
+              <Text style={styles.barrierIntroText}>
                 A strong lipid barrier is not a single-solution anti-aging fix — it's the foundation that makes the entire anti-aging stack more effective. Here's how.
               </Text>
             </View>
@@ -349,9 +349,9 @@ export default function AntiAgingScreen() {
                 detail: 'AM: vitamin C → a thin occlusive → mineral SPF. PM: double cleanse → retinol → 20 min wait → a generous occlusive (buffer + moisture seal). This stack addresses all 6 pillars simultaneously.',
               },
             ].map((item, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{item.title}</Text>
-                <Text style={styles.tallowCardDetail}>{item.detail}</Text>
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{item.title}</Text>
+                <Text style={styles.barrierCardDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -447,16 +447,16 @@ function makeStyles(c: Palette) {
   impactBadge: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
   impactText: { fontSize: 10, fontWeight: '700' },
   lifestyleDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowIntro: {
+  barrierIntro: {
     backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14,
   },
-  tallowIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
-  tallowCard: {
+  barrierIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
+  barrierCard: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
-  tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

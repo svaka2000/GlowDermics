@@ -31,7 +31,7 @@ type SkinDNA = {
   lifestyleScore: number;
   lifestyleInsight: string;
   routineBlueprint: { step: string; note: string }[];
-  tallowFit: string;
+  occlusiveFit: string;
   growthAreas: string[];
   uniqueStrength: string;
   shareCard: string;
@@ -140,7 +140,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"step": "<step>", "note": "<note>"},
     {"step": "<step>", "note": "<note>"}
   ],
-  "tallowFit": "<1-2 brand-agnostic sentences: the skincare approach that best fits this skin DNA — honest and specific, no products or brand>",
+  "occlusiveFit": "<1-2 brand-agnostic sentences: the skincare approach that best fits this skin DNA — honest and specific, no products or brand>",
   "growthAreas": ["<area where they can improve>", "<second area>", "<third area>"],
   "uniqueStrength": "<one sentence: what is genuinely working in their favor — something to feel good about>",
   "shareCard": "<one shareable quote-style text for social media, max 140 chars — e.g. 'My skin DNA says I'm The Barrier Architect 🧱 — building a stronger barrier every day. #VelumiAI'>"
@@ -288,12 +288,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
                     </View>
                   ))}
                 </View>
-                <View style={styles.tallowCard}>
+                <View style={styles.barrierCard}>
                   <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.05)']} style={StyleSheet.absoluteFill} />
-                  <Text style={styles.tallowEmoji}>✨</Text>
+                  <Text style={styles.barrierEmoji}>✨</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.tallowTitle}>Your Skin Fit</Text>
-                    <Text style={styles.tallowText}>{dna.tallowFit}</Text>
+                    <Text style={styles.barrierTitle}>Your Skin Fit</Text>
+                    <Text style={styles.barrierText}>{dna.occlusiveFit}</Text>
                   </View>
                 </View>
               </>
@@ -436,10 +436,10 @@ function makeStyles(c: Palette) {
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   bulletText: { flex: 1, fontSize: 14, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, marginBottom: 12 },
-  tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  barrierCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)', padding: 16, marginBottom: 12 },
+  barrierEmoji: { fontSize: 24 },
+  barrierTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
   ingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   ingName: { fontSize: 14, fontWeight: '600', color: c.textPrimary, marginBottom: 2 },

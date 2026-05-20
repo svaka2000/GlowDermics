@@ -21,7 +21,7 @@ type Challenge = {
   dailyAction: string;
   tips: string[];
   color: [string, string];
-  category: 'routine' | 'tallow' | 'hydration' | 'minimal' | 'lifestyle';
+  category: 'routine' | 'occlusive' | 'hydration' | 'minimal' | 'lifestyle';
 };
 
 type ActiveChallenge = {
@@ -33,7 +33,7 @@ type ActiveChallenge = {
 function buildChallenges(c: Palette): Challenge[] {
   return [
   {
-    id: 'tallow-30',
+    id: 'occlusive-30',
     title: '30-Day Barrier Reset',
     emoji: '🌿',
     description: 'Replace your moisturizer with a single rich occlusive balm for 30 days and track the transformation.',
@@ -46,7 +46,7 @@ function buildChallenges(c: Palette): Challenge[] {
       'Scan weekly to see your progress',
     ],
     color: [c.primaryDark, c.primary],
-    category: 'tallow',
+    category: 'occlusive',
   },
   {
     id: 'full-routine-21',
@@ -226,7 +226,7 @@ export default function ChallengePage() {
 
   const getCategoryColor = (cat: Challenge['category']) => {
     switch (cat) {
-      case 'tallow': return colors.primary;
+      case 'occlusive': return colors.primary;
       case 'routine': return '#2563EB';
       case 'hydration': return '#1B9AAA';
       case 'minimal': return '#4A5568';
@@ -236,7 +236,7 @@ export default function ChallengePage() {
 
   const getCategoryLabel = (cat: Challenge['category']) => {
     switch (cat) {
-      case 'tallow': return 'Barrier';
+      case 'occlusive': return 'Barrier';
       case 'routine': return 'Routine';
       case 'hydration': return 'Hydration';
       case 'minimal': return 'Minimal';

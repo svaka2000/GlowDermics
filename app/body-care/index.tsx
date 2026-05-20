@@ -23,7 +23,7 @@ const TABS = ['Overview', 'KP', 'Body Acne', 'Stretch Marks', 'Ingrown Hairs', '
 const BODY_OVERVIEW = [
   { area: 'Body skin vs face skin', detail: 'Body skin is structurally different from facial skin: thicker dermis, larger pores (especially trunk), different sebaceous gland density, fewer sweat glands per area on arms/legs, and lower NMF content in exposed areas like shins. The same product applied to face vs body may behave differently.', icon: '🧬' },
   { area: 'Why body skin is usually neglected', detail: 'Most skincare education focuses on the face. Yet body skin represents 98% of total body surface area. Issues like KP, body acne, and severe dryness affect significantly more people than many facial conditions, and the body sees more UV exposure (arms, chest, neck) and occupational friction (hands, knees).', icon: '📊' },
-  { area: 'Tallow for body skin', detail: 'Tallow is if anything MORE appropriate for body skin than face. Body skin has larger lipid needs given its surface area. Tallow on the body after showering (while still slightly damp) is highly efficient — a small amount covers a large area and absorbs in minutes. Particularly effective for elbows, knees, feet, and any area prone to extreme dryness.', icon: '🌿' },
+  { area: 'Rich occlusives for body skin', detail: 'A rich occlusive balm is, if anything, MORE appropriate for body skin than face. Body skin has larger lipid needs given its surface area. A thin layer of a barrier-repair balm applied after showering (while still slightly damp) is highly efficient — a small amount covers a large area and absorbs in minutes. Particularly effective for elbows, knees, feet, and any area prone to extreme dryness.', icon: '🌿' },
   { area: 'Body skin and sunscreen', detail: 'Neck, chest, hands, and forearms receive nearly as much cumulative UV as the face. Photoaging of the hands and chest is one of the most reliable chronological age indicators — and completely preventable with SPF. Body SPF is often neglected because it requires more product to cover large areas.', icon: '☀️' },
 ];
 
@@ -35,7 +35,7 @@ const KP_DATA = {
     { treatment: 'AHA body lotion (lactic acid or glycolic)', detail: '10–12% lactic acid or glycolic acid body lotion. Apply to affected areas after shower on damp skin. Chemical exfoliation dissolves the keratin accumulation. Results in 4–8 weeks.' },
     { treatment: 'BHA body wash (2% salicylic acid)', detail: 'Leave on affected areas for 2 minutes before rinsing. Salicylic acid penetrates hair follicles and dissolves the keratin blockage from inside. The most targeted approach for follicular KP.' },
     { treatment: 'Physical exfoliation: konjac sponge or dry brushing', detail: 'Gentle circular motion in the shower over affected areas loosens the dead keratin. Must follow with moisturiser immediately. Physical only is less effective than chemical but compatible.' },
-    { treatment: 'Tallow as post-exfoliation moisturiser', detail: 'After KP treatment (urea or AHA), apply tallow to the treated area. The linoleic acid content helps address the underlying essential fatty acid deficiency associated with KP. The occlusive function maintains softening between treatments.' },
+    { treatment: 'Lipid-replenishing balm as post-exfoliation moisturiser', detail: 'After KP treatment (urea or AHA), apply a balm rich in essential fatty acids (linoleic and oleic acid) to the treated area. The fatty acid content helps address the underlying essential fatty acid deficiency associated with KP. The occlusive function maintains softening between treatments.' },
   ],
   avoid: ['Harsh scrubs that cause inflammation', 'Hot showers (dry out skin and worsen keratin buildup)', 'Picking at bumps (causes PIH and scarring)', 'Skipping moisturiser after treatment'],
 };
@@ -50,7 +50,7 @@ const BODY_ACNE_DATA = {
     { step: 4, action: 'Change pillowcase weekly', detail: 'For back acne: back contact with pillowcase during sleep transfers sebum, bacteria, and dead skin cells to skin nightly. Silk pillowcase reduces friction and bacterial transfer.' },
     { step: 5, action: 'Loose, breathable clothing post-shower', detail: 'Tight synthetic fabrics maintain warmth and moisture next to skin — ideal bacterial conditions. Cotton or moisture-wicking fabrics for daily wear when body acne is active.' },
   ],
-  tallowNote: 'Do not apply tallow over active body acne. Use tallow on non-acne areas (arms, legs, feet) for dryness. As body acne resolves, tallow can be applied to the cleared areas to support barrier recovery and reduce post-acne PIH.',
+  barrierNote: 'Do not apply heavy occlusive balms over active body acne. Reserve rich, ceramide-based moisturisers for non-acne areas (arms, legs, feet) where dryness is the primary concern. As body acne resolves, a barrier-repair balm can be applied to the cleared areas to support recovery and reduce post-acne PIH.',
 };
 
 const STRETCH_MARKS = {
@@ -60,7 +60,7 @@ const STRETCH_MARKS = {
     { treatment: 'Retinoids (tretinoin or retinol)', detail: 'Most clinically supported topical treatment. Retinoids stimulate new collagen synthesis and improve striated texture. Work best on pink/red (fresh) striae. On white/old striae, effect is minimal. Requires 6–12 months of consistent use.', evidence: 'strong' },
     { treatment: 'Centella asiatica (Cica)', detail: 'Contains madecassoside and asiaticoside — compounds that stimulate collagen synthesis and promote wound healing. Clinical studies show improvement in stretch mark appearance and skin elasticity at 4 months. Gentle option for during pregnancy (unlike retinoids).', evidence: 'moderate' },
     { treatment: 'Hyaluronic acid + occlusive (prevention)', detail: 'HA maintains skin plumpness and stretch capacity. Applied twice daily during high-risk periods (pregnancy, rapid growth). More effective as prevention than treatment. Must be sealed with occlusive.', evidence: 'moderate' },
-    { treatment: 'Tallow during high-risk periods', detail: 'Tallow\'s lipid profile supports dermal elasticity. Vitamin A content (retinyl ester form) provides gentle retinoid activity. Applied twice daily during pregnancy (safe, natural source of vitamin A, unlike prescription retinoids) supports skin elasticity. Better as prevention than repair.', evidence: 'traditional' },
+    { treatment: 'Rich occlusive balms during high-risk periods', detail: 'A lipid-rich balm with a balanced fatty acid profile supports dermal elasticity. Balms naturally containing retinyl esters (gentle vitamin A precursors) provide mild retinoid-like activity without the irritation of prescription retinoids. Applied twice daily during pregnancy or rapid growth phases, these support skin elasticity. Better as prevention than repair.', evidence: 'traditional' },
     { treatment: 'Professional: microneedling, laser, PRP', detail: 'For established white striae: microneedling, fractional laser, or PRP injections produce the most visible improvement. These are professional treatments requiring clinical consultation. Most effective within 5 years of formation.', evidence: 'strong (professional only)' },
   ],
 };
@@ -72,21 +72,21 @@ const INGROWN_HAIRS = {
     'Exfoliate with BHA (salicylic acid) 24–48 hours before hair removal — clears follicle openings',
     'Shave WITH the grain, not against, using a single-blade razor',
     'Apply a warm compress before shaving — softens hair for cleaner cut',
-    'Use a shaving oil (tallow works well) rather than foam for closer, cleaner glide',
+    'Use a shaving oil (a lipid-rich balm or dedicated shave oil works well) rather than foam for closer, cleaner glide',
     'Exfoliate regularly in prone areas between hair removal sessions',
     'Wear loose clothing for 24 hours after hair removal',
   ],
   treatment: 'For existing ingrown hairs: apply 2% BHA to affected area 2× daily. The acid softens the dead skin over the ingrown and helps the hair emerge. Do NOT dig out ingrown hairs with fingers — causes infection and scarring. Warm compress 2× daily softens the skin and encourages natural release.',
-  tallowNote: 'Tallow as shaving oil: apply a thin layer of softened tallow to the skin before shaving. It provides a slick, hydrating glide that reduces friction-related ingrown hair formation, while nourishing the skin simultaneously. Rinse the razor frequently. Follow shave with a thin layer of tallow applied to calm skin.',
+  barrierNote: 'Shaving oil tip: apply a thin layer of a lipid-rich balm or dedicated pre-shave oil to the skin before shaving. It provides a slick, hydrating glide that reduces friction-related ingrown hair formation, while nourishing the skin simultaneously. Rinse the razor frequently. Follow the shave with a thin layer of a barrier-repair balm to calm skin.',
 };
 
 const DRY_BODY = [
-  { area: 'Elbows', notes: 'High-friction area, few sebaceous glands, thick skin. Requires both physical exfoliation (pumice or urea) and occlusive moisturiser. Urea 20–40% is the gold standard for elbow skin. Tallow applied after exfoliation locks in softening.', icon: '💪' },
+  { area: 'Elbows', notes: 'High-friction area, few sebaceous glands, thick skin. Requires both physical exfoliation (pumice or urea) and occlusive moisturiser. Urea 20–40% is the gold standard for elbow skin. A rich occlusive balm applied after exfoliation locks in softening.', icon: '💪' },
   { area: 'Knees', notes: 'Same as elbows — high friction, thin sebaceous coverage, prone to hyperpigmentation from constant pressure. Exfoliate gently, moisturise daily, avoid kneeling on hard surfaces without padding.', icon: '🦵' },
-  { area: 'Heels and feet', notes: 'Thickest skin on the body (no sebaceous glands at all — the only area of skin with zero glands). Requires mechanical exfoliation (pumice stone, foot file) to manage callus buildup. Apply urea 40% cream overnight with socks for severe cracked heels. Tallow provides extreme occlusion overnight.', icon: '🦶' },
-  { area: 'Hands', notes: 'Washed 15–30× daily, exposed to detergents, frequent UV exposure. Use hand cream after every wash. Tallow on hands overnight (with cotton gloves) is one of the most effective treatments for extremely dry hands and cuticle repair.', icon: '🤲' },
-  { area: 'Shins and calves', notes: 'Limited sebaceous glands. Common site for xerosis (abnormal dry skin), especially in winter. Apply body lotion or tallow immediately after shower to slightly damp skin for maximum penetration.', icon: '🏃' },
-  { area: 'Lips', notes: 'The lips have the thinnest skin on the body with zero sebaceous glands. They depend entirely on topical moisturisation and the surrounding skin\'s sebum. Tallow is excellent for lip balm — a tiny amount applied to lips creates lasting hydration.', icon: '👄' },
+  { area: 'Heels and feet', notes: 'Thickest skin on the body (no sebaceous glands at all — the only area of skin with zero glands). Requires mechanical exfoliation (pumice stone, foot file) to manage callus buildup. Apply urea 40% cream overnight with socks for severe cracked heels. A thick shea- or ceramide-based balm provides extreme occlusion overnight.', icon: '🦶' },
+  { area: 'Hands', notes: 'Washed 15–30× daily, exposed to detergents, frequent UV exposure. Use hand cream after every wash. A rich barrier-repair balm worn overnight under cotton gloves is one of the most effective treatments for extremely dry hands and cuticle repair.', icon: '🤲' },
+  { area: 'Shins and calves', notes: 'Limited sebaceous glands. Common site for xerosis (abnormal dry skin), especially in winter. Apply body lotion or a lipid-replenishing balm immediately after shower to slightly damp skin for maximum penetration.', icon: '🏃' },
+  { area: 'Lips', notes: 'The lips have the thinnest skin on the body with zero sebaceous glands. They depend entirely on topical moisturisation and the surrounding skin\'s sebum. A wax- or shea-based balm is excellent for lip care — a tiny amount applied to lips creates lasting hydration.', icon: '👄' },
 ];
 
 export default function BodyCareScreen() {
@@ -186,9 +186,9 @@ export default function BodyCareScreen() {
                 </View>
               </View>
             ))}
-            <View style={styles.tallowNote}>
-              <Text style={styles.tallowNoteTitle}>🌿 Tallow Note</Text>
-              <Text style={styles.tallowNoteText}>{BODY_ACNE_DATA.tallowNote}</Text>
+            <View style={styles.barrierNote}>
+              <Text style={styles.barrierNoteTitle}>🌿 Barrier Note</Text>
+              <Text style={styles.barrierNoteText}>{BODY_ACNE_DATA.barrierNote}</Text>
             </View>
           </View>
         )}
@@ -237,9 +237,9 @@ export default function BodyCareScreen() {
               <Text style={[styles.infoBlockTitle, { color: Colors.teal }]}>Treatment</Text>
               <Text style={styles.infoBlockText}>{INGROWN_HAIRS.treatment}</Text>
             </View>
-            <View style={styles.tallowNote}>
-              <Text style={styles.tallowNoteTitle}>🌿 Tallow as Shaving Oil</Text>
-              <Text style={styles.tallowNoteText}>{INGROWN_HAIRS.tallowNote}</Text>
+            <View style={styles.barrierNote}>
+              <Text style={styles.barrierNoteTitle}>🌿 Shaving Oil Tip</Text>
+              <Text style={styles.barrierNoteText}>{INGROWN_HAIRS.barrierNote}</Text>
             </View>
           </View>
         )}
@@ -300,9 +300,9 @@ function makeStyles(c: ShimColors) {
   stepNumText: { color: '#fff', fontSize: 13, fontWeight: '800' },
   stepTitle: { color: c.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 4 },
   stepDetail: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowNote: { backgroundColor: c.primary + '11', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: c.primary + '44', marginTop: 12 },
-  tallowNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 4 },
-  tallowNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
+  barrierNote: { backgroundColor: c.primary + '11', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: c.primary + '44', marginTop: 12 },
+  barrierNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 4 },
+  barrierNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
   infoBlock: { borderRadius: 10, padding: 12, borderWidth: 1, backgroundColor: c.cardAlt, marginBottom: 14 },
   infoBlockTitle: { fontSize: 13, fontWeight: '700', marginBottom: 6 },
   infoBlockText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },

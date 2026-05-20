@@ -50,7 +50,7 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Lightweight moisturizer', detail: 'A thin layer — avoid heavy occlusives over fresh exfoliant' },
     ],
     warnings: ['No retinol tonight', 'Avoid Vitamin C (pH conflict)', 'Use SPF next morning without fail'],
-    tallowNote: 'Skip heavy occlusives tonight — use a lighter moisturizer over fresh exfoliant. Return to a rich occlusive on recovery nights.',
+    barrierNote: 'Skip heavy occlusives tonight — use a lighter moisturizer over fresh exfoliant. Return to a rich occlusive on recovery nights.',
   },
   {
     day: 2,
@@ -65,7 +65,7 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Occlusive balm or moisturizer', detail: 'Apply on top to buffer irritation and lock in the retinoid' },
     ],
     warnings: ['No AHA/BHA tonight', 'No Vitamin C tonight', 'This is where the magic happens — do not skip'],
-    tallowNote: 'A lipid-rich occlusive is excellent as a retinol buffer on Night 2. Apply after the retinoid wait time. Its fatty acid profile buffers irritation without reducing efficacy.',
+    barrierNote: 'A lipid-rich occlusive is excellent as a retinol buffer on Night 2. Apply after the retinoid wait time. Its fatty acid profile buffers irritation without reducing efficacy.',
   },
   {
     day: 3,
@@ -80,7 +80,7 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Facial oil over the occlusive (optional)', detail: 'A drop of rosehip or squalane can be layered over the occlusive for extra nourishment' },
     ],
     warnings: ['Zero actives tonight', 'If skin is irritated — add ceramide or aloe before the occlusive', 'This night is what makes the actives sustainable'],
-    tallowNote: 'Recovery Night 1 is THE occlusive night. Use it generously. This is when an occlusive\'s barrier-repair properties shine — rebuilding what the actives processed.',
+    barrierNote: 'Recovery Night 1 is THE occlusive night. Use it generously. This is when an occlusive\'s barrier-repair properties shine — rebuilding what the actives processed.',
   },
   {
     day: 4,
@@ -95,7 +95,7 @@ function buildCycleNights(Colors: ReturnType<typeof shimColors>) {
       { step: 'Eye care', detail: 'Apply an occlusive or eye cream around eyes' },
     ],
     warnings: ['Still no actives', 'Tomorrow night the cycle repeats from Night 1', 'Consistency over weeks is what produces results'],
-    tallowNote: 'Second recovery night — keep it consistent. By cycling recovery nights with active nights, you prevent the chronic barrier damage that makes actives unsustainable long-term.',
+    barrierNote: 'Second recovery night — keep it consistent. By cycling recovery nights with active nights, you prevent the chronic barrier damage that makes actives unsustainable long-term.',
   },
   ];
 }
@@ -232,9 +232,9 @@ export default function SkinCyclingScreen() {
                     </View>
                   ))}
                 </View>
-                <View style={styles.tallowNoteCard}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
-                  <Text style={styles.tallowNoteText}>{night.tallowNote}</Text>
+                <View style={styles.barrierNoteCard}>
+                  <Text style={styles.barrierNoteTitle}>🌿 Barrier Note</Text>
+                  <Text style={styles.barrierNoteText}>{night.barrierNote}</Text>
                 </View>
                 <View style={styles.warningsBlock}>
                   {night.warnings.map((w, j) => (
@@ -315,9 +315,9 @@ export default function SkinCyclingScreen() {
                     ))}
                   </View>
 
-                  <View style={styles.tonightTallow}>
-                    <Text style={styles.tonightTallowTitle}>🌿 Occlusive Tonight</Text>
-                    <Text style={styles.tonightTallowText}>{nightInfo.tallowNote}</Text>
+                  <View style={styles.tonightOcclusive}>
+                    <Text style={styles.tonightOcclusiveTitle}>🌿 Occlusive Tonight</Text>
+                    <Text style={styles.tonightOcclusiveText}>{nightInfo.barrierNote}</Text>
                   </View>
                 </LinearGradient>
 
@@ -390,12 +390,12 @@ function makeStyles(c: Palette) {
   stepNum: { fontSize: 13, fontWeight: '800', width: 16 },
   stepName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '600', marginBottom: 2 },
   stepDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowNoteCard: {
+  barrierNoteCard: {
     backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 10,
     borderWidth: 1, borderColor: Colors.primary + '33', marginBottom: 10,
   },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  barrierNoteTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  barrierNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
   warningsBlock: { gap: 4 },
   warningItem: { color: Colors.textMuted, fontSize: 12 },
   // Tracker
@@ -450,12 +450,12 @@ function makeStyles(c: Palette) {
   tonightStepNum: { fontSize: 14, fontWeight: '800', width: 18 },
   tonightStepName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '600', marginBottom: 2 },
   tonightStepDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tonightTallow: {
+  tonightOcclusive: {
     backgroundColor: Colors.primary + '20', borderRadius: 10, padding: 10,
     borderWidth: 1, borderColor: Colors.primary + '44',
   },
-  tonightTallowTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  tonightTallowText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  tonightOcclusiveTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  tonightOcclusiveText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
   upNextLabel: { color: Colors.textSecondary, fontSize: 13, fontWeight: '700', marginBottom: 8 },
   upNextCard: {
     flexDirection: 'row', alignItems: 'center', gap: 10,

@@ -11,16 +11,18 @@ import { useColors } from '../../src/state/theme';
 import { ARTICLES, Article } from '../../src/data/articles';
 import { Storage } from '../../src/services/storage';
 
-const TAG_COLORS: Record<string, string> = {
-  'SKIN SCIENCE': '#4ADE80',
-  'INGREDIENTS': '#60A5FA',
-  'GUIDE': '#8A7860',
-  'PHILOSOPHY': '#B79B6E',
-  'SKIN TYPE': '#6B85A8',
-  'TIMELINE': '#F59E0B',
-  'HISTORY': '#FB923C',
-  'PROTECTION': '#38BDF8',
-};
+function tagColors(c: Palette): Record<string, string> {
+  return {
+    'SKIN SCIENCE': c.scoreGood,
+    'INGREDIENTS': c.hydration,
+    'GUIDE': c.primary,
+    'PHILOSOPHY': c.gold,
+    'SKIN TYPE': c.darkCircles,
+    'TIMELINE': c.evenness,
+    'HISTORY': c.firmness,
+    'PROTECTION': c.barrierHealth,
+  };
+}
 
 export default function ArticleDetail() {
   const colors = useColors();
@@ -50,7 +52,7 @@ export default function ArticleDetail() {
     );
   }
 
-  const tagColor = TAG_COLORS[article.tag] || colors.primary;
+  const tagColor = tagColors(colors)[article.tag] || colors.primary;
   const relatedArticles = ARTICLES.filter(a => a.slug !== article.slug && (a.tag === article.tag || a.editorialAngle)).slice(0, 2);
 
   return (

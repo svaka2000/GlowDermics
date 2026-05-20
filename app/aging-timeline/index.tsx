@@ -16,7 +16,7 @@ function shimColors(c: Palette) {
   };
 }
 
-const TABS = ['Decades', 'Science', 'Accelerators', 'Slow It', 'Tallow Age'];
+const TABS = ['Decades', 'Science', 'Accelerators', 'Slow It', 'A rich occlusive balm Age'];
 
 function buildDecades(Colors: ReturnType<typeof shimColors>) {
   return [
@@ -315,22 +315,22 @@ export default function AgingTimeline() {
           </View>
         )}
 
-        {/* TALLOW AGE */}
+        {/* OCCLUSIVE_BALM AGE */}
         {activeTab === 4 && (
           <View style={{ gap: 14 }}>
             <View style={[styles.card, { borderColor: Colors.primary }]}>
-              <Text style={[styles.cardTitle, { color: Colors.primary, marginBottom: 8 }]}>Tallow as an Anti-Aging Ingredient</Text>
+              <Text style={[styles.cardTitle, { color: Colors.primary, marginBottom: 8 }]}>A rich occlusive balm as an Anti-Aging Ingredient</Text>
               <Text style={styles.para}>
-                Tallow's lipid profile — dominated by oleic acid (47%), palmitic acid (26%), and stearic acid (21%) — mirrors the fatty acid composition of human sebum more closely than any plant oil. This structural similarity enables genuine integration into the skin matrix, not just surface-level moisturisation.
+                Its lipid profile — dominated by oleic acid (47%), palmitic acid (26%), and stearic acid (21%) — mirrors the fatty acid composition of human sebum more closely than any plant oil. This structural similarity enables genuine integration into the skin matrix, not just surface-level moisturisation.
               </Text>
             </View>
             <View style={styles.card}>
-              <Text style={[styles.subLabel, { marginBottom: 8 }]}>Why Tallow Works for Aging Skin</Text>
+              <Text style={[styles.subLabel, { marginBottom: 8 }]}>Why A rich occlusive balm Works for Aging Skin</Text>
               {[
-                { point: 'Fat-Soluble Vitamins A, D, E, K', detail: 'Tallow contains retinyl esters (vitamin A precursors), tocopherols (vitamin E), cholecalciferol (D3), and vitamin K2. These are precisely the vitamins depleted by aging — retinoids regulate gene expression for collagen synthesis, vitamin E quenches oxidative stress, K2 activates matrix Gla-protein which prevents elastin calcification.' },
-                { point: 'Conjugated Linoleic Acid (CLA)', detail: 'Grass-fed tallow contains CLA — a fatty acid with anti-inflammatory and antioxidant properties. CLA has been shown to modulate inflammatory signalling pathways that accelerate photoaging.' },
-                { point: 'Barrier Restoration', detail: 'Aging skin loses barrier integrity, leading to accelerated transepidermal water loss (TEWL). Tallow\'s phospholipid and cholesterol content directly rebuilds the lipid lamellae of the stratum corneum, reducing TEWL and improving structural hydration.' },
-                { point: 'No Endocrine Disruption', detail: 'Unlike many synthetic anti-aging ingredients (parabens, phthalates, oxybenzone in chemical SPF), tallow contains no endocrine disruptors. Hormone-disrupting chemicals accelerate aging processes — avoiding them is itself an anti-aging strategy.' },
+                { point: 'Fat-Soluble Vitamins A, D, E, K', detail: 'A rich occlusive balm contains retinyl esters (vitamin A precursors), tocopherols (vitamin E), cholecalciferol (D3), and vitamin K2. These are precisely the vitamins depleted by aging — retinoids regulate gene expression for collagen synthesis, vitamin E quenches oxidative stress, K2 activates matrix Gla-protein which prevents elastin calcification.' },
+                { point: 'Conjugated Linoleic Acid (CLA)', detail: 'Grass-fed a rich occlusive balm contains CLA — a fatty acid with anti-inflammatory and antioxidant properties. CLA has been shown to modulate inflammatory signalling pathways that accelerate photoaging.' },
+                { point: 'Barrier Restoration', detail: 'Aging skin loses barrier integrity, leading to accelerated transepidermal water loss (TEWL). Its phospholipid and cholesterol content directly rebuilds the lipid lamellae of the stratum corneum, reducing TEWL and improving structural hydration.' },
+                { point: 'No Endocrine Disruption', detail: 'Unlike many synthetic anti-aging ingredients (parabens, phthalates, oxybenzone in chemical SPF), a rich occlusive balm contains no endocrine disruptors. Hormone-disrupting chemicals accelerate aging processes — avoiding them is itself an anti-aging strategy.' },
               ].map(p => (
                 <View key={p.point} style={[styles.card, { backgroundColor: Colors.cardAlt, marginBottom: 10 }]}>
                   <Text style={[styles.subLabel, { color: Colors.gold, marginBottom: 4 }]}>{p.point}</Text>
@@ -339,7 +339,7 @@ export default function AgingTimeline() {
               ))}
             </View>
             <View style={styles.card}>
-              <Text style={[styles.subLabel, { marginBottom: 10 }]}>Decade-Specific Tallow Application</Text>
+              <Text style={[styles.subLabel, { marginBottom: 10 }]}>Decade-Specific A rich occlusive balm Application</Text>
               {[
                 { decade: '20s', use: 'Light application as moisturiser, habit building. Focus on occlusive finish after serum.' },
                 { decade: '30s', use: 'Primary evening moisturiser. Layer over retinoid to buffer without blocking absorption.' },

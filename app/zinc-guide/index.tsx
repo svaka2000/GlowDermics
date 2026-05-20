@@ -54,7 +54,7 @@ const TOPICAL_ZINC = [
   { product: 'Calamine lotion (zinc oxide + iron oxide)', use: 'Cooling, anti-pruritic (anti-itch) topical. Effective for eczema itch, sunburn, insect bites. The zinc oxide provides barrier protection; the iron oxide creates the characteristic pink colour.', bestFor: 'Eczema flares, sunburn, pruritus' },
 ];
 
-const TALLOW_ZINC = [
+const OCCLUSIVE_BALM_ZINC = [
   { title: 'Zinc in animal-fat occlusives', body: 'Some animal-fat occlusives contain trace amounts of zinc in their natural composition. While not a significant zinc source (a supplement delivers far more), the trace zinc contributes to wound-healing and anti-inflammatory properties alongside the fatty acids and fat-soluble vitamins.' },
   { title: 'Zinc + an occlusive for acne recovery', body: 'Oral zinc (30–50mg daily) for internal anti-inflammatory and sebum regulation, combined with a lipid-rich occlusive applied topically (barrier repair + palmitoleic acid antimicrobial + vitamin A cell turnover) addresses acne from both internal and external angles. These are complementary, not competing approaches.' },
   { title: 'Post-acne scarring: zinc + occlusive combination', body: 'Zinc accelerates wound healing from the inside (enzyme cofactor for collagen synthesis, cell migration). A lipid-rich occlusive provides vitamin A (retinoid-like activity for skin cell renewal) and vitamin E (lipid antioxidant that reduces oxidative damage in healing tissue). For post-acne PIH and scarring: oral zinc + a PM occlusive addresses both healing speed and scar quality.' },
@@ -176,14 +176,14 @@ export default function ZincGuideScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Zinc + an Occlusive</Text>
-              <Text style={styles.tallowHeroSub}>Zinc and a lipid-rich occlusive work from the inside and outside simultaneously — oral zinc for internal biology, the occlusive for topical barrier and vitamin delivery.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Zinc + an Occlusive</Text>
+              <Text style={styles.barrierHeroSub}>Zinc and a lipid-rich occlusive work from the inside and outside simultaneously — oral zinc for internal biology, the occlusive for topical barrier and vitamin delivery.</Text>
             </View>
-            {TALLOW_ZINC.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_ZINC.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -226,11 +226,11 @@ function makeStyles(c: ShimColors) {
   bioText: { fontSize: 10, fontWeight: '700' },
   doseText: { color: c.textMuted, fontSize: 12 },
   bestForText: { color: c.textMuted, fontSize: 11, marginTop: 2 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

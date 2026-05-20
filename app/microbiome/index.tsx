@@ -21,7 +21,7 @@ const TABS = [
   { id: 'basics', label: 'What Is It?', icon: '🔬' },
   { id: 'disruptors', label: 'What Harms It', icon: '⚠️' },
   { id: 'supporters', label: 'What Helps It', icon: '✅' },
-  { id: 'tallow', label: 'Lipids & Microbiome', icon: '🌿' },
+  { id: 'occlusive', label: 'Lipids & Microbiome', icon: '🌿' },
 ];
 
 const BASICS = [
@@ -152,7 +152,7 @@ const SUPPORTERS = [
   },
 ];
 
-const TALLOW_MICROBIOME = [
+const OCCLUSIVE_BALM_MICROBIOME = [
   {
     title: 'Biocompatibility = microbiome compatibility',
     detail: 'A sebum-similar occlusive\'s fatty acid profile matches human sebum so closely that beneficial bacteria recognise it as native material. They can continue their symbiotic activity on such occlusive-moisturised skin in ways they cannot on petrolatum or synthetic silicones.',
@@ -280,18 +280,18 @@ export default function MicrobiomeScreen() {
           </TouchableOpacity>
         ))}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
-            <View style={styles.tallowIntro}>
-              <Text style={styles.tallowIntroText}>
+            <View style={styles.barrierIntro}>
+              <Text style={styles.barrierIntroText}>
                 Sebum-similar occlusives are well aligned with the skin microbiome's needs — because their lipid profile closely matches the skin's own sebum.
               </Text>
             </View>
-            {TALLOW_MICROBIOME.map((item, i) => (
-              <View key={i} style={[styles.tallowCard, item.note && { borderColor: Colors.gold + '55' }]}>
+            {OCCLUSIVE_BALM_MICROBIOME.map((item, i) => (
+              <View key={i} style={[styles.barrierCard, item.note && { borderColor: Colors.gold + '55' }]}>
                 {item.note && <Text style={styles.noteLabel}>📝 NOTE</Text>}
-                <Text style={styles.tallowTitle}>{item.title}</Text>
-                <Text style={styles.tallowDetail}>{item.detail}</Text>
+                <Text style={styles.barrierTitle}>{item.title}</Text>
+                <Text style={styles.barrierDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -369,17 +369,17 @@ function makeStyles(c: Palette) {
     color: Colors.textSecondary, fontSize: 13, lineHeight: 20,
     marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: Colors.border,
   },
-  tallowIntro: {
+  barrierIntro: {
     backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14,
   },
-  tallowIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
-  tallowCard: {
+  barrierIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
+  barrierCard: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
   noteLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 6 },
-  tallowTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

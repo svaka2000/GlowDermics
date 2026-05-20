@@ -59,7 +59,7 @@ function buildCombinations(Colors: ShimColors) {
   ];
 }
 
-const TALLOW_STACK = [
+const OCCLUSIVE_STACK = [
   { title: 'Niacinamide before the occlusive: the correct order', body: 'Niacinamide is water-soluble — it must contact the aqueous phase of skin before any occlusive is applied. Apply niacinamide serum on clean skin, allow 60–90 seconds, then apply the occlusive. Applying the occlusive first would block niacinamide penetration.' },
   { title: 'Complementary barrier mechanisms', body: 'Niacinamide stimulates ceramide synthesis (internal barrier building). A lipid-rich occlusive provides the three barrier lipids directly (external barrier support). These two mechanisms address barrier repair from both directions: the occlusive fills gaps now; niacinamide rebuilds the infrastructure to maintain them long-term.' },
   { title: 'Niacinamide\'s sebum reduction + a non-comedogenic occlusive', body: 'A common concern: will a rich occlusive make oily skin worse? Niacinamide\'s sebum-reducing effect lowers this risk by reducing sebaceous gland activity. Applied together, niacinamide reduces the sebum that could interact with topical oils, while a sebum-similar occlusive provides barrier support without adding comedogenic risk to properly applied skin.' },
@@ -189,14 +189,14 @@ export default function NiacinamideScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Niacinamide + an Occlusive</Text>
-              <Text style={styles.tallowHeroSub}>Niacinamide and a lipid-rich occlusive address barrier repair from opposite directions — one builds infrastructure, the other fills gaps. Together they are more complete than either alone.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Niacinamide + an Occlusive</Text>
+              <Text style={styles.barrierHeroSub}>Niacinamide and a lipid-rich occlusive address barrier repair from opposite directions — one builds infrastructure, the other fills gaps. Together they are more complete than either alone.</Text>
             </View>
-            {TALLOW_STACK.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_STACK.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -242,11 +242,11 @@ function makeStyles(c: ShimColors) {
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
   stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

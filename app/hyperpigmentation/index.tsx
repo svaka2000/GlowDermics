@@ -23,7 +23,7 @@ const TABS = [
   { id: 'actives', label: 'Treatments', icon: '⚗️' },
   { id: 'routine', label: 'Protocol', icon: '📋' },
   { id: 'myths', label: 'Myths', icon: '💡' },
-  { id: 'tallow', label: 'Barrier Role', icon: '🌿' },
+  { id: 'occlusive', label: 'Barrier Role', icon: '🌿' },
 ];
 
 function buildTypes(Colors: ReturnType<typeof shimColors>) {
@@ -88,7 +88,7 @@ const ACTIVES = [
     howToUse: '10–20% AM, before SPF. Allow 30s to absorb. Stable in low pH.',
     bestFor: ['PIH', 'Sun spots', 'General brightening'],
     evidence: 'strong',
-    tallowStack: 'Apply Vitamin C → wait 60s → a thin occlusive → SPF.',
+    occlusiveStack: 'Apply Vitamin C → wait 60s → a thin occlusive → SPF.',
   },
   {
     name: 'Niacinamide',
@@ -96,7 +96,7 @@ const ACTIVES = [
     howToUse: '5–10%, AM and PM. Well-tolerated by all skin types.',
     bestFor: ['PIH', 'General brightening', 'Skin tone evening'],
     evidence: 'strong',
-    tallowStack: 'Apply niacinamide → 30s → an occlusive on top (it doesn\'t interfere with niacinamide\'s mechanism).',
+    occlusiveStack: 'Apply niacinamide → 30s → an occlusive on top (it doesn\'t interfere with niacinamide\'s mechanism).',
   },
   {
     name: 'Azelaic Acid',
@@ -104,7 +104,7 @@ const ACTIVES = [
     howToUse: '10–20% AM or PM. Prescription strength 20% requires dermatologist. Start low and increase.',
     bestFor: ['PIH', 'Melasma', 'Rosacea-related redness'],
     evidence: 'strong',
-    tallowStack: 'Good combination — azelaic acid reduces the PIH trigger, an occlusive reduces the inflammation that causes it.',
+    occlusiveStack: 'Good combination — azelaic acid reduces the PIH trigger, an occlusive reduces the inflammation that causes it.',
   },
   {
     name: 'Tranexamic Acid',
@@ -112,7 +112,7 @@ const ACTIVES = [
     howToUse: '2–5% topical, AM and PM. Also available as oral supplement (off-label, require physician).',
     bestFor: ['Melasma', 'PIH', 'Overall brightening'],
     evidence: 'strong',
-    tallowStack: 'Can be layered under an occlusive. Tranexamic → occlusive → SPF AM routine.',
+    occlusiveStack: 'Can be layered under an occlusive. Tranexamic → occlusive → SPF AM routine.',
   },
   {
     name: 'Alpha Arbutin',
@@ -120,7 +120,7 @@ const ACTIVES = [
     howToUse: '2%, AM or PM. Well-tolerated and can be used daily.',
     bestFor: ['PIH', 'Sun spots', 'Sensitive skin brightening'],
     evidence: 'moderate',
-    tallowStack: 'Alpha arbutin → occlusive. No interaction issues.',
+    occlusiveStack: 'Alpha arbutin → occlusive. No interaction issues.',
   },
   {
     name: 'Kojic Acid',
@@ -128,7 +128,7 @@ const ACTIVES = [
     howToUse: '1–4%, AM or PM. Can be irritating at high concentration — introduce slowly.',
     bestFor: ['Melasma', 'Sun spots'],
     evidence: 'moderate',
-    tallowStack: 'Can be applied before an occlusive. Note: may not be well-tolerated by rosacea-prone skin.',
+    occlusiveStack: 'Can be applied before an occlusive. Note: may not be well-tolerated by rosacea-prone skin.',
   },
   {
     name: 'Retinoids (Vitamin A)',
@@ -136,7 +136,7 @@ const ACTIVES = [
     howToUse: 'PM only, skin cycling (2× per week). See Retinol Guide.',
     bestFor: ['Sun spots', 'PIH', 'Combined anti-aging + brightening'],
     evidence: 'strong',
-    tallowStack: 'Retinol → 20 min wait → an occlusive as buffer and seal.',
+    occlusiveStack: 'Retinol → 20 min wait → an occlusive as buffer and seal.',
   },
   {
     name: 'SPF 30+ (Broad Spectrum)',
@@ -144,7 +144,7 @@ const ACTIVES = [
     howToUse: 'Every morning, last step, adequate amount.',
     bestFor: ['All types — prevention and maintenance'],
     evidence: 'critical — without it nothing else works',
-    tallowStack: 'Occlusive → SPF. Non-negotiable.',
+    occlusiveStack: 'Occlusive → SPF. Non-negotiable.',
   },
 ];
 
@@ -262,9 +262,9 @@ export default function HyperpigmentationScreen() {
                 <Text style={styles.activeDetail}>{active.mechanism}</Text>
                 <Text style={styles.activeSubLabel}>How to Use</Text>
                 <Text style={styles.activeDetail}>{active.howToUse}</Text>
-                <View style={styles.tallowStackCard}>
-                  <Text style={styles.tallowStackLabel}>🌿 Occlusive Stack</Text>
-                  <Text style={styles.tallowStackText}>{active.tallowStack}</Text>
+                <View style={styles.occlusiveStackCard}>
+                  <Text style={styles.occlusiveStackLabel}>🌿 Occlusive Stack</Text>
+                  <Text style={styles.occlusiveStackText}>{active.occlusiveStack}</Text>
                 </View>
               </View>
             )}
@@ -317,7 +317,7 @@ export default function HyperpigmentationScreen() {
           </TouchableOpacity>
         ))}
 
-        {activeTab === 'tallow' && [
+        {activeTab === 'occlusive' && [
           {
             title: 'Occlusives for post-acne marks (PIH)',
             detail: "Apply a lipid-rich occlusive directly to healing acne spots PM. Palmitoleic acid reduces the inflammation that triggers melanin overproduction. Vitamin K2 supports vascular healing. Early application (while the spot is still healing) reduces PIH formation significantly compared to doing nothing.",
@@ -339,9 +339,9 @@ export default function HyperpigmentationScreen() {
             detail: "Some oils and occlusives can trigger breakouts that then cause PIH. A sebum-compatible occlusive minimizes comedogenic risk. However, if you are purging initially, be extra diligent with SPF during this period as any inflammation from purging can leave marks.",
           },
         ].map((item, i) => (
-          <View key={i} style={styles.tallowPoint}>
-            <Text style={styles.tallowPointTitle}>{item.title}</Text>
-            <Text style={styles.tallowPointDetail}>{item.detail}</Text>
+          <View key={i} style={styles.barrierPoint}>
+            <Text style={styles.barrierPointTitle}>{item.title}</Text>
+            <Text style={styles.barrierPointDetail}>{item.detail}</Text>
           </View>
         ))}
 
@@ -391,9 +391,9 @@ function makeStyles(c: Palette) {
   activeExpanded: { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: Colors.border },
   activeSubLabel: { color: Colors.textSecondary, fontSize: 11, fontWeight: '700', marginBottom: 3, marginTop: 8 },
   activeDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowStackCard: { backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 10, borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 10 },
-  tallowStackLabel: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  tallowStackText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  occlusiveStackCard: { backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 10, borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 10 },
+  occlusiveStackLabel: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  occlusiveStackText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
   protocolNote: { backgroundColor: Colors.card, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: Colors.border, marginBottom: 14 },
   protocolNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   routineSectionLabel: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 10 },
@@ -409,8 +409,8 @@ function makeStyles(c: Palette) {
   mythTruth: { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: Colors.border },
   truthBadge: { color: Colors.green, fontSize: 9, fontWeight: '700', backgroundColor: Colors.green + '22', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, alignSelf: 'flex-start', marginBottom: 6 },
   truthText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowPoint: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierPoint: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

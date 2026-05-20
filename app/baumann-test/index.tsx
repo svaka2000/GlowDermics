@@ -112,16 +112,16 @@ const QUESTIONS: Question[] = [
 
 type Scores = { 'O/D': number; 'S/R': number; 'P/N': number; 'W/T': number };
 
-function buildBaumannTypes(c: Palette): Record<string, { name: string; emoji: string; color: string; desc: string; focus: string[]; tallow: string }> {
+function buildBaumannTypes(c: Palette): Record<string, { name: string; emoji: string; color: string; desc: string; focus: string[]; occlusive: string }> {
   return {
-  DSNW: { name: 'Dry, Sensitive, Non-Pigmented, Wrinkled', emoji: '🌵', color: '#60A5FA', desc: 'Your skin loses water easily, reacts to ingredients, and shows aging. Focus is on barrier repair and gentle actives.', focus: ['Barrier repair', 'Ceramides', 'Gentle peptides', 'Fragrance-free everything'], tallow: 'Tallow is ideal — it repairs barrier, reduces inflammation, and provides dense lipids without irritating ingredients.' },
-  DSPT: { name: 'Dry, Sensitive, Pigmented, Tight', emoji: '🌺', color: '#F97316', desc: 'Sensitive with pigmentation concerns. Need ingredients that brighten without irritating dry, reactive skin.', focus: ['Niacinamide (3-5%)', 'Azelaic acid', 'Avoid AHA until stable', 'Sun protection daily'], tallow: 'Use tallow as your base moisturizer — it calms sensitivity while preparing skin to tolerate brightening actives.' },
-  DRNW: { name: 'Dry, Resistant, Non-Pigmented, Wrinkled', emoji: '⛰️', color: '#6B85A8', desc: 'Skin tolerates most actives well, but needs deep moisture and anti-aging support.', focus: ['Retinol', 'Peptides', 'Rich moisturizers', 'Hyaluronic acid'], tallow: 'Perfect match — tallow provides the rich lipids your dry, aging skin needs without the harsh additives of commercial creams.' },
-  DRPT: { name: 'Dry, Resistant, Pigmented, Tight', emoji: '🌟', color: c.gold, desc: 'Tolerates actives well. Main goals: moisture, brightening, and anti-aging.', focus: ['Vitamin C', 'Retinol', 'AHA exfoliation', 'SPF daily'], tallow: 'Use tallow as your nighttime moisturizer to support recovery from active ingredients like retinol and vitamin C.' },
-  OSNW: { name: 'Oily, Sensitive, Non-Pigmented, Wrinkled', emoji: '🌊', color: '#22C55E', desc: 'Prone to redness and acne despite oily skin. Need anti-inflammatory, non-clogging actives.', focus: ['Niacinamide', 'Zinc', 'Avoid comedogenic ingredients', 'Lightweight antioxidants'], tallow: 'A thin layer of tallow at night can reduce the inflammation driving sensitivity — its CLA is potently anti-inflammatory.' },
-  OSPT: { name: 'Oily, Sensitive, Pigmented, Tight', emoji: '🔥', color: c.scorePoor, desc: 'The most complex type — oily, acne-prone, reactive, with hyperpigmentation.', focus: ['Gentle BHA', 'Niacinamide', 'Anti-inflammatory diet', 'Targeted azelaic acid'], tallow: 'Spot-apply tallow on healing breakouts to reduce inflammation and prevent post-inflammatory hyperpigmentation.' },
-  ORNW: { name: 'Oily, Resistant, Non-Pigmented, Wrinkled', emoji: '🍃', color: '#4ADE80', desc: 'Lucky — tolerates most things and doesn\'t hyperpigment. Focus on anti-aging prevention.', focus: ['Retinol', 'Vitamin C', 'BHA for pores', 'Broad-spectrum SPF'], tallow: 'Use tallow sparingly — your skin produces its own oil. Focus on tallow\'s vitamin content for anti-aging.' },
-  ORPT: { name: 'Oily, Resistant, Pigmented, Tight', emoji: '🌿', color: c.primary, desc: 'Oily and tolerant — can use strong actives for pigmentation and anti-aging.', focus: ['Retinol', 'Strong AHA', 'Vitamin C 15-20%', 'SPF is non-negotiable'], tallow: 'Use as your anti-aging nighttime treatment — tallow\'s fat-soluble vitamins work synergistically with retinol.' },
+  DSNW: { name: 'Dry, Sensitive, Non-Pigmented, Wrinkled', emoji: '🌵', color: '#60A5FA', desc: 'Your skin loses water easily, reacts to ingredients, and shows aging. Focus is on barrier repair and gentle actives.', focus: ['Barrier repair', 'Ceramides', 'Gentle peptides', 'Fragrance-free everything'], occlusive:'A rich occlusive balm is ideal — it repairs barrier, reduces inflammation, and provides dense lipids without irritating ingredients.' },
+  DSPT: { name: 'Dry, Sensitive, Pigmented, Tight', emoji: '🌺', color: '#F97316', desc: 'Sensitive with pigmentation concerns. Need ingredients that brighten without irritating dry, reactive skin.', focus: ['Niacinamide (3-5%)', 'Azelaic acid', 'Avoid AHA until stable', 'Sun protection daily'], occlusive:'Use a rich occlusive balm as your base moisturizer — it calms sensitivity while preparing skin to tolerate brightening actives.' },
+  DRNW: { name: 'Dry, Resistant, Non-Pigmented, Wrinkled', emoji: '⛰️', color: '#6B85A8', desc: 'Skin tolerates most actives well, but needs deep moisture and anti-aging support.', focus: ['Retinol', 'Peptides', 'Rich moisturizers', 'Hyaluronic acid'], occlusive:'Perfect match — a rich occlusive balm provides the rich lipids your dry, aging skin needs without the harsh additives of commercial creams.' },
+  DRPT: { name: 'Dry, Resistant, Pigmented, Tight', emoji: '🌟', color: c.gold, desc: 'Tolerates actives well. Main goals: moisture, brightening, and anti-aging.', focus: ['Vitamin C', 'Retinol', 'AHA exfoliation', 'SPF daily'], occlusive:'Use a rich occlusive balm as your nighttime moisturizer to support recovery from active ingredients like retinol and vitamin C.' },
+  OSNW: { name: 'Oily, Sensitive, Non-Pigmented, Wrinkled', emoji: '🌊', color: '#22C55E', desc: 'Prone to redness and acne despite oily skin. Need anti-inflammatory, non-clogging actives.', focus: ['Niacinamide', 'Zinc', 'Avoid comedogenic ingredients', 'Lightweight antioxidants'], occlusive:'A thin layer of a rich occlusive balm at night can reduce the inflammation driving sensitivity — its CLA is potently anti-inflammatory.' },
+  OSPT: { name: 'Oily, Sensitive, Pigmented, Tight', emoji: '🔥', color: c.scorePoor, desc: 'The most complex type — oily, acne-prone, reactive, with hyperpigmentation.', focus: ['Gentle BHA', 'Niacinamide', 'Anti-inflammatory diet', 'Targeted azelaic acid'], occlusive:'Spot-apply a rich occlusive balm on healing breakouts to reduce inflammation and prevent post-inflammatory hyperpigmentation.' },
+  ORNW: { name: 'Oily, Resistant, Non-Pigmented, Wrinkled', emoji: '🍃', color: '#4ADE80', desc: 'Lucky — tolerates most things and doesn\'t hyperpigment. Focus on anti-aging prevention.', focus: ['Retinol', 'Vitamin C', 'BHA for pores', 'Broad-spectrum SPF'], occlusive:'Use a rich occlusive balm sparingly — your skin produces its own oil. Focus on its vitamin content for anti-aging.' },
+  ORPT: { name: 'Oily, Resistant, Pigmented, Tight', emoji: '🌿', color: c.primary, desc: 'Oily and tolerant — can use strong actives for pigmentation and anti-aging.', focus: ['Retinol', 'Strong AHA', 'Vitamin C 15-20%', 'SPF is non-negotiable'], occlusive:'Use as your anti-aging nighttime treatment — its fat-soluble vitamins work synergistically with retinol.' },
   };
 }
 
@@ -317,10 +317,10 @@ export default function BaumannTest() {
               ))}
             </View>
 
-            <View style={[styles.tallowCard, { borderColor: `${colors.primary}40` }]}>
+            <View style={[styles.barrierCard, { borderColor: `${colors.primary}40` }]}>
               <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowTitle}>🌿 Tallow for Your Type</Text>
-              <Text style={styles.tallowText}>{typeInfo.tallow}</Text>
+              <Text style={styles.barrierTitle}>🌿 Occlusive Balm for Your Type</Text>
+              <Text style={styles.barrierText}>{typeInfo.occlusive}</Text>
             </View>
 
             <View style={styles.card}>
@@ -423,12 +423,12 @@ function makeStyles(c: Palette) {
   focusDot: { width: 7, height: 7, borderRadius: 3.5, marginTop: 6, flexShrink: 0 },
   focusText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: {
+  barrierCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1,
     padding: 16, gap: 8, marginBottom: 14,
   },
-  tallowTitle: { fontSize: 15, fontWeight: '700', color: c.primary },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  barrierTitle: { fontSize: 15, fontWeight: '700', color: c.primary },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   typesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   typeChip: {

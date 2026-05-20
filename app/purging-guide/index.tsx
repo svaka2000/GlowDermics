@@ -212,9 +212,9 @@ export default function PurgingGuideScreen() {
               ))}
             </View>
 
-            <View style={styles.tallowNote}>
-              <Text style={styles.tallowNoteTitle}>🌿 Occlusives During Purging</Text>
-              <Text style={styles.tallowNoteText}>
+            <View style={styles.barrierNote}>
+              <Text style={styles.barrierNoteTitle}>🌿 Occlusives During Purging</Text>
+              <Text style={styles.barrierNoteText}>
                 A vitamin-A-containing occlusive can cause an initial purge in congested skin — the barrier repair and mild vitamin A activity accelerates microcomedone clearing in the same way as retinol.
                 {'\n\n'}
                 This is expected and normal. Keep using it. Apply after any BHA treatment (not before). The purge typically resolves in 2–4 weeks, after which skin noticeably improves.
@@ -311,9 +311,9 @@ function makeStyles(c: Palette) {
   timelineDot: { width: 10, height: 10, borderRadius: 5, marginTop: 4 },
   timelinePeriod: { fontSize: 12, fontWeight: '700', marginBottom: 3 },
   timelineDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowNote: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44' },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
+  barrierNote: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44' },
+  barrierNoteTitle: { color: Colors.primary, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  barrierNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
   tipCard: { flexDirection: 'row', gap: 12, backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 8 },
   tipNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.primary + '22', alignItems: 'center', justifyContent: 'center' },
   tipNumText: { color: Colors.primary, fontSize: 13, fontWeight: '700' },

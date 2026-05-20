@@ -269,7 +269,7 @@ Return ONLY JSON:
 
             {/* Steps */}
             {steps.map((step, i) => (
-              <View key={i} style={[styles.stepCard, step.isKeyStep && styles.tallowStepCard]}>
+              <View key={i} style={[styles.stepCard, step.isKeyStep && styles.keyStepCard]}>
                 {step.isKeyStep && (
                   <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
                 )}
@@ -378,7 +378,7 @@ function makeStyles(c: Palette) {
     backgroundColor: c.bgCard, borderRadius: 14, borderWidth: 1, borderColor: c.border,
     padding: 14, gap: 8, marginBottom: 8, overflow: 'hidden',
   },
-  tallowStepCard: { borderColor: `${c.primary}40` },
+  keyStepCard: { borderColor: `${c.primary}40` },
   stepTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   stepCircle: {
     width: 32, height: 32, borderRadius: 16,

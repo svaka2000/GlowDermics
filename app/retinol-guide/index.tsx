@@ -22,7 +22,7 @@ const TABS = [
   { id: 'types', label: 'Types', icon: '⚗️' },
   { id: 'start', label: 'Starting Guide', icon: '🚀' },
   { id: 'mistakes', label: 'Mistakes', icon: '❌' },
-  { id: 'tallow', label: 'Occlusive Buffer', icon: '🌿' },
+  { id: 'occlusive', label: 'Occlusive Buffer', icon: '🌿' },
 ];
 
 const INTRO_FACTS = [
@@ -286,11 +286,11 @@ export default function RetinolGuideScreen() {
           </View>
         ))}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
-            <View style={styles.tallowIntro}>
-              <Text style={styles.tallowIntroTitle}>🌿 The Occlusive-Retinol Buffer System</Text>
-              <Text style={styles.tallowIntroText}>
+            <View style={styles.barrierIntro}>
+              <Text style={styles.barrierIntroTitle}>🌿 The Occlusive-Retinol Buffer System</Text>
+              <Text style={styles.barrierIntroText}>
                 A lipid-rich occlusive is one of the most effective buffers for retinol. Its biocompatible fatty acid profile reduces irritation while preserving efficacy.
               </Text>
             </View>
@@ -316,9 +316,9 @@ export default function RetinolGuideScreen() {
                 detail: 'For prescription tretinoin users: the sandwich method with an occlusive is especially effective. Tretinoin is significantly more potent — occlusive buffering allows many users to use it 5–7 nights per week instead of the 2–3 nights they could tolerate without the buffer.',
               },
             ].map((item, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{item.title}</Text>
-                <Text style={styles.tallowCardDetail}>{item.detail}</Text>
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{item.title}</Text>
+                <Text style={styles.barrierCardDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -377,11 +377,11 @@ function makeStyles(c: Palette) {
   mistakeX: { color: Colors.red, fontSize: 16, fontWeight: '900' },
   mistakeName: { flex: 1, color: Colors.textPrimary, fontSize: 14, fontWeight: '700' },
   mistakeDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowIntro: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowIntroTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierIntro: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierIntroTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

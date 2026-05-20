@@ -33,7 +33,7 @@ type ProductDeck = {
   products: Product[];
   totalMonthly: string;
   philosophy: string;
-  tallowNote: string;
+  barrierNote: string;
   ts: number;
 };
 
@@ -130,7 +130,7 @@ Return ONLY valid JSON (no markdown):
   ],
   "totalMonthly": "<estimated total monthly spend for this full deck>",
   "philosophy": "<2 sentences on the philosophy behind this deck — why these specific choices>",
-  "tallowNote": "<1-2 sentences specifically about the occlusive balm and why it's the cornerstone of this deck>"
+  "barrierNote": "<1-2 sentences specifically about the occlusive balm and why it's the cornerstone of this deck>"
 }`;
 
       const resp = await groq.chat.completions.create({
@@ -299,12 +299,12 @@ Return ONLY valid JSON (no markdown):
             })}
 
             {/* Occlusive cornerstone */}
-            <View style={styles.tallowCard}>
+            <View style={styles.barrierCard}>
               <LinearGradient colors={[colors.primaryDark, colors.primary]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-              <Text style={styles.tallowEmoji}>🌿</Text>
+              <Text style={styles.barrierEmoji}>🌿</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>Why the Occlusive Is the Cornerstone</Text>
-                <Text style={styles.tallowText}>{deck.tallowNote}</Text>
+                <Text style={styles.barrierTitle}>Why the Occlusive Is the Cornerstone</Text>
+                <Text style={styles.barrierText}>{deck.barrierNote}</Text>
               </View>
             </View>
           </>
@@ -370,9 +370,9 @@ function makeStyles(c: Palette) {
   tdBtn: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(138,120,96,0.3)', backgroundColor: 'rgba(138,120,96,0.08)' },
   tdBtnText: { fontSize: 12, fontWeight: '700', color: c.primary },
 
-  tallowCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
-  tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 4 },
-  tallowText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
+  barrierCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 16, overflow: 'hidden', padding: 16, marginBottom: 14 },
+  barrierEmoji: { fontSize: 24 },
+  barrierTitle: { fontSize: 13, fontWeight: '700', color: c.white, marginBottom: 4 },
+  barrierText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
   });
 }

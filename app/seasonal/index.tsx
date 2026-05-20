@@ -37,7 +37,7 @@ type SeasonalGuide = {
   ingredientsToAdd: { name: string; reason: string }[];
   ingredientsToReduce: { name: string; reason: string }[];
   lifestyleTips: string[];
-  tallowNote: string;
+  barrierNote: string;
   watchOutFor: string[];
 };
 
@@ -114,7 +114,7 @@ Respond ONLY with valid JSON (no markdown, no code fences):
     {"name": "<another to reduce>", "reason": "<reason>"}
   ],
   "lifestyleTips": ["<lifestyle tip for skin in ${season.season}>", "<second lifestyle tip>", "<third tip>", "<fourth tip>"],
-  "tallowNote": "<one brand-agnostic, season-specific skincare tip — e.g. richer moisturizer in winter, lighter in summer; no products, no brand>",
+  "barrierNote": "<one brand-agnostic, season-specific skincare tip — e.g. richer moisturizer in winter, lighter in summer; no products, no brand>",
   "watchOutFor": ["<seasonal skin risk 1>", "<risk 2>", "<risk 3>"]
 }`;
 
@@ -338,12 +338,12 @@ Respond ONLY with valid JSON (no markdown, no code fences):
             )}
 
             {/* Seasonal tip */}
-            <View style={styles.tallowCard}>
+            <View style={styles.barrierCard}>
               <LinearGradient colors={['rgba(138,120,96,0.18)', 'rgba(138,120,96,0.06)']} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowEmoji}>✨</Text>
+              <Text style={styles.barrierEmoji}>✨</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tallowTitle}>Your {season.season} Tip</Text>
-                <Text style={styles.tallowText}>{guide.tallowNote}</Text>
+                <Text style={styles.barrierTitle}>Your {season.season} Tip</Text>
+                <Text style={styles.barrierText}>{guide.barrierNote}</Text>
               </View>
             </View>
           </>
@@ -443,14 +443,14 @@ function makeStyles(c: Palette) {
   lifestyleTipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   lifestyleTipText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: {
+  barrierCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderRadius: 16, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(138,120,96,0.2)',
     padding: 16, marginTop: 4, marginBottom: 14,
   },
-  tallowEmoji: { fontSize: 24 },
-  tallowTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
+  barrierEmoji: { fontSize: 24 },
+  barrierTitle: { fontSize: 13, fontWeight: '700', color: c.primary, marginBottom: 4 },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 19 },
   });
 }

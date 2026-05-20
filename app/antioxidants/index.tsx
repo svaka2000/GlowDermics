@@ -153,7 +153,7 @@ function buildStacking(Colors: ReturnType<typeof shimColors>) {
   ];
 }
 
-const TALLOW_AO = [
+const OCCLUSIVE_BALM_AO = [
   { title: 'Vitamin E: the lipid-phase antioxidant', body: 'Lipid-rich occlusives can carry tocopherols (vitamin E) — the primary lipid-phase antioxidant in the stratum corneum. Applying a vitamin-E-containing occlusive PM replenishes the vitamin E reserves that UV, pollution, and normal metabolic oxidation depleted during the day. This overnight replenishment restores the stratum corneum\'s antioxidant capacity before the next day.' },
   { title: 'Vitamin A as anti-oxidative-stress signalling molecule', body: 'Vitamin A (retinyl esters, present in some lipid occlusives) indirectly reduces oxidative stress by activating Nrf2 — the transcription factor that upregulates the body\'s own antioxidant enzymes (superoxide dismutase, catalase, glutathione peroxidase). This boosts the skin\'s endogenous antioxidant defences rather than donating antioxidants directly.' },
   { title: 'CLA (conjugated linoleic acid) — anti-inflammatory antioxidant', body: 'Some animal-fat occlusives contain CLA, which has antioxidant and anti-inflammatory properties via Nrf2 activation and NF-κB suppression, and reduces lipid peroxidation in cell membranes. Pasture-raised sources contain notably more CLA than grain-fed.' },
@@ -276,14 +276,14 @@ export default function AntioxidantsScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Lipid-Phase Antioxidants</Text>
-              <Text style={styles.tallowHeroSub}>Lipid-rich occlusives contribute several antioxidant mechanisms — primarily vitamin E, vitamin A/Nrf2 signalling, and CLA. They fill the PM antioxidant role that vitamin C fills in the morning.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Lipid-Phase Antioxidants</Text>
+              <Text style={styles.barrierHeroSub}>Lipid-rich occlusives contribute several antioxidant mechanisms — primarily vitamin E, vitamin A/Nrf2 signalling, and CLA. They fill the PM antioxidant role that vitamin C fills in the morning.</Text>
             </View>
-            {TALLOW_AO.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_AO.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -330,11 +330,11 @@ function makeStyles(c: Palette) {
   frText: { color: Colors.textSecondary, fontSize: 12, flex: 1 },
   tapHint: { color: Colors.textMuted, fontSize: 11, marginTop: 4 },
   comboText: { color: Colors.textSecondary, fontSize: 12, fontStyle: 'italic' },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

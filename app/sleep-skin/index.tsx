@@ -61,7 +61,7 @@ const OPTIMISATIONS = [
   { tip: 'Magnesium glycinate 200–400mg PM', detail: 'Magnesium is essential for GABA receptor function (relaxation), melatonin synthesis, and cortisol regulation. Most adults are deficient. Glycinate form is well-absorbed and less likely to cause digestive issues than oxide.', impact: 'medium' },
 ];
 
-const TALLOW_PM = [
+const OCCLUSIVE_BALM_PM = [
   { step: 1, action: 'Double cleanse', detail: 'First cleanse: cleansing balm or oil (removes sunscreen, makeup). Second cleanse: gentle pH-balanced gel. Do not skip the first cleanse if you wore SPF — it will not fully remove with gel alone.' },
   { step: 2, action: 'Active treatment (optional)', detail: 'If using retinol, AHA, or BHA, apply now on dry skin. Wait 20–30 minutes. Do not apply an occlusive before actives — it creates a barrier that reduces penetration.' },
   { step: 3, action: 'Serum (if using)', detail: 'Hydrating serums: hyaluronic acid, peptides, niacinamide. Apply on slightly damp skin for maximum HA uptake. Pat in gently — no dragging.' },
@@ -183,11 +183,11 @@ export default function SleepSkinScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 PM Occlusive Protocol</Text>
-              <Text style={styles.tallowHeroSub}>Aligned with the circadian window. An occlusive applied at the right time traps water during peak TEWL, supports overnight repair, and primes skin for the growth hormone surge.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 PM Occlusive Protocol</Text>
+              <Text style={styles.barrierHeroSub}>Aligned with the circadian window. An occlusive applied at the right time traps water during peak TEWL, supports overnight repair, and primes skin for the growth hormone surge.</Text>
             </View>
-            {TALLOW_PM.map((s, i) => (
+            {OCCLUSIVE_BALM_PM.map((s, i) => (
               <View key={i} style={styles.pmStep}>
                 <View style={styles.pmStepNum}>
                   <Text style={styles.pmStepNumText}>{s.step}</Text>
@@ -243,9 +243,9 @@ function makeStyles(c: ShimColors) {
   timingRelevance: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
   impactBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   impactText: { fontSize: 10, fontWeight: '700' },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   pmStep: { flexDirection: 'row', gap: 12, marginBottom: 14, alignItems: 'flex-start' },
   pmStepNum: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   pmStepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },

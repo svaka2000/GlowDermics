@@ -51,7 +51,7 @@ function getSkinImpact(entry: Partial<EnvEntry>): { issues: string[]; advice: st
   if (entry.humidity !== undefined) {
     if (entry.humidity <= 30) {
       issues.push('Low humidity dries out the stratum corneum, increasing TEWL');
-      advice.push('Layer a humectant (hyaluronic acid / glycerin) under tallow');
+      advice.push('Layer a humectant (hyaluronic acid / glycerin) under an occlusive balm');
     } else if (entry.humidity >= 80) {
       issues.push('High humidity can increase oil production and fungal risk');
       advice.push('Use lighter layers — skip heavy occlusive if skin feels balanced');
@@ -66,7 +66,7 @@ function getSkinImpact(entry: Partial<EnvEntry>): { issues: string[]; advice: st
 
   if (entry.temperature === 'cold' || entry.temperature === 'cool') {
     issues.push('Cold air is dry air — skin barrier works harder in cold weather');
-    advice.push('Apply tallow to slightly damp skin to lock in moisture');
+    advice.push('Apply a rich occlusive balm to slightly damp skin to lock in moisture');
   }
 
   if (entry.temperature === 'hot') {
@@ -360,7 +360,7 @@ export default function EnvironmentLog() {
           {[
             { icon: '💧', tip: 'Ideal skin humidity environment: 40-60%. Below 30%, skin barrier function degrades and TEWL increases by up to 50%.' },
             { icon: '🌫️', tip: 'PM2.5 particles (fine pollution) are small enough to penetrate the stratum corneum, generating free radicals that degrade collagen directly.' },
-            { icon: '❄️', tip: 'Cold temperatures cause vasoconstriction and reduce sebum production. Paradoxically, this can lead to dry skin — tallow is ideal for cold climate barriers.' },
+            { icon: '❄️', tip: 'Cold temperatures cause vasoconstriction and reduce sebum production. Paradoxically, this can lead to dry skin — a rich occlusive balm is ideal for cold climate barriers.' },
             { icon: '🚿', tip: 'Hard water contains calcium and magnesium that interact with soap to form insoluble salts — this deposits on skin and disrupts the acid mantle.' },
             { icon: '🌡️', tip: 'Central heating in winter creates extremely dry indoor air (often 15-20% humidity). Your skin is fighting both cold outside and dry heat inside.' },
           ].map((item, i) => (

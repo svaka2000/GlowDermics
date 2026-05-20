@@ -51,7 +51,7 @@ const RATIO_GUIDE = [
   { point: 'Increasing omega-3: fish oil supplementation', detail: 'For most people on a Western diet, supplementation is necessary to achieve meaningful EPA/DHA levels. Dose: 1–3g combined EPA+DHA daily from fish oil, krill oil, or algae oil. Food sources: 3 servings weekly of fatty fish (salmon, mackerel, sardines, herring) provides significant EPA+DHA.' },
 ];
 
-const OILS_TALLOW = [
+const OILS_OCCLUSIVE_BALM = [
   { oil: 'Grass-Fed Beef Fat', omega3: '~1%', omega6: '~3%', oleic: '~47%', palmitic: '~26%', stearic: '~14%', notes: 'Balanced saturated/monounsaturated profile. Does not significantly skew the omega-6:omega-3 ratio. CLA content (1–2% in grass-fed) is anti-inflammatory. High saturated-fat content makes it very stable against oxidation. Naturally contains vitamins E, A, D, and K2.', heroForSkin: true },
   { oil: 'Rosehip Oil', omega3: '~1%', omega6: '~35–45%', oleic: '~18%', palmitic: '~4%', stearic: '~2%', notes: 'Very high linoleic acid — excellent for barrier ceramide precursor supply. Also contains trans-retinoic acid (vitamin A derivative) in small amounts. Can go rancid quickly due to high PUFA content — store refrigerated. Not for Malassezia-prone skin (high LA but also risky).', heroForSkin: false },
   { oil: 'Hemp Seed Oil', omega3: '~20%', omega6: '~55%', oleic: '~12%', palmitic: '~6%', stearic: '~2%', notes: 'Closest to ideal omega-6:omega-3 ratio of any plant oil (approximately 2.5:1). Contains GLA. Low comedogenic rating. Good choice for combination skin types wanting EFA balance without heavy oils.', heroForSkin: false },
@@ -192,7 +192,7 @@ export default function EFAGuideScreen() {
 
         {activeTab === 4 && (
           <View>
-            {OILS_TALLOW.map((o, i) => (
+            {OILS_OCCLUSIVE_BALM.map((o, i) => (
               <TouchableOpacity key={i} style={[styles.card, o.heroForSkin && { borderColor: Colors.primary + '88', borderWidth: 2 }]} onPress={() => setExpandedOil(expandedOil === i ? null : i)} activeOpacity={0.85}>
                 <View style={styles.cardRow}>
                   <View style={{ flex: 1 }}>

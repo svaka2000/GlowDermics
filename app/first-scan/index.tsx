@@ -35,7 +35,7 @@ export default function FirstScanScreen() {
 
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.brand}>
-            <VelumiWordmark size="lg" />
+            <VelumiWordmark size="lg" useLogo />
           </View>
 
           <Text style={styles.eyebrow}>YOUR FIRST SCAN</Text>

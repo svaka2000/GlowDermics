@@ -67,7 +67,7 @@ const BUILD_IT = [
   ]},
 ];
 
-const TALLOW_COLLAGEN = [
+const OCCLUSIVE_BALM_COLLAGEN = [
   { title: 'Vitamin A (retinyl esters): the gentle collagen stimulant', body: 'Some lipid occlusives contain vitamin A in retinyl-ester form — the same basic form as cosmetic retinol, but at lower activity. In skin, retinyl esters convert to retinol, then to retinoic acid (the active form). The conversion is slow and mild — producing retinoid-receptor activation without the irritation of higher-concentration retinol formulations. Applied PM, such an occlusive provides gentle daily retinoid stimulation for collagen gene upregulation.' },
   { title: 'Amino acids that support the collagen substrate pool', body: 'Some natural animal-fat occlusives contain small amounts of free amino acids, including glycine and proline — two of the most abundant amino acids in collagen. Dietary intake matters more than topical (penetration limits), but pairing topical retinoid-like activity with amino-acid substrate support in one ingredient is a useful combination.' },
   { title: 'Trace minerals support collagen synthesis enzymes', body: 'Some animal-fat occlusives contain modest amounts of zinc (far less than a zinc supplement). Zinc is a cofactor for several metalloenzymes in collagen synthesis — including collagenase-inhibitor proteins that regulate collagen breakdown. With small amounts of copper, this provides useful trace-mineral cofactors.' },
@@ -214,14 +214,14 @@ export default function CollagenGuideScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Lipids & Collagen</Text>
-              <Text style={styles.tallowHeroSub}>Lipid-rich occlusives can support collagen health through vitamin A (retinoid-like activity), barrier support (enabling active penetration), and trace-mineral cofactors.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Lipids & Collagen</Text>
+              <Text style={styles.barrierHeroSub}>Lipid-rich occlusives can support collagen health through vitamin A (retinoid-like activity), barrier support (enabling active penetration), and trace-mineral cofactors.</Text>
             </View>
-            {TALLOW_COLLAGEN.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_COLLAGEN.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -274,11 +274,11 @@ function makeStyles(c: ShimColors) {
   strengthBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, flexShrink: 0 },
   strengthText: { fontSize: 10, fontWeight: '700' },
   buildWhy: { color: c.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

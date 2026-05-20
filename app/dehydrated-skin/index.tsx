@@ -83,7 +83,7 @@ const FIX_STEPS = [
   { step: 7, title: 'Eat adequate dietary fat', detail: 'Essential fatty acids from diet are used to build barrier lipids. Include: oily fish (omega-3), grass-fed animal fats (oleic, palmitic), olive oil, avocado. Very low fat diets chronically impair barrier function and worsen dehydration regardless of topical intervention.' },
 ];
 
-const TALLOW_ROLE = [
+const OCCLUSIVE_BALM_ROLE = [
   { title: 'Occlusives target dry skin, not dehydration directly', body: 'A lipid-rich occlusive addresses dry skin (lack of sebum/oil) directly by supplementing the skin\'s lipid layer. It does not primarily function as a humectant. However, by improving barrier integrity (reducing TEWL), it dramatically reduces the rate of water loss, which helps dehydrated skin retain water longer.' },
   { title: 'The correct stack for dehydrated skin', body: 'Dehydrated skin needs water (HA) + a seal. Apply HA serum to damp skin first. Allow 60 seconds. Apply a lipid-rich occlusive. The HA provides water-binding humectant action; the occlusive provides the lipid seal. This is the most effective two-product stack for dehydration.' },
   { title: 'Natural glycerin content: bonus humectant', body: 'Some natural fat-based occlusives contain glycerin (a breakdown product of triglyceride fats). Glycerin is itself a potent humectant. This gives such an occlusive a dual function: primary occlusive barrier support + secondary humectant activity from its glycerin content.' },
@@ -199,14 +199,14 @@ export default function DehydratedSkinScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Occlusives for Dry vs Dehydrated Skin</Text>
-              <Text style={styles.tallowHeroSub}>Lipid-rich occlusives address different aspects of dry and dehydrated skin. Understanding which you have determines how an occlusive fits into your protocol.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Occlusives for Dry vs Dehydrated Skin</Text>
+              <Text style={styles.barrierHeroSub}>Lipid-rich occlusives address different aspects of dry and dehydrated skin. Understanding which you have determines how an occlusive fits into your protocol.</Text>
             </View>
-            {TALLOW_ROLE.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_ROLE.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -261,11 +261,11 @@ function makeStyles(c: ShimColors) {
   infoBox: { backgroundColor: c.blue + '11', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.blue + '33', marginTop: 6 },
   infoBoxTitle: { color: c.blue, fontSize: 13, fontWeight: '700', marginBottom: 6 },
   infoBoxText: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

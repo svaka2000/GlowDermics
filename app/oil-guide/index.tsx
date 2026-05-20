@@ -33,7 +33,7 @@ interface Oil {
   avoid: string[];
   benefits: string;
   layering: 'first' | 'middle' | 'last';
-  tallowNote?: string;
+  barrierNote?: string;
 }
 
 const OILS: Oil[] = [
@@ -45,7 +45,7 @@ const OILS: Oil[] = [
     avoid: [],
     benefits: "Bioidentical to human sebum. Contains fat-soluble vitamins A, D, E, K2. Full barrier repair. Absorbs like skin's own oil.",
     layering: 'last',
-    tallowNote: 'The richest occlusive here. Use as the final step — all other oils are layered before it.',
+    barrierNote: 'The richest occlusive here. Use as the final step — all other oils are layered before it.',
   },
   {
     name: 'Squalane',
@@ -279,9 +279,9 @@ export default function OilGuideScreen() {
                     <View style={styles.layeringBadge}>
                       <Text style={styles.layeringBadgeText}>Layer {oil.layering === 'first' ? 'early (thin)' : oil.layering === 'last' ? 'last (occlusive)' : 'middle'}</Text>
                     </View>
-                    {oil.tallowNote && (
-                      <View style={styles.tallowNote}>
-                        <Text style={styles.tallowNoteText}>🌿 {oil.tallowNote}</Text>
+                    {oil.barrierNote && (
+                      <View style={styles.barrierNote}>
+                        <Text style={styles.barrierNoteText}>🌿 {oil.barrierNote}</Text>
                       </View>
                     )}
                   </View>
@@ -412,11 +412,11 @@ function makeStyles(c: Palette) {
     paddingHorizontal: 10, paddingVertical: 3, alignSelf: 'flex-start', marginTop: 4,
   },
   layeringBadgeText: { color: Colors.blue, fontSize: 11, fontWeight: '600' },
-  tallowNote: {
+  barrierNote: {
     backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 8,
     borderWidth: 1, borderColor: Colors.primary + '33', marginTop: 8,
   },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  barrierNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
   layeringIntro: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 16,

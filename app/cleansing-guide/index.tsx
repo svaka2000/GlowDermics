@@ -97,7 +97,7 @@ const PH_GUIDE = [
   { item: 'Does pH matter for oil cleansers', detail: 'Considerably less. Oil cleansers work via lipid affinity, not surfactant chemistry, and are typically near-neutral pH. They do not significantly affect the acid mantle. This is one reason oil cleansers are generally safe for sensitive and barrier-compromised skin as a first cleanse.' },
 ];
 
-const TALLOW_CLEANSING = [
+const OCCLUSIVE_BALM_CLEANSING = [
   { title: 'Oil cleansing: the original method', body: 'Oil cleansing predates modern surfactant cleansers by millennia. An occlusive oil or balm applied to dry skin, massaged for 60 seconds, then wiped with a warm damp cloth removes makeup, SPF, and excess sebum effectively via lipid-lipid affinity. It is the original "cleansing balm" — many people use a thin layer as their PM first cleanse.' },
   { title: 'OCM (Oil Cleansing Method)', body: 'Apply a pea-sized amount of a cleansing oil or balm to dry skin. Massage for 60–90 seconds. Hold a warm-hot (not hot) damp cloth over the face for 10 seconds (a gentle steam effect), then wipe gently. Follow with a gentle water-based second cleanse, or just rinse with warm water if skin is clear.' },
   { title: 'Preserves the acid mantle', body: 'Oil cleansing maintains a near-neutral to slightly acidic pH environment. Unlike soap- or SLS-based cleansers that spike skin pH to 9–11, it does not significantly shift the acid mantle. The microbiome and barrier enzymes stay functional throughout the cleansing process.' },
@@ -230,14 +230,14 @@ export default function CleansingGuideScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Oil Cleansing</Text>
-              <Text style={styles.tallowHeroSub}>Oil is the original cleansing agent. Oil cleansing predates modern skincare chemistry — and for good reason.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Oil Cleansing</Text>
+              <Text style={styles.barrierHeroSub}>Oil is the original cleansing agent. Oil cleansing predates modern skincare chemistry — and for good reason.</Text>
             </View>
-            {TALLOW_CLEANSING.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_CLEANSING.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -294,11 +294,11 @@ function makeStyles(c: Palette) {
   infoBox: { backgroundColor: Colors.teal + '11', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.teal + '33', marginTop: 6 },
   infoBoxTitle: { color: Colors.teal, fontSize: 13, fontWeight: '700', marginBottom: 6 },
   infoBoxText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

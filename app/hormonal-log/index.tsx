@@ -29,7 +29,7 @@ function buildPhases(c: Palette) {
     emoji: '🔴',
     color: '#EF4444',
     desc: 'Estrogen & progesterone drop. Skin may be dull, sensitive.',
-    skinTips: ['Use calming, minimal products', 'Avoid actives (AHA, retinol)', 'Apply extra tallow for barrier support', 'Stay hydrated'],
+    skinTips: ['Use calming, minimal products', 'Avoid actives (AHA, retinol)', 'Apply a rich occlusive (ceramide-based or shea balm) for barrier support', 'Stay hydrated'],
   },
   {
     id: 'follicular',
@@ -56,7 +56,7 @@ function buildPhases(c: Palette) {
     emoji: '🌙',
     color: '#6B85A8',
     desc: 'Progesterone rises, then drops. Increased oil, pore visibility, and breakouts.',
-    skinTips: ['Prioritize anti-inflammatory ingredients', 'Tallow balm helps with breakout inflammation', 'Avoid heavy makeup', 'Zinc & B6 can help hormonally'],
+    skinTips: ['Prioritize anti-inflammatory ingredients', 'A barrier-repair balm helps with breakout inflammation', 'Avoid heavy makeup', 'Zinc & B6 can help hormonally'],
   },
   ];
 }

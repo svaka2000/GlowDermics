@@ -26,6 +26,7 @@ import { Storage } from '../../src/services/storage';
 import { Auth } from '../../src/services/auth';
 import { UserProfile, RegionalFinding } from '../../src/types';
 import { RegionalSkinMap, BiomarkerCloud, SkinAgeBadge } from '../../src/components/ui';
+import { VelumiWordmark } from '../../src/components/ui/VelumiWordmark';
 
 // Fallback for non-component contexts (worklets). The component overrides with useWindowDimensions.
 const { width: SCREEN_W_FALLBACK, height: SCREEN_H } = Dimensions.get('window');
@@ -358,14 +359,7 @@ function PageWelcome({
     <View style={[styles.page, { width: screenW }]}>
       <View style={styles.pageContent}>
         <Animated.View style={[styles.welcomeLogo, logoStyle]}>
-          <LinearGradient
-            colors={['#B79B6E', '#8A7860', '#665845']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 0.9, y: 1 }}
-            style={styles.welcomeLogoGrad}
-          >
-            <Text style={styles.welcomeLogoMark}>✦</Text>
-          </LinearGradient>
+          <VelumiWordmark size="lg" useLogo tagline={false} />
         </Animated.View>
 
         <Animated.View style={headStyle}>

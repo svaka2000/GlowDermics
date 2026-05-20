@@ -114,7 +114,7 @@ function buildCombinations(Colors: ReturnType<typeof shimColors>) {
   ];
 }
 
-const TALLOW_STACK = [
+const OCCLUSIVE_STACK = [
   { title: 'VC-IP + an occlusive: the oil-soluble pairing', body: 'Ascorbyl tetraisopalmitate (VC-IP) is oil-soluble — it disperses readily in fatty acids. A VC-IP serum applied before an occlusive means the vitamin C is carried deeper into the lipid-rich stratum corneum as the occlusive integrates. This pairing works particularly well for dry and mature skin.' },
   { title: 'Vitamin E in an occlusive regenerates vitamin C', body: 'Some lipid occlusives contain significant vitamin E (tocopherol). When topical vitamin C is applied before such an occlusive, its vitamin E helps regenerate spent vitamin C within the skin — creating the antioxidant recycling loop that makes C+E so effective.' },
   { title: 'Vitamin A (retinol equivalent) in an occlusive + vitamin C', body: 'Some occlusives contain vitamin A (retinyl esters). Vitamin A and vitamin C work through complementary pathways: C stimulates collagen synthesis via prolyl hydroxylase cofactor activity; A (via RAR signalling) upregulates collagen gene expression. The combination addresses collagen from two angles.' },
@@ -255,14 +255,14 @@ export default function VitaminCScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Vitamin C + Occlusive Stack</Text>
-              <Text style={styles.tallowHeroSub}>Vitamin C and a lipid-rich occlusive address skin health from complementary angles. Understanding how to sequence them unlocks the benefits of both without interference.</Text>
+            <View style={styles.occlusiveHero}>
+              <Text style={styles.occlusiveHeroTitle}>🌿 Vitamin C + Occlusive Stack</Text>
+              <Text style={styles.occlusiveHeroSub}>Vitamin C and a lipid-rich occlusive address skin health from complementary angles. Understanding how to sequence them unlocks the benefits of both without interference.</Text>
             </View>
-            {TALLOW_STACK.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_STACK.map((p, i) => (
+              <View key={i} style={styles.occlusiveCard}>
+                <Text style={styles.occlusiveCardTitle}>{p.title}</Text>
+                <Text style={styles.occlusiveCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -314,11 +314,11 @@ function makeStyles(c: Palette) {
   stepDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 19 },
   verdictBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   verdictText: { fontSize: 10, fontWeight: '700' },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  occlusiveHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  occlusiveHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  occlusiveHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  occlusiveCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  occlusiveCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  occlusiveCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

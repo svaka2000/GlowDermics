@@ -56,7 +56,7 @@ const DURING_EXERCISE = [
   { concern: 'Acne and folliculitis from gym equipment', detail: 'Face towels, gym mats, and surfaces carry bacteria (including MRSA). Phone pressed against face during calls post-workout. Helmet strap acne. Headband-related folliculitis. Clean all contact points. Use a dedicated clean gym towel for face only. Bench covers for face-down positions.', icon: '🦠' },
 ];
 
-const TALLOW_PROTOCOL = [
+const OCCLUSIVE_BALM_PROTOCOL = [
   { title: 'Pre-workout: heavy occlusives are not ideal', body: 'Avoid heavy occlusives immediately before intense exercise. An occlusive layer traps heat and can impair sweating (a vital thermoregulation mechanism). It can also mix with sweat to create a pore-blocking film. Pre-exercise skin should be clean and minimally occluded.' },
   { title: 'Post-workout: the ideal occlusive window', body: 'Post-shower, post-workout is the ideal window for an occlusive. Skin is clean (sweat removed), slightly warm (increased penetration), and potentially moisture-depleted from sweating. Apply a lipid-rich occlusive to slightly damp post-shower skin within 60 seconds for maximum barrier replenishment and anti-inflammatory effect.' },
   { title: 'Anti-inflammatory fatty acids for post-workout recovery', body: 'Intense exercise creates temporary micro-inflammation in muscles and skin (from increased blood flow and mechanical friction). Palmitoleic acid in some animal-fat occlusives has documented anti-inflammatory effects — applied topically post-exercise, it may reduce the minor skin inflammation associated with exertion. Particularly relevant for eczema- and rosacea-prone skin after exercise.' },
@@ -175,14 +175,14 @@ export default function ExerciseSkinScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Occlusive + Exercise Protocol</Text>
-              <Text style={styles.tallowHeroSub}>Exercise and a lipid-rich occlusive address skin health through complementary pathways — never apply a heavy occlusive before intense exercise, but it is ideal for the post-workout recovery window.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Occlusive + Exercise Protocol</Text>
+              <Text style={styles.barrierHeroSub}>Exercise and a lipid-rich occlusive address skin health through complementary pathways — never apply a heavy occlusive before intense exercise, but it is ideal for the post-workout recovery window.</Text>
             </View>
-            {TALLOW_PROTOCOL.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_PROTOCOL.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -228,11 +228,11 @@ function makeStyles(c: ShimColors) {
   actionRow: { flexDirection: 'row', gap: 8, marginBottom: 6, alignItems: 'flex-start' },
   actionBullet: { fontSize: 14, fontWeight: '700', marginTop: 1 },
   actionText: { flex: 1, color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

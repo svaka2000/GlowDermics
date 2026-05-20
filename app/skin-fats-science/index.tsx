@@ -133,7 +133,7 @@ const SCIENCE_FACTS = [
   },
 ];
 
-export default function TallowScience() {
+export default function SkinFatsScience() {
   const colors = useColors();
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const FATTY_ACIDS = useMemo(() => buildFattyAcids(colors), [colors]);
@@ -191,10 +191,10 @@ export default function TallowScience() {
               ['Palmitoleic Acid', '4%', '7%'],
               ['Stearic Acid', '16%', '10%'],
               ['Linoleic Acid', '5%', '5%'],
-            ].map(([acid, tallow, sebum], i) => (
+            ].map(([acid, occlusive, sebum], i) => (
               <View key={i} style={[styles.compRow, { backgroundColor: i % 2 === 0 ? `${colors.primary}05` : 'transparent' }]}>
                 <Text style={styles.compCell}>{acid}</Text>
-                <Text style={[styles.compCellSmall, { color: colors.primary, fontWeight: '700' }]}>{tallow}</Text>
+                <Text style={[styles.compCellSmall, { color: colors.primary, fontWeight: '700' }]}>{occlusive}</Text>
                 <Text style={[styles.compCellSmall, { color: colors.gold, fontWeight: '700' }]}>{sebum}</Text>
               </View>
             ))}

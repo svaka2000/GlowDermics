@@ -31,7 +31,7 @@ const QUICK_TAGS = ['Clear skin', 'Breakout', 'Dry', 'Oily', 'Glowing', 'Irritat
 
 const HIGH_IMPACT_HABITS = [
   'Washed face with gentle cleanser',
-  'Applied moisturizer / tallow balm',
+  'Applied moisturizer / a rich occlusive balm',
   'Wore SPF (morning)',
   'Drank 8 glasses of water',
   'Got 7-8 hours of sleep',

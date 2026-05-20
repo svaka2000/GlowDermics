@@ -23,7 +23,7 @@ const POPULAR_INGREDIENTS = [
   { name: 'Peptides', category: 'Anti-aging', emoji: '🔗' },
   { name: 'Oleic Acid', category: 'Fatty Acid', emoji: '🥑' },
   { name: 'Manuka Honey', category: 'Antibacterial', emoji: '🍯' },
-  { name: 'Tallow (Beef Tallow)', category: 'Emollient', emoji: '🌱' },
+  { name: 'Beef Tallow (rich occlusive balm)', category: 'Emollient', emoji: '🌱' },
   { name: 'Phenoxyethanol', category: 'Preservative', emoji: '⚗️' },
   { name: 'Fragrance (Parfum)', category: 'Sensitizer', emoji: '⚠️' },
   { name: 'Dimethicone', category: 'Silicone', emoji: '🔷' },

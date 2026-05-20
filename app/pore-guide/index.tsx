@@ -34,7 +34,7 @@ function buildSections(Colors: ReturnType<typeof shimColors>) {
     { id: 'causes', title: 'What Enlarges Pores', icon: '⚠️', color: Colors.red },
     { id: 'treatments', title: 'Treatments That Work', icon: '✅', color: Colors.green },
     { id: 'habits', title: 'Daily Habits', icon: '📅', color: Colors.primary },
-    { id: 'tallow', title: "Occlusive's Role", icon: '🌿', color: Colors.purple },
+    { id: 'occlusive', title: "Occlusive's Role", icon: '🌿', color: Colors.purple },
   ];
 }
 
@@ -213,7 +213,7 @@ const HABITS = [
   },
 ];
 
-const TALLOW_PORE = [
+const OCCLUSIVE_BALM_PORE = [
   {
     point: 'Biocompatible, non-comedogenic fat profile',
     detail: "A sebum-similar occlusive's fatty acid profile closely mirrors human sebum — primarily oleic and stearic acid. This means it does not trigger the clogging response that foreign oils do.",
@@ -384,31 +384,31 @@ export default function PoreGuideScreen() {
           </View>
         );
 
-      case 'tallow':
+      case 'occlusive':
         return (
           <View>
             <LinearGradient
               colors={['#8A786022', '#0A0A0F']}
-              style={styles.tallowHero}
+              style={styles.barrierHero}
             >
-              <Text style={styles.tallowHeroTitle}>Occlusives & Pore Health</Text>
-              <Text style={styles.tallowHeroSub}>
+              <Text style={styles.barrierHeroTitle}>Occlusives & Pore Health</Text>
+              <Text style={styles.barrierHeroSub}>
                 How a lipid-rich occlusive fits into a pore-conscious routine — and what to watch out for.
               </Text>
             </LinearGradient>
-            {TALLOW_PORE.map((item, i) => (
+            {OCCLUSIVE_BALM_PORE.map((item, i) => (
               <View
                 key={i}
-                style={[styles.tallowCard, item.caution && { borderColor: Colors.gold + '66' }]}
+                style={[styles.barrierCard, item.caution && { borderColor: Colors.gold + '66' }]}
               >
                 {item.caution && (
                   <Text style={styles.cautionLabel}>⚠️ CAUTION</Text>
                 )}
-                <Text style={styles.tallowPoint}>{item.point}</Text>
-                <Text style={styles.tallowDetail}>{item.detail}</Text>
+                <Text style={styles.barrierPoint}>{item.point}</Text>
+                <Text style={styles.barrierDetail}>{item.detail}</Text>
               </View>
             ))}
-            <View style={styles.tallowConclusion}>
+            <View style={styles.barrierConclusion}>
               <Text style={styles.conclusionText}>
                 Bottom line: a sebum-similar occlusive is not inherently pore-clogging when chosen well and used on a clean, BHA-maintained skin barrier.
                 It works best as a finishing moisturizer after your actives — not as a heavy occlusive on congested skin.
@@ -580,20 +580,20 @@ function makeStyles(c: Palette) {
   habitDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
 
   // Occlusive
-  tallowHero: {
+  barrierHero: {
     borderRadius: 16, padding: 20, marginBottom: 16,
     borderWidth: 1, borderColor: Colors.primary + '33',
   },
-  tallowHeroTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: {
+  barrierHeroTitle: { color: Colors.textPrimary, fontSize: 18, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
   cautionLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 6 },
-  tallowPoint: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowConclusion: {
+  barrierPoint: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierConclusion: {
     backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 16,
     borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 4,
   },

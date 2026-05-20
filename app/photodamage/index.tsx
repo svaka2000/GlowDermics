@@ -57,7 +57,7 @@ const PREVENTION_STACK = [
   { time: 'PM', step: 3, product: 'Occlusive', role: 'Barrier support, vitamin A/E/D delivery, antioxidant protection', critical: false },
 ];
 
-const TALLOW_ROLE = [
+const OCCLUSIVE_BALM_ROLE = [
   { title: 'Vitamin E — the forgotten photoprotective antioxidant', body: 'Some animal-fat occlusives contain significant vitamin E (tocopherol). In the skin, vitamin E is the primary lipid-phase antioxidant — it neutralises free radicals within the lipid bilayer of the stratum corneum, where UV generates them. Applied before bed, a vitamin-E-rich occlusive replenishes the reserves depleted by daytime UV exposure.' },
   { title: 'Vitamin A as a gentle retinoid equivalent', body: 'Some lipid occlusives contain vitamin A as retinyl esters — a gentle precursor to the active retinoid retinoic acid. While not as potent as prescription tretinoin, retinyl esters provide gentle cell turnover stimulation and support the epidermal renewal processes that counteract photoaging.' },
   { title: 'Barrier repair supports reversal active efficacy', body: 'Photoaged skin has a compromised barrier — chronic UV exposure degrades barrier lipids and impairs NMF synthesis. A compromised barrier reduces the efficacy of reversal actives like retinoids and vitamin C (they must penetrate through the barrier to reach target cells). A lipid occlusive, by restoring barrier integrity, improves the penetration and efficacy of other photoaging treatments.' },
@@ -194,14 +194,14 @@ export default function PhotodamageScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Occlusives in Photoaging Prevention</Text>
-              <Text style={styles.tallowHeroSub}>A lipid-rich occlusive plays a specific PM role in the photodamage strategy — not as sun protection, but as the antioxidant and barrier-recovery partner that supports daytime SPF.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Occlusives in Photoaging Prevention</Text>
+              <Text style={styles.barrierHeroSub}>A lipid-rich occlusive plays a specific PM role in the photodamage strategy — not as sun protection, but as the antioxidant and barrier-recovery partner that supports daytime SPF.</Text>
             </View>
-            {TALLOW_ROLE.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_ROLE.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -256,11 +256,11 @@ function makeStyles(c: Palette) {
   stackRole: { color: Colors.textMuted, fontSize: 11 },
   criticalBadge: { color: Colors.gold, fontSize: 16 },
   legendText: { color: Colors.textMuted, fontSize: 12, fontStyle: 'italic', marginTop: 4 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

@@ -321,7 +321,7 @@ export default function ActiveRotation() {
             </View>
 
             <Text style={styles.scheduleFootnote}>
-              Always apply tallow balm as your final PM step — it seals all active ingredients in and aids overnight repair.
+              Always apply a rich occlusive balm as your final PM step — it seals all active ingredients in and aids overnight repair.
             </Text>
           </View>
         )}
@@ -335,7 +335,7 @@ export default function ActiveRotation() {
             { rule: 'Retinol goes last (or "sandwich")', why: 'Apply between moisturizer layers if sensitive, or after all serums if tolerant' },
             { rule: 'pH matters for actives', why: 'AHA/BHA need pH 3.5-4. Vitamin C needs pH 3.5. Apply before moisturizer which raises pH.' },
             { rule: 'Introduce one active at a time', why: 'Wait 2 weeks before adding another — you need to know what your skin is reacting to' },
-            { rule: 'Always follow actives with tallow or ceramides', why: 'Active ingredients exfoliate or modify skin — tallow seals and repairs what was just stimulated' },
+            { rule: 'Always follow actives with a ceramide or rich occlusive balm', why: 'Active ingredients exfoliate or modify skin — a barrier-repair balm seals and repairs what was just stimulated' },
           ].map((item, i) => (
             <View key={i} style={styles.ruleRow}>
               <View style={styles.ruleDot} />

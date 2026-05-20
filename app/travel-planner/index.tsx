@@ -30,7 +30,7 @@ type TravelPlan = {
   eveningRoutine: { step: string; product: string; why: string }[];
   flightRoutine: { step: string; why: string }[];
   adjustments: string[];
-  tallowTip: string;
+  occlusiveTip: string;
   watchOut: string[];
 };
 
@@ -111,7 +111,7 @@ Return this exact JSON:
     {"step": "Step name", "why": "Cabin air is 20% humidity — what to do"}
   ],
   "adjustments": ["3-4 key adjustments from their normal routine specific to this destination"],
-  "tallowTip": "1-2 sentences on specifically how to use a rich occlusive balm for this climate",
+  "occlusiveTip": "1-2 sentences on specifically how to use a rich occlusive balm for this climate",
   "watchOut": ["2-3 common travel skincare mistakes specific to this climate/destination"]
 }
 
@@ -333,10 +333,10 @@ Provide 5-7 packing list items, 3-4 morning steps, 3-4 evening steps, 3-4 flight
             </View>
 
             {/* Occlusive tip */}
-            <View style={styles.tallowCard}>
+            <View style={styles.barrierCard}>
               <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-              <Text style={styles.tallowTitle}>🌿 Occlusive Tip for {plan.climate}</Text>
-              <Text style={styles.tallowText}>{plan.tallowTip}</Text>
+              <Text style={styles.barrierTitle}>🌿 Occlusive Tip for {plan.climate}</Text>
+              <Text style={styles.barrierText}>{plan.occlusiveTip}</Text>
             </View>
 
             {/* Watch out */}
@@ -473,12 +473,12 @@ function makeStyles(c: Palette) {
   adjustDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: c.primary, marginTop: 6, flexShrink: 0 },
   adjustText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
-  tallowCard: {
+  barrierCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  barrierTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   watchCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)',

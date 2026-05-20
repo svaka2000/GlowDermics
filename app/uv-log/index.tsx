@@ -451,7 +451,7 @@ export default function UVLog() {
           <Text style={styles.cardTitle}>UV & Skin Science</Text>
           {[
             { icon: '☀️', tip: 'UVA (aging rays) penetrate clouds and glass. UVB (burning rays) peak 10am-4pm. Both damage collagen.' },
-            { icon: '🌿', tip: 'Tallow contains vitamin D3 precursors — but it doesn\'t replace SPF. Use tallow after sun protection, not instead of it.' },
+            { icon: '🌿', tip: 'A rich occlusive balm contains vitamin D3 precursors — but it doesn\'t replace SPF. Use a rich occlusive balm after sun protection, not instead of it.' },
             { icon: '⏱️', tip: 'SPF 30 blocks ~97% of UVB. SPF 50 blocks ~98%. Reapplication every 2 hours matters more than SPF number.' },
             { icon: '💊', tip: '15-30 minutes of midday sun on your arms and face produces enough vitamin D3. After that, risk outweighs benefit.' },
             { icon: '🔴', tip: 'A single blistering sunburn at any age doubles lifetime melanoma risk. Daily SPF is the #1 anti-aging habit.' },

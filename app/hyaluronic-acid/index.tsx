@@ -96,7 +96,7 @@ const LAYERING = [
   { step: 6, action: 'Occlusive seal', detail: 'The critical sealing step. Apply a balm or another occlusive to trap all the moisture and active ingredients underneath. This is what converts HA from a potential dehydrator to a genuine hydrator.', timing: 'Last step PM' },
 ];
 
-const TALLOW_NOTES = [
+const OCCLUSIVE_BALM_NOTES = [
   { title: 'Why an occlusive and HA are complementary, not redundant', body: 'A lipid occlusive is lipid-based. HA is water-based (humectant). These mechanisms are not the same — they are complementary. HA draws water into the surface layers; the occlusive prevents that water from evaporating. Used together they address hydration from both angles: attract and retain.' },
   { title: 'The correct application sequence', body: 'HA must go on first — it is water-soluble and needs direct contact with the skin surface. Apply HA to damp skin, allow 60 seconds, then apply the occlusive over. It acts as the seal that converts the HA from a humectant into a sustained hydrator.' },
   { title: 'Some occlusives\' glycerin content adds humectant action', body: 'Some natural fat-based occlusives contain glycerin (glycerol), a humectant that binds water similarly to HA. Combined, you get a lipid occlusive + a built-in humectant, on top of the aqueous HA layer beneath. A multi-layer hydration system.' },
@@ -236,14 +236,14 @@ export default function HyaluronicAcidScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 HA + Occlusive: The Hydration System</Text>
-              <Text style={styles.tallowHeroSub}>Humectant + occlusive = attract and retain. This is the principle behind the most effective hydration protocols — HA with a lipid-rich occlusive is the natural skincare version.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 HA + Occlusive: The Hydration System</Text>
+              <Text style={styles.barrierHeroSub}>Humectant + occlusive = attract and retain. This is the principle behind the most effective hydration protocols — HA with a lipid-rich occlusive is the natural skincare version.</Text>
             </View>
-            {TALLOW_NOTES.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_NOTES.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -297,11 +297,11 @@ function makeStyles(c: ShimColors) {
   stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700' },
   stepTiming: { color: c.textMuted, fontSize: 11 },
   stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

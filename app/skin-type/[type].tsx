@@ -25,7 +25,7 @@ type SkinTypeProfile = {
   bestIngredients: { name: string; why: string }[];
   ingredientsToAvoid: { name: string; why: string }[];
   idealRoutine: { step: string; recommendation: string; why: string }[];
-  tallowFit: string;
+  occlusiveFit: string;
   proTips: string[];
 };
 
@@ -75,7 +75,7 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   "idealRoutine": [
     {"step": "<step name>", "recommendation": "<specific product type>", "why": "<why>"}
   ],
-  "tallowFit": "<1-2 sentences on how a lipid-rich occlusive / barrier-first skincare specifically relates to this skin type — be honest if it may not be ideal>",
+  "occlusiveFit": "<1-2 sentences on how a lipid-rich occlusive / barrier-first skincare specifically relates to this skin type — be honest if it may not be ideal>",
   "proTips": ["<3-4 pro tips specific to this skin type that most people don't know>"]
 }
 
@@ -266,7 +266,7 @@ Include 5-6 bestIngredients, 3-4 ingredientsToAvoid, and 4-5 routine steps.`;
         <View style={styles.tdCard}>
           <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
           <Text style={styles.tdEyebrow}>BARRIER FIT</Text>
-          <Text style={styles.tdText}>{profile.tallowFit}</Text>
+          <Text style={styles.tdText}>{profile.occlusiveFit}</Text>
         </View>
 
         {/* Coach CTA */}

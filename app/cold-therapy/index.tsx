@@ -44,8 +44,8 @@ const SCIENCE_CARDS = [
     content: "Research on cold exposure practitioners shows significantly reduced systemic inflammation markers. Since many skin conditions (acne, eczema, rosacea) are inflammatory in nature, cold therapy's anti-inflammatory systemic effects are relevant beyond the skin surface.",
   },
   {
-    title: 'Tallow + cold therapy synergy',
-    content: "Apply tallow AFTER cold therapy, not before. The improved circulation from cold exposure enhances transdermal penetration. Your skin is warmed from within and blood flow is maximized — the ideal state for tallow's fatty acids to penetrate.",
+    title: 'A rich occlusive balm + cold therapy synergy',
+    content: "Apply a rich occlusive balm AFTER cold therapy, not before. The improved circulation from cold exposure enhances transdermal penetration. Your skin is warmed from within and blood flow is maximized — the ideal state for its fatty acids to penetrate.",
   },
 ];
 
@@ -98,8 +98,8 @@ const COLD_SHOWER_PROTOCOL = [
   {
     phase: 'Done!',
     duration: 0,
-    instruction: 'Turn off water. Pat dry gently (do not rub). Apply tallow immediately while skin is cold.',
-    tip: 'The post-cold warmup state is when circulation peaks. Perfect timing for tallow application.',
+    instruction: 'Turn off water. Pat dry gently (do not rub). Apply a rich occlusive balm immediately while skin is cold.',
+    tip: 'The post-cold warmup state is when circulation peaks. Perfect timing for occlusive balm application.',
   },
 ];
 

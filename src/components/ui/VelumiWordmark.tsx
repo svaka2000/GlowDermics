@@ -20,9 +20,11 @@ import { fonts } from '../../constants/typography';
 // Placeholder is a 1×1 transparent PNG so require() resolves before real art lands.
 const LOGO_SOURCE = require('../../../assets/velumi-logo.png');
 
-// Heuristic so the placeholder doesn't render in production: if useLogo is true,
-// the Image is shown. Default flips to true once the real logo is dropped in
-// (see assets/velumi-logo.png).
+// Skip rendering the placeholder when no real logo is in place: resolveAssetSource is
+// synchronous for local require()'d images, so we can decide at module load.
+const LOGO_META: { width?: number; height?: number } | null =
+  (Image as any).resolveAssetSource ? (Image as any).resolveAssetSource(LOGO_SOURCE) : null;
+const HAS_REAL_LOGO = !!(LOGO_META && (LOGO_META.width ?? 0) >= 32 && (LOGO_META.height ?? 0) >= 32);
 type Size = 'sm' | 'md' | 'lg';
 
 const SIZES: Record<Size, { word: number; spacing: number; spark: number; tag: number; tagSpacing: number; logo: number }> = {
@@ -59,7 +61,7 @@ export function VelumiWordmark({
 
   return (
     <View style={[styles.root, { alignItems: align }]}>
-      {useLogo && (
+      {useLogo && HAS_REAL_LOGO && (
         <Image
           source={LOGO_SOURCE}
           style={{ width: s.logo, height: s.logo, marginBottom: 6 }}

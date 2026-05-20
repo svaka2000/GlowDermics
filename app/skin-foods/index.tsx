@@ -127,7 +127,7 @@ const AVOID = [
   { food: 'Trans fats (hydrogenated oils)', impact: 'Incorporated into cell membranes where they reduce fluidity and barrier function. Impair the enzymatic reactions needed for ceramide and prostaglandin synthesis. Generally being removed from food supplies but still found in some processed foods.', severity: 'moderate', emoji: '🍟' },
 ];
 
-const TALLOW_DIET = [
+const OCCLUSIVE_BALM_DIET = [
   { title: 'Quality animal fats: diet vs skin', body: 'Grass-fed animal fat is both a topical occlusive ingredient AND a dietary food — the same fat. As a cooking fat it provides retinol (vitamin A), vitamin D, vitamin K2 (mk4 — the most bioavailable form), conjugated linoleic acid (CLA — anti-inflammatory), and a balanced saturated-fat profile for cellular membranes. The nutrients you apply topically are also available internally from the diet.' },
   { title: 'Vitamin K2 MK-4: the skin calcification protector', body: 'Grass-fed animal fats (especially from ruminants like cattle) are the primary dietary source of vitamin K2 MK-4. K2 MK-4 activates matrix GLA protein (MGP), which prevents calcium from depositing in soft tissues — including skin and elastin fibres. Arterial and tissue calcification is increasingly recognised as a driver of skin aging and elastin stiffening. Dietary K2 addresses this pathway directly.' },
   { title: 'CLA (conjugated linoleic acid) and skin inflammation', body: 'Grass-fed cattle produce significantly more CLA in their fat than grain-fed. CLA has demonstrated anti-inflammatory effects, particularly relevant to acne and inflammatory skin conditions. It modulates the same prostaglandin pathways targeted by fish oil omega-3s. Grass-fed animal fat consumed in the diet provides this benefit alongside topical occlusive use.' },
@@ -287,14 +287,14 @@ export default function SkinFoodsScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Dietary Fats as Skin Nutrition</Text>
-              <Text style={styles.tallowHeroSub}>Quality animal fats are unique among skincare ingredients in being a genuinely functional food. The nutrients you apply are the same nutrients you can eat.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Dietary Fats as Skin Nutrition</Text>
+              <Text style={styles.barrierHeroSub}>Quality animal fats are unique among skincare ingredients in being a genuinely functional food. The nutrients you apply are the same nutrients you can eat.</Text>
             </View>
-            {TALLOW_DIET.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_DIET.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -352,11 +352,11 @@ function makeStyles(c: Palette) {
   antiFoodItem: { color: Colors.textSecondary, fontSize: 13, lineHeight: 22 },
   severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, marginTop: 2 },
   severityText: { fontSize: 10, fontWeight: '700' },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

@@ -31,8 +31,8 @@ type IngredientProfile = {
   conflictsWith: string[];
   naturalVsSynthetic: string;
   researchStrength: 'strong' | 'moderate' | 'limited' | 'theoretical';
-  isTallowIngredient: boolean;
-  tallowNote?: string;
+  isOcclusiveIngredient: boolean;
+  barrierNote?: string;
 };
 
 function buildSafetyConfig(c: Palette) {
@@ -116,8 +116,8 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
   "conflictsWith": ["<1-3 ingredients to avoid pairing with, or empty array if none>"],
   "naturalVsSynthetic": "<brief note on whether typically natural, synthetic, or both, and what to prefer>",
   "researchStrength": "<strong|moderate|limited|theoretical>",
-  "isTallowIngredient": <true if this ingredient is an occlusive lipid or found in lipid-rich/animal-fat formulas>,
-  "tallowNote": "<optional: 1 sentence on how occlusive/lipid-barrier skincare relates to this ingredient>"
+  "isOcclusiveIngredient": <true if this ingredient is an occlusive lipid or found in lipid-rich/animal-fat formulas>,
+  "barrierNote": "<optional: 1 sentence on how occlusive/lipid-barrier skincare relates to this ingredient>"
 }`;
 
       const response = await groq.chat.completions.create({
@@ -304,11 +304,11 @@ Respond ONLY with a valid JSON object (no markdown, no code fences):
         </View>
 
         {/* Occlusive connection */}
-        {(profile.isTallowIngredient || profile.tallowNote) && (
+        {(profile.isOcclusiveIngredient || profile.barrierNote) && (
           <View style={styles.tdCard}>
             <LinearGradient colors={['rgba(138,120,96,0.12)', 'rgba(138,120,96,0.04)']} style={StyleSheet.absoluteFill} />
             <Text style={styles.tdEyebrow}>LIPID-BARRIER CONNECTION</Text>
-            <Text style={styles.tdText}>{profile.tallowNote || 'This ingredient is present in or closely related to occlusive / lipid-barrier skincare formulations.'}</Text>
+            <Text style={styles.tdText}>{profile.barrierNote || 'This ingredient is present in or closely related to occlusive / lipid-barrier skincare formulations.'}</Text>
           </View>
         )}
 

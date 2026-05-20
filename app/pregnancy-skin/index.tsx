@@ -70,7 +70,7 @@ const PREGNANCY_ROUTINE = {
   ],
 };
 
-const TALLOW_PREGNANCY = [
+const OCCLUSIVE_BALM_PREGNANCY = [
   { title: 'Are lipid-rich occlusives safe during pregnancy?', body: 'Yes — a single-ingredient lipid-rich occlusive is one of the safest skincare options during pregnancy. It contains no synthetic chemicals, no retinoids (in the prescription sense), no endocrine disruptors, and no high-risk preservatives. A rendered animal-fat balm is essentially the same type of fat humans have eaten for hundreds of thousands of years.' },
   { title: 'Vitamin A in occlusives: the retinoid question', body: 'Some animal-fat occlusives contain vitamin A in retinyl ester form. The concern with retinoids in pregnancy relates to HIGH systemic doses (oral isotretinoin is severely teratogenic). Topical vitamin A as retinyl esters (not retinoic acid) at the concentrations in food and natural skincare is in a fundamentally different category. This is the same form found in liver, butter, and egg yolks — foods eaten safely throughout pregnancy for millennia. No evidence links topical retinyl esters from food-grade fats to adverse pregnancy outcomes.' },
   { title: 'Stretch mark prevention: an occlusive twice daily', body: 'Start stretch mark prevention early — ideally from week 12. Apply a lipid-rich occlusive twice daily to the abdomen, hips, breasts, and inner thighs. The occlusive barrier and lipid content maintains skin suppleness and elasticity. Pair with centella asiatica cream on alternating applications. Consistent twice-daily application from early second trimester is more effective than intensive application starting in the third trimester when stretching is already rapid.' },
@@ -203,14 +203,14 @@ export default function PregnancySkinScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Occlusives During Pregnancy</Text>
-              <Text style={styles.tallowHeroSub}>A single-ingredient lipid-rich occlusive is among the safest skincare choices during pregnancy — minimal ingredients, no synthetic actives, and a biological profile compatible with the skin it is applied to.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Occlusives During Pregnancy</Text>
+              <Text style={styles.barrierHeroSub}>A single-ingredient lipid-rich occlusive is among the safest skincare choices during pregnancy — minimal ingredients, no synthetic actives, and a biological profile compatible with the skin it is applied to.</Text>
             </View>
-            {TALLOW_PREGNANCY.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_PREGNANCY.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -259,11 +259,11 @@ function makeStyles(c: Palette) {
   stepNumText: { color: '#fff', fontSize: 12, fontWeight: '800' },
   stepAction: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 2 },
   stepNote: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
-  tallowCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: Colors.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: Colors.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierCardTitle: { color: Colors.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

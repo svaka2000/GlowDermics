@@ -26,7 +26,7 @@ interface Zone {
   color: string;
   causes: string[];
   solutions: string[];
-  tallowNote: string;
+  barrierNote: string;
   science: string;
 }
 
@@ -53,7 +53,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Keep hair off forehead',
       'BHA along hairline 2× per week',
     ],
-    tallowNote: 'A light occlusive applied sparingly works well here. Avoid the hairline if using heavy hair products that could combine with it and clog follicles.',
+    barrierNote: 'A light occlusive applied sparingly works well here. Avoid the hairline if using heavy hair products that could combine with it and clog follicles.',
     science: 'Traditional face mapping associates the forehead with the digestive system. Modern dermatology supports a gut-skin axis: dysbiosis (gut microbiome imbalance) can manifest as forehead breakouts via inflammatory cytokines. Hair product contamination is also a major practical cause.',
   },
   {
@@ -76,7 +76,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Keep phone away from face (use speaker/earbuds)',
       'Prioritize 7–9 hours quality sleep',
     ],
-    tallowNote: 'Temple breakouts often respond well to a light occlusive due to hydration support. Use lightly — the area is close to the hairline.',
+    barrierNote: 'Temple breakouts often respond well to a light occlusive due to hydration support. Use lightly — the area is close to the hairline.',
     science: 'Temple breakouts are often linked to the kidneys and bladder in traditional Chinese face mapping — organs closely tied to hydration. Modern evidence points to phone contamination (phones harbor more bacteria than a toilet seat) and dehydration-triggered sebum changes.',
   },
   {
@@ -99,7 +99,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Prioritize sleep before midnight',
       'Avoid waxing/threading irritation',
     ],
-    tallowNote: "The glabella (between-brow area) is a sebum-dense zone. An occlusive used here should be applied after BHA exfoliation to avoid trapping debris in already-active follicles.",
+    barrierNote: "The glabella (between-brow area) is a sebum-dense zone. An occlusive used here should be applied after BHA exfoliation to avoid trapping debris in already-active follicles.",
     science: 'The glabella has high sebaceous gland density. Traditional mapping links this zone to liver function. Alcohol metabolism is heavily liver-dependent — excess alcohol creates oxidative stress that can manifest systemically, including as skin inflammation.',
   },
   {
@@ -122,7 +122,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Stop touching your nose',
       'Oil cleansing to dissolve sebum plugs',
     ],
-    tallowNote: 'The nose is the highest-sebum zone. Apply any occlusive sparingly here — a thin layer after BHA exfoliation. A weekly clay mask before applying it gives best results.',
+    barrierNote: 'The nose is the highest-sebum zone. Apply any occlusive sparingly here — a thin layer after BHA exfoliation. A weekly clay mask before applying it gives best results.',
     science: 'The nose has the highest density of sebaceous glands on the face. Blackheads here (sebaceous filaments) are normal and nearly universal — they are not dirt but oxidized sebum. BHA is the only ingredient that penetrates into the follicle to address this.',
   },
   {
@@ -145,7 +145,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Wipe phone screen daily',
       'Reduce dairy if allergies are present',
     ],
-    tallowNote: 'Cheek skin often responds best to a rich occlusive — it tends to be less congested than the T-zone and benefits greatly from barrier repair. Apply generously here as part of the PM routine.',
+    barrierNote: 'Cheek skin often responds best to a rich occlusive — it tends to be less congested than the T-zone and benefits greatly from barrier repair. Apply generously here as part of the PM routine.',
     science: "Traditional mapping links cheeks to the lungs and respiratory system. Modern evidence: the cheek microbiome is heavily influenced by air quality. Pollution particles deposit on cheeks and trigger inflammatory breakouts. Pillowcase bacteria is the most practical cause — one pillow can harbor billions of bacteria after 1 week.",
   },
   {
@@ -167,7 +167,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Change pillowcase frequently',
       'Be mindful of hand-to-face contact',
     ],
-    tallowNote: 'Same as left cheek — cheeks love a rich occlusive. The right cheek often responds to phone hygiene improvements within 2 weeks.',
+    barrierNote: 'Same as left cheek — cheeks love a rich occlusive. The right cheek often responds to phone hygiene improvements within 2 weeks.',
     science: 'Right cheek breakouts have an unusually strong correlation with phone use — the right ear is the dominant phone-holding side for most people. Studies show phones carry Staphylococcus aureus and other acne-triggering bacteria. Regular disinfection makes a measurable difference.',
   },
   {
@@ -190,7 +190,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Consider zinc supplementation',
       'Consult dermatologist if severe (spironolactone)',
     ],
-    tallowNote: "A vitamin-A-containing occlusive supports gentle cell turnover that helps hormonal breakouts heal faster. Apply as a spot treatment PM on active spots here, not just as an area moisturizer.",
+    barrierNote: "A vitamin-A-containing occlusive supports gentle cell turnover that helps hormonal breakouts heal faster. Apply as a spot treatment PM on active spots here, not just as an area moisturizer.",
     science: "Chin and jawline acne is the strongest predictor of hormonal causation. Androgen receptors are most dense along the jawline. Progesterone spikes in the luteal phase increase sebum production — which is why 80% of women report chin/jaw breakouts in the week before their period.",
   },
   {
@@ -213,7 +213,7 @@ function buildZones(Colors: ShimColors): Zone[] {
       'Cold spoon or ice roller in morning',
       'Stay well hydrated',
     ],
-    tallowNote: 'A fragrance-free occlusive is gentle enough for the under-eye area (no harsh actives). Apply a tiny amount PM for barrier support and hydration. Vitamin K may help with dark circles over time.',
+    barrierNote: 'A fragrance-free occlusive is gentle enough for the under-eye area (no harsh actives). Apply a tiny amount PM for barrier support and hydration. Vitamin K may help with dark circles over time.',
     science: "Under-eye skin is the thinnest on the face (0.5mm vs 2mm elsewhere). Blood vessels showing through are the primary cause of dark circles. Sleep deprivation increases fluid retention and blood pooling. Vitamin K helps with vascular permeability — a K2-containing occlusive is a genuine advantage here.",
   },
   ];
@@ -349,9 +349,9 @@ export default function FaceMappingScreen() {
                     <Text style={styles.listText}>{s}</Text>
                   </View>
                 ))}
-                <View style={styles.tallowNote}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
-                  <Text style={styles.tallowNoteText}>{selectedZone.tallowNote}</Text>
+                <View style={styles.barrierNote}>
+                  <Text style={styles.barrierNoteTitle}>🌿 Barrier Note</Text>
+                  <Text style={styles.barrierNoteText}>{selectedZone.barrierNote}</Text>
                 </View>
               </View>
             )}
@@ -442,12 +442,12 @@ function makeStyles(c: ShimColors) {
   listItem: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   listBullet: { fontSize: 14, fontWeight: '700', marginTop: 1 },
   listText: { flex: 1, color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowNote: {
+  barrierNote: {
     backgroundColor: c.primary + '15', borderRadius: 12, padding: 12,
     borderWidth: 1, borderColor: c.primary + '44', marginTop: 8,
   },
-  tallowNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 6 },
-  tallowNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 19 },
+  barrierNoteTitle: { color: c.primary, fontSize: 12, fontWeight: '700', marginBottom: 6 },
+  barrierNoteText: { color: c.textSecondary, fontSize: 12, lineHeight: 19 },
   scienceText: { color: c.textSecondary, fontSize: 13, lineHeight: 21 },
   disclaimer: {
     marginHorizontal: 16, marginTop: 16,

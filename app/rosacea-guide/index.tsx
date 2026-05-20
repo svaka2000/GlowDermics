@@ -32,7 +32,7 @@ const TABS = [
   { id: 'triggers', label: 'Triggers', icon: '⚠️' },
   { id: 'ingredients', label: 'Ingredients', icon: '🧪' },
   { id: 'routine', label: 'Routine', icon: '📋' },
-  { id: 'tallow', label: 'Barrier Approach', icon: '🌿' },
+  { id: 'occlusive', label: 'Barrier Approach', icon: '🌿' },
 ];
 
 function buildSubtypes(Colors: ReturnType<typeof shimColors>) {
@@ -262,7 +262,7 @@ export default function RosaceaGuideScreen() {
           </>
         )}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
             {[
               {
@@ -290,9 +290,9 @@ export default function RosaceaGuideScreen() {
                 detail: 'Best results for rosacea: azelaic acid or niacinamide as the active treatment, a lipid-rich occlusive as the barrier support. These are complementary mechanisms. Azelaic acid targets Demodex and inflammation; the occlusive repairs the barrier so actives can work without triggering further sensitivity.',
               },
             ].map((item, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{item.title}</Text>
-                <Text style={styles.tallowCardDetail}>{item.detail}</Text>
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{item.title}</Text>
+                <Text style={styles.barrierCardDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -395,11 +395,11 @@ function makeStyles(c: Palette) {
   routineNumText: { color: Colors.rose, fontSize: 13, fontWeight: '700' },
   routineStepName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '600', marginBottom: 4 },
   routineStepNote: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowCard: {
+  barrierCard: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
-  tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

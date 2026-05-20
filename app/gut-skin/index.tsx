@@ -57,11 +57,11 @@ const GUT_SKIN_FOODS = [
   { food: 'Oily fish', benefit: 'Omega-3 EPA/DHA reduce gut inflammation and improve the Firmicutes:Bacteroidetes ratio (imbalance is associated with inflammatory conditions). Also directly anti-inflammatory in skin. Dual gut+skin benefit from a single food.', emoji: '🐟' },
 ];
 
-const TALLOW_LINK = [
-  { title: 'Dietary fat quality and the gut microbiome', body: 'Grass-fed animal fats are saturated fat with a balanced palmitic:stearic:oleic ratio, plus CLA and some omega-3 (less than fish). Unlike refined vegetable oils, they do not contain trans fats, oxidised lipids, or the high omega-6 content that promotes gut dysbiosis. Dietary fat quality is a key gut microbiome modulator.' },
-  { title: 'Butyric acid: the gut-skin SCFA', body: 'Butyric acid (butyrate) is a short-chain fatty acid produced by gut bacteria fermenting fibre — and also found in grass-fed butter and animal fats. Topical butyrate has been studied for eczema with promising results. Dietary butyrate from fermented fibre and grass-fed animal fats addresses the gut-skin inflammation pathway simultaneously.' },
-  { title: 'Vitamin K2 MK-4 and gut-skin health', body: 'Grass-fed animal fats are among the richest dietary sources of vitamin K2 MK-4. K2 is produced by gut bacteria AND obtained from grass-fed animal products. K2 deficiency is increasingly associated with systemic inflammation and impaired skin elasticity. Adequate K2 from diet supports both gut-based immune regulation and skin structural integrity.' },
-  { title: 'Animal-fat skin lipids and the skin microbiome: emerging research', body: 'The skin has its own microbiome that communicates with the gut microbiome through immune crosstalk. Antimicrobial fatty acids (palmitoleic acid) in some animal-fat occlusives selectively inhibit pathogenic skin bacteria while remaining compatible with Staphylococcus epidermidis (a key beneficial skin commensal). A topical occlusive may support skin microbiome health — complementary to gut microbiome support through diet.' },
+const FATS_LINK = [
+  { title: 'Dietary fat quality and the gut microbiome', body: 'Quality saturated dietary fats from grass-fed sources contain a balanced palmitic:stearic:oleic ratio, plus CLA and some omega-3 (less than fish). Unlike refined vegetable oils, they do not contain trans fats, oxidised lipids, or the high omega-6 content that promotes gut dysbiosis. Dietary fat quality is a key gut microbiome modulator.' },
+  { title: 'Butyric acid: the gut-skin SCFA', body: 'Butyric acid (butyrate) is a short-chain fatty acid produced by gut bacteria fermenting fibre — and also found in grass-fed butter and other quality animal fats. Topical butyrate has been studied for eczema with promising results. Dietary butyrate from fermented fibre and grass-fed sources addresses the gut-skin inflammation pathway simultaneously.' },
+  { title: 'Vitamin K2 MK-4 and gut-skin health', body: 'Grass-fed animal products are among the richest dietary sources of vitamin K2 MK-4. K2 is produced by gut bacteria AND obtained from grass-fed dairy and meat. K2 deficiency is increasingly associated with systemic inflammation and impaired skin elasticity. Adequate K2 from diet supports both gut-based immune regulation and skin structural integrity.' },
+  { title: 'Skin-lipid occlusives and the skin microbiome: emerging research', body: 'The skin has its own microbiome that communicates with the gut microbiome through immune crosstalk. Antimicrobial fatty acids (such as palmitoleic acid) found in certain lipid-rich occlusive balms selectively inhibit pathogenic skin bacteria while remaining compatible with Staphylococcus epidermidis (a key beneficial skin commensal). A well-formulated topical occlusive may support skin microbiome health — complementary to gut microbiome support through diet.' },
 ];
 
 export default function GutSkinScreen() {
@@ -180,14 +180,14 @@ export default function GutSkinScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Dietary Fats in the Gut-Skin Framework</Text>
-              <Text style={styles.tallowHeroSub}>Quality dietary fats address the gut-skin axis from both directions: as nutrition that supports microbiome health, and as a topical occlusive that supports the skin microbiome.</Text>
+            <View style={styles.fatsHero}>
+              <Text style={styles.fatsHeroTitle}>🌿 Dietary Fats in the Gut-Skin Framework</Text>
+              <Text style={styles.fatsHeroSub}>Quality dietary fats address the gut-skin axis from both directions: as nutrition that supports microbiome health, and as a topical occlusive that supports the skin microbiome.</Text>
             </View>
-            {TALLOW_LINK.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {FATS_LINK.map((p, i) => (
+              <View key={i} style={styles.fatsCard}>
+                <Text style={styles.fatsCardTitle}>{p.title}</Text>
+                <Text style={styles.fatsCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -233,11 +233,11 @@ function makeStyles(c: ShimColors) {
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
   stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  fatsHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  fatsHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  fatsHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  fatsCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  fatsCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  fatsCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

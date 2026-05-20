@@ -23,7 +23,7 @@ const TABS = [
   { id: 'triggers', label: 'Triggers', icon: '⚠️' },
   { id: 'skincare', label: 'Skincare', icon: '🧴' },
   { id: 'flare', label: 'Flare Protocol', icon: '🆘' },
-  { id: 'tallow', label: 'Barrier Approach', icon: '🌿' },
+  { id: 'occlusive', label: 'Barrier Approach', icon: '🌿' },
 ];
 
 const SCIENCE = [
@@ -194,10 +194,10 @@ export default function EczemaGuideScreen() {
           </>
         )}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
-            <View style={styles.tallowIntro}>
-              <Text style={styles.tallowIntroText}>
+            <View style={styles.barrierIntro}>
+              <Text style={styles.barrierIntroText}>
                 Lipid-rich animal-fat occlusives have historically been used on eczema-affected skin and are gaining attention in eczema communities. Here is an honest assessment of the evidence and practical approach.
               </Text>
             </View>
@@ -228,10 +228,10 @@ export default function EczemaGuideScreen() {
                 caution: true,
               },
             ].map((item, i) => (
-              <View key={i} style={[styles.tallowCard, item.caution && { borderColor: Colors.gold + '66' }]}>
+              <View key={i} style={[styles.barrierCard, item.caution && { borderColor: Colors.gold + '66' }]}>
                 {item.caution && <Text style={styles.cautionLabel}>⚠️ IMPORTANT</Text>}
-                <Text style={styles.tallowCardTitle}>{item.title}</Text>
-                <Text style={styles.tallowCardDetail}>{item.detail}</Text>
+                <Text style={styles.barrierCardTitle}>{item.title}</Text>
+                <Text style={styles.barrierCardDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -285,11 +285,11 @@ function makeStyles(c: Palette) {
   flareNumText: { color: Colors.teal, fontSize: 13, fontWeight: '700' },
   flareStepName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 4 },
   flareStepNote: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowIntro: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
-  tallowIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
-  tallowCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  barrierIntro: { backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14 },
+  barrierIntroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21, fontStyle: 'italic' },
+  barrierCard: { backgroundColor: Colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
   cautionLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 6 },
-  tallowCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCardTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

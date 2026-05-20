@@ -32,7 +32,7 @@ const TABS = [
   { id: 'types', label: 'Chemical vs Mineral', icon: '⚗️' },
   { id: 'application', label: 'How to Apply', icon: '🖐️' },
   { id: 'myths', label: 'Myths', icon: '💡' },
-  { id: 'tallow', label: 'SPF + Occlusive', icon: '🌿' },
+  { id: 'occlusive', label: 'SPF + Occlusive', icon: '🌿' },
 ];
 
 const BASICS = [
@@ -73,7 +73,7 @@ function buildSpfTypes(Colors: ReturnType<typeof shimColors>) {
     pros: ['Lightweight, invisible finish', 'No white cast', 'Easy to formulate with cosmetic actives', 'Works well under makeup'],
     cons: ['Some filters are endocrine disruptors (oxybenzone, octinoxate)', 'Can cause irritation for sensitive/rosacea skin', 'Requires 20–30 min before sun exposure to activate', 'Some are not reef-safe'],
     forSkinTypes: 'Oily, normal, combination skin that tolerates them. Avoid if sensitive to fragrance or reactive skin.',
-    tallowNote: 'Apply an occlusive BEFORE chemical SPF. Allow 60–90 seconds for it to absorb, then apply SPF on top. Chemical filters absorb differently if applied over a heavy occlusive — test your stack for finish.',
+    barrierNote: 'Apply an occlusive BEFORE chemical SPF. Allow 60–90 seconds for it to absorb, then apply SPF on top. Chemical filters absorb differently if applied over a heavy occlusive — test your stack for finish.',
   },
   {
     type: 'Mineral (Physical) Filters',
@@ -84,7 +84,7 @@ function buildSpfTypes(Colors: ReturnType<typeof shimColors>) {
     pros: ['Stable in sunlight (no degradation)', 'Reef-safe (zinc oxide)', 'Safe for sensitive, rosacea, eczema skin', 'Immediate protection on application', 'Anti-inflammatory properties (zinc)'],
     cons: ['White cast on darker skin tones (especially titanium dioxide)', 'Heavier texture', 'Can pill under makeup', 'Less cosmetically elegant'],
     forSkinTypes: 'Sensitive, rosacea, eczema, and deeper skin tones who find transparent mineral formulas. Excellent for daily use.',
-    tallowNote: 'Mineral SPF is the ideal companion to an occlusive. Zinc oxide is anti-inflammatory — it amplifies the occlusive\'s barrier-repair, redness-reducing properties. Apply the occlusive → wait 60s → mineral SPF on top.',
+    barrierNote: 'Mineral SPF is the ideal companion to an occlusive. Zinc oxide is anti-inflammatory — it amplifies the occlusive\'s barrier-repair, redness-reducing properties. Apply the occlusive → wait 60s → mineral SPF on top.',
   },
   ];
 }
@@ -133,7 +133,7 @@ const MYTHS = [
   { myth: '"SPF is only needed in summer"', truth: 'UVA intensity varies less by season than UVB. A January commuter receives meaningful UVA exposure. 365-day SPF is the only protocol that prevents long-term photoaging.' },
 ];
 
-const TALLOW_SPF = [
+const OCCLUSIVE_BALM_SPF = [
   {
     title: 'The layering protocol',
     detail: 'An occlusive → 60 seconds absorption time → SPF. Never reverse this. Applying SPF first and the occlusive on top dilutes and disrupts the UV-filter film formation. Test your combo at home before relying on it outdoors.',
@@ -242,9 +242,9 @@ export default function SPFGuideScreen() {
                     {type.cons.map((c, j) => <Text key={j} style={styles.conItem}>✗ {c}</Text>)}
                   </View>
                 </View>
-                <View style={styles.tallowNoteCard}>
-                  <Text style={styles.tallowNoteTitle}>🌿 Barrier Note</Text>
-                  <Text style={styles.tallowNoteText}>{type.tallowNote}</Text>
+                <View style={styles.barrierNoteCard}>
+                  <Text style={styles.barrierNoteTitle}>🌿 Barrier Note</Text>
+                  <Text style={styles.barrierNoteText}>{type.barrierNote}</Text>
                 </View>
               </View>
             )}
@@ -280,10 +280,10 @@ export default function SPFGuideScreen() {
           </TouchableOpacity>
         ))}
 
-        {activeTab === 'tallow' && TALLOW_SPF.map((item, i) => (
-          <View key={i} style={styles.tallowPoint}>
-            <Text style={styles.tallowPointTitle}>{item.title}</Text>
-            <Text style={styles.tallowPointDetail}>{item.detail}</Text>
+        {activeTab === 'occlusive' && OCCLUSIVE_BALM_SPF.map((item, i) => (
+          <View key={i} style={styles.barrierPoint}>
+            <Text style={styles.barrierPointTitle}>{item.title}</Text>
+            <Text style={styles.barrierPointDetail}>{item.detail}</Text>
           </View>
         ))}
 
@@ -349,12 +349,12 @@ function makeStyles(c: Palette) {
   consLabel: { color: Colors.red, fontSize: 11, fontWeight: '700', marginBottom: 4 },
   proItem: { color: Colors.textSecondary, fontSize: 11, lineHeight: 18 },
   conItem: { color: Colors.textSecondary, fontSize: 11, lineHeight: 18 },
-  tallowNoteCard: {
+  barrierNoteCard: {
     backgroundColor: Colors.primary + '15', borderRadius: 10, padding: 10,
     borderWidth: 1, borderColor: Colors.primary + '44',
   },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  barrierNoteTitle: { color: Colors.primary, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  barrierNoteText: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
   appStep: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 8,
@@ -386,11 +386,11 @@ function makeStyles(c: Palette) {
     borderRadius: 4, alignSelf: 'flex-start', marginBottom: 6,
   },
   truthText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowPoint: {
+  barrierPoint: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
-  tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

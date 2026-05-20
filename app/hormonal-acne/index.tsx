@@ -32,7 +32,7 @@ const TABS = [
   { id: 'cycle', label: 'Cycle Guide', icon: '🌙' },
   { id: 'diet', label: 'Diet & Supplements', icon: '🌿' },
   { id: 'skincare', label: 'Skincare Protocol', icon: '🧴' },
-  { id: 'tallow', label: 'Barrier Approach', icon: '✨' },
+  { id: 'occlusive', label: 'Barrier Approach', icon: '✨' },
 ];
 
 const SIGNS = [
@@ -250,11 +250,11 @@ export default function HormonalAcneScreen() {
           </View>
         ))}
 
-        {activeTab === 'tallow' && (
+        {activeTab === 'occlusive' && (
           <>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Barrier Support for Hormonal Acne</Text>
-              <Text style={styles.tallowHeroText}>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Barrier Support for Hormonal Acne</Text>
+              <Text style={styles.barrierHeroText}>
                 A lipid-rich occlusive is not a cure for hormonal acne — the root cause is internal (hormones). But it plays a specific and important supporting role in managing it.
               </Text>
             </View>
@@ -285,10 +285,10 @@ export default function HormonalAcneScreen() {
                 detail: 'Night 1: BHA → wait → occlusive. Night 2: niacinamide → retinol → wait → occlusive. Night 3: occlusive only (recovery). This cycling approach maximizes treatment while protecting barrier integrity.',
               },
             ].map((item, i) => (
-              <View key={i} style={[styles.tallowPoint, item.caution && { borderColor: Colors.gold + '55' }]}>
+              <View key={i} style={[styles.barrierPoint, item.caution && { borderColor: Colors.gold + '55' }]}>
                 {item.caution && <Text style={styles.cautionLabel}>⚠️ NOTE</Text>}
-                <Text style={styles.tallowPointTitle}>{item.title}</Text>
-                <Text style={styles.tallowPointDetail}>{item.detail}</Text>
+                <Text style={styles.barrierPointTitle}>{item.title}</Text>
+                <Text style={styles.barrierPointDetail}>{item.detail}</Text>
               </View>
             ))}
           </>
@@ -388,18 +388,18 @@ function makeStyles(c: Palette) {
   skincareNumText: { color: Colors.pink, fontSize: 13, fontWeight: '700' },
   skincareStepName: { color: Colors.textPrimary, fontSize: 13, fontWeight: '700', marginBottom: 4 },
   skincareStepDetail: { color: Colors.textSecondary, fontSize: 12, lineHeight: 19 },
-  tallowHero: {
+  barrierHero: {
     backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.primary + '44', marginBottom: 14,
   },
-  tallowHeroTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowHeroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowPoint: {
+  barrierHeroTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierHeroText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierPoint: {
     backgroundColor: Colors.card, borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 10,
   },
   cautionLabel: { color: Colors.gold, fontSize: 11, fontWeight: '700', marginBottom: 6 },
-  tallowPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierPointTitle: { color: Colors.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierPointDetail: { color: Colors.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

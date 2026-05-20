@@ -36,7 +36,7 @@ const COMMUNITY_TIPS = [
 ];
 
 const TRENDING_CHALLENGES = [
-  { id: 'tallow-30', title: '30-Day Barrier Reset', emoji: '🌿', joined: 8421, completedToday: 1203, hot: true },
+  { id: 'occlusive-30', title: '30-Day Barrier Reset', emoji: '🌿', joined: 8421, completedToday: 1203, hot: true },
   { id: 'hydration-14', title: '14-Day Glow Hydration', emoji: '💧', joined: 5832, completedToday: 891, hot: false },
   { id: 'minimal-7', title: '7-Day Minimal Routine', emoji: '✨', joined: 12940, completedToday: 2104, hot: true },
   { id: 'sleep-skin-14', title: '14-Day Sleep for Skin', emoji: '🌙', joined: 3291, completedToday: 443, hot: false },

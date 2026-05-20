@@ -107,7 +107,7 @@ type BarrierResult = {
   protocol: { phase: string; duration: string; steps: string[] }[];
   ingredients: { name: string; role: string; priority: 'high' | 'medium' }[];
   avoid: string[];
-  tallowNote: string;
+  barrierNote: string;
 };
 
 function getResult(totalScore: number, maxScore: number, c: Palette): BarrierResult {
@@ -118,15 +118,15 @@ function getResult(totalScore: number, maxScore: number, c: Palette): BarrierRes
       level: 'Strong Barrier', score: totalScore, color: '#4ADE80', emoji: '🛡️',
       summary: 'Your skin barrier is functioning well. Focus on maintenance and prevention rather than repair.',
       protocol: [
-        { phase: 'Maintain', duration: 'Daily', steps: ['Gentle cleanser morning and night', 'One humectant (hyaluronic acid or glycerin)', 'Occlusive seal (tallow or squalane)', 'SPF 30+ every morning'] },
+        { phase: 'Maintain', duration: 'Daily', steps: ['Gentle cleanser morning and night', 'One humectant (hyaluronic acid or glycerin)', 'Occlusive seal (a rich occlusive balm or squalane)', 'SPF 30+ every morning'] },
       ],
       ingredients: [
-        { name: 'Tallow / Squalane', role: 'Maintenance occlusive', priority: 'high' },
+        { name: 'A rich occlusive balm / Squalane', role: 'Maintenance occlusive', priority: 'high' },
         { name: 'Niacinamide', role: 'Strengthening ceramide production', priority: 'medium' },
         { name: 'SPF 30+', role: 'Prevention of UV damage', priority: 'high' },
       ],
       avoid: ['Over-exfoliation (limit to 2-3x per week max)', 'Fragrance in leave-on products'],
-      tallowNote: 'With a strong barrier, tallow works beautifully as your nightly occlusive — its fatty acid profile closely matches your skin\'s own sebum, maintaining what\'s already working.',
+      barrierNote: 'With a strong barrier, a rich occlusive balm works beautifully as your nightly occlusive — its fatty acid profile closely matches your skin\'s own sebum, maintaining what\'s already working.',
     };
   }
 
@@ -135,17 +135,17 @@ function getResult(totalScore: number, maxScore: number, c: Palette): BarrierRes
       level: 'Mildly Compromised', score: totalScore, color: c.gold, emoji: '⚠️',
       summary: 'Your barrier shows mild signs of compromise. A 2-4 week repair protocol will significantly restore function.',
       protocol: [
-        { phase: 'Phase 1: Simplify', duration: 'Weeks 1-2', steps: ['Stop all actives (AHA, BHA, retinol, vitamin C)', 'Use only micellar water to cleanse', 'Apply ceramide moisturizer twice daily', 'Seal with tallow balm at night'] },
-        { phase: 'Phase 2: Rebuild', duration: 'Weeks 3-4', steps: ['Reintroduce gentle cleanser', 'Add one humectant (glycerin or HA)', 'Continue tallow at night', 'Reintroduce actives one at a time — start with niacinamide'] },
+        { phase: 'Phase 1: Simplify', duration: 'Weeks 1-2', steps: ['Stop all actives (AHA, BHA, retinol, vitamin C)', 'Use only micellar water to cleanse', 'Apply ceramide moisturizer twice daily', 'Seal with a rich occlusive balm at night'] },
+        { phase: 'Phase 2: Rebuild', duration: 'Weeks 3-4', steps: ['Reintroduce gentle cleanser', 'Add one humectant (glycerin or HA)', 'Continue a rich occlusive balm at night', 'Reintroduce actives one at a time — start with niacinamide'] },
       ],
       ingredients: [
-        { name: 'Tallow balm', role: 'Barrier occlusive and lipid replacement', priority: 'high' },
+        { name: 'A rich occlusive balm', role: 'Barrier occlusive and lipid replacement', priority: 'high' },
         { name: 'Ceramides (types 1, 3, 6)', role: 'Rebuilding lipid structure', priority: 'high' },
         { name: 'Niacinamide 4-5%', role: 'Ceramide synthesis stimulation', priority: 'high' },
         { name: 'Glycerin', role: 'Humectant — draws water to barrier', priority: 'medium' },
       ],
       avoid: ['All exfoliants for at least 2 weeks', 'Fragrance', 'Alcohol-based toners', 'Hot water washing'],
-      tallowNote: 'For mildly compromised barriers, tallow is one of the most effective repair ingredients available — its conjugated linoleic acid (CLA) reduces inflammation while the fatty acid profile fills barrier gaps.',
+      barrierNote: 'For mildly compromised barriers, a rich occlusive balm is one of the most effective repair ingredients available — its conjugated linoleic acid (CLA) reduces inflammation while the fatty acid profile fills barrier gaps.',
     };
   }
 
@@ -154,19 +154,19 @@ function getResult(totalScore: number, maxScore: number, c: Palette): BarrierRes
       level: 'Moderately Compromised', score: totalScore, color: '#F97316', emoji: '🔴',
       summary: 'Your barrier has significant compromise. A minimum 4-6 week protocol focused exclusively on repair is needed before introducing actives.',
       protocol: [
-        { phase: 'Phase 1: Complete Rest', duration: 'Weeks 1-3', steps: ['Cleanse only with oil or micellar water — no foam/gel', 'NO actives of any kind', 'Tallow twice daily: morning and night', 'Add ceramide-based cream under tallow', 'No exfoliation whatsoever'] },
-        { phase: 'Phase 2: Cautious Rebuild', duration: 'Weeks 4-6', steps: ['Introduce gentle pH-balanced cleanser', 'Add niacinamide 4% (anti-inflammatory, builds ceramides)', 'Continue tallow nightly', 'Only add one new product per 2 weeks'] },
+        { phase: 'Phase 1: Complete Rest', duration: 'Weeks 1-3', steps: ['Cleanse only with oil or micellar water — no foam/gel', 'NO actives of any kind', 'A rich occlusive balm twice daily: morning and night', 'Add ceramide-based cream under an occlusive balm', 'No exfoliation whatsoever'] },
+        { phase: 'Phase 2: Cautious Rebuild', duration: 'Weeks 4-6', steps: ['Introduce gentle pH-balanced cleanser', 'Add niacinamide 4% (anti-inflammatory, builds ceramides)', 'Continue a rich occlusive balm nightly', 'Only add one new product per 2 weeks'] },
         { phase: 'Phase 3: Maintenance', duration: 'Ongoing', steps: ['Reintroduce ONE active at low concentration', 'Always patch test', 'Keep exfoliation to once per week maximum'] },
       ],
       ingredients: [
-        { name: 'Tallow (undiluted)', role: 'Primary barrier repair — CLA reduces inflammation, fatty acids fill barrier gaps', priority: 'high' },
+        { name: 'A rich occlusive balm (undiluted)', role: 'Primary barrier repair — CLA reduces inflammation, fatty acids fill barrier gaps', priority: 'high' },
         { name: 'Ceramides', role: 'Structural lipid replacement', priority: 'high' },
         { name: 'Panthenol (vitamin B5)', role: 'Wound healing and barrier restoration', priority: 'high' },
         { name: 'Colloidal oat', role: 'Soothing anti-inflammatory', priority: 'medium' },
         { name: 'Allantoin', role: 'Cell regeneration and soothing', priority: 'medium' },
       ],
       avoid: ['ALL exfoliants', 'ALL actives (vitamin C, retinol, AHA, BHA)', 'Fragrance and essential oils', 'Hot showers', 'Over-cleansing (max once per day)', 'Physical scrubbing'],
-      tallowNote: 'Moderate barrier damage requires consistent, rich lipid application. Tallow applied twice daily creates a semi-occlusive layer that holds moisture in while its palmitoleic acid fights the inflammation causing barrier breakdown. This is the closest thing to a medical barrier cream without a prescription.',
+      barrierNote: 'Moderate barrier damage requires consistent, rich lipid application. A rich occlusive balm applied twice daily creates a semi-occlusive layer that holds moisture in while its palmitoleic acid fights the inflammation causing barrier breakdown. This is the closest thing to a medical barrier cream without a prescription.',
     };
   }
 
@@ -174,17 +174,17 @@ function getResult(totalScore: number, maxScore: number, c: Palette): BarrierRes
     level: 'Severely Compromised', score: totalScore, color: c.scorePoor, emoji: '🚨',
     summary: 'Your barrier is severely compromised. Focus is on wound-healing mode for at least 6-8 weeks. Consider seeing a dermatologist.',
     protocol: [
-      { phase: 'Emergency Phase', duration: 'Weeks 1-4', steps: ['Cleanse only with mineral/lukewarm water — no cleanser', 'Apply thick layer of tallow immediately after washing (damp skin)', 'No products of any kind except tallow', 'Use humidifier in bedroom', 'Drink 8+ glasses of water daily', 'Consult a dermatologist — you may have a condition like eczema or rosacea'] },
-      { phase: 'Stabilization', duration: 'Weeks 5-8', steps: ['Introduce one ceramide moisturizer with tallow', 'Consider low-dose prescription if dermatologist recommends', 'Still no actives', 'Keep routine to absolute minimum: cleanse, moisturize, seal'] },
+      { phase: 'Emergency Phase', duration: 'Weeks 1-4', steps: ['Cleanse only with mineral/lukewarm water — no cleanser', 'Apply thick layer of a rich occlusive balm immediately after washing (damp skin)', 'No products of any kind except a rich occlusive balm', 'Use humidifier in bedroom', 'Drink 8+ glasses of water daily', 'Consult a dermatologist — you may have a condition like eczema or rosacea'] },
+      { phase: 'Stabilization', duration: 'Weeks 5-8', steps: ['Introduce one ceramide moisturizer with an occlusive balm', 'Consider low-dose prescription if dermatologist recommends', 'Still no actives', 'Keep routine to absolute minimum: cleanse, moisturize, seal'] },
     ],
     ingredients: [
-      { name: 'Tallow (thick, frequent application)', role: 'Emergency barrier repair — closest non-prescription option to medical-grade occlusives', priority: 'high' },
+      { name: 'A rich occlusive balm (thick, frequent application)', role: 'Emergency barrier repair — closest non-prescription option to medical-grade occlusives', priority: 'high' },
       { name: 'Ceramides', role: 'Critical structural repair', priority: 'high' },
       { name: 'Petrolatum (if tolerated)', role: 'Maximum occlusion for severe TEWL', priority: 'high' },
       { name: 'Colloidal oatmeal', role: 'Emergency soothing for inflamed skin', priority: 'high' },
     ],
     avoid: ['Everything except the basics above', 'ANY active ingredient', 'Hot water', 'Towel rubbing — pat only', 'Fragranced products', 'Most commercial moisturizers (fragrance, preservatives)'],
-    tallowNote: 'Severe barrier compromise requires the most intensive care. Tallow applied in a thick layer multiple times daily can significantly reduce transepidermal water loss (TEWL) — in some studies, animal fats match petrolatum\'s barrier-repair efficacy. Apply immediately after washing while skin is still slightly damp.',
+    barrierNote: 'Severe barrier compromise requires the most intensive care. A rich occlusive balm applied in a thick layer multiple times daily can significantly reduce transepidermal water loss (TEWL) — in some studies, animal fats match petrolatum\'s barrier-repair efficacy. Apply immediately after washing while skin is still slightly damp.',
   };
 }
 
@@ -255,7 +255,7 @@ export default function BarrierQuiz() {
               'An exact repair protocol based on your results',
               'Which ingredients to use and avoid right now',
               'How to reintroduce actives safely',
-              'How tallow fits into your barrier repair',
+              'How a rich occlusive balm fits into your barrier repair',
             ].map((item, i) => (
               <View key={i} style={styles.listRow}>
                 <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
@@ -378,10 +378,10 @@ export default function BarrierQuiz() {
             ))}
           </View>
 
-          <View style={styles.tallowCard}>
+          <View style={styles.barrierCard}>
             <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-            <Text style={styles.tallowTitle}>🌿 Tallow for Your Barrier Level</Text>
-            <Text style={styles.tallowText}>{result.tallowNote}</Text>
+            <Text style={styles.barrierTitle}>🌿 A rich occlusive balm for Your Barrier Level</Text>
+            <Text style={styles.barrierText}>{result.barrierNote}</Text>
           </View>
 
           <Pressable style={styles.doneBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)' as any)}>
@@ -476,12 +476,12 @@ function makeStyles(c: Palette) {
   avoidRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   avoidText: { flex: 1, fontSize: 13, color: c.textSecondary, lineHeight: 19 },
 
-  tallowCard: {
+  barrierCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  barrierTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   doneBtn: {
     height: 52, borderRadius: 14, backgroundColor: c.primary,

@@ -60,7 +60,7 @@ const REPAIR_INGREDIENTS = [
   { name: 'Colloidal oatmeal', role: 'Beta-glucans form a protective film. Anti-itch. Studied for eczema and barrier repair.', found: 'Aveeno, oat-based formulas', use: 'As needed for itch/inflammation', rating: 'moderate' },
 ];
 
-const TALLOW_POINTS = [
+const OCCLUSIVE_POINTS = [
   { title: 'Lipid profile matches human sebum', body: 'Sebum-similar occlusives (≈50% oleic, ≈25% palmitic, ≈15% stearic acid) closely match human sebum composition. The stratum corneum recognises these lipids as "self" and integrates them directly into the lipid lamellar structure.' },
   { title: 'Contains all three barrier lipid classes', body: 'Sebum-similar animal-fat occlusives contain ceramide precursors (fatty acids the skin enzymatically converts to ceramides), cholesterol, and free fatty acids — the exact three-lipid system that waterproofs the stratum corneum.' },
   { title: 'Vitamins A, D, E, K2 — all fat-soluble and bioavailable', body: 'Vitamin A supports epithelial integrity. Vitamin D modulates skin immune function and barrier gene expression. Vitamin E is a potent lipid antioxidant that prevents lipid peroxidation in the barrier. K2 supports skin elasticity.' },
@@ -205,14 +205,14 @@ export default function BarrierRepairScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={[styles.tallowHero, { borderColor: Colors.primary + '44' }]}>
-              <Text style={styles.tallowHeroTitle}>🌿 Why Lipid-Rich Occlusives Help Barrier Repair</Text>
-              <Text style={styles.tallowHeroSub}>Sebum-similar occlusives have a lipid composition well suited to the stratum corneum's three-lipid system — ceramides, cholesterol, and free fatty acids.</Text>
+            <View style={[styles.barrierHero, { borderColor: Colors.primary + '44' }]}>
+              <Text style={styles.barrierHeroTitle}>🌿 Why Lipid-Rich Occlusives Help Barrier Repair</Text>
+              <Text style={styles.barrierHeroSub}>Sebum-similar occlusives have a lipid composition well suited to the stratum corneum's three-lipid system — ceramides, cholesterol, and free fatty acids.</Text>
             </View>
-            {TALLOW_POINTS.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_POINTS.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -268,11 +268,11 @@ function makeStyles(c: ShimColors) {
   infoRow: { flexDirection: 'row', gap: 8, marginTop: 6 },
   infoLabel: { color: c.textMuted, fontSize: 12, fontWeight: '600', width: 60 },
   infoValue: { color: c.textSecondary, fontSize: 12, flex: 1 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

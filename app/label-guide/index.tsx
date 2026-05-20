@@ -262,10 +262,10 @@ export default function LabelGuide() {
           </View>
         ))}
 
-        <View style={styles.tallowCard}>
+        <View style={styles.barrierCard}>
           <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-          <Text style={styles.tallowTitle}>🌿 Why Anhydrous Balms Are Different</Text>
-          <Text style={styles.tallowText}>
+          <Text style={styles.barrierTitle}>🌿 Why Anhydrous Balms Are Different</Text>
+          <Text style={styles.barrierText}>
             A minimal anhydrous balm's ingredient list can be as short as: a single plant or animal fat, beeswax, and calendula. That's it. No water means no preservatives. No synthetic emulsifiers. No fragrance. No fillers. The ingredient list is the entire formula.
           </Text>
         </View>
@@ -349,11 +349,11 @@ function makeStyles(c: Palette) {
   compCell: { flex: 1, padding: 10, fontSize: 12, lineHeight: 18 },
   compHeaderText: { fontWeight: '800', color: c.textPrimary, fontSize: 11 },
 
-  tallowCard: {
+  barrierCard: {
     borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 16, gap: 6, marginBottom: 14, marginTop: 10,
   },
-  tallowTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
-  tallowText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  barrierTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  barrierText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
   });
 }

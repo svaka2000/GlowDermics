@@ -28,7 +28,7 @@ const CATEGORIES: ProductCategory[] = [
   { label: 'Exfoliant', icon: '🔮', placeholder: '$35', tdAlternative: 'Manuka honey mask', tdPrice: 0 },
 ];
 
-const TALLOW_PRODUCT = {
+const OCCLUSIVE_BALM_PRODUCT = {
   name: 'Signature Occlusive Balm',
   price: 48,
   lasts: '3 months',
@@ -64,7 +64,7 @@ export default function BudgetCalculator() {
     return sum + monthly;
   }, 0);
 
-  const tdMonthly = (TALLOW_PRODUCT.price / 3) + (5 / 3); // balm + rosewater + spf avg
+  const tdMonthly = (OCCLUSIVE_BALM_PRODUCT.price / 3) + (5 / 3); // balm + rosewater + spf avg
   const tdMonthlyFull = 48 / 3 + 5 / 3 + 20 / 3; // full TD setup monthly
 
   const conventionalAnnual = conventionalMonthly * 12;
@@ -177,8 +177,8 @@ export default function BudgetCalculator() {
             {/* What one balm replaces */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>What One Balm Replaces</Text>
-              <Text style={styles.cardSub}>${TALLOW_PRODUCT.price} lasts {TALLOW_PRODUCT.lasts}</Text>
-              <Text style={styles.replaceDesc}>{TALLOW_PRODUCT.description}</Text>
+              <Text style={styles.cardSub}>${OCCLUSIVE_BALM_PRODUCT.price} lasts {OCCLUSIVE_BALM_PRODUCT.lasts}</Text>
+              <Text style={styles.replaceDesc}>{OCCLUSIVE_BALM_PRODUCT.description}</Text>
               <View style={styles.replacesGrid}>
                 {['Moisturizer', 'Face Oil', 'Eye Cream', 'Night Cream'].map(r => (
                   <View key={r} style={styles.replacesChip}>

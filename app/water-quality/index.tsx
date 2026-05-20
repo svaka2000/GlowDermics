@@ -118,7 +118,7 @@ const SOLUTIONS = [
     solution: 'Oil Cleansing (No-Rinse Option)',
     difficulty: 'Easy',
     cost: '💰',
-    howTo: 'Use an oil cleanser (or tallow balm) and remove with a damp warm muslin cloth — wrung out with filtered or bottled water. Minimizes tap water contact while still cleansing effectively.',
+    howTo: 'Use an oil cleanser (or a rich occlusive balm) and remove with a damp warm muslin cloth — wrung out with filtered or bottled water. Minimizes tap water contact while still cleansing effectively.',
     why: 'Oil emulsifies makeup, SPF, and sebum without requiring a water rinse. The cloth removal method further reduces hard water mineral deposition.',
     rating: 'good',
   },
@@ -143,7 +143,7 @@ const SOLUTIONS = [
 const HARD_WATER_ROUTINE = {
   am: [
     { step: 1, action: 'Splash with Vitamin C water (1 tsp powder per 1L jug kept by sink)', note: 'Neutralizes chlorine and minerals from overnight face contact with pillow' },
-    { step: 2, action: 'Apply tallow balm or moisturizer to damp skin', note: 'Lock in moisture while skin is still damp from the Vitamin C rinse' },
+    { step: 2, action: 'Apply a rich occlusive balm or moisturizer to damp skin', note: 'Lock in moisture while skin is still damp from the Vitamin C rinse' },
     { step: 3, action: 'SPF 30+ last', note: 'Filters as additional buffer to environmental oxidants' },
   ],
   pm: [
@@ -151,7 +151,7 @@ const HARD_WATER_ROUTINE = {
     { step: 2, action: 'Emulsify with minimal water or damp warm cloth (filtered preferred)', note: 'Remove with as little tap water as possible' },
     { step: 3, action: 'Optional: second gentle cleanser if needed, rinse with Vitamin C water', note: 'The Vitamin C water as final rinse neutralizes mineral buildup from any tap water contact' },
     { step: 4, action: 'ACV toner (1:5) if skin feels alkaline/tight', note: 'Restores acid mantle pH. Skip if skin is not reactive.' },
-    { step: 5, action: 'Actives, then tallow balm to finish', note: 'Seal everything with a biocompatible occlusive' },
+    { step: 5, action: 'Actives, then a rich occlusive balm to finish', note: 'Seal everything with a biocompatible occlusive' },
   ],
 };
 
@@ -324,10 +324,10 @@ export default function WaterQualityScreen() {
               </View>
             ))}
 
-            <View style={styles.tallowNote}>
-              <Text style={styles.tallowNoteTitle}>🌿 Tallow in a Hard Water Routine</Text>
-              <Text style={styles.tallowNoteText}>
-                Grass-fed tallow is a particularly good fit for hard water skin. Its sebum-like fatty acid profile penetrates and repairs the barrier damage from mineral deposits without adding synthetic comedogenic compounds that hard-water skin is already prone to reacting to.
+            <View style={styles.barrierNote}>
+              <Text style={styles.barrierNoteTitle}>🌿 A rich occlusive balm in a Hard Water Routine</Text>
+              <Text style={styles.barrierNoteText}>
+                Grass-fed a rich occlusive balm is a particularly good fit for hard water skin. Its sebum-like fatty acid profile penetrates and repairs the barrier damage from mineral deposits without adding synthetic comedogenic compounds that hard-water skin is already prone to reacting to.
                 {'\n\n'}
                 Use it as the final PM step — after all actives and the Vitamin C rinse — to seal everything in and allow overnight repair.
               </Text>
@@ -438,11 +438,11 @@ function makeStyles(c: Palette) {
   routineStepNumText: { color: Colors.primary, fontSize: 13, fontWeight: '700' },
   routineStepAction: { color: Colors.textPrimary, fontSize: 13, fontWeight: '600', marginBottom: 4 },
   routineStepNote: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
-  tallowNote: {
+  barrierNote: {
     backgroundColor: Colors.primary + '15', borderRadius: 14, padding: 16,
     borderWidth: 1, borderColor: Colors.primary + '44', marginTop: 16,
   },
-  tallowNoteTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 8 },
-  tallowNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
+  barrierNoteTitle: { color: Colors.primary, fontSize: 14, fontWeight: '700', marginBottom: 8 },
+  barrierNoteText: { color: Colors.textSecondary, fontSize: 13, lineHeight: 21 },
   });
 }

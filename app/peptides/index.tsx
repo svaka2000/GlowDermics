@@ -88,7 +88,7 @@ const HOW_TO_USE = [
   { step: 6, title: 'Look for delivery systems in formulations', detail: 'High-quality peptide products include penetration enhancers: palmitoyl or acetyl groups attached to the peptide (lipid modification), liposomal encapsulation, or fatty acid vehicles. These are what separate effective peptide products from expensive water. Palmitoyl-prefixed peptides have built-in delivery.' },
 ];
 
-const TALLOW_PEPTIDES = [
+const OCCLUSIVE_BALM_PEPTIDES = [
   { title: 'Animal-fat occlusives provide amino acid building blocks', body: 'Some animal-fat occlusives contain a range of amino acids — the building blocks cells use to construct peptides and proteins (including collagen). While topical amino acid delivery is less efficient than peptide delivery, the fat-soluble vitamins (A, D, E, K2) support the cellular machinery that synthesises these proteins.' },
   { title: 'An occlusive as the delivery vehicle for lipid-modified peptides', body: 'Palmitoyl-prefixed peptides (Matrixyl, GHK-Cu palmitoylated forms) have a fatty acid attached specifically to improve stratum corneum penetration. Applying these peptides over a thin layer of a lipid occlusive creates a lipid-rich environment that may further aid the penetration of these oil-adapted peptides.' },
   { title: 'Recommended stack: peptide serum → occlusive', body: 'Apply peptide serum first (water-soluble, needs direct skin contact). Allow 90 seconds to absorb. Apply a thin layer of an occlusive to seal in the serum layer, add vitamin A/E/D, and provide overnight barrier support. The occlusive does not block the already-absorbed serum.' },
@@ -237,14 +237,14 @@ export default function PeptidesScreen() {
 
         {activeTab === 4 && (
           <View>
-            <View style={styles.tallowHero}>
-              <Text style={styles.tallowHeroTitle}>🌿 Peptides + an Occlusive</Text>
-              <Text style={styles.tallowHeroSub}>A lipid-rich occlusive and peptides work through complementary pathways. Peptides signal collagen production; the occlusive provides barrier support and fat-soluble vitamins that enable the cellular machinery to respond.</Text>
+            <View style={styles.barrierHero}>
+              <Text style={styles.barrierHeroTitle}>🌿 Peptides + an Occlusive</Text>
+              <Text style={styles.barrierHeroSub}>A lipid-rich occlusive and peptides work through complementary pathways. Peptides signal collagen production; the occlusive provides barrier support and fat-soluble vitamins that enable the cellular machinery to respond.</Text>
             </View>
-            {TALLOW_PEPTIDES.map((p, i) => (
-              <View key={i} style={styles.tallowCard}>
-                <Text style={styles.tallowCardTitle}>{p.title}</Text>
-                <Text style={styles.tallowCardBody}>{p.body}</Text>
+            {OCCLUSIVE_BALM_PEPTIDES.map((p, i) => (
+              <View key={i} style={styles.barrierCard}>
+                <Text style={styles.barrierCardTitle}>{p.title}</Text>
+                <Text style={styles.barrierCardBody}>{p.body}</Text>
               </View>
             ))}
           </View>
@@ -298,11 +298,11 @@ function makeStyles(c: ShimColors) {
   stepNumText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   stepTitle: { color: c.textPrimary, fontSize: 14, fontWeight: '700', marginBottom: 4 },
   stepDetail: { color: c.textSecondary, fontSize: 13, lineHeight: 19 },
-  tallowHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
-  tallowHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
-  tallowHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
-  tallowCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
-  tallowCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  tallowCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierHero: { backgroundColor: c.primary + '11', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: c.primary + '44', marginBottom: 14 },
+  barrierHeroTitle: { color: c.primary, fontSize: 16, fontWeight: '800', marginBottom: 6 },
+  barrierHeroSub: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
+  barrierCard: { backgroundColor: c.card, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: c.border, marginBottom: 10 },
+  barrierCardTitle: { color: c.gold, fontSize: 14, fontWeight: '700', marginBottom: 6 },
+  barrierCardBody: { color: c.textSecondary, fontSize: 13, lineHeight: 20 },
   });
 }

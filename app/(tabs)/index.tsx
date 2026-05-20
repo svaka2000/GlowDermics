@@ -161,7 +161,7 @@ export default function Home() {
     try {
       const CHALLENGE_KEY = 'gd_active_challenge';
       const CHALLENGES_MAP: Record<string, { title: string; emoji: string; duration: number }> = {
-        'tallow-30': { title: '30-Day Barrier Reset', emoji: '🌿', duration: 30 },
+        'occlusive-30': { title: '30-Day Barrier Reset', emoji: '🌿', duration: 30 },
         'full-routine-21': { title: '21-Day Routine Reset', emoji: '🌅', duration: 21 },
         'hydration-14': { title: '14-Day Glow Hydration', emoji: '💧', duration: 14 },
         'minimal-7': { title: '7-Day Minimal Routine', emoji: '✨', duration: 7 },

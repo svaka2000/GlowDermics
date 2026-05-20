@@ -29,7 +29,7 @@ type DetoxProtocol = {
     allowed: string[];
     notAllowed: string[];
   }[];
-  tallowRole: string;
+  occlusiveRole: string;
 };
 
 type ActiveDetox = {
@@ -66,7 +66,7 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         notAllowed: ['Actives', 'Exfoliants', 'Multiple products', 'Fragrance'],
       },
     ],
-    tallowRole: 'A single-ingredient occlusive is the hero of this protocol. It provides barrier repair, anti-inflammatory CLA, and all necessary lipids — in one clean ingredient. It\'s the only "treatment" you need during the detox.',
+    occlusiveRole: 'A single-ingredient occlusive is the hero of this protocol. It provides barrier repair, anti-inflammatory CLA, and all necessary lipids — in one clean ingredient. It\'s the only "treatment" you need during the detox.',
   },
   {
     id: 'barrier-14',
@@ -94,7 +94,7 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         notAllowed: ['Retinol', 'AHA/BHA', 'Vitamin C', 'Benzoyl peroxide', 'Fragrance', 'Essential oils'],
       },
     ],
-    tallowRole: 'A lipid-rich occlusive is the cornerstone of barrier repair. Its fatty acid profile fills the structural gaps in a damaged stratum corneum while CLA suppresses the inflammation that\'s preventing repair. Apply generously, multiple times daily in severe cases.',
+    occlusiveRole: 'A lipid-rich occlusive is the cornerstone of barrier repair. Its fatty acid profile fills the structural gaps in a damaged stratum corneum while CLA suppresses the inflammation that\'s preventing repair. Apply generously, multiple times daily in severe cases.',
   },
   {
     id: 'minimal-30',
@@ -129,7 +129,7 @@ function buildProtocols(c: Palette): DetoxProtocol[] {
         notAllowed: ['Returning to your old full routine without analysis'],
       },
     ],
-    tallowRole: 'Challenge: can a single occlusive replace your moisturizer AND eye cream AND body lotion? Most users find it can. This challenge tests whether an expensive multi-step routine actually outperforms one simple ingredient.',
+    occlusiveRole: 'Challenge: can a single occlusive replace your moisturizer AND eye cream AND body lotion? Most users find it can. This challenge tests whether an expensive multi-step routine actually outperforms one simple ingredient.',
   },
   ];
 }
@@ -244,10 +244,10 @@ export default function SkinDetox() {
             </View>
           ))}
 
-          <View style={styles.tallowRoleCard}>
+          <View style={styles.occlusiveRoleCard}>
             <LinearGradient colors={[`${colors.primary}12`, `${colors.primary}04`]} style={StyleSheet.absoluteFill} />
-            <Text style={styles.tallowRoleTitle}>🌿 The Occlusive in This Protocol</Text>
-            <Text style={styles.tallowRoleText}>{selectedProtocol.tallowRole}</Text>
+            <Text style={styles.occlusiveRoleTitle}>🌿 The Occlusive in This Protocol</Text>
+            <Text style={styles.occlusiveRoleText}>{selectedProtocol.occlusiveRole}</Text>
           </View>
 
           {!activeDetox ? (
@@ -446,12 +446,12 @@ function makeStyles(c: Palette) {
   phaseNotAllowedTitle: { fontSize: 12, fontWeight: '800', color: c.scorePoor },
   phaseNotAllowedItem: { fontSize: 12, color: c.textSecondary, paddingLeft: 4 },
 
-  tallowRoleCard: {
+  occlusiveRoleCard: {
     borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: `${c.primary}30`,
     padding: 14, gap: 6, marginBottom: 14,
   },
-  tallowRoleTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
-  tallowRoleText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
+  occlusiveRoleTitle: { fontSize: 14, fontWeight: '700', color: c.primary },
+  occlusiveRoleText: { fontSize: 13, color: c.textSecondary, lineHeight: 20 },
 
   startBtn: {
     height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginBottom: 14,

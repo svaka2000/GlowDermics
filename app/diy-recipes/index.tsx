@@ -60,7 +60,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     shelfLife: '12-18 months',
   },
   {
-    id: 'tallow-serum',
+    id: 'occlusive-serum',
     name: 'Brightening Face Serum',
     emoji: '✨',
     category: 'Serum',
@@ -92,7 +92,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     shelfLife: '3-6 months',
   },
   {
-    id: 'tallow-eye',
+    id: 'occlusive-eye',
     name: 'Under-Eye Repair Balm',
     emoji: '👁️',
     category: 'Eye Treatment',
@@ -124,7 +124,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     shelfLife: '6-9 months',
   },
   {
-    id: 'tallow-mask',
+    id: 'occlusive-mask',
     name: 'Deep Nourishing Clay Mask',
     emoji: '😌',
     category: 'Mask',
@@ -157,7 +157,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     shelfLife: 'Single use',
   },
   {
-    id: 'tallow-lip',
+    id: 'occlusive-lip',
     name: 'Tinted Lip Treatment',
     emoji: '💋',
     category: 'Lip',
@@ -190,7 +190,7 @@ function buildRecipes(colors: Palette): Recipe[] {
     shelfLife: '12 months',
   },
   {
-    id: 'tallow-body',
+    id: 'occlusive-body',
     name: 'Whipped Body Butter',
     emoji: '🧴',
     category: 'Body',
